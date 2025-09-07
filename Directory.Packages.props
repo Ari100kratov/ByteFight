@@ -32,7 +32,7 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <!--Aspire AppHost-->
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.4.1" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.4.2" />
     <!--Aspire ServiceDefaults-->
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.8.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.1" />
