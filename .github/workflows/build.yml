@@ -22,13 +22,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
-        run: dotnet restore CleanArchitecture.sln
+        run: dotnet restore ByteFight.sln
 
       - name: Build
-        run: dotnet build CleanArchitecture.sln --configuration Release --no-restore
+        run: dotnet build ByteFight.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test CleanArchitecture.sln --configuration Release --no-restore --no-build
+        run: dotnet test ByteFight.sln --configuration Release --no-restore --no-build
 
       - name: Publish
-        run: dotnet publish CleanArchitecture.sln --configuration Release --no-restore --no-build
+        run: dotnet publish ByteFight.sln --configuration Release --no-restore --no-build
