@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- Static code analysis -->
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.4.1" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.4.2" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" />
     <!-- Application -->
     <PackageVersion Include="Scrutor" Version="6.1.0" />
