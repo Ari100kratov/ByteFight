@@ -12,6 +12,17 @@ builder.AddServiceDefaults();
 
 builder.Services.AddSwaggerGenWithAuth();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // Vite dev server
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 builder.Services
     .AddApplication()
     .AddPresentation()
@@ -40,6 +51,8 @@ app.MapHealthChecks("health", new HealthCheckOptions
 app.UseRequestContextLogging();
 
 app.UseExceptionHandler();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 
