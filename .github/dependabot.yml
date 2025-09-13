@@ -1,6 +1,29 @@
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
 version: 2
 updates:
+  - package-ecosystem: "npm"
+    directory: "/src/ClientApp/*"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 15
+    groups: 
+      frontend-dependencies:
+        patterns:
+          - "*"
+
+ # Enable version updates for Docker
+ # - package-ecosystem: "docker"
+ #   directory: "/"
+ #   schedule:
+ #     interval: "weekly"
+
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    open-pull-requests-limit: 15
+    groups: 
+      backend-dependencies:
+        patterns:
+          - "*"
