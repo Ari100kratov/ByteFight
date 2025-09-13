@@ -9,12 +9,12 @@
     <!-- Application -->
     <PackageVersion Include="Scrutor" Version="6.1.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
     <!-- Infrastructure -->
     <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.9" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
