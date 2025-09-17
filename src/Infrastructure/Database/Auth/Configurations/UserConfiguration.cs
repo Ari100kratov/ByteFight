@@ -1,8 +1,8 @@
-﻿using Domain.Users;
+﻿using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Users;
+namespace Infrastructure.Database.Auth.Configurations;
 
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {

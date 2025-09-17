@@ -1,13 +1,11 @@
-﻿using Domain.Todos;
-using Domain.Users;
+﻿using Domain.Game.Characters;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Abstractions.Data;
 
-public interface IApplicationDbContext
+public interface IGameDbContext
 {
-    DbSet<User> Users { get; }
-    DbSet<TodoItem> TodoItems { get; }
+    DbSet<Character> Characters { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

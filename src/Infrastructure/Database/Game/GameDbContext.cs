@@ -1,26 +1,25 @@
 ﻿using Application.Abstractions.Data;
-using Domain.Todos;
-using Domain.Users;
+using Domain.Game.Characters;
+using Infrastructure.Database.Auth;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
-namespace Infrastructure.Database;
+namespace Infrastructure.Database.Game;
 
-public sealed class ApplicationDbContext(
-    DbContextOptions<ApplicationDbContext> options,
+public sealed class GameDbContext(
+    DbContextOptions<GameDbContext> options,
     IDomainEventsDispatcher domainEventsDispatcher)
-    : DbContext(options), IApplicationDbContext
+    : DbContext(options), IGameDbContext
 {
-    public DbSet<User> Users { get; set; }
-
-    public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<Character> Characters { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(GameDbContext).Assembly, t => t.Namespace != null && t.Namespace.Contains("Infrastructure.Database.Game.Configurations"));
 
-        modelBuilder.HasDefaultSchema(Schemas.Default);
+        modelBuilder.HasDefaultSchema(Schemas.Game);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

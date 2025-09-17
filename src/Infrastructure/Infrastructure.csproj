@@ -17,4 +17,9 @@
 	<InternalsVisibleTo Include="ArchitectureTests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\Auth\Migrations\" />
+    <Folder Include="Database\Game\Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -1,15 +1,16 @@
 ﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Auth.Users;
+using Domain.Game.Characters;
 using Domain.Todos;
-using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Todos.Create;
 
 internal sealed class CreateTodoCommandHandler(
-    IApplicationDbContext context,
+    IAuthDbContext context,
     IDateTimeProvider dateTimeProvider,
     IUserContext userContext)
     : ICommandHandler<CreateTodoCommand, Guid>
@@ -42,7 +43,7 @@ internal sealed class CreateTodoCommandHandler(
 
         todoItem.Raise(new TodoItemCreatedDomainEvent(todoItem.Id));
 
-        context.TodoItems.Add(todoItem);
+        //context.TodoItems.Add(todoItem);
 
         await context.SaveChangesAsync(cancellationToken);
 

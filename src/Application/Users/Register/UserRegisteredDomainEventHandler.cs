@@ -1,4 +1,4 @@
-﻿using Domain.Users;
+﻿using Domain.Auth.Users;
 using SharedKernel;
 
 namespace Application.Users.Register;

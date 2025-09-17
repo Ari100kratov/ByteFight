@@ -51,7 +51,7 @@ export default function LoginPage() {
       // API возвращает строковый токен
       const token = await res.text()
       localStorage.setItem("token", token)
-      navigate("/dashboard")
+      navigate("/main")
     } catch {
       setError("Сервер недоступен. Попробуйте позже.")
     } finally {

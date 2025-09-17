@@ -6,24 +6,25 @@ using SharedKernel;
 
 namespace Application.Todos.Update;
 
-internal sealed class UpdateTodoCommandHandler(
-    IApplicationDbContext context)
+internal sealed class UpdateTodoCommandHandler
     : ICommandHandler<UpdateTodoCommand>
 {
-    public async Task<Result> Handle(UpdateTodoCommand command, CancellationToken cancellationToken)
+    public Task<Result> Handle(UpdateTodoCommand command, CancellationToken cancellationToken)
     {
-        TodoItem? todoItem = await context.TodoItems
-            .SingleOrDefaultAsync(t => t.Id == command.TodoItemId, cancellationToken);
+        return Task.FromResult(Result.Success());
 
-        if (todoItem is null)
-        {
-            return Result.Failure(TodoItemErrors.NotFound(command.TodoItemId));
-        }
+        //TodoItem? todoItem = await context.TodoItems
+        //    .SingleOrDefaultAsync(t => t.Id == command.TodoItemId, cancellationToken);
 
-        todoItem.Description = command.Description;
+        //if (todoItem is null)
+        //{
+        //    return Result.Failure(TodoItemErrors.NotFound(command.TodoItemId));
+        //}
 
-        await context.SaveChangesAsync(cancellationToken);
+        //todoItem.Description = command.Description;
+
+        //await context.SaveChangesAsync(cancellationToken);
         
-        return Result.Success();
+        //return Result.Success();
     }
 }
