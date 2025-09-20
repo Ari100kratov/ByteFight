@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -20,50 +21,17 @@ export default function RegisterPage() {
     lastName: "",
     password: "",
   })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
   const navigate = useNavigate()
+  const { register, loading, error } = useAuth()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError("")
-
-    if (!form.email || !form.firstName || !form.lastName || !form.password) {
-      setError("Заполните все поля")
-      return
-    }
-
-    if (form.password.length < 8) {
-      setError("Пароль должен содержать не менее 8 символов")
-      return
-    }
-
-    setLoading(true)
+    
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      })
-
-      if (!res.ok) {
-        const text = await res.text()
-        try {
-          const json = JSON.parse(text)
-          setError(json.message ?? json.detail ?? text ?? "Ошибка регистрации")
-        } catch {
-          setError(text || "Ошибка регистрации")
-        }
-        return
-      }
-
-      // Успех — идём на страницу входа
-      await res.json().catch(() => {})
+      await register(form)
       navigate("/login")
     } catch {
-      setError("Сервер недоступен. Попробуйте позже.")
-    } finally {
-      setLoading(false)
+      /* Ошибка уже есть в error, можно не обрабатывать */
     }
   }
 

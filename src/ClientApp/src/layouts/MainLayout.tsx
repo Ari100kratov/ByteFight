@@ -17,7 +17,10 @@ import {
 
 const routeNames: Record<string, string> = {
   play: "Играть",
+
   characters: "Мои персонажи",
+  create: "Создание персонажа",
+
   docs: "Документация",
   settings: "Настройки",
 }

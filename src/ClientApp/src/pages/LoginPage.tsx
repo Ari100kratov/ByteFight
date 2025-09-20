@@ -12,50 +12,22 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const { login, loading, error } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError("")
-
-    if (!email || !password) {
-      setError("Заполните все поля")
-      return
-    }
-
-    setLoading(true)
+    
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (!res.ok) {
-        const text = await res.text()
-        try {
-          const json = JSON.parse(text)
-          setError(json.message ?? json.detail ?? text ?? "Ошибка входа")
-        } catch {
-          setError(text || "Ошибка входа")
-        }
-        return
-      }
-
-      // API возвращает строковый токен
-      const token = await res.text()
-      localStorage.setItem("token", token)
+      await login(email, password)
       navigate("/")
     } catch {
-      setError("Сервер недоступен. Попробуйте позже.")
-    } finally {
-      setLoading(false)
+      /* Ошибка уже есть в `error`, ничего делать не нужно */
     }
   }
 
