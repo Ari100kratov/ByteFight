@@ -10,25 +10,17 @@ using SharedKernel;
 
 namespace Application.Game.Characters.GetByUserId;
 
-public sealed class GetCharactersByUserIdQueryHandler : IQueryHandler<GetCharactersByUserIdQuery, IReadOnlyList<CharacterResponse>>
+public sealed class GetCharactersByUserIdQueryHandler(IGameDbContext dbContext, IUserContext userContext)
+    : IQueryHandler<GetCharactersByUserIdQuery, IReadOnlyList<CharacterResponse>>
 {
-    private readonly IGameDbContext _dbContext;
-    private readonly IUserContext _userContext;
-
-    public GetCharactersByUserIdQueryHandler(IGameDbContext dbContext, IUserContext userContext)
-    {
-        _dbContext = dbContext;
-        _userContext = userContext;
-    }
-
     public async Task<Result<IReadOnlyList<CharacterResponse>>> Handle(GetCharactersByUserIdQuery query, CancellationToken cancellationToken)
     {
-        if (_userContext.UserId != query.UserId)
+        if (userContext.UserId != query.UserId)
         {
             return Result.Failure<IReadOnlyList<CharacterResponse>>(UserErrors.Unauthorized());
         }
 
-        IReadOnlyList<CharacterResponse> characters = await _dbContext.Characters
+        IReadOnlyList<CharacterResponse> characters = await dbContext.Characters
             .AsNoTracking()
             .Where(c => c.UserId == new UserId(query.UserId))
             .Select(c => new CharacterResponse

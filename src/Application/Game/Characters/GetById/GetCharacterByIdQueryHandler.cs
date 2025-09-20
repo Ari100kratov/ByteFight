@@ -9,20 +9,12 @@ using SharedKernel;
 
 namespace Application.Game.Characters.GetById;
 
-internal sealed class GetCharacterByIdQueryHandler : IQueryHandler<GetCharacterByIdQuery, CharacterResponse>
+internal sealed class GetCharacterByIdQueryHandler(IGameDbContext dbContext, IUserContext userContext)
+    : IQueryHandler<GetCharacterByIdQuery, CharacterResponse>
 {
-    private readonly IGameDbContext _dbContext;
-    private readonly IUserContext _userContext;
-
-    public GetCharacterByIdQueryHandler(IGameDbContext dbContext, IUserContext userContext)
-    {
-        _dbContext = dbContext;
-        _userContext = userContext;
-    }
-
     public async Task<Result<CharacterResponse>> Handle(GetCharacterByIdQuery query, CancellationToken cancellationToken)
     {
-        CharacterResponse? character = await _dbContext.Characters
+        CharacterResponse? character = await dbContext.Characters
             .AsNoTracking()
             .Where(c => c.Id == query.Id)
             .Select(c => new CharacterResponse
@@ -38,7 +30,7 @@ internal sealed class GetCharacterByIdQueryHandler : IQueryHandler<GetCharacterB
             return Result.Failure<CharacterResponse>(CharacterErrors.NotFound(query.Id));
         }
 
-        if (_userContext.UserId != character.UserId)
+        if (userContext.UserId != character.UserId)
         {
             return Result.Failure<CharacterResponse>(UserErrors.Unauthorized());
         }
