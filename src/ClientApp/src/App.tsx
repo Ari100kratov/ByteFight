@@ -7,6 +7,8 @@ import InProgressPage from "./pages/InProgressPage"
 import CreateCharacterPage from "./pages/characters/CreateCharacterPage"
 import CharactersLayout from "./layouts/CharactersLayout"
 import CharactersListPage from "./pages/characters/CharactersListPage"
+import CharacterDetailsPage from "./pages/characters/CharacterDetailsPage"
+import { BreadcrumbProvider } from "./layouts/BreadcrumbProvider"
 
 export default function App() {
   return (
@@ -21,7 +23,9 @@ export default function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <MainLayout />
+              <BreadcrumbProvider>
+                <MainLayout />
+              </BreadcrumbProvider>
             </ProtectedRoute>
           }
         >
@@ -32,6 +36,7 @@ export default function App() {
           <Route path="characters" element={<CharactersLayout />}>
             <Route index element={<CharactersListPage />} />
             <Route path="create" element={<CreateCharacterPage />} />
+            <Route path=":id" element={<CharacterDetailsPage />} />
           </Route>
 
           <Route path="docs" element={<InProgressPage title="Документация" />} />

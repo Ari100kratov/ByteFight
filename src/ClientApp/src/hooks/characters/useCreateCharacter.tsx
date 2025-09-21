@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { createCharacter } from "@/api/characters"
+import createCharacter from "@/api/characters/createCharacter"
 
 export function useCreateCharacter() {
   const [loading, setLoading] = useState(false)
@@ -15,8 +15,8 @@ export function useCreateCharacter() {
     setLoading(true)
     setError(null)
     try {
-      const result = await createCharacter(data)
-      return result
+      const id: string = await createCharacter(data)
+      return id
     } catch (err) {
       setError(err instanceof Error ? err.message : "Неизвестная ошибка")
       throw err

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getCharactersByCurrentUser, type Character } from "@/api/characters"
+import { getCharactersByCurrentUser, type Character } from "@/api/characters/getCharactersByCurrentUser"
 
 export function useCharacters() {
   const [characters, setCharacters] = useState<Character[]>([])

@@ -21,8 +21,8 @@ export default function CreateCharacterPage() {
     e.preventDefault()
 
     try {
-      const data = await create({ name })
-      navigate(`/characters/${data.id}`)
+      const id = await create({ name })
+      navigate(`/characters/${id}`)
     } catch {}
   }
 
@@ -58,7 +58,7 @@ export default function CreateCharacterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="h-24 flex items-center justify-center text-muted-foreground">
-            Блок выбора класса будет здесь
+            Блок выбора класса и описание будет здесь
           </CardContent>
         </Card>
       </div>

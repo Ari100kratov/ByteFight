@@ -14,6 +14,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { useBreadcrumbNames } from "./BreadcrumbProvider"
 
 const routeNames: Record<string, string> = {
   play: "Играть",
@@ -28,6 +29,7 @@ const routeNames: Record<string, string> = {
 export default function MainLayout() {
   const location = useLocation()
   const parts = location.pathname.split("/").filter(Boolean)
+  const { names } = useBreadcrumbNames()
 
   return (
     <SidebarProvider>
@@ -36,23 +38,22 @@ export default function MainLayout() {
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
                 {parts.map((part, idx) => {
                   const path = "/" + parts.slice(0, idx + 1).join("/")
                   const isLast = idx === parts.length - 1
+                  const label = names[path] || routeNames[part] || decodeURIComponent(part)
+
                   return (
                     <BreadcrumbItem key={path}>
                       {isLast ? (
-                        <BreadcrumbPage>{routeNames[part] || part}</BreadcrumbPage>
+                        <BreadcrumbPage>{label}</BreadcrumbPage>
                       ) : (
                         <>
                           <BreadcrumbLink asChild>
-                            <Link to={path}>{routeNames[part] || part}</Link>
+                            <Link to={path}>{label}</Link>
                           </BreadcrumbLink>
                           <BreadcrumbSeparator />
                         </>

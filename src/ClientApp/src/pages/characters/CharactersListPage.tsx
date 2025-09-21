@@ -39,7 +39,7 @@ export default function CharactersListPage() {
       {!loading && !error && characters.length > 0 && (
         <div className="grid gap-4 md:grid-cols-3">
           {characters.map((ch) => (
-            <CharacterCard key={ch.id} name={ch.name} />
+            <CharacterCard key={ch.id} id={ch.id} name={ch.name} />
           ))}
         </div>
       )}
