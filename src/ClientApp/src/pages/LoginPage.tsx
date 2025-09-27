@@ -12,23 +12,26 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuth } from "@/hooks/useAuth"
+import useLogin from "@/hooks/auth/useLogin"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const { login, loading, error } = useAuth()
   const navigate = useNavigate()
 
-  async function handleSubmit(e: React.FormEvent) {
+  const { mutate: login, isPending, error } = useLogin()
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    
-    try {
-      await login(email, password)
-      navigate("/")
-    } catch {
-      /* Ошибка уже есть в `error`, ничего делать не нужно */
-    }
+
+    login(
+      { email, password },
+      {
+        onSuccess: () => {
+          navigate("/")
+        },
+      }
+    )
   }
 
   return (
@@ -67,13 +70,13 @@ export default function LoginPage() {
                 />
               </div>
 
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-sm text-red-500">{error instanceof Error ? error.message : String(error)}</p>}
             </div>
           </CardContent>
 
           <CardFooter className="flex-col gap-2 mt-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Вхожу..." : "Войти"}
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Вхожу..." : "Войти"}
             </Button>
           </CardFooter>
         </form>

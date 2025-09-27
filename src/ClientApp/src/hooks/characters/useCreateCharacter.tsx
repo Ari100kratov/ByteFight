@@ -1,29 +1,26 @@
-import { useState } from "react"
-import createCharacter from "@/api/characters/createCharacter"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/apiFetch'
+
+export interface CreateCharacterRequest {
+  name: string
+}
 
 export function useCreateCharacter() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
-  async function create(data: { name: string }) {
-    if (!data.name?.trim()) {
-      const msg = "Имя персонажа обязательно"
-      setError(msg)
-      throw new Error(msg)
-    }
+  return useMutation({
+    mutationFn: async (data: CreateCharacterRequest): Promise<string> => {
+      if (!data.name?.trim())
+        throw new Error("Имя персонажа обязательно")
 
-    setLoading(true)
-    setError(null)
-    try {
-      const id: string = await createCharacter(data)
-      return id
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Неизвестная ошибка")
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return { create, loading, error }
+      // сервер возвращает просто строку id
+      return apiFetch<string>('/characters', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['characters'] })
+    },
+  })
 }

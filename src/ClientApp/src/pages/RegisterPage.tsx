@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuth } from "@/hooks/useAuth"
+import useRegister from "@/hooks/auth/useRegister"
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -21,18 +21,18 @@ export default function RegisterPage() {
     lastName: "",
     password: "",
   })
-  const navigate = useNavigate()
-  const { register, loading, error } = useAuth()
 
-  async function handleSubmit(e: React.FormEvent) {
+  const navigate = useNavigate()
+  const { mutate: register, isPending, error } = useRegister()
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    
-    try {
-      await register(form)
-      navigate("/login")
-    } catch {
-      /* Ошибка уже есть в error, можно не обрабатывать */
-    }
+
+    register(form, {
+      onSuccess: () => {
+        navigate("/login")
+      },
+    })
   }
 
   return (
@@ -89,13 +89,17 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && (
+                <p className="text-sm text-red-500">
+                  {error instanceof Error ? error.message : String(error)}
+                </p>
+              )}
             </div>
           </CardContent>
 
           <CardFooter className="flex-col gap-2 mt-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Регистрируем..." : "Зарегистрироваться"}
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? "Регистрируем..." : "Зарегистрироваться"}
             </Button>
           </CardFooter>
         </form>

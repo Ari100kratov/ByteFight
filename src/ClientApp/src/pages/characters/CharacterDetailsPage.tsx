@@ -11,14 +11,15 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import useCharacter from "@/hooks/characters/useCharacter"
+import { useCharacter } from "@/hooks/characters/useCharacter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
+import CharacterCodeBlock from "@/components/characters/CharacterCodeBlock"
 
 export default function CharacterDetailsPage() {
   const { id } = useParams<{ id: string }>()
-  const { character, loading, error } = useCharacter(id)
+  const { data: character, isLoading, error } = useCharacter(id)
   const { setName } = useBreadcrumbNames()
 
   useEffect(() => {
@@ -27,8 +28,7 @@ export default function CharacterDetailsPage() {
     }
   }, [character, setName])
 
-  if (loading) {
-    // скелетон
+  if (isLoading) {
     return (
       <div className="flex flex-col gap-6 p-4 w-full h-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
@@ -47,7 +47,7 @@ export default function CharacterDetailsPage() {
     return (
       <Alert variant="destructive">
         <AlertTitle>Ошибка</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
+        <AlertDescription>{error.message}</AlertDescription>
       </Alert>
     )
 
@@ -88,23 +88,7 @@ export default function CharacterDetailsPage() {
       {/* 2 строка: Код + Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full h-full">
         {/* Код */}
-        <Card className="md:col-span-2 flex flex-col w-full">
-          <CardHeader>
-            <CardTitle>Код персонажа</CardTitle>
-            <CardDescription>
-              Здесь можно будет редактировать поведение персонажа
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1">
-            <textarea
-              className="w-full h-full border rounded-md p-2 font-mono text-sm resize-none"
-              defaultValue={"// Код персонажа"}
-            />
-          </CardContent>
-          <CardFooter className="justify-end">
-            <Button>Сохранить код</Button>
-          </CardFooter>
-        </Card>
+        <CharacterCodeBlock characterId={id!} />
 
         {/* Статистика */}
         <Card className="w-full">

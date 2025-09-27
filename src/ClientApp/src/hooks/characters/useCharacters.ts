@@ -1,32 +1,15 @@
-import { useEffect, useState } from "react"
-import { getCharactersByCurrentUser, type Character } from "@/api/characters/getCharactersByCurrentUser"
+import { useQuery } from "@tanstack/react-query"
+import { apiFetch } from "@/lib/apiFetch"
+
+export type Character = {
+  id: string
+  name: string
+  userId: string
+}
 
 export function useCharacters() {
-  const [characters, setCharacters] = useState<Character[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    let active = true
-
-    getCharactersByCurrentUser()
-      .then((data) => {
-        if (active) {
-          setCharacters(data)
-          setError(null)
-        }
-      })
-      .catch((err) => {
-        if (active) setError(err.message)
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [])
-
-  return { characters, loading, error }
+  return useQuery<Character[], Error>({
+    queryKey: ['characters'],
+    queryFn: () => apiFetch('/characters/by-current-user')
+  })
 }

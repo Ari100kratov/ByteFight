@@ -1,12 +1,12 @@
-import { useCharacters } from "@/hooks/characters/useCharacters"
 import { CharacterCard } from "@/components/characters/CharacterCard"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
+import { useCharacters } from "@/hooks/characters/useCharacters"
 
 export default function CharactersListPage() {
-  const { characters, loading, error } = useCharacters()
+  const { data: characters, isLoading, error } = useCharacters()
   const navigate = useNavigate()
 
   return (
@@ -17,7 +17,7 @@ export default function CharactersListPage() {
         </Button>
       </div>
 
-      {loading && (
+      {isLoading && (
         <div className="grid gap-4 md:grid-cols-3">
           {[...Array(3)].map((_, i) => (
             <Skeleton key={i} className="h-40 rounded-2xl" />
@@ -28,17 +28,19 @@ export default function CharactersListPage() {
       {error && (
         <Alert variant="destructive">
           <AlertTitle>Ошибка</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>
+            {error instanceof Error ? error.message : String(error)}
+          </AlertDescription>
         </Alert>
       )}
 
-      {!loading && !error && characters.length === 0 && (
+      {!isLoading && !error && characters?.length === 0 && (
         <div className="text-muted-foreground">У вас пока нет персонажей.</div>
       )}
 
-      {!loading && !error && characters.length > 0 && (
+      {!isLoading && !error && (characters?.length ?? 0) > 0 && (
         <div className="grid gap-4 md:grid-cols-3">
-          {characters.map((ch) => (
+          {characters?.map((ch) => (
             <CharacterCard key={ch.id} id={ch.id} name={ch.name} />
           ))}
         </div>

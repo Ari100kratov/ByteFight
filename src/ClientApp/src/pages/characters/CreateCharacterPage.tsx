@@ -15,15 +15,16 @@ import { useCreateCharacter } from "@/hooks/characters/useCreateCharacter"
 export default function CreateCharacterPage() {
   const [name, setName] = useState("")
   const navigate = useNavigate()
-  const { create, loading, error } = useCreateCharacter()
+  const { mutateAsync: create, isPending, error } = useCreateCharacter()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-
     try {
       const id = await create({ name })
       navigate(`/characters/${id}`)
-    } catch {}
+    } catch {
+      // Ошибка уже показывается через error
+    }
   }
 
   return (
@@ -46,7 +47,7 @@ export default function CreateCharacterPage() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && <p className="text-sm text-red-500">{error.message}</p>}
           </CardContent>
         </Card>
 
@@ -64,8 +65,8 @@ export default function CreateCharacterPage() {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={loading}>
-          {loading ? "Создаём..." : "Создать персонажа"}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Создаём..." : "Создать персонажа"}
         </Button>
       </div>
     </form>
