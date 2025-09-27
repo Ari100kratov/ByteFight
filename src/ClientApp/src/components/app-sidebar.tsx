@@ -27,6 +27,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useCurrentUser } from "@/hooks/auth/useCurrentUser"
 
 const data = {
   user: {
@@ -104,6 +105,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: user } = useCurrentUser()
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -129,7 +132,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {user ? (
+          <NavUser user={user} />
+        ) : (
+          <div className="text-sm text-muted-foreground px-2 py-1">
+            Загрузка...
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   )
