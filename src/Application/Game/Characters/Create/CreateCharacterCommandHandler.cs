@@ -16,7 +16,9 @@ public sealed class CreateCharacterCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateCharacterCommand command, CancellationToken cancellationToken)
     {
-        bool exists = await dbContext.Characters.AnyAsync(c => c.Name == command.Name, cancellationToken);
+        string name = command.Name.Trim();
+
+        bool exists = await dbContext.Characters.AnyAsync(c => c.Name == name, cancellationToken);
         if (exists)
         {
             return Result.Failure<Guid>(CharacterErrors.NameNotUnique);
@@ -25,7 +27,7 @@ public sealed class CreateCharacterCommandHandler(
         var character = new Character
         {
             Id = Guid.CreateVersion7(),
-            Name = command.Name,
+            Name = name,
             CreatedAt = dateTimeProvider.UtcNow,
             UserId = new UserId(userContext.UserId)
         };
