@@ -20,8 +20,4 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\src\Web.Api\Web.Api.csproj" />
-	</ItemGroup>
-
 </Project>
