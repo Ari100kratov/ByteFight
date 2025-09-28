@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Auth.RefreshTokens;
 using Domain.Auth.Users;
 using Domain.Todos;
 using Infrastructure.DomainEvents;
@@ -13,6 +14,8 @@ public sealed class AuthDbContext(
     : DbContext(options), IAuthDbContext
 {
     public DbSet<User> Users { get; set; }
+
+    public DbSet<RefreshToken> RefreshTokens { get;set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

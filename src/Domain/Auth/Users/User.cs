@@ -1,4 +1,5 @@
-﻿using SharedKernel;
+﻿using Domain.Auth.RefreshTokens;
+using SharedKernel;
 
 namespace Domain.Auth.Users;
 
@@ -9,4 +10,6 @@ public sealed class User : Entity
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string PasswordHash { get; set; }
+
+    public List<RefreshToken> RefreshTokens { get; set; } = [];
 }

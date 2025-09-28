@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/apiFetch'
+import { saveAuthTokens } from '@/lib/auth'
 
 export interface LoginRequest {
   email: string
@@ -7,7 +8,8 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string
+  accessToken: string
+  refreshToken: string
 }
 
 export default function useLogin() {
@@ -22,8 +24,9 @@ export default function useLogin() {
         body: JSON.stringify(data),
       })
 
-      localStorage.setItem('token', res.token)
-      return res.token
+      saveAuthTokens(res.accessToken, res.refreshToken)
+
+      return res.accessToken
     },
   })
 }

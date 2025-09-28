@@ -6,17 +6,17 @@ public static class UserErrors
 {
     public static Error NotFound(Guid userId) => Error.NotFound(
         "Users.NotFound",
-        $"The user with the Id = '{userId}' was not found");
+        $"Пользователь с Id = '{userId}' не найден");
 
     public static Error Unauthorized() => Error.Failure(
         "Users.Unauthorized",
-        "You are not authorized to perform this action.");
+        "Вы не авторизованы для выполнения данного действия.");
 
     public static readonly Error NotFoundByEmail = Error.NotFound(
         "Users.NotFoundByEmail",
-        "The user with the specified email was not found");
+        "Пользователь с указанным email не найден");
 
     public static readonly Error EmailNotUnique = Error.Conflict(
         "Users.EmailNotUnique",
-        "The provided email is not unique");
+        "Указанный email уже используется");
 }

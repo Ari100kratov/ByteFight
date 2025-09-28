@@ -12,6 +12,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react"
 import type { CurrentUser } from "@/hooks/auth/useCurrentUser"
+import useLogout from "@/hooks/auth/useLogout"
 
 export function NavUser({
   user,
@@ -20,12 +21,17 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
+  const logout = useLogout()
 
   const initials = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`.toUpperCase()
 
-  function handleLogout() {
-    localStorage.removeItem("token")
-    navigate("/login", { replace: true })
+  async function handleLogout() {
+    try {
+      await logout.mutateAsync()
+      navigate("/login", { replace: true })
+    } catch (e) {
+      console.error("Ошибка при выходе:", e)
+    }
   }
 
   return (
@@ -85,9 +91,13 @@ export function NavUser({
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem
+              onClick={handleLogout}
+              disabled={logout.isPending}
+              className={logout.isPending ? "opacity-50 cursor-not-allowed" : ""}
+            >
               <LogOut />
-              Выйти
+              {logout.isPending ? "Выходим..." : "Выйти"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

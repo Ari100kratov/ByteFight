@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Auth.RefreshTokens;
 using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -10,12 +11,13 @@ namespace Application.Auth.Users.Login;
 internal sealed class LoginUserCommandHandler(
     IAuthDbContext context,
     IPasswordHasher passwordHasher,
-    ITokenProvider tokenProvider) : ICommandHandler<LoginUserCommand, LoginUserResponse>
+    ITokenProvider tokenProvider,
+    IRefreshTokenService refreshTokenService
+    ) : ICommandHandler<LoginUserCommand, LoginUserResponse>
 {
     public async Task<Result<LoginUserResponse>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
         User? user = await context.Users
-            .AsNoTracking()
             .SingleOrDefaultAsync(u => u.Email == command.Email, cancellationToken);
 
         if (user is null)
@@ -30,8 +32,12 @@ internal sealed class LoginUserCommandHandler(
             return Result.Failure<LoginUserResponse>(UserErrors.NotFoundByEmail);
         }
 
-        string token = tokenProvider.Create(user);
+        string accessToken = tokenProvider.Create(user);
 
-        return Result.Success(new LoginUserResponse(token));
+        RefreshToken refreshToken = refreshTokenService.Generate(user);
+        context.RefreshTokens.Add(refreshToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return Result.Success(new LoginUserResponse(accessToken, refreshToken.Token));
     }
 }

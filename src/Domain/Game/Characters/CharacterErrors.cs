@@ -6,13 +6,13 @@ public static class CharacterErrors
 {
     public static Error NotFound(Guid characterId) => Error.NotFound(
         "Characters.NotFound",
-        $"The character with the Id = '{characterId}' was not found");
+        $"Персонаж с Id = '{characterId}' не найден");
 
     public static readonly Error NameNotUnique = Error.Conflict(
         "Characters.NameNotUnique",
-        "The provided character name is not unique");
+        "Имя персонажа уже используется");
 
     public static Error Unauthorized() => Error.Failure(
         "Characters.Unauthorized",
-        "You are not authorized to perform this action.");
+        "Вы не авторизованы для выполнения данного действия");
 }
