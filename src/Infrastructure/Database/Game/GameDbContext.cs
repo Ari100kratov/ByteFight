@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Game.Characters;
-using Infrastructure.Database.Auth;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;

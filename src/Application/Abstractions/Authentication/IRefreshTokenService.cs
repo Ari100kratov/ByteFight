@@ -1,5 +1,5 @@
-using Domain.Auth.Users;
 using Domain.Auth.RefreshTokens;
+using Domain.Auth.Users;
 
 namespace Application.Abstractions.Authentication;
 

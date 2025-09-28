@@ -1,8 +1,5 @@
-﻿using Application.Abstractions.Authentication;
-using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Messaging;
 using Domain.Todos;
-using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Todos.GetById;

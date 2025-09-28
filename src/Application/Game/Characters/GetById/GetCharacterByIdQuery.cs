@@ -1,5 +1,4 @@
 using Application.Abstractions.Messaging;
-using Application.Game.Characters;
 
 namespace Application.Game.Characters.GetById;
 

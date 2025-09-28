@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using Domain.Auth.Users;
-using Domain.Auth.RefreshTokens;
 using Application.Abstractions.Authentication;
+using Domain.Auth.RefreshTokens;
+using Domain.Auth.Users;
 using SharedKernel;
 
 namespace Infrastructure.Authentication;

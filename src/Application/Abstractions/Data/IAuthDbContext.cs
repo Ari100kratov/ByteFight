@@ -1,6 +1,5 @@
 ﻿using Domain.Auth.RefreshTokens;
 using Domain.Auth.Users;
-using Domain.Todos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Abstractions.Data;

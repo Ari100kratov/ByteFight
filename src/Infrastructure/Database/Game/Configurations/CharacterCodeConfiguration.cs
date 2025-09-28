@@ -1,5 +1,4 @@
-﻿using Domain;
-using Domain.Game.CharacterCodes;
+﻿using Domain.Game.CharacterCodes;
 using Domain.Game.Characters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

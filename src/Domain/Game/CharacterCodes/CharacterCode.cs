@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Game.Characters;
-
-namespace Domain.Game.CharacterCodes;
+﻿namespace Domain.Game.CharacterCodes;
 
 public class CharacterCode
 {

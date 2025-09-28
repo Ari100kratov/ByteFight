@@ -1,5 +1,4 @@
 ﻿using Domain.Auth.Users;
-using Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

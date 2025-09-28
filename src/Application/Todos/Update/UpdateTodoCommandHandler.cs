@@ -1,7 +1,4 @@
-using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Domain.Todos;
-using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Todos.Update;
@@ -24,7 +21,7 @@ internal sealed class UpdateTodoCommandHandler
         //todoItem.Description = command.Description;
 
         //await context.SaveChangesAsync(cancellationToken);
-        
+
         //return Result.Success();
     }
 }

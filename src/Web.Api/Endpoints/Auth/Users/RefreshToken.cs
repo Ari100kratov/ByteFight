@@ -1,5 +1,4 @@
 using Application.Abstractions.Messaging;
-using Application.Auth.Users.Logout;
 using Application.Auth.Users.RefreshTokens;
 using SharedKernel;
 using Web.Api.Extensions;

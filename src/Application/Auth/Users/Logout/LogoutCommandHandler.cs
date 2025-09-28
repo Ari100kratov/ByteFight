@@ -2,10 +2,8 @@ using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain.Auth.RefreshTokens;
-using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Auth.Users.Logout;
 

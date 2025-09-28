@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Auth.RefreshTokens;
 using Domain.Auth.Users;
-using Domain.Todos;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -15,7 +14,7 @@ public sealed class AuthDbContext(
 {
     public DbSet<User> Users { get; set; }
 
-    public DbSet<RefreshToken> RefreshTokens { get;set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

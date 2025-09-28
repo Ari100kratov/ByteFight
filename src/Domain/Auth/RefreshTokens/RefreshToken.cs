@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Auth.Users;
+﻿using Domain.Auth.Users;
 using SharedKernel;
 
 namespace Domain.Auth.RefreshTokens;
