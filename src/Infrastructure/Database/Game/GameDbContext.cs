@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Game.CharacterCodes;
 using Domain.Game.Characters;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ public sealed class GameDbContext(
     : DbContext(options), IGameDbContext
 {
     public DbSet<Character> Characters { get; set; }
+
+    public DbSet<CharacterCode> CharacterCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

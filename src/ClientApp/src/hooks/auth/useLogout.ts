@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/apiFetch'
+import { clearAuth } from '@/lib/auth'
 
 export default function useLogout() {
   return useMutation({
@@ -10,8 +11,7 @@ export default function useLogout() {
         // даже если запрос упал — всё равно чистим локальное хранилище
       }
 
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
+      clearAuth();
       window.location.href = '/login'
     },
   })

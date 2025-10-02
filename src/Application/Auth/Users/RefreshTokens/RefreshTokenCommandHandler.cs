@@ -29,11 +29,10 @@ internal sealed class RefreshTokenCommandHandler(
         // Сгенерировать новый токен
         RefreshToken newRefreshToken = refreshTokenService.Generate(token.User);
         context.RefreshTokens.Add(newRefreshToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         // Новый access-токен
         string accessToken = tokenProvider.Create(token.User);
-
-        await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success(new RefreshTokenResponse(accessToken, newRefreshToken.Token));
     }
