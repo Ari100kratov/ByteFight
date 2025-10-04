@@ -39,7 +39,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     try {
       const json = await res.json()
       msg = json.message ?? json.detail ?? msg
-    } catch {}
+    } catch { }
     throw new Error(msg)
   }
 
@@ -62,7 +62,7 @@ async function refreshAccessToken(): Promise<string> {
   }
 
   const json = await res.json()
-  
+
   saveAuthTokens(json.accessToken, json.refreshToken)
 
   return json.accessToken

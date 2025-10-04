@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import useRegister from "@/hooks/auth/useRegister"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -99,7 +100,13 @@ export default function RegisterPage() {
 
           <CardFooter className="flex-col gap-2 mt-4">
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Регистрируем..." : "Зарегистрироваться"}
+              {isPending ? (
+                <>
+                  <Spinner  /> Регистрируем...
+                </>
+              ) : (
+                "Зарегистрироваться"
+              )}
             </Button>
           </CardFooter>
         </form>

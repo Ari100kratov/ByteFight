@@ -11,6 +11,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useCreateCharacter } from "@/hooks/characters/useCreateCharacter"
+import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 
 export default function CreateCharacterPage() {
   const [name, setName] = useState("")
@@ -19,12 +21,16 @@ export default function CreateCharacterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    try {
-      const id = await create({ name })
-      navigate(`/characters/${id}`)
-    } catch {
-      // Ошибка уже показывается через error
-    }
+
+    create(
+      { name },
+      {
+        onSuccess: (id) => {
+          navigate(`/characters/${id}`)
+          toast.success("Персонаж успешно создан")
+        },
+      }
+    )
   }
 
   return (
@@ -66,7 +72,13 @@ export default function CreateCharacterPage() {
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Создаём..." : "Создать персонажа"}
+          {isPending ? (
+            <>
+              <Spinner /> Создаем...
+            </>
+          ) : (
+            "Создать персонажа"
+          )}
         </Button>
       </div>
     </form>

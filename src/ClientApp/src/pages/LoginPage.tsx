@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import useLogin from "@/hooks/auth/useLogin"
+import { Spinner } from "@/components/ui/spinner"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -76,7 +77,13 @@ export default function LoginPage() {
 
           <CardFooter className="flex-col gap-2 mt-4">
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Вхожу..." : "Войти"}
+              {isPending ? (
+                <>
+                  <Spinner  /> Вхожу...
+                </>
+              ) : (
+                "Войти"
+              )}
             </Button>
           </CardFooter>
         </form>

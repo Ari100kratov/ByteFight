@@ -28,6 +28,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useCurrentUser } from "@/hooks/auth/useCurrentUser"
+import { Spinner } from "./ui/spinner"
 
 const data = {
   user: {
@@ -135,8 +136,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {user ? (
           <NavUser user={user} />
         ) : (
-          <div className="text-sm text-muted-foreground px-2 py-1">
-            Загрузка...
+          <div className="flex items-center justify-start gap-3 px-2 py-2 text-sm text-muted-foreground">
+            <Spinner className="h-4 w-4" />
+            <div className="flex flex-col leading-tight">
+              <span className="block">Загружаем </span>
+              <span className="block">пользователя...</span>
+            </div>
           </div>
         )}
       </SidebarFooter>
