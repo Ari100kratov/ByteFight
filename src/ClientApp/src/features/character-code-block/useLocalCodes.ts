@@ -36,22 +36,22 @@ export function useLocalCodes(codesQuery: UseQueryResult<any>, templateQuery: Us
   }
 
   const deleteCode = (id: string) => {
-  setLocalCodes(prev => {
-    const code = prev.find(c => c.id === id)
-    if (!code) return prev
+    setLocalCodes(prev => {
+      const code = prev.find(c => c.id === id)
+      if (!code) return prev
 
-    if (code.status === ChangeStatus.Created) {
-      return prev.filter(c => c.id !== id)
+      if (code.status === ChangeStatus.Created) {
+        return prev.filter(c => c.id !== id)
+      }
+
+      return prev.map(c => (c.id === id ? { ...c, status: ChangeStatus.Deleted } : c))
+    })
+
+    if (activeTab === id) {
+      const remaining = localCodes.filter(c => c.id !== id && c.status !== ChangeStatus.Deleted)
+      setActiveTab(remaining[0]?.id)
     }
-
-    return prev.map(c => (c.id === id ? { ...c, status: ChangeStatus.Deleted } : c))
-  })
-
-  if (activeTab === id) {
-    const remaining = localCodes.filter(c => c.id !== id && c.status !== ChangeStatus.Deleted)
-    setActiveTab(remaining[0]?.id)
   }
-}
 
   const renameCode = (id: string, name: string) => {
     setLocalCodes(prev =>
@@ -66,17 +66,17 @@ export function useLocalCodes(codesQuery: UseQueryResult<any>, templateQuery: Us
   }
 
   const resetChanges = () => {
-  if (!codesQuery.data) return
+    if (!codesQuery.data) return
 
-  setLocalCodes(
-    codesQuery.data.map((c: any) => ({
-      ...c,
-      sourceCode: c.sourceCode ?? "",
-      status: ChangeStatus.Unchanged,
-    }))
-  )
-  setActiveTab(codesQuery.data[0]?.id)
-}
+    setLocalCodes(
+      codesQuery.data.map((c: any) => ({
+        ...c,
+        sourceCode: c.sourceCode ?? "",
+        status: ChangeStatus.Unchanged,
+      }))
+    )
+    setActiveTab(codesQuery.data[0]?.id)
+  }
 
   return { localCodes, activeTab, setActiveTab, addCode, deleteCode, renameCode, changeSource, resetChanges }
 }

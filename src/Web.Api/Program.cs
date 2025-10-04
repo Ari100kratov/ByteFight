@@ -1,5 +1,6 @@
 using System.Reflection;
 using Application;
+using Aspire.ServiceDefaults;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
