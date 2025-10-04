@@ -1,5 +1,3 @@
-using Domain.Game.CharacterCodes;
-
 namespace Application.Game.CharacterCodes.GetByCharacterId;
 
 public sealed record CharacterCodeResponse

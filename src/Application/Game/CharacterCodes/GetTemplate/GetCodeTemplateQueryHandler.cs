@@ -1,11 +1,4 @@
-using System.Collections.Generic;
-using Application.Abstractions.Authentication;
-using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Domain;
-using Domain.Auth.Users;
-using Domain.Game.Characters;
-using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Game.CharacterCodes.GetTemplate;

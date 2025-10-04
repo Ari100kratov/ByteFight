@@ -43,6 +43,10 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     throw new Error(msg)
   }
 
+  // статус 204 No Content или пустое тело
+  if (res.status === 204) 
+    return {} as T
+
   return res.json()
 }
 

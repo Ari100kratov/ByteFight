@@ -10,7 +10,7 @@ public static class CharacterErrors
 
     public static readonly Error NameNotUnique = Error.Conflict(
         "Characters.NameNotUnique",
-        "Имя персонажа уже используется");
+        "Имя персонажа уже занято");
 
     public static Error Unauthorized() => Error.Failure(
         "Characters.Unauthorized",

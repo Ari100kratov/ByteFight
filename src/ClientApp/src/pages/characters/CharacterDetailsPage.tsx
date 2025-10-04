@@ -45,9 +45,9 @@ export default function CharacterDetailsPage() {
         }
       >
         {character && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full h-full">
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-6 w-full h-full">
             {/* Левая часть: Основная информация + Класс */}
-            <div className="flex flex-col gap-6">
+            <div className="md:col-span-3 flex flex-col gap-6">
               {/* Основная информация */}
               <Card className="flex-1">
                 <CardHeader>
@@ -78,7 +78,7 @@ export default function CharacterDetailsPage() {
             </div>
 
             {/* Правая часть: Код */}
-            <div className="md:col-span-2 flex flex-col h-full">
+            <div className="md:col-span-4 flex flex-col h-full">
               <CharacterCodeBlock characterId={id!} />
             </div>
           </div>

@@ -1,6 +1,5 @@
 using Application.Abstractions.Messaging;
 using Application.Game.CharacterCodes.GetByCharacterId;
-using Application.Game.CharacterCodes.GetTemplate;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;

@@ -8,16 +8,23 @@ export function useLocalCodes(codesQuery: UseQueryResult<any>, templateQuery: Us
 
   // загружаем данные с сервера
   useEffect(() => {
-    if (codesQuery.data) {
-      setLocalCodes(
-        codesQuery.data.map((c: any) => ({
-          ...c,
-          sourceCode: c.sourceCode ?? "",
-          status: ChangeStatus.Unchanged,
-        }))
-      )
-      setActiveTab(codesQuery.data[0]?.id)
-    }
+    if (codesQuery.data == null)
+      return
+
+    const newLocalCodes: LocalCode[] = codesQuery.data.map((c: any) => ({
+      ...c,
+      sourceCode: c.sourceCode ?? "",
+      status: ChangeStatus.Unchanged,
+    }))
+
+    setLocalCodes(newLocalCodes)
+
+    setActiveTab(prev => {
+      if (prev && newLocalCodes.some(c => c.id === prev))
+        return prev
+
+      return newLocalCodes[0]?.id
+    })
   }, [codesQuery.data])
 
   const addCode = async () => {
@@ -66,16 +73,23 @@ export function useLocalCodes(codesQuery: UseQueryResult<any>, templateQuery: Us
   }
 
   const resetChanges = () => {
-    if (!codesQuery.data) return
+    if (codesQuery.data == null)
+      return
 
-    setLocalCodes(
-      codesQuery.data.map((c: any) => ({
-        ...c,
-        sourceCode: c.sourceCode ?? "",
-        status: ChangeStatus.Unchanged,
-      }))
-    )
-    setActiveTab(codesQuery.data[0]?.id)
+    const newLocalCodes: LocalCode[] = codesQuery.data.map((c: any) => ({
+      ...c,
+      sourceCode: c.sourceCode ?? "",
+      status: ChangeStatus.Unchanged,
+    }))
+
+    setLocalCodes(newLocalCodes)
+
+    setActiveTab(prev => {
+      if (prev && newLocalCodes.some(c => c.id === prev))
+        return prev
+
+      return newLocalCodes[0]?.id
+    })
   }
 
   return { localCodes, activeTab, setActiveTab, addCode, deleteCode, renameCode, changeSource, resetChanges }

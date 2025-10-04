@@ -6,7 +6,8 @@ internal sealed class CreateCharacterCommandValidator : AbstractValidator<Create
 {
     public CreateCharacterCommandValidator()
     {
-        RuleFor(c => c.Name).NotEmpty();
-        RuleFor(c => c.Name).MaximumLength(32);
+        RuleFor(c => c.Name)
+            .NotEmpty()
+            .MaximumLength(32);
     }
 }

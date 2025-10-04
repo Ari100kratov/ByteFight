@@ -9,6 +9,9 @@ import { ChangeStatus } from "./types"
 import { ConfirmDialog } from "@/components/common/ConfirmDialog"
 import { Plus, RotateCcw } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useUpdateCodes } from "./useUpdateCodes"
+import { toast } from "sonner"
+import { Spinner } from "@/components/ui/spinner"
 
 type Props = {
   characterId: string
@@ -17,15 +20,35 @@ type Props = {
 export default function CharacterCodeBlock({ characterId }: Props) {
   const codesQuery = useCharacterCodes(characterId)
   const templateQuery = useCodeTemplate()
+  const { mutate: updateCodes, isPending } = useUpdateCodes()
 
   const { localCodes, activeTab, setActiveTab, addCode, deleteCode, renameCode, changeSource, resetChanges } =
     useLocalCodes(codesQuery, templateQuery)
 
   const hasChanges = localCodes.some(c => c.status !== ChangeStatus.Unchanged)
 
-  const handleSave = async () => {
-    console.log("Сохраняем все коды:", localCodes)
-    // здесь логика вызова API
+  const handleSave = () => {
+    const created = localCodes
+      .filter(c => c.status === ChangeStatus.Created)
+      .map(({ id, name, sourceCode }) => ({ id, name, sourceCode }))
+    const updated = localCodes
+      .filter(c => c.status === ChangeStatus.Updated)
+      .map(({ id, name, sourceCode }) => ({ id, name, sourceCode }))
+    const deletedIds = localCodes
+      .filter(c => c.status === ChangeStatus.Deleted)
+      .map(c => c.id)
+
+    updateCodes(
+      { characterId, created, updated, deletedIds },
+      {
+        onSuccess: () => {
+          toast.success("Изменения успешно сохранены")
+        },
+        onError: (error: any) => {
+          toast.error(`Ошибка при сохранении: ${error.message ?? error}`)
+        },
+      }
+    )
   }
 
   return (
@@ -64,7 +87,7 @@ export default function CharacterCodeBlock({ characterId }: Props) {
         <CardFooter className="justify-end gap-2">
           <ConfirmDialog
             trigger={
-              <button className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-muted-foreground">
+              <button disabled={isPending} className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-muted-foreground">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -81,7 +104,15 @@ export default function CharacterCodeBlock({ characterId }: Props) {
             description="Все несохранённые изменения будут потеряны."
             onConfirm={resetChanges}
           />
-          <Button onClick={handleSave}>Сохранить</Button>
+          <Button onClick={handleSave} disabled={isPending}>
+            {isPending ? (
+              <>
+                <Spinner /> Сохраняем...
+              </>
+            ) : (
+              "Сохранить"
+            )}
+          </Button>
         </CardFooter>
       )}
     </Card>

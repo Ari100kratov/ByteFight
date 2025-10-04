@@ -1,5 +1,3 @@
-using Domain.Game.CharacterCodes;
-
 namespace Application.Game.CharacterCodes.GetTemplate;
 
 public sealed record CodeTemplateResponse
