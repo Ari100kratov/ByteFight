@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import useLogin from "@/hooks/auth/useLogin"
+import useLogin from "@/features/user-login/useLogin"
 import { Spinner } from "@/components/ui/spinner"
 
 export default function LoginPage() {

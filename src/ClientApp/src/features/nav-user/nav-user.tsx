@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -11,28 +10,33 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react"
-import type { CurrentUser } from "@/hooks/auth/useCurrentUser"
-import useLogout from "@/hooks/auth/useLogout"
+import { useCurrentUser } from "@/features/nav-user/hooks/useCurrentUser"
+import useLogout from "@/features/nav-user/hooks/useLogout"
+import { Spinner } from "../../components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export function NavUser({
-  user,
-}: {
-  user: CurrentUser
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar()
-  const navigate = useNavigate()
+
+  const { data: user } = useCurrentUser()
   const logout = useLogout()
 
-  const initials = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`.toUpperCase()
-
   async function handleLogout() {
-    try {
-      await logout.mutateAsync()
-      navigate("/login", { replace: true })
-    } catch (e) {
-      console.error("Ошибка при выходе:", e)
-    }
+    await logout.mutateAsync()
   }
+
+  if (!user)
+    return (
+      <div className="flex items-center gap-3 px-2 py-2">
+        <Skeleton className="h-8 w-8 rounded-lg" /> {/* аватар */}
+        <div className="flex flex-col flex-1 gap-1">
+          <Skeleton className="h-4 w-32 rounded-md" /> {/* имя */}
+          <Skeleton className="h-3 w-40 rounded-md" /> {/* email */}
+        </div>
+      </div>
+    )
+
+  const initials = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`.toUpperCase()
 
   return (
     <SidebarMenu>
@@ -96,8 +100,15 @@ export function NavUser({
               disabled={logout.isPending}
               className={logout.isPending ? "opacity-50 cursor-not-allowed" : ""}
             >
-              <LogOut />
-              {logout.isPending ? "Выходим..." : "Выйти"}
+              {logout.isPending ? (
+                <>
+                  <Spinner /> Выходим...
+                </>
+              ) : (
+                <>
+                  <LogOut /> Выйти
+                </>
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
