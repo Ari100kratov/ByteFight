@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/apiFetch'
+import { queryKeys } from '@/lib/queryKeys'
 
 export interface CurrentUser {
   id: string
@@ -11,7 +12,7 @@ export interface CurrentUser {
 
 export function useCurrentUser() {
   return useQuery<CurrentUser, Error>({
-    queryKey: ['currentUser'],
+    queryKey: queryKeys.users.current,
     queryFn: () => apiFetch<CurrentUser>('/users/current'),
   })
 }

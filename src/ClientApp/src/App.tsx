@@ -4,11 +4,12 @@ import RegisterPage from "./pages/RegisterPage"
 import ProtectedRoute from "./components/ProtectedRoute"
 import MainLayout from "./layouts/MainLayout"
 import InProgressPage from "./pages/InProgressPage"
-import CreateCharacterPage from "./pages/characters/CreateCharacterPage"
-import CharactersLayout from "./layouts/CharactersLayout"
-import CharactersListPage from "./pages/characters/CharactersListPage"
-import CharacterDetailsPage from "./pages/characters/CharacterDetailsPage"
+import CreateCharacterPage from "./features/character-create/CreateCharacterPage"
+import CharactersPage from "./features/characters/CharactersPage"
+import CharacterPage from "./features/character/CharacterPage"
 import { BreadcrumbProvider } from "./layouts/BreadcrumbProvider"
+import GameModesPage from "./features/game-modes/GameModesPage"
+import GameMapsPage from "./features/game-maps/GameMapsPage"
 
 export default function App() {
   return (
@@ -31,12 +32,16 @@ export default function App() {
         >
           {/* вложенные страницы */}
           <Route index element={<Navigate to="/play" replace />} />
-          <Route path="play" element={<InProgressPage title="Играть" />} />
+          
+          <Route path="play">
+            <Route index element={<GameModesPage />} />
+            <Route path=":id" element={<GameMapsPage />} />
+          </Route>
 
-          <Route path="characters" element={<CharactersLayout />}>
-            <Route index element={<CharactersListPage />} />
+          <Route path="characters">
+            <Route index element={<CharactersPage />} />
             <Route path="create" element={<CreateCharacterPage />} />
-            <Route path=":id" element={<CharacterDetailsPage />} />
+            <Route path=":id" element={<CharacterPage />} />
           </Route>
 
           <Route path="docs" element={<InProgressPage title="Документация" />} />
