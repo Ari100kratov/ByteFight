@@ -11,4 +11,6 @@ public static class Tags
     public const string CharacterCodes = "Character Codes";
 
     public const string GameModes = "Game Modes";
+
+    public const string Arenas = "Arenas";
 }

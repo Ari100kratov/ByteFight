@@ -8,7 +8,7 @@ using SharedKernel;
 
 namespace Application.Game.Characters.Create;
 
-public sealed class CreateCharacterCommandHandler(
+internal sealed class CreateCharacterCommandHandler(
     IGameDbContext dbContext,
     IUserContext userContext,
     IDateTimeProvider dateTimeProvider)

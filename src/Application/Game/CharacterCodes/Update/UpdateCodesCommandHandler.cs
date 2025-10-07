@@ -10,7 +10,7 @@ using SharedKernel;
 
 namespace Application.Game.CharacterCodes.Update;
 
-public class UpdateCodesCommandHandler(
+internal class UpdateCodesCommandHandler(
     IGameDbContext dbContext,
     IUserContext userContext,
     IDateTimeProvider dateTimeProvider,

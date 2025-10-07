@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Database.Game;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Game.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    partial class GameDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251007170921_AddArenaMigration")]
+    partial class AddArenaMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,11 +46,6 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("description");
-
                     b.PrimitiveCollection<int[]>("GameModes")
                         .IsRequired()
                         .HasColumnType("integer[]")
@@ -76,13 +74,9 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("pk_arenas");
+                        .HasName("pk_arena");
 
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_arenas_name");
-
-                    b.ToTable("arenas", "game");
+                    b.ToTable("arena", "game");
                 });
 
             modelBuilder.Entity("Domain.Game.CharacterCodes.CharacterCode", b =>

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Game.Arenas;
 using Domain.Game.CharacterCodes;
 using Domain.Game.Characters;
 using Infrastructure.DomainEvents;
@@ -15,6 +16,8 @@ public sealed class GameDbContext(
     public DbSet<Character> Characters { get; set; }
 
     public DbSet<CharacterCode> CharacterCodes { get; set; }
+
+    public DbSet<Arena> Arenas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

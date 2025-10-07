@@ -1,4 +1,8 @@
 export const queryKeys = {
+  users: {
+    current: ['users', 'current'] as const,
+  },
+  
   characters: {
     byCurrentUser: ['characters', 'currentUser'] as const,
     byId: (id: string | undefined) => ['characters', 'byId', id] as const,
@@ -13,7 +17,8 @@ export const queryKeys = {
     all: ['game-modes', 'all'] as const,
   },
 
-  users: {
-    current: ['users', 'current'] as const,
+  arenas: {
+    byMode: (mode: string | undefined) => ['arenas', 'byMode', mode] as const,
   },
+
 } as const
