@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LoaderState } from "@/components/common/LoaderState"
 import { useCharacterCodes } from "@/features/character-code-block/hooks/useCharacterCodes"
@@ -12,12 +12,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useUpdateCodes } from "./hooks/useUpdateCodes"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
+import { cn } from "@/lib/utils"
 
 type Props = {
   characterId: string
+  className?: string
 }
 
-export default function CharacterCodeBlock({ characterId }: Props) {
+export default function CharacterCodeBlock({ characterId, className }: Props) {
   const codesQuery = useCharacterCodes(characterId)
   const templateQuery = useCodeTemplate()
   const { mutate: updateCodes, isPending } = useUpdateCodes()
@@ -52,10 +54,10 @@ export default function CharacterCodeBlock({ characterId }: Props) {
   }
 
   return (
-    <Card className="flex flex-col w-full h-full">
+    <Card className={cn("flex flex-col w-full h-full", className)}>
       <CardHeader>
-        <CardTitle>Код</CardTitle>
-        <CardDescription>Придумать описание</CardDescription>
+        <CardTitle>Поведение</CardTitle>
+        {/* <CardDescription>Придумать описание</CardDescription> */}
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col">

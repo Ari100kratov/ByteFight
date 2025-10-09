@@ -19,6 +19,7 @@ export const queryKeys = {
 
   arenas: {
     byMode: (mode: string | undefined) => ['arenas', 'byMode', mode] as const,
+    byId: (id: string | undefined) => ['arenas', 'byId', id] as const,
   },
 
 } as const

@@ -1,26 +1,24 @@
 import { useEffect, useMemo } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
-import { useArenasByMode } from "./useArenasByMode"
+import { useArenasByMode, type Arena } from "./useArenasByMode"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
+import { GameArenaCard } from "./components/GameArenaCard"
+
+export const ModeNames: Record<string, string> = {
+  training: "Тренировка",
+  pve: "PvE",
+  pvp: "PvP",
+}
 
 export default function GameArenasPage() {
-  const { id: modeType } = useParams<{ id: string }>()
+  const { modeType } = useParams<{ modeType: string }>()
   const { setName } = useBreadcrumbNames()
+  const navigate = useNavigate()
 
   const modeName = useMemo(() => {
-    switch (modeType) {
-      case "training":
-        return "Тренировка"
-      case "pve":
-        return "PvE"
-      case "pvp":
-        return "PvP"
-      default:
-        return "Неизвестный режим"
-    }
+    return modeType ? ModeNames[modeType] ?? "Неизвестный режим" : "Неизвестный режим"
   }, [modeType])
 
   useEffect(() => {
@@ -28,6 +26,10 @@ export default function GameArenasPage() {
       setName(`/play/${modeType}`, modeName)
     }
   }, [modeType, modeName, setName])
+
+  const handleArenaClick = (arena: Arena) => {
+    navigate(`/play/${modeType}/${arena.id}`)
+  }
 
   const { data: arenas, isLoading, error } = useArenasByMode(modeType)
 
@@ -59,22 +61,11 @@ export default function GameArenasPage() {
         {arenas?.length && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {arenas.map((arena) => (
-              <Card
+              <GameArenaCard
                 key={arena.id}
-                className="cursor-pointer overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1"
-              >
-                {/* Заглушка под изображение */}
-                <div className="h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                  Изображение арены
-                </div>
-
-                <CardContent className="p-4 space-y-2">
-                  <CardTitle className="text-lg font-semibold">{arena.name}</CardTitle>
-                  <CardDescription className="text-sm text-muted-foreground line-clamp-3">
-                    {arena.description || "Описание отсутствует."}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                arena={arena}
+                onClick={handleArenaClick}
+              />
             ))}
           </div>
         )}

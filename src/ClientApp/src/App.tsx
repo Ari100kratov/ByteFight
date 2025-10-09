@@ -10,6 +10,7 @@ import CharacterPage from "./features/character/CharacterPage"
 import { BreadcrumbProvider } from "./layouts/BreadcrumbProvider"
 import GameModesPage from "./features/game-modes/GameModesPage"
 import GameArenasPage from "./features/game-arenas/GameArenasPage"
+import GameArenaPage from "./features/game-arena/GameArenaPage"
 
 export default function App() {
   return (
@@ -35,7 +36,8 @@ export default function App() {
           
           <Route path="play">
             <Route index element={<GameModesPage />} />
-            <Route path=":id" element={<GameArenasPage />} />
+            <Route path=":modeType" element={<GameArenasPage />} />
+            <Route path=":modeType/:arenaId" element={<GameArenaPage />} />
           </Route>
 
           <Route path="characters">
