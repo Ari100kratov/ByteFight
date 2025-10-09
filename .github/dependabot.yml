@@ -3,7 +3,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/src/ClientApp/*"
+    directory: "/src/ClientApp"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 15
