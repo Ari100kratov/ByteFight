@@ -13,7 +13,7 @@ public interface IStorageService
     /// <param name="key">Ключ файла в бакете.</param>
     /// <param name="cancellationToken">Токен отмены операции.</param>
     /// <returns>Поток с данными файла.</returns>
-    Task<Stream> GetFileStreamAsync(string bucket, string key, CancellationToken cancellationToken = default);
+    Task<Stream> GetFileStreamAsync(string bucket, string key, CancellationToken cancellationToken);
 
     /// <summary>
     /// Получает публичный или временный URL для доступа к файлу по ключу.
@@ -32,5 +32,5 @@ public interface IStorageService
     /// <param name="key">Ключ файла в бакете.</param>
     /// <param name="cancellationToken">Токен отмены операции.</param>
     /// <returns>True, если объект существует, иначе false.</returns>
-    Task<bool> ExistsAsync(string bucket, string key, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(string bucket, string key, CancellationToken cancellationToken);
 }

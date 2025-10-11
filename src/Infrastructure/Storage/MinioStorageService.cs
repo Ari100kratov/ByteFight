@@ -7,7 +7,7 @@ namespace Infrastructure.Storage;
 
 public sealed class MinioStorageService(IMinioClient minioClient) : IStorageService
 {
-    public async Task<Stream> GetFileStreamAsync(string bucket, string key, CancellationToken cancellationToken = default)
+    public async Task<Stream> GetFileStreamAsync(string bucket, string key, CancellationToken cancellationToken)
     {
         try
         {
