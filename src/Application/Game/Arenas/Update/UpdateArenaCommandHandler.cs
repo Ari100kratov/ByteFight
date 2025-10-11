@@ -25,7 +25,7 @@ internal sealed class UpdateArenaCommandHandler(
         }
 
         string name = command.Name.Trim();
-        bool exists = await dbContext.Arenas.AnyAsync(a => a.Name == name, cancellationToken);
+        bool exists = await dbContext.Arenas.AnyAsync(a => a.Id != arena.Id && a.Name == name, cancellationToken);
         if (exists)
         {
             return Result.Failure(ArenaErrors.NameNotUnique);

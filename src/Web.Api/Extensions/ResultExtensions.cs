@@ -34,7 +34,7 @@ public static class ResultExtensions
     {
         return result.Match(
             onSuccess: id => Results.Created(getResourceUrl(id), new { Id = id }),
-            onFailure: err => CustomResults.Problem(err)
+            onFailure: CustomResults.Problem
         );
     }
 }

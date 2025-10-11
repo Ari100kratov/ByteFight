@@ -13,4 +13,6 @@ public static class Tags
     public const string GameModes = "Game Modes";
 
     public const string Arenas = "Arenas";
+
+    public const string Assets = "Assets";
 }

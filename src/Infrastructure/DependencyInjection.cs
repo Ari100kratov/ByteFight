@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
+using Application.Abstractions.Storage;
 using Infrastructure.Authentication;
 using Infrastructure.Authorization;
 using Infrastructure.Database;
 using Infrastructure.Database.Auth;
 using Infrastructure.Database.Game;
 using Infrastructure.DomainEvents;
+using Infrastructure.Storage;
 using Infrastructure.Time;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using SharedKernel;
 
 namespace Infrastructure;
@@ -27,6 +31,7 @@ public static class DependencyInjection
         services
             .AddServices()
             .AddDatabases(configuration)
+            .AddStorage(configuration)
             .AddHealthChecks(configuration)
             .AddAuthenticationInternal(configuration)
             .AddAuthorizationInternal();
@@ -60,6 +65,25 @@ public static class DependencyInjection
 
         services.AddScoped<IGameDbContext>(sp => sp.GetRequiredService<GameDbContext>());
 
+        return services;
+    }
+
+    public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<MinioOptions>(configuration.GetSection("Minio"));
+
+        services.AddSingleton(sp =>
+        {
+            MinioOptions options = sp.GetRequiredService<IOptions<MinioOptions>>().Value;
+
+            return new MinioClient()
+                .WithEndpoint(options.Endpoint)
+                .WithCredentials(options.AccessKey, options.SecretKey)
+                .WithSSL(options.UseSSL)
+                .Build();
+        });
+
+        services.AddSingleton<IStorageService, MinioStorageService>();
         return services;
     }
 
