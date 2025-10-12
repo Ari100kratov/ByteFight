@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useCreateCharacter } from "@/features/character-create/useCreateCharacter"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
+import { useCreateCharacter } from "./useCreateCharacter"
 
 export default function CreateCharacterPage() {
   const [name, setName] = useState("")

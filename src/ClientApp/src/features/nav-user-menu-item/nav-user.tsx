@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react"
-import { useCurrentUser } from "@/features/nav-user/hooks/useCurrentUser"
-import useLogout from "@/features/nav-user/hooks/useLogout"
 import { Spinner } from "../../components/ui/spinner"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useCurrentUser } from "./hooks/useCurrentUser"
+import useLogout from "./hooks/useLogout"
 
 export function NavUser() {
   const { isMobile } = useSidebar()

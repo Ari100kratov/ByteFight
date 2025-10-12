@@ -25,7 +25,10 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
           ...options.headers,
         },
       })
-      if (!retry.ok) throw new Error("Ошибка при запросе после обновления токена")
+
+      if (!retry.ok) 
+        throw new Error("Ошибка при запросе после обновления токена")
+
       return retry.json()
     } catch {
       clearAuth()
@@ -43,7 +46,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     throw new Error(msg)
   }
 
-  // статус 204 No Content или пустое тело
+  // 204 No Content
   if (res.status === 204) 
     return {} as T
 
@@ -52,7 +55,8 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
 
 async function refreshAccessToken(): Promise<string> {
   const refreshToken = getRefreshToken()
-  if (!refreshToken) throw new Error("Нет refresh-токена")
+  if (!refreshToken) 
+    throw new Error("Нет refresh-токена")
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/users/refresh-token`, {
     method: "POST",

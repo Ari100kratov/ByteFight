@@ -5,12 +5,7 @@ import { useArenasByMode, type Arena } from "./useArenasByMode"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { GameArenaCard } from "./components/GameArenaCard"
-
-export const ModeNames: Record<string, string> = {
-  training: "Тренировка",
-  pve: "PvE",
-  pvp: "PvP",
-}
+import { ModeNames } from "./types"
 
 export default function GameArenasPage() {
   const { modeType } = useParams<{ modeType: string }>()

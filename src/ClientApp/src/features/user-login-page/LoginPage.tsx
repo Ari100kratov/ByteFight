@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import useLogin from "@/features/user-login/useLogin"
 import { Spinner } from "@/components/ui/spinner"
+import useLogin from "./useLogin"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")

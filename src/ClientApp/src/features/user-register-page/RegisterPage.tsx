@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import useRegister from "@/features/user-register/useRegister"
 import { Spinner } from "@/components/ui/spinner"
+import useRegister from "./useRegister"
 
 export default function RegisterPage() {
   const [form, setForm] = useState({

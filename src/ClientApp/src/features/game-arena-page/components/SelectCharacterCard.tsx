@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useCharacters, type Character } from "@/features/characters/useCharacters"
+import { useCharacters, type Character } from "@/features/characters-page/useCharacters"
 
 type Props = {
   selectedCharacter?: Character

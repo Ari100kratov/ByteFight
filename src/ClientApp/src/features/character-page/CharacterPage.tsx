@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useCharacter } from "@/features/character/useCharacter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import CharacterCodeBlock from "@/features/character-code-block/CharacterCodeBlock"
 import { LoaderState } from "@/components/common/LoaderState"
+import { useCharacter } from "./useCharacter"
 
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>()

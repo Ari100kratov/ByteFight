@@ -1,10 +1,10 @@
-import { CharacterCard } from "@/features/characters/components/CharacterCard"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
-import { useCharacters } from "@/features/characters/useCharacters"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Plus } from "lucide-react"
+import { useCharacters } from "./useCharacters"
+import { CharacterCard } from "./components/CharacterCard"
 
 export default function CharactersPage() {
   const { data: characters, isLoading, error } = useCharacters()

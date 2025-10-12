@@ -10,7 +10,7 @@ type Props = {
 
 export function ArenaCard({ arena }: Props) {
 
-const { data: imageUrl, isLoading, error } = useAsset(arena.backgroundAsset)
+const { data: imageUrl, error } = useAsset(arena.backgroundAsset)
 
   return (
     <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col">

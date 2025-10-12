@@ -8,13 +8,13 @@ import {
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
 import { useArena, type Arena } from "./useArena"
-import { ModeNames } from "../game-arenas/GameArenasPage"
 import { SelectCharacterCard } from "./components/SelectCharacterCard"
 import { ArenaCard } from "./components/ArenaCard"
-import type { Character } from "../characters/useCharacters"
 import { Card } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
+import type { Character } from "../character-page/useCharacter"
+import { ModeNames } from "../game-arenas-page/types"
 
 export default function GameArenaPage() {
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
