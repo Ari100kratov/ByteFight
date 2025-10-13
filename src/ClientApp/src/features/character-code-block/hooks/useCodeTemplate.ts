@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/apiFetch"
+import { ApiException, apiFetch } from "@/lib/apiFetch"
 import { queryKeys } from "@/lib/queryKeys"
 
 export type CodeTemplate = {
@@ -9,7 +9,7 @@ export type CodeTemplate = {
 }
 
 export function useCodeTemplate() {
-  return useQuery<CodeTemplate, Error>({
+  return useQuery<CodeTemplate, ApiException>({
     queryKey: queryKeys.characterCodes.template,
     queryFn: () => apiFetch('/characters/codes/template'),
   })

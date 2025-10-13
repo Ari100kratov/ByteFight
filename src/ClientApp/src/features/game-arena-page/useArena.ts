@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/apiFetch"
+import { ApiException, apiFetch } from "@/lib/apiFetch"
 import { queryKeys } from "@/lib/queryKeys"
 
 export type Arena = {
@@ -12,7 +12,7 @@ export type Arena = {
 }
 
 export function useArena(arenaId: string | undefined) {
-  return useQuery<Arena, Error>({
+  return useQuery<Arena, ApiException>({
     queryKey: queryKeys.arenas.byId(arenaId),
     queryFn: () => apiFetch(`/arenas/${arenaId}`),
     enabled: !!arenaId,

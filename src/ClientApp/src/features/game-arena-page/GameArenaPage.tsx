@@ -37,12 +37,12 @@ export default function GameArenaPage() {
   }, [arena, modeType, setName])
 
   return (
-    <LoaderState
-      isLoading={isLoading}
-      error={error}
-      skeletonClassName="w-full h-full rounded-2xl"
-      loadingFallback={
-        <div className="flex flex-col gap-6 p-4 w-full h-full">
+    <div className="flex flex-col gap-6 p-4 w-full h-full">
+      <LoaderState
+        isLoading={isLoading}
+        error={error}
+        skeletonClassName="w-full h-full rounded-2xl"
+        loadingFallback={
           <ResizablePanelGroup direction="horizontal" className="h-full rounded-2xl border">
             {/* Левая часть */}
             <ResizablePanel defaultSize={40}>
@@ -66,10 +66,8 @@ export default function GameArenaPage() {
               <Skeleton className="h-full w-full rounded-md" />
             </ResizablePanel>
           </ResizablePanelGroup>
-        </div>
-      }
-    >
-      <div className="flex flex-col gap-6 p-4 w-full h-full">
+        }
+      >
         <ResizablePanelGroup direction="horizontal" className="h-full rounded-2xl border">
           {/* Левая часть */}
           <ResizablePanel defaultSize={40}>
@@ -106,10 +104,10 @@ export default function GameArenaPage() {
 
           {/* Правая часть — арена */}
           <ResizablePanel defaultSize={60}>
-            <ArenaCard arena={arena as Arena}/>
+            <ArenaCard arena={arena as Arena} />
           </ResizablePanel>
         </ResizablePanelGroup>
-      </div>
-    </LoaderState>
+      </LoaderState>
+    </div>
   )
 }

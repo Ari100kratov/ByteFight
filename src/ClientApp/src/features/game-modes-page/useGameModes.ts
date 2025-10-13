@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/apiFetch"
+import { ApiException, apiFetch } from "@/lib/apiFetch"
 import { queryKeys } from "@/lib/queryKeys"
 
 export type GameMode = {
@@ -10,7 +10,7 @@ export type GameMode = {
 }
 
 export function useGameModes() {
-  return useQuery<GameMode[], Error>({
+  return useQuery<GameMode[], ApiException>({
     queryKey: queryKeys.gameModes.all,
     queryFn: () => apiFetch("/game/modes"),
   })

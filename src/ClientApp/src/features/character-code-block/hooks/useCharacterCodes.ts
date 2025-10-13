@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/apiFetch"
+import { ApiException, apiFetch } from "@/lib/apiFetch"
 import { queryKeys } from "@/lib/queryKeys"
 
 export type CharacterCode = {
@@ -9,7 +9,7 @@ export type CharacterCode = {
 }
 
 export function useCharacterCodes(characterId: string) {
-  return useQuery<CharacterCode[], Error>({
+  return useQuery<CharacterCode[], ApiException>({
     queryKey: queryKeys.characterCodes.byCharacterId(characterId),
     queryFn: () => apiFetch(`/characters/${characterId}/codes`)
   })
