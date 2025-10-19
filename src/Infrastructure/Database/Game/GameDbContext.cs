@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Game.Arenas;
-using Domain.Game.CharacterCodes;
+using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Characters;
+using Domain.Game.Characters.CharacterCodes;
+using Domain.Game.Enemies;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -14,10 +16,14 @@ public sealed class GameDbContext(
     : DbContext(options), IGameDbContext
 {
     public DbSet<Character> Characters { get; set; }
-
     public DbSet<CharacterCode> CharacterCodes { get; set; }
 
     public DbSet<Arena> Arenas { get; set; }
+    public DbSet<ArenaEnemy> ArenaEnemies { get; set; }
+
+    public DbSet<Enemy> Enemies { get; set; }
+    public DbSet<EnemyStat> EnemyStats { get; set; }
+    public DbSet<EnemyAsset> EnemyAssets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -13,7 +13,7 @@ internal sealed class GetArenasByModeQueryHandler(
     {
         List<ArenaResponse> arenas = await dbContext.Arenas
             .AsNoTracking()
-            .Where(a => a.GameModes.Contains(query.Mode))
+            .Where(a => a.IsActive && a.GameModes.Contains(query.Mode))
             .Select(a => new ArenaResponse(a.Id, a.Name, a.GridWidth, a.GridHeight, a.Description))
             .ToListAsync(cancellationToken);
 

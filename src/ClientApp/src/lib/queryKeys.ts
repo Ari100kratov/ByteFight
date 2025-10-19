@@ -22,4 +22,12 @@ export const queryKeys = {
     byId: (id: string | undefined) => ['arenas', 'byId', id] as const,
   },
 
+  arenaEnemies: {
+    byArenaId: (arenaId: string | undefined) => ['arenaEnemies', 'byArenaId', arenaId] as const,
+  },
+
+  enemies: {
+    byId: (id: string | undefined) => ['enemies', 'byId', id] as const,
+  },
+
 } as const

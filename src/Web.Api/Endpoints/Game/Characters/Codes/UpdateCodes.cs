@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Game.CharacterCodes.Update;
+using Application.Game.Characters.CharacterCodes.Update;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;

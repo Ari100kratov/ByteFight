@@ -85,7 +85,69 @@ namespace Infrastructure.Database.Game.Migrations
                     b.ToTable("arenas", "game");
                 });
 
-            modelBuilder.Entity("Domain.Game.CharacterCodes.CharacterCode", b =>
+            modelBuilder.Entity("Domain.Game.Arenas.ArenaEnemies.ArenaEnemy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ArenaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("arena_id");
+
+                    b.Property<Guid>("EnemyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("enemy_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_arena_enemies");
+
+                    b.HasIndex("ArenaId")
+                        .HasDatabaseName("ix_arena_enemies_arena_id");
+
+                    b.HasIndex("EnemyId")
+                        .HasDatabaseName("ix_arena_enemies_enemy_id");
+
+                    b.ToTable("arena_enemies", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.Characters.Character", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_characters");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_characters_name");
+
+                    b.ToTable("characters", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.Characters.CharacterCodes.CharacterCode", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,16 +189,17 @@ namespace Infrastructure.Database.Game.Migrations
                     b.ToTable("character_codes", "game");
                 });
 
-            modelBuilder.Entity("Domain.Game.Characters.Character", b =>
+            modelBuilder.Entity("Domain.Game.Enemies.Enemy", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("description");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -144,25 +207,102 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("name");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
                     b.HasKey("Id")
-                        .HasName("pk_characters");
+                        .HasName("pk_enemies");
 
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_characters_name");
-
-                    b.ToTable("characters", "game");
+                    b.ToTable("enemies", "game");
                 });
 
-            modelBuilder.Entity("Domain.Game.CharacterCodes.CharacterCode", b =>
+            modelBuilder.Entity("Domain.Game.Enemies.EnemyAsset", b =>
+                {
+                    b.Property<Guid>("EnemyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("enemy_id");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("integer")
+                        .HasColumnName("action_type");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("url");
+
+                    b.HasKey("EnemyId", "ActionType")
+                        .HasName("pk_enemy_assets");
+
+                    b.ToTable("enemy_assets", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.Enemies.EnemyStat", b =>
+                {
+                    b.Property<Guid>("EnemyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("enemy_id");
+
+                    b.Property<int>("StatType")
+                        .HasColumnType("integer")
+                        .HasColumnName("stat_type");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric")
+                        .HasColumnName("value");
+
+                    b.HasKey("EnemyId", "StatType")
+                        .HasName("pk_enemy_stats");
+
+                    b.ToTable("enemy_stats", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.Arenas.ArenaEnemies.ArenaEnemy", b =>
+                {
+                    b.HasOne("Domain.Game.Arenas.Arena", "Arena")
+                        .WithMany("Enemies")
+                        .HasForeignKey("ArenaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_arena_enemies_arenas_arena_id");
+
+                    b.HasOne("Domain.Game.Enemies.Enemy", "Enemy")
+                        .WithMany()
+                        .HasForeignKey("EnemyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_arena_enemies_enemies_enemy_id");
+
+                    b.OwnsOne("Domain.Game.Arenas.ArenaEnemies.Position", "Position", b1 =>
+                        {
+                            b1.Property<Guid>("ArenaEnemyId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("X")
+                                .HasColumnType("integer")
+                                .HasColumnName("position_x");
+
+                            b1.Property<int>("Y")
+                                .HasColumnType("integer")
+                                .HasColumnName("position_y");
+
+                            b1.HasKey("ArenaEnemyId");
+
+                            b1.ToTable("arena_enemies", "game");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArenaEnemyId")
+                                .HasConstraintName("fk_arena_enemies_arena_enemies_id");
+                        });
+
+                    b.Navigation("Arena");
+
+                    b.Navigation("Enemy");
+
+                    b.Navigation("Position")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Game.Characters.CharacterCodes.CharacterCode", b =>
                 {
                     b.HasOne("Domain.Game.Characters.Character", null)
                         .WithMany("Codes")
@@ -172,9 +312,45 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasConstraintName("fk_character_codes_characters_character_id");
                 });
 
+            modelBuilder.Entity("Domain.Game.Enemies.EnemyAsset", b =>
+                {
+                    b.HasOne("Domain.Game.Enemies.Enemy", "Enemy")
+                        .WithMany("Assets")
+                        .HasForeignKey("EnemyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_enemy_assets_enemies_enemy_id");
+
+                    b.Navigation("Enemy");
+                });
+
+            modelBuilder.Entity("Domain.Game.Enemies.EnemyStat", b =>
+                {
+                    b.HasOne("Domain.Game.Enemies.Enemy", "Enemy")
+                        .WithMany("Stats")
+                        .HasForeignKey("EnemyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_enemy_stats_enemies_enemy_id");
+
+                    b.Navigation("Enemy");
+                });
+
+            modelBuilder.Entity("Domain.Game.Arenas.Arena", b =>
+                {
+                    b.Navigation("Enemies");
+                });
+
             modelBuilder.Entity("Domain.Game.Characters.Character", b =>
                 {
                     b.Navigation("Codes");
+                });
+
+            modelBuilder.Entity("Domain.Game.Enemies.Enemy", b =>
+                {
+                    b.Navigation("Assets");
+
+                    b.Navigation("Stats");
                 });
 #pragma warning restore 612, 618
         }

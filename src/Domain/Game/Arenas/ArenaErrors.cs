@@ -4,9 +4,8 @@ namespace Domain.Game.Arenas;
 
 public static class ArenaErrors
 {
-    public static Error NotFound(Guid arenaId) => Error.NotFound(
-        "Arenas.NotFound",
-        $"јрена с Id = '{arenaId}' не найдена");
+    public static Error NotFound(Guid id) =>
+        Error.NotFound("Arena.NotFound", $"јрена с Id = {id} не найдена.");
 
     public static readonly Error NameNotUnique = Error.Conflict(
         "Arenas.NameNotUnique",

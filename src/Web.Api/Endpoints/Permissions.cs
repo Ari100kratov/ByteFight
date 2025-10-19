@@ -13,4 +13,11 @@ internal static class Permissions
         public const string Edit = "arenas:edit";
         public const string Delete = "arenas:delete";
     }
+
+    internal static class Enemies
+    {
+        public const string Create = "enemies:create";
+        public const string Edit = "enemies:edit";
+        public const string Delete = "enemies:delete";
+    }
 }

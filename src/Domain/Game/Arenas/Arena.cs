@@ -1,4 +1,5 @@
-﻿using Domain.Game.GameModes;
+﻿using Domain.Game.Arenas.ArenaEnemies;
+using Domain.Game.GameModes;
 using SharedKernel;
 
 namespace Domain.Game.Arenas;
@@ -26,4 +27,6 @@ public sealed class Arena : Entity
     public DateTime CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public ICollection<ArenaEnemy> Enemies { get; set; }
 }

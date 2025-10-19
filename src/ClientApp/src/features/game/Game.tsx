@@ -1,9 +1,10 @@
 import { Application } from "@pixi/react"
 import type { Arena } from "../game-arena-page/useArena"
-import { Grid } from "./Grid"
+import { Grid } from "./grid/Grid"
 import { useState } from "react"
 import { BackgroundImage } from "./BackgroundImage"
-import { calculateGridLayout } from "./gridUtils"
+import { calculateGridLayout } from "./grid/gridUtils"
+import { ArenaEnemies } from "./arena-enemies/ArenaEnemies"
 
 type Props = {
   arena: Arena
@@ -19,13 +20,9 @@ export function Game({ arena }: Props) {
 
   return (
     <Application width={canvasSize.width} height={canvasSize.height}>
-      <BackgroundImage
-        assetKey={arena.backgroundAsset}
-        layout={layout}
-      />
-      <Grid
-        layout={layout}
-      />
+      <BackgroundImage assetKey={arena.backgroundAsset} layout={layout} />
+      <Grid layout={layout} />
+      <ArenaEnemies arenaId={arena.id} layout={layout} />
     </Application>
   )
 }

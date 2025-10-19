@@ -1,5 +1,5 @@
 using Application.Abstractions.Messaging;
-using Application.Game.CharacterCodes.GetByCharacterId;
+using Application.Game.Characters.CharacterCodes.GetByCharacterId;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;

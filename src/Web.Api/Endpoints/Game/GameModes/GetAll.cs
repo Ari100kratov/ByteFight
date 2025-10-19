@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Game.GameModes;
+using Application.Game.GameModes.Get;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Sprite, Texture } from "pixi.js"
 import { useAsset } from "@/hooks/useAsset"
 import { extend } from "@pixi/react"
-import type { GridLayout } from "./gridUtils"
+import type { GridLayout } from "./grid/gridUtils"
 
 extend({ Sprite, Texture })
 
@@ -18,23 +18,25 @@ export function BackgroundImage({ assetKey, layout }: BackgroundImageProps) {
   const [texture, setTexture] = useState<Texture | null>(null)
 
   useEffect(() => {
-    if (!blob)
-      return
+    if (!blob) return;
 
-    let tex: Texture
+    let cancelled = false;
+    let tex: Texture | null = null;
 
     createImageBitmap(blob)
       .then((bitmap) => {
-        tex = Texture.from(bitmap)
-        setTexture(tex)
+        if (cancelled) return;
+        tex = Texture.from(bitmap);
+        setTexture(tex);
       })
-      .catch(console.error)
+      .catch(console.error);
 
     return () => {
-      tex?.destroy(true)
-    }
-
-  }, [blob])
+      cancelled = true;
+      tex?.destroy(true);
+      setTexture(null);
+    };
+  }, [blob]);
 
   if (!texture) return null
 

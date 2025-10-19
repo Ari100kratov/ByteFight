@@ -1,4 +1,4 @@
-﻿using Domain.Game.CharacterCodes;
+﻿using Domain.Game.Characters.CharacterCodes;
 using SharedKernel;
 
 namespace Domain.Game.Characters;
