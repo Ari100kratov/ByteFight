@@ -49,7 +49,7 @@ importers:
         version: 1.2.8(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tailwindcss/vite':
         specifier: ^4.1.14
-        version: 4.1.14(vite@7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1))
+        version: 4.1.14(vite@7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1))
       '@tanstack/react-query':
         specifier: ^5.90.5
         version: 5.90.5(react@19.2.0)
@@ -91,8 +91,8 @@ importers:
         version: 4.1.14
     devDependencies:
       '@types/node':
-        specifier: ^24.8.0
-        version: 24.8.0
+        specifier: ^24.8.1
+        version: 24.8.1
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.2
@@ -101,7 +101,7 @@ importers:
         version: 19.2.2(@types/react@19.2.2)
       '@vitejs/plugin-react-swc':
         specifier: ^4.1.0
-        version: 4.1.0(vite@7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1))
+        version: 4.1.0(vite@7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1))
       globals:
         specifier: ^16.4.0
         version: 16.4.0
@@ -113,7 +113,7 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.1.10
-        version: 7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1)
+        version: 7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1)
 
 packages:
 
@@ -1042,8 +1042,8 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/node@24.8.0':
-    resolution: {integrity: sha512-5x08bUtU8hfboMTrJ7mEO4CpepS9yBwAqcL52y86SWNmbPX8LVbNs3EP4cNrIZgdjk2NAlP2ahNihozpoZIxSg==}
+  '@types/node@24.8.1':
+    resolution: {integrity: sha512-alv65KGRadQVfVcG69MuB4IzdYVpRwMG/mq8KWOaoOdyY617P5ivaDiMCGOFDWD2sAn5Q0mR3mRtUOgm99hL9Q==}
 
   '@types/react-dom@19.2.2':
     resolution: {integrity: sha512-9KQPoO6mZCi7jcIStSnlOWn2nEF3mNmyr3rIAsGnAbQKYbRLyqmeSc39EVgtxXVia+LMT8j3knZLAZAh+xLmrw==}
@@ -2213,12 +2213,12 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.1.14
       '@tailwindcss/oxide-win32-x64-msvc': 4.1.14
 
-  '@tailwindcss/vite@4.1.14(vite@7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1))':
+  '@tailwindcss/vite@4.1.14(vite@7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1))':
     dependencies:
       '@tailwindcss/node': 4.1.14
       '@tailwindcss/oxide': 4.1.14
       tailwindcss: 4.1.14
-      vite: 7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1)
+      vite: 7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1)
 
   '@tanstack/query-core@5.90.5': {}
 
@@ -2233,7 +2233,7 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/node@24.8.0':
+  '@types/node@24.8.1':
     dependencies:
       undici-types: 7.14.0
 
@@ -2249,11 +2249,11 @@ snapshots:
     dependencies:
       csstype: 3.1.3
 
-  '@vitejs/plugin-react-swc@4.1.0(vite@7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1))':
+  '@vitejs/plugin-react-swc@4.1.0(vite@7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.35
       '@swc/core': 1.13.20
-      vite: 7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1)
+      vite: 7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -2588,7 +2588,7 @@ snapshots:
     dependencies:
       react: 19.2.0
 
-  vite@7.1.10(@types/node@24.8.0)(jiti@2.6.0)(lightningcss@1.30.1):
+  vite@7.1.10(@types/node@24.8.1)(jiti@2.6.0)(lightningcss@1.30.1):
     dependencies:
       esbuild: 0.25.11
       fdir: 6.5.0(picomatch@4.0.3)
@@ -2597,7 +2597,7 @@ snapshots:
       rollup: 4.52.4
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.8.0
+      '@types/node': 24.8.1
       fsevents: 2.3.3
       jiti: 2.6.0
       lightningcss: 1.30.1
