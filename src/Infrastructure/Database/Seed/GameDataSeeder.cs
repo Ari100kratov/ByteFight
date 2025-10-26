@@ -21,17 +21,17 @@ public class GameDataSeeder(IGameDbContext dbContext)
             return;
         }
 
-        await AddArenas(seed);
+        AddArenas(seed);
 
-        await AddEnemies(seed);
-        await AddArenaEnemies(seed);
+        AddEnemies(seed);
+        AddArenaEnemies(seed);
 
-        await AddCharacterClasses(seed);
+        AddCharacterClasses(seed);
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task AddArenas(SeedContext seed)
+    private void AddArenas(SeedContext seed)
     {
         var trainingArena = new Arena
         {
@@ -67,7 +67,7 @@ public class GameDataSeeder(IGameDbContext dbContext)
         seed.Arena_2 = banditCampArena.Id;
     }
 
-    private async Task AddEnemies(SeedContext seed)
+    private void AddEnemies(SeedContext seed)
     {
         var orcWarrior = new Enemy
         {
@@ -191,7 +191,7 @@ public class GameDataSeeder(IGameDbContext dbContext)
         seed.Orc_Warrior = orcWarrior.Id;
     }
 
-    private async Task AddArenaEnemies(SeedContext seed)
+    private void AddArenaEnemies(SeedContext seed)
     {
         var arenaEnemies = new List<ArenaEnemy>
         {
@@ -214,7 +214,7 @@ public class GameDataSeeder(IGameDbContext dbContext)
         dbContext.ArenaEnemies.AddRange(arenaEnemies);
     }
 
-    private async Task AddCharacterClasses(SeedContext seed)
+    private void AddCharacterClasses(SeedContext seed)
     {
         var warrior = new CharacterClass
         {
