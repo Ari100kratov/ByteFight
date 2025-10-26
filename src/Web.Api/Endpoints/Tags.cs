@@ -15,4 +15,6 @@ public static class Tags
     public const string ArenaEnemies = "Arena Enemies";
 
     public const string Enemies = "Enemies";
+
+    public const string CharacterClasses = "Character Classes";
 }

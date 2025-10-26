@@ -13,17 +13,25 @@ import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { useCreateCharacter } from "./useCreateCharacter"
+import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
 
 export default function CreateCharacterPage() {
   const [name, setName] = useState("")
+  const [selectedClassId, setSelectedClassId] = useState<string>()
+
   const navigate = useNavigate()
   const { mutateAsync: create, isPending, error } = useCreateCharacter()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    if (!selectedClassId) {
+      toast.error("Пожалуйста, выберите класс персонажа")
+      return
+    }
+
     create(
-      { name },
+      { name, classId: selectedClassId },
       {
         onSuccess: (id) => {
           navigate(`/characters/${id}`)
@@ -42,7 +50,6 @@ export default function CreateCharacterPage() {
         <Card className="flex-[2]">
           <CardHeader>
             <CardTitle>Основная информация</CardTitle>
-            <CardDescription>Введите имя вашего персонажа</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="grid gap-2">
@@ -57,17 +64,10 @@ export default function CreateCharacterPage() {
           </CardContent>
         </Card>
 
-        <Card className="flex-[4]">
-          <CardHeader>
-            <CardTitle>Класс персонажа</CardTitle>
-            <CardDescription>
-              Выберите класс вашего персонажа (пока пусто)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-24 flex items-center justify-center text-muted-foreground">
-            Блок выбора класса и описание будет здесь
-          </CardContent>
-        </Card>
+        <CharacterClassSelector
+          selectedClassId={selectedClassId}
+          onSelectClass={setSelectedClassId}
+        />
       </div>
 
       <div className="flex justify-end">

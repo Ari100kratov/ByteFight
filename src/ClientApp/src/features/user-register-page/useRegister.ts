@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { apiFetch } from '@/lib/apiFetch'
+import { apiFetch } from '@/shared/lib/apiFetch'
 
 export interface RegisterRequest {
   email: string

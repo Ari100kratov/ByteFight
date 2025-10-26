@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Game.Common.Dtos;
 using Domain.Game.Enemies;
 using SharedKernel;
 
@@ -17,18 +18,8 @@ internal sealed class CreateEnemyCommandHandler(IGameDbContext dbContext)
             Id = enemyId,
             Name = command.Name.Trim(),
             Description = command.Description,
-            Stats = [.. command.Stats.Select(s => new EnemyStat
-            {
-                EnemyId = enemyId,
-                StatType = s.StatType,
-                Value = s.Value
-            })],
-            Assets = [.. command.Assets.Select(a => new EnemyAsset
-            {
-                EnemyId = enemyId,
-                ActionType = a.ActionType,
-                Url = a.Url.ToString()
-            })]
+            Stats = [.. command.Stats.Select(s => s.ToEnemyStat(enemyId))],
+            ActionAssets = [.. command.ActionAssets.Select(a => a.ToEnemyActionAsset(enemyId))]
         };
 
         dbContext.Enemies.Add(enemy);

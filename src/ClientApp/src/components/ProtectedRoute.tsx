@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/lib/auth"
+import { getAccessToken } from "@/shared/lib/auth"
 import { Navigate } from "react-router-dom"
 
 interface ProtectedRouteProps {

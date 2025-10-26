@@ -7,6 +7,7 @@ using Infrastructure.Authorization;
 using Infrastructure.Database;
 using Infrastructure.Database.Auth;
 using Infrastructure.Database.Game;
+using Infrastructure.Database.Seed;
 using Infrastructure.DomainEvents;
 using Infrastructure.Storage;
 using Infrastructure.Time;
@@ -64,6 +65,10 @@ public static class DependencyInjection
                 .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IGameDbContext>(sp => sp.GetRequiredService<GameDbContext>());
+
+        services.AddScoped<DatabaseSeeder>();
+        services.AddScoped<AuthDataSeeder>();
+        services.AddScoped<GameDataSeeder>();
 
         return services;
     }

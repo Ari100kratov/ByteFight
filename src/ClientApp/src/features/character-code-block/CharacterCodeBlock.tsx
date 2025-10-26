@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useUpdateCodes } from "./hooks/useUpdateCodes"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/lib/utils"
 
 type Props = {
   characterId: string

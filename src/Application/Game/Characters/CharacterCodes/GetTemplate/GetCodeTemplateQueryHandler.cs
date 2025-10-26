@@ -10,7 +10,7 @@ internal sealed class GetCodeTemplateQueryHandler : IQueryHandler<GetCodeTemplat
         var codeTemplate = new CodeTemplateResponse
         {
             Id = Guid.CreateVersion7(),
-            Name = "Новый код",
+            Name = "Program.cs",
             SourceCode = @"using System;
 
 public class Character

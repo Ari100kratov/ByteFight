@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { ApiException, apiFetch } from '@/lib/apiFetch'
-import { queryKeys } from '@/lib/queryKeys'
+import { ApiException, apiFetch } from '@/shared/lib/apiFetch'
+import { queryKeys } from '@/shared/lib/queryKeys'
 
 export type Character = {
   id: string

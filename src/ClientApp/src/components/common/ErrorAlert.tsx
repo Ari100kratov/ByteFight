@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import type { ApiError } from "@/lib/apiFetch"
+import type { ApiError } from "@/shared/lib/apiFetch"
 import { AlertCircleIcon } from "lucide-react"
 
 type ErrorAlertProps = {

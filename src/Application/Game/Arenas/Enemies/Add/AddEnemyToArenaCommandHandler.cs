@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Game.Arenas.Enemies.Dtos;
 using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Enemies;
@@ -22,7 +23,7 @@ internal sealed class AddEnemyToArenaCommandHandler(
             return Result.Failure<Guid>(ArenaErrors.NotFound(command.ArenaId));
         }
 
-        var position = new Position(command.Position.X, command.Position.Y);
+        Position position = command.Position.ToValueObject();
         if (!position.IsWithinGrid(arena.GridWidth, arena.GridHeight))
         {
             return Result.Failure<Guid>(ArenaEnemiesErrors.InvalidCoordinates(position.X, position.Y));

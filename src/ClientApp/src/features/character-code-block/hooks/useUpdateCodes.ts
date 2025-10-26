@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/apiFetch"
-import { queryKeys } from "@/lib/queryKeys";
+import { apiFetch } from "@/shared/lib/apiFetch"
+import { queryKeys } from "@/shared/lib/queryKeys";
 
 export interface UpdateCodesRequest {
   characterId: string

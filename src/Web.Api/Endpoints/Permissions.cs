@@ -20,4 +20,11 @@ internal static class Permissions
         public const string Edit = "enemies:edit";
         public const string Delete = "enemies:delete";
     }
+
+    internal static class CharacterClasses
+    {
+        public const string Create = "character-classes:create";
+        public const string Edit = "character-classes:edit";
+        public const string Delete = "character-classes:delete";
+    }
 }

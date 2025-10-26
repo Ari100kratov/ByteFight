@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
+using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
 using Domain.Game.Enemies;
@@ -23,7 +24,11 @@ public sealed class GameDbContext(
 
     public DbSet<Enemy> Enemies { get; set; }
     public DbSet<EnemyStat> EnemyStats { get; set; }
-    public DbSet<EnemyAsset> EnemyAssets { get; set; }
+    public DbSet<EnemyActionAsset> EnemyActionAssets { get; set; }
+
+    public DbSet<CharacterClass> CharacterClasses { get; set; }
+    public DbSet<CharacterClassActionAsset> CharacterClassActionAssets { get; set; }
+    public DbSet<CharacterClassStat> CharacterClassStats { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

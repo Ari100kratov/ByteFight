@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Game.Common.Dtos;
+using FluentValidation;
 
 namespace Application.Game.Enemies.Create;
 
@@ -14,27 +15,9 @@ internal sealed class CreateEnemyCommandValidator : AbstractValidator<CreateEnem
             .MaximumLength(512);
 
         RuleForEach(x => x.Stats)
-            .SetValidator(new EnemyStatDtoValidator());
+            .SetValidator(new StatDtoValidator());
 
-        RuleForEach(x => x.Assets)
-            .SetValidator(new EnemyAssetDtoValidator());
-    }
-
-    private sealed class EnemyStatDtoValidator : AbstractValidator<EnemyStatDto>
-    {
-        public EnemyStatDtoValidator()
-        {
-            RuleFor(x => x.Value).GreaterThan(0);
-        }
-    }
-
-    private sealed class EnemyAssetDtoValidator : AbstractValidator<EnemyAssetDto>
-    {
-        public EnemyAssetDtoValidator()
-        {
-            RuleFor(x => x.Url.ToString())
-                .NotEmpty()
-                .MaximumLength(256);
-        }
+        RuleForEach(x => x.ActionAssets)
+            .SetValidator(new ActionAssetDtoValidator());
     }
 }

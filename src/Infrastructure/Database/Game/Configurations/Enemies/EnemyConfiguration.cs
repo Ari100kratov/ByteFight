@@ -22,7 +22,7 @@ internal sealed class EnemyConfiguration : IEntityTypeConfiguration<Enemy>
             .HasForeignKey(s => s.EnemyId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(e => e.Assets)
+        builder.HasMany(e => e.ActionAssets)
             .WithOne(a => a.Enemy)
             .HasForeignKey(a => a.EnemyId)
             .OnDelete(DeleteBehavior.Cascade);

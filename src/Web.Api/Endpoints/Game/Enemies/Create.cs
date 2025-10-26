@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Game.Common.Dtos;
 using Application.Game.Enemies.Create;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -10,8 +11,8 @@ internal sealed class Create : IEndpoint
     public sealed record Request(
         string Name,
         string? Description,
-        List<EnemyStatDto> Stats,
-        List<EnemyAssetDto> Assets
+        List<StatDto> Stats,
+        List<ActionAssetDto> Assets
     );
 
     public void MapEndpoint(IEndpointRouteBuilder app)

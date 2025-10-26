@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Game.Arenas.Enemies.Dtos;
+using FluentValidation;
 
 namespace Application.Game.Arenas.Enemies.Add;
 
@@ -13,14 +14,7 @@ internal sealed class AddEnemyToArenaCommandValidator : AbstractValidator<AddEne
             .NotEmpty();
 
         RuleFor(x => x.Position)
-            .NotNull();
-
-        RuleFor(x => x.Position.X)
-            .GreaterThanOrEqualTo(0)
-            .WithMessage("Координата X не может быть отрицательной.");
-
-        RuleFor(x => x.Position.Y)
-            .GreaterThanOrEqualTo(0)
-            .WithMessage("Координата Y не может быть отрицательной.");
+            .NotNull()
+            .SetValidator(new PositionDtoValidator());
     }
 }

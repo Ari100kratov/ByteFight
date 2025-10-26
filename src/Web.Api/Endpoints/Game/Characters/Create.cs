@@ -2,13 +2,12 @@ using Application.Abstractions.Messaging;
 using Application.Game.Characters.Create;
 using SharedKernel;
 using Web.Api.Extensions;
-using Web.Api.Infrastructure;
 
 namespace Web.Api.Endpoints.Game.Characters;
 
 internal sealed class Create : IEndpoint
 {
-    public sealed record Request(string Name);
+    public sealed record Request(string Name, Guid ClassId);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -17,11 +16,11 @@ internal sealed class Create : IEndpoint
             ICommandHandler<CreateCharacterCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new CreateCharacterCommand(request.Name);
+            var command = new CreateCharacterCommand(request.Name, request.ClassId);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
-            return result.Match(Results.Ok, CustomResults.Problem);
+            return result.ToCreated(id => $"/characters/{id}");
         })
         .WithTags(Tags.Characters)
         .RequireAuthorization();

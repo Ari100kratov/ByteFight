@@ -9,5 +9,5 @@ public sealed class Enemy : Entity
     public string? Description { get; set; }
 
     public ICollection<EnemyStat> Stats { get; set; }
-    public ICollection<EnemyAsset> Assets { get; set; }
+    public ICollection<EnemyActionAsset> ActionAssets { get; set; }
 }

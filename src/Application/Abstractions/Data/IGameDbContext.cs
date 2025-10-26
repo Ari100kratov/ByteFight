@@ -1,5 +1,6 @@
 ﻿using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
+using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
 using Domain.Game.Enemies;
@@ -16,8 +17,12 @@ public interface IGameDbContext
     DbSet<ArenaEnemy> ArenaEnemies { get; }
 
     DbSet<Enemy> Enemies { get; }
-    DbSet<EnemyAsset> EnemyAssets { get; }
+    DbSet<EnemyActionAsset> EnemyActionAssets { get; }
     DbSet<EnemyStat> EnemyStats { get; }
+
+    DbSet<CharacterClass> CharacterClasses { get; }
+    DbSet<CharacterClassActionAsset> CharacterClassActionAssets { get; }
+    DbSet<CharacterClassStat> CharacterClassStats { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

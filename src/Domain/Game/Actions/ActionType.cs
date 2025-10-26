@@ -4,7 +4,10 @@ public enum ActionType
 {
     Idle = 1,
     Walk = 2,
-    Attack = 3,
-    Hit = 4,
-    Death = 5,
+    Run = 3,
+    Attack = 4,
+    Run_Attack = 5,
+    Jump = 6,
+    Hurt = 7,
+    Dead = 8,
 }

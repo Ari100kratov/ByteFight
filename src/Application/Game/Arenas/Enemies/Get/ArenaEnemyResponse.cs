@@ -1,4 +1,4 @@
-﻿using Application.Game.Arenas.Enemies.Models;
+﻿using Application.Game.Arenas.Enemies.Dtos;
 
 namespace Application.Game.Arenas.Enemies.Get;
 

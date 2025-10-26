@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Game.Common.Dtos;
 using Domain.Game.Enemies;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -13,7 +14,7 @@ internal sealed class UpdateEnemyCommandHandler(IGameDbContext dbContext)
     {
         Enemy? enemy = await dbContext.Enemies
             .Include(e => e.Stats)
-            .Include(e => e.Assets)
+            .Include(e => e.ActionAssets)
             .SingleOrDefaultAsync(e => e.Id == command.Id, cancellationToken);
 
         if (enemy is null)
@@ -25,20 +26,10 @@ internal sealed class UpdateEnemyCommandHandler(IGameDbContext dbContext)
         enemy.Description = command.Description;
 
         dbContext.EnemyStats.RemoveRange(enemy.Stats);
-        enemy.Stats = [.. command.Stats.Select(s => new EnemyStat
-        {
-            EnemyId = enemy.Id,
-            StatType = s.StatType,
-            Value = s.Value
-        })];
+        enemy.Stats = [.. command.Stats.Select(s => s.ToEnemyStat(enemy.Id))];
 
-        dbContext.EnemyAssets.RemoveRange(enemy.Assets);
-        enemy.Assets = [.. command.Assets.Select(a => new EnemyAsset
-        {
-            EnemyId = enemy.Id,
-            ActionType = a.ActionType,
-            Url = a.Url.ToString(),
-        })];
+        dbContext.EnemyActionAssets.RemoveRange(enemy.ActionAssets);
+        enemy.ActionAssets = [.. command.ActionAssets.Select(a => a.ToEnemyActionAsset(enemy.Id))];
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

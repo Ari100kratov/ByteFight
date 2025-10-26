@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Sprite, Texture } from "pixi.js"
-import { useAsset } from "@/hooks/useAsset"
+import { useAsset } from "@/shared/hooks/useAsset"
 import { extend } from "@pixi/react"
 import type { GridLayout } from "./grid/gridUtils"
 

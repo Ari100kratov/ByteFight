@@ -1,15 +1,11 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Game.Actions;
-using Domain.Game.Stats;
+using Application.Game.Common.Dtos;
 
 namespace Application.Game.Enemies.Create;
 
 public sealed record CreateEnemyCommand(
     string Name,
     string? Description,
-    List<EnemyStatDto> Stats,
-    List<EnemyAssetDto> Assets
+    List<StatDto> Stats,
+    List<ActionAssetDto> ActionAssets
 ) : ICommand<Guid>;
-
-public sealed record EnemyStatDto(StatType StatType, decimal Value);
-public sealed record EnemyAssetDto(ActionType ActionType, Uri Url);

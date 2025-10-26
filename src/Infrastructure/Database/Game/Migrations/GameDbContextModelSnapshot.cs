@@ -18,7 +18,7 @@ namespace Infrastructure.Database.Game.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("game")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -112,12 +112,88 @@ namespace Infrastructure.Database.Game.Migrations
                     b.ToTable("arena_enemies", "game");
                 });
 
+            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClass", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_character_classes");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_character_classes_name");
+
+                    b.ToTable("character_classes", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassActionAsset", b =>
+                {
+                    b.Property<Guid>("CharacterClassId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("character_class_id");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("integer")
+                        .HasColumnName("action_type");
+
+                    b.Property<int>("Variant")
+                        .HasColumnType("integer")
+                        .HasColumnName("variant");
+
+                    b.HasKey("CharacterClassId", "ActionType", "Variant")
+                        .HasName("pk_character_class_action_assets");
+
+                    b.ToTable("character_class_action_assets", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassStat", b =>
+                {
+                    b.Property<Guid>("CharacterClassId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("character_class_id");
+
+                    b.Property<int>("StatType")
+                        .HasColumnType("integer")
+                        .HasColumnName("stat_type");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric")
+                        .HasColumnName("value");
+
+                    b.HasKey("CharacterClassId", "StatType")
+                        .HasName("pk_character_class_stats");
+
+                    b.ToTable("character_class_stats", "game");
+                });
+
             modelBuilder.Entity("Domain.Game.Characters.Character", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("class_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -139,6 +215,9 @@ namespace Infrastructure.Database.Game.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_characters");
+
+                    b.HasIndex("ClassId")
+                        .HasDatabaseName("ix_characters_class_id");
 
                     b.HasIndex("Name")
                         .IsUnique()
@@ -213,7 +292,7 @@ namespace Infrastructure.Database.Game.Migrations
                     b.ToTable("enemies", "game");
                 });
 
-            modelBuilder.Entity("Domain.Game.Enemies.EnemyAsset", b =>
+            modelBuilder.Entity("Domain.Game.Enemies.EnemyActionAsset", b =>
                 {
                     b.Property<Guid>("EnemyId")
                         .HasColumnType("uuid")
@@ -223,16 +302,14 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("action_type");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("url");
+                    b.Property<int>("Variant")
+                        .HasColumnType("integer")
+                        .HasColumnName("variant");
 
-                    b.HasKey("EnemyId", "ActionType")
-                        .HasName("pk_enemy_assets");
+                    b.HasKey("EnemyId", "ActionType", "Variant")
+                        .HasName("pk_enemy_action_assets");
 
-                    b.ToTable("enemy_assets", "game");
+                    b.ToTable("enemy_action_assets", "game");
                 });
 
             modelBuilder.Entity("Domain.Game.Enemies.EnemyStat", b =>
@@ -302,6 +379,90 @@ namespace Infrastructure.Database.Game.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassActionAsset", b =>
+                {
+                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "CharacterClass")
+                        .WithMany("ActionAssets")
+                        .HasForeignKey("CharacterClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_character_class_action_assets_character_classes_character_c");
+
+                    b.OwnsOne("Domain.ValueObjects.SpriteAnimation", "Animation", b1 =>
+                        {
+                            b1.Property<Guid>("CharacterClassActionAssetCharacterClassId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("character_class_id");
+
+                            b1.Property<int>("CharacterClassActionAssetActionType")
+                                .HasColumnType("integer")
+                                .HasColumnName("action_type");
+
+                            b1.Property<int>("CharacterClassActionAssetVariant")
+                                .HasColumnType("integer")
+                                .HasColumnName("variant");
+
+                            b1.Property<float>("AnimationSpeed")
+                                .HasColumnType("real")
+                                .HasColumnName("animation_animation_speed");
+
+                            b1.Property<int>("FrameCount")
+                                .HasColumnType("integer")
+                                .HasColumnName("animation_frame_count");
+
+                            b1.Property<float>("ScaleX")
+                                .HasColumnType("real")
+                                .HasColumnName("animation_scale_x");
+
+                            b1.Property<float>("ScaleY")
+                                .HasColumnType("real")
+                                .HasColumnName("animation_scale_y");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)")
+                                .HasColumnName("animation_url");
+
+                            b1.HasKey("CharacterClassActionAssetCharacterClassId", "CharacterClassActionAssetActionType", "CharacterClassActionAssetVariant");
+
+                            b1.ToTable("character_class_action_assets", "game");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CharacterClassActionAssetCharacterClassId", "CharacterClassActionAssetActionType", "CharacterClassActionAssetVariant")
+                                .HasConstraintName("fk_character_class_action_assets_character_class_action_assets");
+                        });
+
+                    b.Navigation("Animation")
+                        .IsRequired();
+
+                    b.Navigation("CharacterClass");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassStat", b =>
+                {
+                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "CharacterClass")
+                        .WithMany("Stats")
+                        .HasForeignKey("CharacterClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_character_class_stats_character_classes_character_class_id");
+
+                    b.Navigation("CharacterClass");
+                });
+
+            modelBuilder.Entity("Domain.Game.Characters.Character", b =>
+                {
+                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "Class")
+                        .WithMany("Characters")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_characters_character_classes_class_id");
+
+                    b.Navigation("Class");
+                });
+
             modelBuilder.Entity("Domain.Game.Characters.CharacterCodes.CharacterCode", b =>
                 {
                     b.HasOne("Domain.Game.Characters.Character", null)
@@ -312,14 +473,62 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasConstraintName("fk_character_codes_characters_character_id");
                 });
 
-            modelBuilder.Entity("Domain.Game.Enemies.EnemyAsset", b =>
+            modelBuilder.Entity("Domain.Game.Enemies.EnemyActionAsset", b =>
                 {
                     b.HasOne("Domain.Game.Enemies.Enemy", "Enemy")
-                        .WithMany("Assets")
+                        .WithMany("ActionAssets")
                         .HasForeignKey("EnemyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_enemy_assets_enemies_enemy_id");
+                        .HasConstraintName("fk_enemy_action_assets_enemies_enemy_id");
+
+                    b.OwnsOne("Domain.ValueObjects.SpriteAnimation", "Animation", b1 =>
+                        {
+                            b1.Property<Guid>("EnemyActionAssetEnemyId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("enemy_id");
+
+                            b1.Property<int>("EnemyActionAssetActionType")
+                                .HasColumnType("integer")
+                                .HasColumnName("action_type");
+
+                            b1.Property<int>("EnemyActionAssetVariant")
+                                .HasColumnType("integer")
+                                .HasColumnName("variant");
+
+                            b1.Property<float>("AnimationSpeed")
+                                .HasColumnType("real")
+                                .HasColumnName("animation_animation_speed");
+
+                            b1.Property<int>("FrameCount")
+                                .HasColumnType("integer")
+                                .HasColumnName("animation_frame_count");
+
+                            b1.Property<float>("ScaleX")
+                                .HasColumnType("real")
+                                .HasColumnName("animation_scale_x");
+
+                            b1.Property<float>("ScaleY")
+                                .HasColumnType("real")
+                                .HasColumnName("animation_scale_y");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)")
+                                .HasColumnName("animation_url");
+
+                            b1.HasKey("EnemyActionAssetEnemyId", "EnemyActionAssetActionType", "EnemyActionAssetVariant");
+
+                            b1.ToTable("enemy_action_assets", "game");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EnemyActionAssetEnemyId", "EnemyActionAssetActionType", "EnemyActionAssetVariant")
+                                .HasConstraintName("fk_enemy_action_assets_enemy_action_assets_enemy_id_action_typ");
+                        });
+
+                    b.Navigation("Animation")
+                        .IsRequired();
 
                     b.Navigation("Enemy");
                 });
@@ -341,6 +550,15 @@ namespace Infrastructure.Database.Game.Migrations
                     b.Navigation("Enemies");
                 });
 
+            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClass", b =>
+                {
+                    b.Navigation("ActionAssets");
+
+                    b.Navigation("Characters");
+
+                    b.Navigation("Stats");
+                });
+
             modelBuilder.Entity("Domain.Game.Characters.Character", b =>
                 {
                     b.Navigation("Codes");
@@ -348,7 +566,7 @@ namespace Infrastructure.Database.Game.Migrations
 
             modelBuilder.Entity("Domain.Game.Enemies.Enemy", b =>
                 {
-                    b.Navigation("Assets");
+                    b.Navigation("ActionAssets");
 
                     b.Navigation("Stats");
                 });

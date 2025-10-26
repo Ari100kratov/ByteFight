@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Game.Arenas.Enemies.Models;
+using Application.Game.Arenas.Enemies.Dtos;
 using Domain.Game.Arenas;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -21,13 +21,10 @@ internal sealed class GetArenaEnemiesQueryHandler(IGameDbContext dbContext)
         }
 
         List<ArenaEnemyResponse> enemies = await dbContext.ArenaEnemies
+            .AsNoTracking()
             .Where(e => e.ArenaId == query.ArenaId)
             .Include(e => e.Enemy)
-            .Select(e => new ArenaEnemyResponse(
-                e.Id,
-                e.EnemyId,
-                e.Enemy.Name,
-                new PositionDto(e.Position.X, e.Position.Y)))
+            .Select(e => new ArenaEnemyResponse(e.Id, e.EnemyId, e.Enemy.Name, e.Position.ToDto()))
             .ToListAsync(cancellationToken);
 
         return Result.Success<IReadOnlyList<ArenaEnemyResponse>>(enemies);

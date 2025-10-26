@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { AnimatedSprite, Texture, Rectangle, ImageSource } from "pixi.js";
 import { extend } from "@pixi/react";
-import { ActionType, useEnemy } from "./useEnemy";
-import { useAsset } from "@/hooks/useAsset";
+import { useEnemy } from "./useEnemy";
+import { useAsset } from "@/shared/hooks/useAsset";
+import { ActionType } from "@/shared/types/action";
 
 extend({ AnimatedSprite, Texture, Rectangle, ImageSource });
 
@@ -14,6 +15,14 @@ type Props = {
   height: number;
 };
 
+const defaultSpriteAnimation = {
+  scaleX: 1,
+  scaleY: 1,
+  animationSpeed: 0.1,
+  frameCount: 1,
+  url: undefined
+}
+
 export function EnemyAnimatedSprite({
   enemyId,
   x,
@@ -21,48 +30,49 @@ export function EnemyAnimatedSprite({
   width,
   height,
 }: Props) {
-  const actionType = ActionType.Idle;
-  const frameCount = 5;
 
-  const { data: enemy } = useEnemy(enemyId);
-  const assetKey = enemy?.assets.find((a) => a.actionType === actionType)?.url;
-  const { data: blob } = useAsset(assetKey);
+  const { data: enemy } = useEnemy(enemyId)
 
-  const [textures, setTextures] = useState<Texture[]>([]);
+  const spriteAnimation = enemy?.actionAssets
+    .find((a) => a.actionType === ActionType.Idle)?.spriteAnimation ?? defaultSpriteAnimation
+
+  const { data: blob } = useAsset(spriteAnimation.url)
+
+  const [textures, setTextures] = useState<Texture[]>([])
 
   useEffect(() => {
     if (!blob) return;
 
-    let cancelled = false;
+    let cancelled = false
 
     createImageBitmap(blob)
       .then((bitmap) => {
         if (cancelled) return;
 
-        const frameWidth = bitmap.width / frameCount;
-        const texs: Texture[] = [];
+        const frameWidth = bitmap.width / spriteAnimation.frameCount
+        const texs: Texture[] = []
 
-        for (let i = 0; i < frameCount; i++) {
-          const frame = new Rectangle(i * frameWidth, 0, frameWidth, bitmap.height);
-          const source = new ImageSource({ resource: bitmap });
-          const texture = new Texture({ source, frame });
-          texs.push(texture);
+        for (let i = 0; i < spriteAnimation.frameCount; i++) {
+          const frame = new Rectangle(i * frameWidth, 0, frameWidth, bitmap.height)
+          const source = new ImageSource({ resource: bitmap })
+          const texture = new Texture({ source, frame })
+          texs.push(texture)
         }
 
-        setTextures(texs);
+        setTextures(texs)
       })
-      .catch(console.error);
+      .catch(console.error)
 
     return () => {
-      cancelled = true;
+      cancelled = true
       for (const t of textures) {
-        t.destroy(false);
+        t.destroy(false)
       }
-      setTextures([]);
+      setTextures([])
     };
-  }, [blob, frameCount]);
+  }, [blob, spriteAnimation])
 
-  if (textures.length === 0) return null;
+  if (textures.length === 0) return null
 
   return (
     <pixiAnimatedSprite
@@ -71,11 +81,11 @@ export function EnemyAnimatedSprite({
       x={x + width / 2}  // позиция по X (центр спрайта в клетке)
       y={y + height - 10} // позиция по Y (низ спрайта чуть выше нижней границы клетки)
       anchor={{ x: 0.5, y: 1 }} // точка привязки спрайта: центр по горизонтали, низ по вертикали
-      scale={{ x: -1, y: 1 }} // отражение по горизонтали (зеркально)
-      animationSpeed={0.1}  // скорость анимации (0.1 = кадры меняются медленно)
+      scale={{ x: spriteAnimation.scaleX, y: spriteAnimation.scaleY }} // отражение по горизонтали (зеркально)
+      animationSpeed={spriteAnimation.animationSpeed}  // скорость анимации (0.1 = кадры меняются медленно)
 
       autoPlay={true}
       loop={true}
     />
-  );
+  )
 }

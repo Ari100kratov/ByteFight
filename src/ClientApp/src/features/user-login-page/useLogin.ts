@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
-import { apiFetch } from '@/lib/apiFetch'
-import { saveAuthTokens } from '@/lib/auth'
+import { apiFetch } from '@/shared/lib/apiFetch'
+import { saveAuthTokens } from '@/shared/lib/auth'
 
 export interface LoginRequest {
   email: string

@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Database.Auth;
 using Infrastructure.Database.Game;
+using Infrastructure.Database.Seed;
 using Microsoft.EntityFrameworkCore;
 
 namespace Web.Api.Extensions;
@@ -30,5 +31,12 @@ public static class MigrationExtensions
             scope.ServiceProvider.GetRequiredService<GameDbContext>();
 
         dbContext.Database.Migrate();
+    }
+
+    public static async Task DatabaseSeed(this IApplicationBuilder app)
+    {
+        using IServiceScope scope = app.ApplicationServices.CreateScope();
+        DatabaseSeeder seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+        await seeder.Seed();
     }
 }

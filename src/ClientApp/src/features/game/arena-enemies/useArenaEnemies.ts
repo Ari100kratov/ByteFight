@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
-import { ApiException, apiFetch } from "@/lib/apiFetch"
+import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import type { PositionDto } from "../types"
-import { queryKeys } from "@/lib/queryKeys"
+import { queryKeys } from "@/shared/lib/queryKeys"
 
 export type ArenaEnemyResponse = {
   id: string

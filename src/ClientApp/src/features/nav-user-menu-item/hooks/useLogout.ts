@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
-import { apiFetch } from '@/lib/apiFetch'
-import { clearAuth } from '@/lib/auth'
+import { apiFetch } from '@/shared/lib/apiFetch'
+import { clearAuth } from '@/shared/lib/auth'
 
 export default function useLogout() {
   return useMutation({

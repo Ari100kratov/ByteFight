@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Game.Common.Dtos;
 using Domain.Game.Enemies;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -13,7 +14,7 @@ internal sealed class GetEnemyByIdQueryHandler(IGameDbContext dbContext)
     {
         Enemy? enemy = await dbContext.Enemies
             .Include(e => e.Stats)
-            .Include(e => e.Assets)
+            .Include(e => e.ActionAssets)
             .SingleOrDefaultAsync(e => e.Id == query.Id, cancellationToken);
 
         if (enemy is null)
@@ -25,8 +26,8 @@ internal sealed class GetEnemyByIdQueryHandler(IGameDbContext dbContext)
             enemy.Id,
             enemy.Name,
             enemy.Description,
-            [.. enemy.Stats.Select(s => new EnemyStatDto(s.StatType, s.Value))],
-            [.. enemy.Assets.Select(a => new EnemyAssetDto(a.ActionType, new Uri(a.Url, UriKind.Relative)))]
+            [.. enemy.Stats.Select(s => s.ToDto())],
+            [.. enemy.ActionAssets.Select(a => a.ToDto())]
         );
 
         return Result.Success(response);
