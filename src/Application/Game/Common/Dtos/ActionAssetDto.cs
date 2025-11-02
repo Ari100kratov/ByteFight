@@ -56,6 +56,7 @@ internal sealed class ActionAssetDtoValidator : AbstractValidator<ActionAssetDto
     {
         RuleFor(x => x.Variant).GreaterThanOrEqualTo(0);
 
+        RuleFor(x => x.SpriteAnimation).NotNull();
         RuleFor(x => x.SpriteAnimation)
             .SetValidator(new SpriteAnimationDtoValidator());
     }

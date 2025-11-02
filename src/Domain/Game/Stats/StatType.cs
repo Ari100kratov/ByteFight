@@ -5,5 +5,6 @@ public enum StatType
     Health = 1,
     Mana = 2,
     Attack = 3,
-    MoveRange = 4,
+    AttackRange = 4,
+    MoveRange = 5,
 }

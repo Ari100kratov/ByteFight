@@ -10,6 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Plus } from "lucide-react"
 import { useCharacters, type Character } from "@/features/characters-page/useCharacters"
 
 type Props = {
@@ -19,6 +21,12 @@ type Props = {
 
 export function SelectCharacterCard({ selectedCharacter, onSelect }: Props) {
   const { data: characters, isLoading, error } = useCharacters()
+
+  const handleCreateClick = () => {
+    window.open("/characters/create", "_blank")
+  }
+
+  const hasCharacters = characters && characters.length > 0
 
   return (
     <LoaderState
@@ -31,8 +39,7 @@ export function SelectCharacterCard({ selectedCharacter, onSelect }: Props) {
         <CardHeader>
           <CardTitle>Персонаж</CardTitle>
           <CardDescription>
-            {/* Селект */}
-            {characters?.length ? (
+            {hasCharacters && (
               <Select
                 value={selectedCharacter?.id}
                 onValueChange={(id) => {
@@ -54,21 +61,24 @@ export function SelectCharacterCard({ selectedCharacter, onSelect }: Props) {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            ) : (
-              <>Персонажи отсутствуют</>
             )}
           </CardDescription>
         </CardHeader>
+
         <CardContent className="flex flex-col gap-4">
-          {/* Информация о выбранном персонаже */}
+          {!hasCharacters && (
+            <div className="flex flex-1 items-center justify-center py-8">
+              <Button onClick={handleCreateClick} className="gap-2">
+                <Plus className="w-4 h-4" /> Создать персонажа
+              </Button>
+            </div>
+          )}
+
           {selectedCharacter && (
             <div className="flex items-center gap-4 p-2 border rounded-md bg-muted">
-              {/* Аватар-заглушка */}
               <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white">
-                {/* Можно вставить иконку или инициалы */}
                 {selectedCharacter.name[0]?.toUpperCase()}
               </div>
-              {/* Имя персонажа */}
               <div className="text-sm font-medium">{selectedCharacter.name}</div>
             </div>
           )}

@@ -7,9 +7,10 @@ public sealed record SpriteAnimationDto(
     Uri Url,
     int FrameCount,
     float AnimationSpeed,
-    float ScaleX,
-    float ScaleY
+    ScaleDto Scale
 );
+
+public sealed record ScaleDto(float X, float Y);
 
 internal static partial class Mapper
 {
@@ -19,8 +20,7 @@ internal static partial class Mapper
             new Uri(valueObject.Url, UriKind.Relative),
             valueObject.FrameCount,
             valueObject.AnimationSpeed,
-            valueObject.ScaleX,
-            valueObject.ScaleY
+            new ScaleDto(valueObject.Scale.X, valueObject.Scale.Y)
         );
     }
 
@@ -30,16 +30,14 @@ internal static partial class Mapper
             dto.Url,
             dto.FrameCount,
             dto.AnimationSpeed,
-            dto.ScaleX,
-            dto.ScaleY
+            dto.Scale.X,
+            dto.Scale.Y
         );
     }
 }
 
 internal sealed class SpriteAnimationDtoValidator : AbstractValidator<SpriteAnimationDto>
 {
-    private const float Epsilon = 0.0001f;
-
     public SpriteAnimationDtoValidator()
     {
         RuleFor(x => x.Url)
@@ -57,12 +55,24 @@ internal sealed class SpriteAnimationDtoValidator : AbstractValidator<SpriteAnim
             .GreaterThan(0)
             .WithMessage($"{nameof(SpriteAnimationDto.AnimationSpeed)} должен быть больше 0.");
 
-        RuleFor(x => x.ScaleX)
-            .Must(x => Math.Abs(x) > Epsilon)
-            .WithMessage($"{nameof(SpriteAnimationDto.ScaleX)} не может быть равен 0.");
+        RuleFor(x => x.Scale).NotNull();
+        RuleFor(x => x.Scale)
+            .SetValidator(new ScaleDtoValidator());
+    }
+}
 
-        RuleFor(x => x.ScaleY)
+internal sealed class ScaleDtoValidator : AbstractValidator<ScaleDto>
+{
+    private const float Epsilon = 0.0001f;
+
+    public ScaleDtoValidator()
+    {
+        RuleFor(x => x.X)
+            .Must(x => Math.Abs(x) > Epsilon)
+            .WithMessage($"{nameof(SpriteAnimationDto.Scale.X)} не может быть равен 0.");
+
+        RuleFor(x => x.Y)
             .Must(y => Math.Abs(y) > Epsilon)
-            .WithMessage($"{nameof(SpriteAnimationDto.ScaleY)} не может быть равен 0.");
+            .WithMessage($"{nameof(SpriteAnimationDto.Scale.Y)} не может быть равен 0.");
     }
 }

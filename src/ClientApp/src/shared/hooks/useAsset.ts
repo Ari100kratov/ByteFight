@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-export function useAsset(assetKey: string | undefined) {
+export function useAssetBlob(assetKey: string | undefined) {
   return useQuery<Blob, Error>({
     queryKey: ["asset", assetKey],
     queryFn: async () => {
@@ -20,9 +20,9 @@ export function useAsset(assetKey: string | undefined) {
   })
 }
 
-// export function useAsset(assetKey: string | undefined) {
+// export function useAssetUrl(assetKey: string | undefined) {
 //   return useQuery<string, Error>({
-//     queryKey: ["asset", assetKey],
+//     queryKey: ["asset-url", assetKey],
 //     queryFn: async () => {
 //       const res = await fetch(`${import.meta.env.VITE_API_URL}/assets/${assetKey}`)
 //       if (!res.ok) {
@@ -30,7 +30,7 @@ export function useAsset(assetKey: string | undefined) {
 //         try {
 //           const json = await res.json()
 //           msg = json.message ?? json.detail ?? msg
-//         } catch { }
+//         } catch {}
 //         throw new Error(msg)
 //       }
 
@@ -38,6 +38,5 @@ export function useAsset(assetKey: string | undefined) {
 //       return URL.createObjectURL(blob)
 //     },
 //     enabled: !!assetKey,
-//     staleTime: Infinity,
 //   })
 // }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Sprite, Texture } from "pixi.js"
-import { useAsset } from "@/shared/hooks/useAsset"
+import { useAssetBlob } from "@/shared/hooks/useAsset"
 import { extend } from "@pixi/react"
 import type { GridLayout } from "./grid/gridUtils"
 
@@ -14,7 +14,7 @@ type BackgroundImageProps = {
 export function BackgroundImage({ assetKey, layout }: BackgroundImageProps) {
   const { gridPixelWidth, gridPixelHeight, offsetX, offsetY } = layout
 
-  const { data: blob } = useAsset(assetKey)
+  const { data: blob } = useAssetBlob(assetKey)
   const [texture, setTexture] = useState<Texture | null>(null)
 
   useEffect(() => {

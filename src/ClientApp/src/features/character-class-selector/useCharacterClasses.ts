@@ -4,9 +4,17 @@ import { queryKeys } from "@/shared/lib/queryKeys";
 import type { StatDto } from "@/shared/types/stat";
 import type { ActionAssetDto } from "@/shared/types/action";
 
+export const CharacterClassType = {
+  Warrior: 1,
+  Mage: 2,
+} as const;
+
+export type CharacterClassType = (typeof CharacterClassType)[keyof typeof CharacterClassType];
+
 export type CharacterClassResponse = {
   id: string
   name: string
+  type: CharacterClassType,
   description?: string
   stats: StatDto[]
   actionAssets: ActionAssetDto[]

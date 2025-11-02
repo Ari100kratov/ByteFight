@@ -13,8 +13,11 @@ internal sealed class CharacterClassActionAssetConfiguration : IEntityTypeConfig
         builder.Property(x => x.ActionType)
             .HasConversion<int>();
 
-        builder.OwnsOne(x => x.Animation,
-            builder => builder.Property(x => x.Url).HasMaxLength(256));
+        builder.OwnsOne(x => x.Animation, builder =>
+        {
+            builder.Property(x => x.Url).HasMaxLength(256);
+            builder.OwnsOne(a => a.Scale);
+        });
 
         builder.HasOne(x => x.CharacterClass)
             .WithMany(e => e.ActionAssets)

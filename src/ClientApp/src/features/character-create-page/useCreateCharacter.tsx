@@ -22,7 +22,6 @@ export function useCreateCharacter() {
       if (!data.classId)
         throw new Error('Не выбран класс персонажа')
 
-      // теперь сервер возвращает { id: string }
       const response = await apiFetch<CreateCharacterResponse>('/characters', {
         method: 'POST',
         body: JSON.stringify(data),

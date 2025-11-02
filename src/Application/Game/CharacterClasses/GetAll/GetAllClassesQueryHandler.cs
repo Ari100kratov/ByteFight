@@ -15,6 +15,7 @@ internal sealed class GetAllClassesQueryHandler(IGameDbContext dbContext)
             .Select(x => new ClassResponse(
                 x.Id,
                 x.Name,
+                x.Type,
                 x.Description,
                 x.Stats.Select(s => s.ToDto()).ToArray(),
                 x.ActionAssets.Select(a => a.ToDto()).ToArray()

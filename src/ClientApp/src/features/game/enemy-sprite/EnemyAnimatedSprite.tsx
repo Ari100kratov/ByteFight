@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatedSprite, Texture, Rectangle, ImageSource } from "pixi.js";
 import { extend } from "@pixi/react";
 import { useEnemy } from "./useEnemy";
-import { useAsset } from "@/shared/hooks/useAsset";
+import { useAssetBlob } from "@/shared/hooks/useAsset";
 import { ActionType } from "@/shared/types/action";
 
 extend({ AnimatedSprite, Texture, Rectangle, ImageSource });
@@ -16,11 +16,14 @@ type Props = {
 };
 
 const defaultSpriteAnimation = {
-  scaleX: 1,
-  scaleY: 1,
+
   animationSpeed: 0.1,
   frameCount: 1,
-  url: undefined
+  url: undefined,
+  scale: {
+    x: 1,
+    y: 1
+  }
 }
 
 export function EnemyAnimatedSprite({
@@ -36,7 +39,7 @@ export function EnemyAnimatedSprite({
   const spriteAnimation = enemy?.actionAssets
     .find((a) => a.actionType === ActionType.Idle)?.spriteAnimation ?? defaultSpriteAnimation
 
-  const { data: blob } = useAsset(spriteAnimation.url)
+  const { data: blob } = useAssetBlob(spriteAnimation.url)
 
   const [textures, setTextures] = useState<Texture[]>([])
 
@@ -81,7 +84,7 @@ export function EnemyAnimatedSprite({
       x={x + width / 2}  // позиция по X (центр спрайта в клетке)
       y={y + height - 10} // позиция по Y (низ спрайта чуть выше нижней границы клетки)
       anchor={{ x: 0.5, y: 1 }} // точка привязки спрайта: центр по горизонтали, низ по вертикали
-      scale={{ x: spriteAnimation.scaleX, y: spriteAnimation.scaleY }} // отражение по горизонтали (зеркально)
+      scale={{ x: -spriteAnimation.scale.x, y: spriteAnimation.scale.y }} // отражение по горизонтали
       animationSpeed={spriteAnimation.animationSpeed}  // скорость анимации (0.1 = кадры меняются медленно)
 
       autoPlay={true}

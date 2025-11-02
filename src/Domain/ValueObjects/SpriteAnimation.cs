@@ -2,8 +2,6 @@
 
 public sealed record SpriteAnimation
 {
-    private const float Epsilon = 0.0001f;
-
     /// <summary>
     /// Относительный путь к файлу ассета (например, URL спрайтшита).
     /// </summary>
@@ -21,18 +19,9 @@ public sealed record SpriteAnimation
     public float AnimationSpeed { get; init; }
 
     /// <summary>
-    /// Масштаб по оси X.
-    /// 1.0 — смотрит право, -1.0 — смотрит влево,
-    /// меньше 1.0 — уменьшение, больше 1.0 — увеличение.
+    /// Масштаб
     /// </summary>
-    public float ScaleX { get; init; }
-
-    /// <summary>
-    /// Масштаб по оси Y.
-    /// 1.0 — нормальное положение, -1.0 — отзеркален по вертикали,
-    /// меньше 1.0 — уменьшение, больше 1.0 — увеличение.
-    /// </summary>
-    public float ScaleY { get; init; }
+    public Scale Scale { get; init; }
 
     private SpriteAnimation() { } // Для EF
 
@@ -59,20 +48,9 @@ public sealed record SpriteAnimation
             throw new ArgumentException("AnimationSpeed должен быть > 0.");
         }
 
-        if (Math.Abs(scaleX) < Epsilon)
-        {
-            throw new ArgumentOutOfRangeException(nameof(scaleX), "ScaleX не может быть 0");
-        }
-
-        if (Math.Abs(scaleY) < Epsilon)
-        {
-            throw new ArgumentOutOfRangeException(nameof(scaleY), "ScaleY не может быть 0");
-        }
-
         Url = urlString;
         FrameCount = frameCount;
         AnimationSpeed = animationSpeed;
-        ScaleX = scaleX;
-        ScaleY = scaleY;
+        Scale = new Scale(scaleX, scaleY);
     }
 }
