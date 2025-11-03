@@ -1,27 +1,22 @@
 import { AnimatedSprite, Texture, Rectangle, ImageSource } from "pixi.js";
 import { extend } from "@pixi/react";
-import { useArenaEnemiesStore } from "../state/arena-enemies.store";
 import { useGridStore } from "../state/game/grid.state.store";
-import { useEnemiesStore } from "../state/data/enemies.data.store";
 import { useSpriteTextures } from "@/shared/hooks/useSpriteTextures";
+import { useCharacterStore } from "../state/data/character.data.store";
+import { useCharacterStateStore } from "../state/game/character.state.store";
 
 extend({ AnimatedSprite, Texture, Rectangle, ImageSource });
 
-type Props = {
-  arenaEnemyId: string;
-};
-
-export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
+export function CharacterAnimatedSprite() {
   const layout = useGridStore(s => s.layout);
-  const arenaEnemy = useArenaEnemiesStore(s => s.getArenaEnemy(arenaEnemyId));
-
-  const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, arenaEnemy?.currentAction));
+  const runtime = useCharacterStateStore(s => s.runtime)
+  const spriteAnimation = useCharacterStore(s => s.getSpriteAnimation(runtime?.currentAction));
   const textures = useSpriteTextures(spriteAnimation);
 
-  if (!layout || !arenaEnemy || textures.length === 0 || !spriteAnimation)
+  if (!layout || !runtime || textures.length === 0 || !spriteAnimation)
     return null;
 
-  const cell = layout.cells[arenaEnemy.position.y][arenaEnemy.position.x]
+  const cell = layout.cells[runtime.position.y][runtime.position.x]
 
   return (
     <pixiAnimatedSprite
@@ -30,7 +25,7 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
       x={cell.x + cell.width / 2}  // позиция по X (центр спрайта в клетке)
       y={cell.y + cell.height - 10} // позиция по Y (низ спрайта чуть выше нижней границы клетки)
       anchor={{ x: 0.5, y: 1 }} // точка привязки спрайта: центр по горизонтали, низ по вертикали
-      scale={{ x: -spriteAnimation.scale.x, y: spriteAnimation.scale.y }} // отражение по горизонтали
+      scale={{ x: spriteAnimation.scale.x, y: spriteAnimation.scale.y }} // отражение по горизонтали
       animationSpeed={spriteAnimation.animationSpeed}  // скорость анимации (0.1 = кадры меняются медленно)
 
       autoPlay={true}

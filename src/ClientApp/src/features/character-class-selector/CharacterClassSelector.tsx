@@ -38,7 +38,7 @@ export function CharacterClassSelector({ selectedClassId, onSelectClass }: Props
       <Card className="flex flex-col flex-[4]">
         <CardHeader className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-3">
-            <CardTitle>Класс персонажа</CardTitle>
+            <CardTitle>Класс</CardTitle>
             {data && data.length > 0 && (
               <ToggleGroup
                 type="single"

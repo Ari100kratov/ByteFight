@@ -1,28 +1,18 @@
 import { Application } from "@pixi/react"
-import type { Arena } from "../game-arena-page/useArena"
-import { Grid } from "./grid/Grid"
-import { useState } from "react"
-import { BackgroundImage } from "./BackgroundImage"
-import { calculateGridLayout } from "./grid/gridUtils"
+import { GridContainer } from "./grid-container/GridContainer"
+import { BackgroundSprite } from "./background-sprite/BackgroundSprite"
 import { ArenaEnemies } from "./arena-enemies/ArenaEnemies"
+import { useGridStore } from "./state/game/grid.state.store"
+import { CharacterAnimatedSprite } from "./character-sprite/CharacterAnimatedSprite"
 
-type Props = {
-  arena: Arena
-}
-
-export function Game({ arena }: Props) {
-  const [canvasSize, setCanvasSize] = useState({ width: 650, height: 450 })
-
-  const layout = calculateGridLayout(
-    { width: arena.gridWidth, height: arena.gridHeight },
-    canvasSize
-  )
-
+export function Game() {
+  const canvasSize = useGridStore(s => s.canvasSize)
   return (
     <Application width={canvasSize.width} height={canvasSize.height}>
-      <BackgroundImage assetKey={arena.backgroundAsset} layout={layout} />
-      <Grid layout={layout} />
-      <ArenaEnemies arenaId={arena.id} layout={layout} />
+      <BackgroundSprite />
+      <GridContainer />
+      <CharacterAnimatedSprite />
+      <ArenaEnemies />
     </Application>
   )
 }

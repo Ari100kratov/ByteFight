@@ -1,8 +1,3 @@
 namespace Application.Game.Characters.GetByUserId;
 
-public sealed record CharacterResponse
-{
-    public Guid Id { get; init; }
-    public string Name { get; init; }
-    public Guid UserId { get; init; }
-}
+public sealed record CharacterResponse(Guid Id, string Name, Guid ClassId);

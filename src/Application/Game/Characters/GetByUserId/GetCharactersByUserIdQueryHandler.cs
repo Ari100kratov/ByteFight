@@ -21,12 +21,7 @@ public sealed class GetCharactersByUserIdQueryHandler(IGameDbContext dbContext, 
         IReadOnlyList<CharacterResponse> characters = await dbContext.Characters
             .AsNoTracking()
             .Where(c => c.UserId == new UserId(query.UserId))
-            .Select(c => new CharacterResponse
-            {
-                Id = c.Id,
-                Name = c.Name,
-                UserId = c.UserId.Value
-            })
+            .Select(c => new CharacterResponse(c.Id, c.Name, c.ClassId))
             .ToListAsync(cancellationToken);
 
         return Result.Success(characters);

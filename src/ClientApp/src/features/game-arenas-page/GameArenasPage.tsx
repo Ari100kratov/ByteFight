@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
-import { useArenasByMode, type Arena } from "./useArenasByMode"
+import { useArenasByMode, type ArenaResponse } from "./useArenasByMode"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { GameArenaCard } from "./components/GameArenaCard"
@@ -22,7 +22,7 @@ export default function GameArenasPage() {
     }
   }, [modeType, modeName, setName])
 
-  const handleArenaClick = (arena: Arena) => {
+  const handleArenaClick = (arena: ArenaResponse) => {
     navigate(`/play/${modeType}/${arena.id}`)
   }
 

@@ -6,6 +6,7 @@ export const queryKeys = {
   characters: {
     byCurrentUser: ['characters', 'currentUser'] as const,
     byId: (id: string | undefined) => ['characters', 'byId', id] as const,
+    details: (id: string | undefined) => ['characters', 'details', id] as const,
   },
 
   characterCodes: {

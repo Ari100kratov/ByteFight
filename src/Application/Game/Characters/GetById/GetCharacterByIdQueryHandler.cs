@@ -1,6 +1,7 @@
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain;
 using Domain.Auth.Users;
 using Domain.Game.Characters;
 using Microsoft.EntityFrameworkCore;
@@ -15,23 +16,13 @@ internal sealed class GetCharacterByIdQueryHandler(IGameDbContext dbContext, IUs
     {
         CharacterResponse? character = await dbContext.Characters
             .AsNoTracking()
-            .Where(c => c.Id == query.Id)
-            .Select(c => new CharacterResponse
-            {
-                Id = c.Id,
-                Name = c.Name,
-                UserId = c.UserId.Value
-            })
+            .Where(c => c.Id == query.Id && c.UserId == new UserId(userContext.UserId))
+            .Select(c => new CharacterResponse(c.Id, c.Name, c.ClassId))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (character is null)
         {
             return Result.Failure<CharacterResponse>(CharacterErrors.NotFound(query.Id));
-        }
-
-        if (userContext.UserId != character.UserId)
-        {
-            return Result.Failure<CharacterResponse>(UserErrors.Unauthorized());
         }
 
         return Result.Success(character);

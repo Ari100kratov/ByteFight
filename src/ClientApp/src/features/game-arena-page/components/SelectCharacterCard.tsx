@@ -12,15 +12,21 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { useCharacters, type Character } from "@/features/characters-page/useCharacters"
+import { useCharacters } from "@/features/characters-page/useCharacters"
+import { useEffect, useState } from "react"
+import { useCharacterDetails } from "../hooks/useCharacterDetails"
+import { useCharacterStateStore } from "@/features/game/state/game/character.state.store"
 
-type Props = {
-  selectedCharacter?: Character
-  onSelect: (character: Character) => void
-}
-
-export function SelectCharacterCard({ selectedCharacter, onSelect }: Props) {
+export function SelectCharacterCard() {
   const { data: characters, isLoading, error } = useCharacters()
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>()
+  const { data: character } = useCharacterDetails(selectedCharacterId)
+
+  useEffect(() => {
+    if (character) {
+      useCharacterStateStore.getState().init()
+    }
+  }, [character?.id])
 
   const handleCreateClick = () => {
     window.open("/characters/create", "_blank")
@@ -41,11 +47,8 @@ export function SelectCharacterCard({ selectedCharacter, onSelect }: Props) {
           <CardDescription>
             {hasCharacters && (
               <Select
-                value={selectedCharacter?.id}
-                onValueChange={(id) => {
-                  const char = characters.find((c) => c.id === id)
-                  if (char) onSelect(char)
-                }}
+                value={selectedCharacterId}
+                onValueChange={setSelectedCharacterId}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Выберите персонажа" />
@@ -74,12 +77,12 @@ export function SelectCharacterCard({ selectedCharacter, onSelect }: Props) {
             </div>
           )}
 
-          {selectedCharacter && (
+          {character && (
             <div className="flex items-center gap-4 p-2 border rounded-md bg-muted">
               <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white">
-                {selectedCharacter.name[0]?.toUpperCase()}
+                {character.name[0]?.toUpperCase()}
               </div>
-              <div className="text-sm font-medium">{selectedCharacter.name}</div>
+              <div className="text-sm font-medium">{character.name}</div>
             </div>
           )}
         </CardContent>

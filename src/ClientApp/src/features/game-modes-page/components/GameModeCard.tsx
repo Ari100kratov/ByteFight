@@ -1,9 +1,9 @@
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
-import type { GameMode } from "../useGameModes"
+import type { GameModeResponse } from "../useGameModes"
 
 type Props = {
-  mode: GameMode
-  onSelect: (mode: GameMode) => void
+  mode: GameModeResponse
+  onSelect: (mode: GameModeResponse) => void
 }
 
 export function GameModeCard({ mode, onSelect }: Props) {

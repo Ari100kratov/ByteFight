@@ -1,30 +1,34 @@
+import { useEffect } from "react"
 import { EnemyAnimatedSprite } from "../enemy-sprite/EnemyAnimatedSprite"
-import type { GridLayout } from "../grid/gridUtils"
+import { useEnemiesStore } from "../state/data/enemies.data.store"
 import { useArenaEnemies } from "./useArenaEnemies"
+import { fetchEnemy } from "./fetchEnemy"
 
-type Props = {
-  arenaId: string
-  layout: GridLayout
-}
+export function ArenaEnemies() {
+  const { data: arenaEnemies } = useArenaEnemies()
+  const setEnemies = useEnemiesStore(s => s.setEnemies)
 
-export function ArenaEnemies({ arenaId, layout }: Props) {
-  const { data: arenaEnemies } = useArenaEnemies(arenaId)
+  useEffect(() => {
+    if (!arenaEnemies) return
 
-  if (!arenaEnemies || arenaEnemies.length === 0) 
+    const uniqueEnemyIds = [...new Set(arenaEnemies.map(e => e.enemyId))]
+    if (uniqueEnemyIds.length === 0) return
+
+    Promise.all(uniqueEnemyIds.map(fetchEnemy))
+      .then(setEnemies)
+      .catch(console.error)
+  }, [arenaEnemies, setEnemies])
+
+  if (!arenaEnemies)
     return null
 
   return (
     <>
       {arenaEnemies.map((arenaEnemy) => {
-        const cell = layout.cells[arenaEnemy.position.y][arenaEnemy.position.x]
         return (
           <EnemyAnimatedSprite
             key={arenaEnemy.id}
-            enemyId={arenaEnemy.enemyId}
-            x={cell.x}
-            y={cell.y}
-            width={cell.width}
-            height={cell.height}
+            arenaEnemyId={arenaEnemy.id}
           />
         )
       })}

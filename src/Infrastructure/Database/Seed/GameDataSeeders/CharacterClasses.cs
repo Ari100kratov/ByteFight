@@ -159,6 +159,15 @@ internal class CharacterClasses
                 {
                     ActionType = ActionType.Attack,
                     Animation = new SpriteAnimation(
+                        new Uri($"{assetFolder}/{wizardFolder}/Flame_jet.png", UriKind.Relative),
+                        frameCount: 14,
+                        animationSpeed: 0.2f)
+                },
+                new()
+                {
+                    ActionType = ActionType.Attack,
+                    Variant = 1,
+                    Animation = new SpriteAnimation(
                         new Uri($"{assetFolder}/{wizardFolder}/Attack_1.png", UriKind.Relative),
                         frameCount: 4,
                         animationSpeed: 0.1f)
@@ -166,33 +175,12 @@ internal class CharacterClasses
                 new()
                 {
                     ActionType = ActionType.Attack,
-                    Variant = 1,
+                    Variant = 2,
                     Animation = new SpriteAnimation(
                         new Uri($"{assetFolder}/{wizardFolder}/Attack_2.png", UriKind.Relative),
                         frameCount: 4,
                         animationSpeed: 0.1f)
                 },
-                //new()
-                //{
-                //    ActionType = ActionType.Attack,
-                //    Variant = 2,
-                //    Animation = new SpriteAnimation(
-                //        new Uri("classes/warrior-1/Attack_3.png", UriKind.Relative),
-                //        frameCount: 4,
-                //        animationSpeed: 0.1f,
-                //        scaleX: -1f,
-                //        scaleY: 1f)
-                //},
-                //new()
-                //{
-                //    ActionType = ActionType.Run_Attack,
-                //    Animation = new SpriteAnimation(
-                //        new Uri("classes/warrior-1/Run_Attack.png", UriKind.Relative),
-                //        frameCount: 4,
-                //        animationSpeed: 0.1f,
-                //        scaleX: -1f,
-                //        scaleY: 1f)
-                //},
                 new()
                 {
                     ActionType = ActionType.Jump,

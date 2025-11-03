@@ -1,14 +1,24 @@
 import { extend } from "@pixi/react"
 import { Graphics, Text, Container } from "pixi.js"
-import { type GridLayout } from "./gridUtils"
+import { useGridStore } from "../state/game/grid.state.store"
+import { useEffect } from "react"
+import { useArenaStore } from "../state/data/arena.data.store"
 
 extend({ Graphics, Text, Container })
 
-type GridProps = {
-  layout: GridLayout
-}
+export function GridContainer() {
 
-export function Grid({ layout }: GridProps) {
+  const arena = useArenaStore((s) => s.arena)
+  const { layout, setLayout } = useGridStore()
+
+  useEffect(() => {
+    if (arena)
+      setLayout({ width: arena.gridWidth, height: arena.gridHeight })
+  }, [arena])
+
+  if (!layout)
+    return null
+
   const { gridSize, cellSize, gridPixelWidth, gridPixelHeight, offsetX, offsetY, cells } = layout
 
   // cells сейчас хранит gridY = 0 снизу, и x/y — абсолютные пиксельные позиции (левый верх ячейки)

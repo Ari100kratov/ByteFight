@@ -1,0 +1,33 @@
+import { create } from "zustand"
+import type { EnemyResponse } from "../../arena-enemies/fetchEnemy"
+import type { ActionType } from "@/shared/types/action"
+
+export type Enemy = EnemyResponse
+
+type EnemiesState = {
+  enemies: Record<string, Enemy>
+  setEnemies: (enemies: Enemy[]) => void
+  getEnemy: (id?: string) => Enemy | undefined
+  getSpriteAnimation: (enemyId?: string, actionType?: ActionType) => Enemy["actionAssets"][number]["spriteAnimation"] | undefined
+}
+
+export const useEnemiesStore = create<EnemiesState>((set, get) => ({
+  enemies: {},
+  setEnemies: (enemies) =>
+    set({
+      enemies: Object.fromEntries(
+        enemies.map((e) => [e.id, { ...e }])
+      ),
+    }),
+  getEnemy: (id) => {
+    if (!id)
+      return undefined
+    return get().enemies[id]
+  },
+  getSpriteAnimation: (enemyId, actionType) => {
+    if (!enemyId || !actionType) return undefined
+    const enemy = get().enemies[enemyId]
+    if (!enemy) return undefined
+    return enemy.actionAssets.find(a => a.actionType === actionType)?.spriteAnimation
+  },
+}))

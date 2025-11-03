@@ -1,14 +1,15 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SwordsIcon } from "lucide-react"
-import type { Arena } from "../useArena"
 import { Game } from "@/features/game/Game"
+import { useArenaStore } from "@/features/game/state/data/arena.data.store"
+import { Skeleton } from "@/components/ui/skeleton"
 
-type Props = {
-  arena: Arena
-}
-
-export function ArenaCard({ arena }: Props) {
+export function ArenaCard() {
+  const arena = useArenaStore((s) => s.arena)
+  if (!arena) {
+    return <Skeleton className="w-full h-full rounded-none md:rounded-r-2xl" />
+  }
 
   return (
     <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col">
@@ -17,7 +18,7 @@ export function ArenaCard({ arena }: Props) {
         <CardDescription>{arena.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 p-0 flex justify-center items-center">
-        <Game arena={arena}/>
+        <Game />
       </CardContent>
       <CardFooter className="flex justify-end">
         <Button size="lg"><SwordsIcon /> В бой</Button>

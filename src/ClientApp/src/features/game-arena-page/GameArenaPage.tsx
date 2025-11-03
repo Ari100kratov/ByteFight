@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useParams } from "react-router-dom"
 import {
   ResizablePanelGroup,
@@ -7,21 +7,21 @@ import {
 } from "@/components/ui/resizable"
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
-import { useArena, type Arena } from "./useArena"
 import { SelectCharacterCard } from "./components/SelectCharacterCard"
 import { ArenaCard } from "./components/ArenaCard"
 import { Card } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { Character } from "../character-page/useCharacter"
 import { ModeNames } from "../game-arenas-page/types"
+import { useArena } from "./hooks/useArena"
+import { useCharacterStore } from "../game/state/data/character.data.store"
 
 export default function GameArenaPage() {
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
   const { setName } = useBreadcrumbNames()
-
   const { data: arena, isLoading, error } = useArena(arenaId)
-  const [selectedCharacter, setSelectedCharacter] = useState<Character>()
+
+  const character = useCharacterStore(s => s.character)
 
   useEffect(() => {
     if (modeType) {
@@ -74,19 +74,16 @@ export default function GameArenaPage() {
             <ResizablePanelGroup direction="vertical" className="h-full">
               {/* Блок персонажа */}
               <ResizablePanel defaultSize={30}>
-                <SelectCharacterCard
-                  onSelect={setSelectedCharacter}
-                  selectedCharacter={selectedCharacter}
-                />
+                <SelectCharacterCard />
               </ResizablePanel>
 
               <ResizableHandle withHandle />
 
               {/* Блок кода */}
               <ResizablePanel defaultSize={70}>
-                {selectedCharacter ? (
+                {character ? (
                   <CharacterCodeBlock
-                    characterId={selectedCharacter.id}
+                    characterId={character.id}
                     className="rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r"
                   />
                 ) : (
@@ -104,7 +101,7 @@ export default function GameArenaPage() {
 
           {/* Правая часть — арена */}
           <ResizablePanel defaultSize={60}>
-            <ArenaCard arena={arena as Arena} />
+            <ArenaCard />
           </ResizablePanel>
         </ResizablePanelGroup>
       </LoaderState>

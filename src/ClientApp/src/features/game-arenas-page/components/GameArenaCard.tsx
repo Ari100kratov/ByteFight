@@ -1,9 +1,9 @@
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
-import type { Arena } from "../useArenasByMode"
+import type { ArenaResponse } from "../useArenasByMode"
 
 interface GameArenaCardProps {
-  arena: Arena
-  onClick: (arena: Arena) => void
+  arena: ArenaResponse
+  onClick: (arena: ArenaResponse) => void
 }
 
 export function GameArenaCard({ arena, onClick }: GameArenaCardProps) {

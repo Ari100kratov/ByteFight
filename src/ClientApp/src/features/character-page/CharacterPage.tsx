@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -16,6 +15,7 @@ import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import CharacterCodeBlock from "@/features/character-code-block/CharacterCodeBlock"
 import { LoaderState } from "@/components/common/LoaderState"
 import { useCharacter } from "./useCharacter"
+import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
 
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>()
@@ -52,7 +52,6 @@ export default function CharacterPage() {
               <Card className="flex-1">
                 <CardHeader>
                   <CardTitle>Основная информация</CardTitle>
-                  <CardDescription>Придумать описание</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
                   <div className="grid gap-2">
@@ -66,15 +65,7 @@ export default function CharacterPage() {
               </Card>
 
               {/* Класс */}
-              <Card className="flex-1">
-                <CardHeader>
-                  <CardTitle>Класс</CardTitle>
-                  <CardDescription>Придумать описание</CardDescription>
-                </CardHeader>
-                <CardContent className="h-full flex items-center justify-center text-muted-foreground">
-                  Блок выбора класса
-                </CardContent>
-              </Card>
+              <CharacterClassSelector selectedClassId={character.classId} onSelectClass={() => { }} />
             </div>
 
             {/* Правая часть: Код */}
