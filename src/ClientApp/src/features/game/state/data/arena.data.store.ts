@@ -6,6 +6,7 @@ export type Arena = ArenaResponse
 type ArenaState = {
   arena?: Arena
   setArena: (arena: ArenaResponse) => void
+  reset: () => void
 }
 
 export const useArenaStore = create<ArenaState>((set) => ({
@@ -16,4 +17,5 @@ export const useArenaStore = create<ArenaState>((set) => ({
     }
     set({ arena: arena })
   },
+  reset: () => set({ arena: undefined }),
 }))

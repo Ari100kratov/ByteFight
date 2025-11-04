@@ -12,5 +12,6 @@ export function useCodeTemplate() {
   return useQuery<CodeTemplateResponse, ApiException>({
     queryKey: queryKeys.characterCodes.template,
     queryFn: () => apiFetch('/characters/codes/template'),
+    enabled: false
   })
 }

@@ -54,10 +54,9 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
   }
 
   return (
-    <Card className={cn("flex flex-col w-full h-full", className)}>
+    <Card className={cn("flex flex-col w-full h-full overflow-auto", className)}>
       <CardHeader>
         <CardTitle>Поведение</CardTitle>
-        {/* <CardDescription>Придумать описание</CardDescription> */}
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col">

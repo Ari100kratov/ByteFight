@@ -18,8 +18,8 @@ export const useCharacterStateStore = create<CharacterRuntimeState>((set, get) =
   runtime: undefined,
 
   init: () => {
-    // const { runtime } = get()
-    // if (runtime) return
+    const { runtime } = get()
+    if (runtime) return
     set({ runtime: { currentAction: ActionType.Idle, position: { x: 0, y: 0 } } })
   },
 

@@ -3,7 +3,7 @@ import type { PositionDto } from "../types"
 import { queryKeys } from "@/shared/lib/queryKeys"
 import { useArenaStore } from "../state/data/arena.data.store"
 import { useStoreQuery } from "@/shared/hooks/useStoreQuery"
-import { useArenaEnemiesStore } from "../state/arena-enemies.store"
+import { useArenaEnemiesStore } from "../state/data/arena-enemies.store"
 
 export type ArenaEnemyResponse = {
   id: string

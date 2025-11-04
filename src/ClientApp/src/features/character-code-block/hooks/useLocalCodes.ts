@@ -28,13 +28,13 @@ export function useLocalCodes(codesQuery: UseQueryResult<any>, templateQuery: Us
   }, [codesQuery.data])
 
   const addCode = async () => {
-    await templateQuery.refetch()
-    if (!templateQuery.data) return
+    const { data } = await templateQuery.refetch()
+    if (!data) return
 
     const newCode: LocalCode = {
-      id: templateQuery.data.id,
-      name: templateQuery.data.name,
-      sourceCode: templateQuery.data.sourceCode ?? "",
+      id: data.id,
+      name: data.name,
+      sourceCode: data.sourceCode ?? "",
       status: ChangeStatus.Created,
     }
 

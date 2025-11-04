@@ -1,16 +1,17 @@
 import { create } from "zustand"
 import { calculateGridLayout, type GridLayout, type GridSize } from "../../grid-container/gridUtils"
 
-export type CanvasSize = {
+type CanvasSize = {
   width: number
   height: number
 }
 
-interface GridState {
+type GridState = {
   canvasSize: CanvasSize
   layout?: GridLayout
   setLayout: (gridSize: GridSize) => void
   setCanvasSize: (canvasSize: CanvasSize) => void
+  reset: () => void
 }
 
 export const useGridStore = create<GridState>((set) => ({
@@ -22,4 +23,8 @@ export const useGridStore = create<GridState>((set) => ({
     })),
   setCanvasSize: (canvasSize) =>
     set({ canvasSize: canvasSize }),
+
+  reset: () => set({
+    layout: undefined
+  }),
 }))

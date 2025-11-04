@@ -16,6 +16,8 @@ import { useCharacters } from "@/features/characters-page/useCharacters"
 import { useEffect, useState } from "react"
 import { useCharacterDetails } from "../hooks/useCharacterDetails"
 import { useCharacterStateStore } from "@/features/game/state/game/character.state.store"
+import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
+import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 
 export function SelectCharacterCard() {
   const { data: characters, isLoading, error } = useCharacters()
@@ -41,7 +43,7 @@ export function SelectCharacterCard() {
       skeletonClassName="w-full h-full rounded-2xl"
       loadingFallback={<Skeleton className="w-full h-full rounded-2xl" />}
     >
-      <Card className="h-full rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r">
+      <Card className="h-full rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r overflow-auto">
         <CardHeader>
           <CardTitle>Персонаж</CardTitle>
           <CardDescription>
@@ -68,7 +70,7 @@ export function SelectCharacterCard() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="flex flex-col gap-4">
+        <CardContent className="flex flex-col md:flex-row gap-4">
           {!hasCharacters && (
             <div className="flex flex-1 items-center justify-center py-8">
               <Button onClick={handleCreateClick} className="gap-2">
@@ -78,12 +80,15 @@ export function SelectCharacterCard() {
           )}
 
           {character && (
-            <div className="flex items-center gap-4 p-2 border rounded-md bg-muted">
-              <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-white">
-                {character.name[0]?.toUpperCase()}
+            <>
+              {/* Левая часть — спрайт */}
+              <div className="flex items-center justify-center p-4">
+                <SpriteAnimationPlayer actionAssets={character.class.actionAssets} />
               </div>
-              <div className="text-sm font-medium">{character.name}</div>
-            </div>
+
+              {/* Правая часть — характеристики */}
+              <CharacterStats stats={character.class.stats} />
+            </>
           )}
         </CardContent>
       </Card>

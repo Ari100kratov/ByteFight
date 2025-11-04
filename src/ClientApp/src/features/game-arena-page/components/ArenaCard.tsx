@@ -12,7 +12,7 @@ export function ArenaCard() {
   }
 
   return (
-    <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col">
+    <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col overflow-auto">
       <CardHeader>
         <CardTitle>{arena.name}</CardTitle>
         <CardDescription>{arena.description}</CardDescription>

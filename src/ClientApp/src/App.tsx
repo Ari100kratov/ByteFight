@@ -37,7 +37,7 @@ export default function App() {
           <Route path="play">
             <Route index element={<GameModesPage />} />
             <Route path=":modeType" element={<GameArenasPage />} />
-            <Route path=":modeType/:arenaId" element={<GameArenaPage />} />
+            <Route path=":modeType/:arenaId" element={<GameArenaPage />} key={window.location.pathname} />
           </Route>
 
           <Route path="characters">

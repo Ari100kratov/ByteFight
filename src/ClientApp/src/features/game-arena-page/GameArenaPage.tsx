@@ -9,12 +9,13 @@ import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
 import { SelectCharacterCard } from "./components/SelectCharacterCard"
 import { ArenaCard } from "./components/ArenaCard"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ModeNames } from "../game-arenas-page/types"
 import { useArena } from "./hooks/useArena"
 import { useCharacterStore } from "../game/state/data/character.data.store"
+import { resetGameStores } from "../game/state/stateReset"
 
 export default function GameArenaPage() {
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
@@ -22,6 +23,12 @@ export default function GameArenaPage() {
   const { data: arena, isLoading, error } = useArena(arenaId)
 
   const character = useCharacterStore(s => s.character)
+
+  useEffect(() => {
+    return () => {
+      resetGameStores()
+    }
+  }, [])
 
   useEffect(() => {
     if (modeType) {
@@ -73,24 +80,29 @@ export default function GameArenaPage() {
           <ResizablePanel defaultSize={40}>
             <ResizablePanelGroup direction="vertical" className="h-full">
               {/* Блок персонажа */}
-              <ResizablePanel defaultSize={30}>
+              <ResizablePanel defaultSize={40}>
                 <SelectCharacterCard />
               </ResizablePanel>
 
               <ResizableHandle withHandle />
 
               {/* Блок кода */}
-              <ResizablePanel defaultSize={70}>
+              <ResizablePanel defaultSize={60}>
                 {character ? (
                   <CharacterCodeBlock
                     characterId={character.id}
                     className="rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r"
                   />
                 ) : (
-                  <Card className="h-full rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r flex items-center justify-center">
-                    <div className="text-muted-foreground text-center p-4">
-                      Необходимо выбрать персонажа.
-                    </div>
+                  <Card className="flex flex-col w-full h-full overflow-auto rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r overflow-auto">
+                    <CardHeader>
+                      <CardTitle>Поведение</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-muted-foreground text-center p-4">
+                        Необходимо выбрать персонажа.
+                      </div>
+                    </CardContent>
                   </Card>
                 )}
               </ResizablePanel>

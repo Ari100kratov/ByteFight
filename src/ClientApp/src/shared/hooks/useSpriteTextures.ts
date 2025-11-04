@@ -17,7 +17,8 @@ export function useSpriteTextures(spriteAnimation?: SpriteAnimationDto) {
 
     getOrLoadTextures(spriteAnimation.url, spriteAnimation.frameCount)
       .then(texs => {
-        if (!cancelled) setTextures(texs);
+        if (cancelled) return;
+        setTextures(texs);
       })
       .catch(console.error);
 

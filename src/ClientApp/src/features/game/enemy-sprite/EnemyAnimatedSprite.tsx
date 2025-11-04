@@ -1,9 +1,10 @@
 import { AnimatedSprite, Texture, Rectangle, ImageSource } from "pixi.js";
 import { extend } from "@pixi/react";
-import { useArenaEnemiesStore } from "../state/arena-enemies.store";
+import { useArenaEnemiesStore } from "../state/data/arena-enemies.store";
 import { useGridStore } from "../state/game/grid.state.store";
 import { useEnemiesStore } from "../state/data/enemies.data.store";
 import { useSpriteTextures } from "@/shared/hooks/useSpriteTextures";
+import { useEnemyStateStore } from "../state/game/enemy.state.store";
 
 extend({ AnimatedSprite, Texture, Rectangle, ImageSource });
 
@@ -14,8 +15,8 @@ type Props = {
 export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
   const layout = useGridStore(s => s.layout);
   const arenaEnemy = useArenaEnemiesStore(s => s.getArenaEnemy(arenaEnemyId));
-
-  const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, arenaEnemy?.currentAction));
+  const enemyState = useEnemyStateStore(s => s.get(arenaEnemy?.id))
+  const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, enemyState?.currentAction));
   const textures = useSpriteTextures(spriteAnimation);
 
   if (!layout || !arenaEnemy || textures.length === 0 || !spriteAnimation)

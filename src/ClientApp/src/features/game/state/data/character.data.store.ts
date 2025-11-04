@@ -8,6 +8,7 @@ type CharacterState = {
   character?: Character
   setCharacter: (character: CharacterResponse) => void
   getSpriteAnimation: (actionType?: ActionType) => Character["class"]["actionAssets"][number]["spriteAnimation"] | undefined
+  reset: () => void
 }
 
 export const useCharacterStore = create<CharacterState>((set, get) => ({
@@ -24,4 +25,5 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     if (!character) return undefined
     return character.class.actionAssets.find(a => a.actionType === actionType && a.variant === 0)?.spriteAnimation
   },
+  reset: () => set({ character: undefined }),
 }))

@@ -1,15 +1,14 @@
 import { create } from "zustand"
-import type { ArenaEnemyResponse } from "../arena-enemies/useArenaEnemies"
+import type { ArenaEnemyResponse } from "../../arena-enemies/useArenaEnemies"
 import { ActionType } from "@/shared/types/action"
 
-export type ArenaEnemy = ArenaEnemyResponse & {
-  currentAction: ActionType
-}
+export type ArenaEnemy = ArenaEnemyResponse
 
 type ArenaEnemiesState = {
   arenaEnemies: Record<string, ArenaEnemy>
   setArenaEnemies: (enemies: ArenaEnemyResponse[]) => void
   getArenaEnemy: (id: string) => ArenaEnemy | undefined
+  reset: () => void
 }
 
 export const useArenaEnemiesStore = create<ArenaEnemiesState>((set, get) => ({
@@ -21,4 +20,5 @@ export const useArenaEnemiesStore = create<ArenaEnemiesState>((set, get) => ({
       ),
     }),
   getArenaEnemy: (id) => get().arenaEnemies[id],
+  reset: () => set({ arenaEnemies: {} }),
 }))

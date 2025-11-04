@@ -9,6 +9,7 @@ type EnemiesState = {
   setEnemies: (enemies: Enemy[]) => void
   getEnemy: (id?: string) => Enemy | undefined
   getSpriteAnimation: (enemyId?: string, actionType?: ActionType) => Enemy["actionAssets"][number]["spriteAnimation"] | undefined
+  reset: () => void
 }
 
 export const useEnemiesStore = create<EnemiesState>((set, get) => ({
@@ -30,4 +31,5 @@ export const useEnemiesStore = create<EnemiesState>((set, get) => ({
     if (!enemy) return undefined
     return enemy.actionAssets.find(a => a.actionType === actionType)?.spriteAnimation
   },
+  reset: () => set({ enemies: {} }),
 }))

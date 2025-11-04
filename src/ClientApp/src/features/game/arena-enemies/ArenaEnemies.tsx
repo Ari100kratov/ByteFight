@@ -3,10 +3,12 @@ import { EnemyAnimatedSprite } from "../enemy-sprite/EnemyAnimatedSprite"
 import { useEnemiesStore } from "../state/data/enemies.data.store"
 import { useArenaEnemies } from "./useArenaEnemies"
 import { fetchEnemy } from "./fetchEnemy"
+import { useEnemyStateStore } from "../state/game/enemy.state.store"
 
 export function ArenaEnemies() {
   const { data: arenaEnemies } = useArenaEnemies()
   const setEnemies = useEnemiesStore(s => s.setEnemies)
+  const init = useEnemyStateStore(s => s.init)
 
   useEffect(() => {
     if (!arenaEnemies) return
@@ -17,7 +19,13 @@ export function ArenaEnemies() {
     Promise.all(uniqueEnemyIds.map(fetchEnemy))
       .then(setEnemies)
       .catch(console.error)
-  }, [arenaEnemies, setEnemies])
+
+    const initPayload = arenaEnemies.map(e => ({
+      arenaEnemyId: e.id,
+      position: e.position,
+    }))
+    init(initPayload)
+  }, [arenaEnemies])
 
   if (!arenaEnemies)
     return null
