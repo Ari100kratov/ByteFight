@@ -89,10 +89,12 @@ export default function GameArenaPage() {
               {/* Блок кода */}
               <ResizablePanel defaultSize={60}>
                 {character ? (
-                  <CharacterCodeBlock
-                    characterId={character.id}
-                    className="rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r"
-                  />
+                  <div className="h-full overflow-auto">
+                    <CharacterCodeBlock
+                      characterId={character.id}
+                      className="rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r"
+                    />
+                  </div>
                 ) : (
                   <Card className="flex flex-col w-full h-full overflow-auto rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r overflow-auto">
                     <CardHeader>

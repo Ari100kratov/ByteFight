@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { CodeActionsMenu } from "./CodeActionsMenu"
 import type { LocalCode } from "../types"
+import { CodeEditor } from "@/features/code-editor/CodeEditor"
 
 type Props = {
   codes: LocalCode[]
@@ -47,10 +48,9 @@ export function CodeTabs({ codes, activeTab, onTabChange, onAdd, onRename, onDel
       {/* Контент вкладок */}
       {codes.map(c => (
         <TabsContent key={c.id} value={c.id} className="flex-1 flex flex-col mt-2">
-          <textarea
+          <CodeEditor
             value={c.sourceCode}
-            onChange={(e) => onChangeSource(c.id, e.target.value)}
-            className="flex-1 w-full border rounded-md p-2 font-mono text-sm resize-none"
+            onChange={(v) => onChangeSource(c.id, v)}
           />
         </TabsContent>
       ))}
