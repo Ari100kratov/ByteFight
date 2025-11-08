@@ -18,16 +18,21 @@ import { useCharacterDetails } from "../hooks/useCharacterDetails"
 import { useCharacterStateStore } from "@/features/game/state/game/character.state.store"
 import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
 import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
+import { StatType } from "@/shared/types/stat"
 
 export function SelectCharacterCard() {
   const { data: characters, isLoading, error } = useCharacters()
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>()
   const { data: character } = useCharacterDetails(selectedCharacterId)
+  const init = useCharacterStateStore(s => s.init)
 
   useEffect(() => {
-    if (character) {
-      useCharacterStateStore.getState().init()
-    }
+    if (!character) return
+
+    const health = character.class.stats.find(s => s.statType === StatType.Health)?.value
+    const mana = character.class.stats.find(s => s.statType === StatType.Mana)?.value
+    init({ characterId: character.id, maxHp: health ?? 0, maxMp: mana })
+
   }, [character?.id])
 
   const handleCreateClick = () => {

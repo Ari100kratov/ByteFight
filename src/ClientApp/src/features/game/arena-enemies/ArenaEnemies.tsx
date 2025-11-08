@@ -4,6 +4,7 @@ import { useEnemiesStore } from "../state/data/enemies.data.store"
 import { useArenaEnemies } from "./useArenaEnemies"
 import { fetchEnemy } from "./fetchEnemy"
 import { useEnemyStateStore } from "../state/game/enemy.state.store"
+import { StatType } from "@/shared/types/stat"
 
 export function ArenaEnemies() {
   const { data: arenaEnemies } = useArenaEnemies()
@@ -17,14 +18,25 @@ export function ArenaEnemies() {
     if (uniqueEnemyIds.length === 0) return
 
     Promise.all(uniqueEnemyIds.map(fetchEnemy))
-      .then(setEnemies)
-      .catch(console.error)
+      .then((enemiesData) => {
+        setEnemies(enemiesData)
 
-    const initPayload = arenaEnemies.map(e => ({
-      arenaEnemyId: e.id,
-      position: e.position,
-    }))
-    init(initPayload)
+        const initPayload = arenaEnemies.map((arenaEnemy) => {
+          const enemyData = enemiesData.find(e => e.id === arenaEnemy.enemyId)
+          const health = enemyData?.stats.find(s => s.statType === StatType.Health)?.value
+          const mana = enemyData?.stats.find(s => s.statType === StatType.Mana)?.value
+
+          return {
+            arenaEnemyId: arenaEnemy.id,
+            position: arenaEnemy.position,
+            maxHp: health ?? 0,
+            maxMp: mana,
+          }
+        })
+
+        init(initPayload)
+      })
+      .catch(console.error)
   }, [arenaEnemies])
 
   if (!arenaEnemies)

@@ -1,23 +1,20 @@
 import { create } from "zustand"
 import { ActionType } from "@/shared/types/action"
-import type { PositionDto } from "../../types"
-
-type EnemyRuntime = {
-  arenaEnemyid: string
-  currentAction: ActionType
-  position: PositionDto
-}
+import type { PositionDto } from "../../shared/types"
+import type { UnitRuntime } from "./types/unit.runtime"
 
 type InitPayload = {
   arenaEnemyId: string
   position: PositionDto
+  maxHp: number
+  maxMp?: number
 }
 
 type EnemyRuntimeStore = {
-  arenaEnemies: Record<string, EnemyRuntime>
+  arenaEnemies: Record<string, UnitRuntime>
   init: (arenaEnemies: InitPayload[]) => void
-  set: (arenaEnemyId: string, partial: Partial<EnemyRuntime>) => void
-  get: (arenaEnemyId?: string) => EnemyRuntime | undefined
+  set: (arenaEnemyId: string, partial: Partial<UnitRuntime>) => void
+  get: (arenaEnemyId?: string) => UnitRuntime | undefined
   reset: () => void
 }
 
@@ -28,12 +25,15 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
     const current = get().arenaEnemies
     const updated = { ...current }
 
-    for (const { arenaEnemyId, position } of arenaEnemies) {
+    for (const { arenaEnemyId, position, maxHp, maxMp } of arenaEnemies) {
       if (updated[arenaEnemyId]) continue
       updated[arenaEnemyId] = {
-        arenaEnemyid: arenaEnemyId,
+        id: arenaEnemyId,
         currentAction: ActionType.Idle,
-        position,
+        position: position,
+        hp: { current: maxHp, max: maxHp },
+        mp: maxMp ? { current: maxMp, max: maxMp } : undefined,
+        facing: "left"
       }
     }
 

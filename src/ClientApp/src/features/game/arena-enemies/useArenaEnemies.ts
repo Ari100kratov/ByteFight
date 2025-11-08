@@ -1,5 +1,5 @@
 import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
-import type { PositionDto } from "../types"
+import type { PositionDto } from "../shared/types"
 import { queryKeys } from "@/shared/lib/queryKeys"
 import { useArenaStore } from "../state/data/arena.data.store"
 import { useStoreQuery } from "@/shared/hooks/useStoreQuery"

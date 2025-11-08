@@ -1,26 +1,37 @@
 import { create } from "zustand"
 import { ActionType } from "@/shared/types/action"
-import type { PositionDto } from "../../types"
+import type { UnitRuntime } from "./types/unit.runtime"
 
-type CharacterRuntime = {
-  currentAction: ActionType
-  position: PositionDto
+type InitPayload = {
+  characterId: string
+  maxHp: number
+  maxMp?: number
 }
 
 type CharacterRuntimeState = {
-  runtime?: CharacterRuntime
-  set: (runtime: Partial<CharacterRuntime>) => void
-  init: () => void
+  runtime?: UnitRuntime
+  set: (runtime: Partial<UnitRuntime>) => void
+  init: (payload: InitPayload) => void
   reset: () => void
 }
 
 export const useCharacterStateStore = create<CharacterRuntimeState>((set, get) => ({
   runtime: undefined,
 
-  init: () => {
-    const { runtime } = get()
-    if (runtime) return
-    set({ runtime: { currentAction: ActionType.Idle, position: { x: 0, y: 0 } } })
+  init: (payload) => {
+    const prev = get().runtime
+    if (!prev || prev.id !== payload.characterId) {
+      set({
+        runtime: {
+          id: payload.characterId,
+          currentAction: ActionType.Idle,
+          position: { x: 0, y: 0 },
+          hp: { current: payload.maxHp, max: payload.maxHp },
+          mp: payload.maxMp ? { current: payload.maxMp, max: payload.maxMp } : undefined,
+          facing: "right",
+        },
+      })
+    }
   },
 
   set: (runtime) => {
