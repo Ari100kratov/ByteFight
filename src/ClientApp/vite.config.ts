@@ -12,6 +12,13 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+
+      '/game-runtime-hub': {
+        target: 'http://localhost:5000',
+        ws: true,
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   resolve: {

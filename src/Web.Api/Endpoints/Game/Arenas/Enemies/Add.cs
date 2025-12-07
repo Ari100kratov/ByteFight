@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Application.Game.Arenas.Enemies.Add;
-using Application.Game.Arenas.Enemies.Dtos;
 using SharedKernel;
 using Web.Api.Extensions;
 

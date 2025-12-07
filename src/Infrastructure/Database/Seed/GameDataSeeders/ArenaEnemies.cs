@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Game.Arenas.ArenaEnemies;
+using Domain.ValueObjects;
 
 namespace Infrastructure.Database.Seed.GameDataSeeders;
 

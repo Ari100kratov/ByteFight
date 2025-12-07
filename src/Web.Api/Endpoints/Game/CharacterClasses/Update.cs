@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Application.Game.CharacterClasses.Update;
-using Application.Game.Common.Dtos;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;

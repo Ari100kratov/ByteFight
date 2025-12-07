@@ -6,4 +6,3 @@ public enum GameModeType
     PvE = 1,
     PvP = 2
 }
-

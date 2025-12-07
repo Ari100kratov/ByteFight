@@ -17,7 +17,7 @@ internal sealed class GetByMode : IEndpoint
             CancellationToken cancellationToken) =>
         {
             // TODO: сделать по-человечески парсинг перечисления из query-параметра
-            if (!Enum.TryParse<GameModeType>(mode, true, out GameModeType parsedMode))
+            if (!Enum.TryParse(mode, true, out GameModeType parsedMode))
             {
                 return Results.BadRequest($"Invalid mode: {mode}");
             }

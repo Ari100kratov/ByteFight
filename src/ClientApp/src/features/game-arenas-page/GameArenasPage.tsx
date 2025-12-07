@@ -1,26 +1,15 @@
-import { useEffect, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import { useArenasByMode, type ArenaResponse } from "./useArenasByMode"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { GameArenaCard } from "./components/GameArenaCard"
-import { ModeNames } from "./types"
+import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
 
 export default function GameArenasPage() {
-  const { modeType } = useParams<{ modeType: string }>()
-  const { setName } = useBreadcrumbNames()
   const navigate = useNavigate()
 
-  const modeName = useMemo(() => {
-    return modeType ? ModeNames[modeType] ?? "Неизвестный режим" : "Неизвестный режим"
-  }, [modeType])
-
-  useEffect(() => {
-    if (modeType) {
-      setName(`/play/${modeType}`, modeName)
-    }
-  }, [modeType, modeName, setName])
+  const { modeType } = useParams<{ modeType: string }>()
+  useArenaBreadcrumbs({ modeType })
 
   const handleArenaClick = (arena: ArenaResponse) => {
     navigate(`/play/${modeType}/${arena.id}`)

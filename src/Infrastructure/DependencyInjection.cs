@@ -7,6 +7,7 @@ using Infrastructure.Authorization;
 using Infrastructure.Database;
 using Infrastructure.Database.Auth;
 using Infrastructure.Database.Game;
+using Infrastructure.Database.GameRuntime;
 using Infrastructure.Database.Seed;
 using Infrastructure.DomainEvents;
 using Infrastructure.Storage;
@@ -65,6 +66,14 @@ public static class DependencyInjection
                 .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IGameDbContext>(sp => sp.GetRequiredService<GameDbContext>());
+
+        services.AddDbContext<GameRuntimeDbContext>(
+            options => options
+                .UseNpgsql(connectionString, npgsqlOptions =>
+                    npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.GameRuntime))
+                .UseSnakeCaseNamingConvention());
+
+        services.AddScoped<IGameRuntimeDbContext>(sp => sp.GetRequiredService<GameRuntimeDbContext>());
 
         services.AddScoped<DatabaseSeeder>();
         services.AddScoped<AuthDataSeeder>();

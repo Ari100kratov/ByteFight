@@ -1,10 +1,8 @@
-using System.Linq;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Game.Common.Dtos;
+using Application.Contracts;
 using Domain;
-using Domain.Auth.Users;
 using Domain.Game.Characters;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;

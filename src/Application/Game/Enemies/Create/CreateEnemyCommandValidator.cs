@@ -1,4 +1,4 @@
-﻿using Application.Game.Common.Dtos;
+﻿using Application.Contracts;
 using FluentValidation;
 
 namespace Application.Game.Enemies.Create;

@@ -10,7 +10,7 @@ type Props = {
 export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
   const arenaEnemy = useArenaEnemiesStore(s => s.getArenaEnemy(arenaEnemyId));
   const runtime = useEnemyStateStore(s => s.get(arenaEnemy?.id))
-  const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.currentAction));
+  const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action));
 
   if (!runtime || !spriteAnimation)
     return null;
@@ -19,6 +19,7 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
     <UnitAnimatedSprite
       unitRuntume={runtime}
       spriteAnimation={spriteAnimation}
+      onSpriteReady={(ref) => { useEnemyStateStore.getState().set(arenaEnemyId, { spriteRef: ref }) }}
     />
   )
 }

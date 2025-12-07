@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Database\Auth\Migrations\" />
+    <Folder Include="Database\GameRuntime\Migrations\" />
     <Folder Include="Database\Game\Migrations\" />
   </ItemGroup>
 

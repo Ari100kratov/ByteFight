@@ -1,7 +1,8 @@
 import { create } from "zustand"
 import { ActionType } from "@/shared/types/action"
 import type { PositionDto } from "../../shared/types"
-import type { UnitRuntime } from "./types/unit.runtime"
+import type { UnitRuntime } from "../../types/UnitRuntime"
+import { FacingDirection } from "../../types/common"
 
 type InitPayload = {
   arenaEnemyId: string
@@ -29,11 +30,11 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
       if (updated[arenaEnemyId]) continue
       updated[arenaEnemyId] = {
         id: arenaEnemyId,
-        currentAction: ActionType.Idle,
-        position: position,
+        action: ActionType.Idle,
         hp: { current: maxHp, max: maxHp },
         mp: maxMp ? { current: maxMp, max: maxMp } : undefined,
-        facing: "left"
+        facing: FacingDirection.Left,
+        position: position
       }
     }
 

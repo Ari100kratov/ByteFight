@@ -1,6 +1,6 @@
 import { extend } from "@pixi/react";
 import { Graphics, Container } from "pixi.js";
-import type { UnitRuntime } from "../../state/game/types/unit.runtime";
+import type { UnitRuntime } from "../../types/UnitRuntime";
 
 extend({ Graphics, Container });
 

@@ -33,11 +33,12 @@ export default function App() {
         >
           {/* вложенные страницы */}
           <Route index element={<Navigate to="/play" replace />} />
-          
+
           <Route path="play">
             <Route index element={<GameModesPage />} />
             <Route path=":modeType" element={<GameArenasPage />} />
             <Route path=":modeType/:arenaId" element={<GameArenaPage />} key={window.location.pathname} />
+            <Route path=":modeType/:arenaId/:sessionId" element={<GameArenaPage />} key={window.location.pathname} />
           </Route>
 
           <Route path="characters">

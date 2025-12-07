@@ -1,4 +1,4 @@
-﻿using Application.Game.Common.Dtos;
+﻿using Application.Contracts;
 using Domain.Game.CharacterClasses;
 
 namespace Application.Game.CharacterClasses.GetAll;

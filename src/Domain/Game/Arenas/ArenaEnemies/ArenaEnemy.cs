@@ -1,4 +1,5 @@
 ﻿using Domain.Game.Enemies;
+using Domain.ValueObjects;
 using SharedKernel;
 
 namespace Domain.Game.Arenas.ArenaEnemies;

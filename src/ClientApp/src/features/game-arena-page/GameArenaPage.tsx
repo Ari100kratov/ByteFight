@@ -1,47 +1,28 @@
-import { useEffect } from "react"
 import { useParams } from "react-router-dom"
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable"
-import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
 import { SelectCharacterCard } from "./components/SelectCharacterCard"
 import { ArenaCard } from "./components/ArenaCard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ModeNames } from "../game-arenas-page/types"
 import { useArena } from "./hooks/useArena"
 import { useCharacterStore } from "../game/state/data/character.data.store"
-import { resetGameStores } from "../game/state/stateReset"
+import { useGameSession } from "./hooks/useGameSession"
+import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
 
 export default function GameArenaPage() {
-  const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
-  const { setName } = useBreadcrumbNames()
-  const { data: arena, isLoading, error } = useArena(arenaId)
+  const { modeType, arenaId, sessionId } = useParams()
 
+  const { data: arena, isLoading, error } = useArena(arenaId)
   const character = useCharacterStore(s => s.character)
 
-  useEffect(() => {
-    return () => {
-      resetGameStores()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (modeType) {
-      const modeName = ModeNames[modeType] ?? "Неизвестный режим"
-      setName(`/play/${modeType}`, modeName)
-    }
-  }, [modeType, setName])
-
-  useEffect(() => {
-    if (arena) {
-      setName(`/play/${modeType}/${arena.id}`, arena.name)
-    }
-  }, [arena, modeType, setName])
+  useArenaBreadcrumbs({ modeType, arena })
+  useGameSession(sessionId)
 
   return (
     <div className="flex flex-col gap-6 p-4 w-full h-full">

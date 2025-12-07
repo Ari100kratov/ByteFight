@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Game.Common.Dtos;
+using Application.Contracts;
 
 namespace Application.Game.CharacterClasses.Update;
 

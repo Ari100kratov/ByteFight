@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Game.Arenas.Enemies.Dtos;
+using Application.Contracts;
 
 namespace Application.Game.Arenas.Enemies.Add;
 

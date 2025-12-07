@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Game.Common.Dtos;
+using Application.Contracts;
 using Domain.Game.CharacterClasses;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;

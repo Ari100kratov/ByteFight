@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Database.Auth;
 using Infrastructure.Database.Game;
+using Infrastructure.Database.GameRuntime;
 using Infrastructure.Database.Seed;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ public static class MigrationExtensions
     {
         AuthMigrations(app);
         GameMigrations(app);
+        GameRuntimeMigrations(app);
     }
 
     private static void AuthMigrations(IApplicationBuilder app)
@@ -29,6 +31,16 @@ public static class MigrationExtensions
 
         using GameDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<GameDbContext>();
+
+        dbContext.Database.Migrate();
+    }
+
+    private static void GameRuntimeMigrations(IApplicationBuilder app)
+    {
+        using IServiceScope scope = app.ApplicationServices.CreateScope();
+
+        using GameRuntimeDbContext dbContext =
+            scope.ServiceProvider.GetRequiredService<GameRuntimeDbContext>();
 
         dbContext.Database.Migrate();
     }

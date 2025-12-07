@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Application.Game.Common.Dtos;
+using Application.Contracts;
 using Application.Game.Enemies.Create;
 using SharedKernel;
 using Web.Api.Extensions;

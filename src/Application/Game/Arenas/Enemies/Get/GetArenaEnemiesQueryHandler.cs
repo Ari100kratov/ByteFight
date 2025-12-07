@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Game.Arenas.Enemies.Dtos;
+using Application.Contracts;
 using Domain.Game.Arenas;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;

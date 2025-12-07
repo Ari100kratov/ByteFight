@@ -33,6 +33,10 @@ export const queryKeys = {
 
   characterClasses: {
     all: ['character-classes', 'all'] as const
+  },
+
+  gameSessions: {
+    byId: (id: string | undefined) => ['game-sessions', 'byId', id] as const,
   }
 
 } as const

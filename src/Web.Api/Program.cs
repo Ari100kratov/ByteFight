@@ -1,6 +1,9 @@
 using System.Reflection;
 using Application;
+using Application.Abstractions.GameRuntime;
 using Aspire.ServiceDefaults;
+using GameRuntime;
+using GameRuntime.Realtime;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -27,7 +30,8 @@ builder.Services.AddCors(options =>
 builder.Services
     .AddApplication()
     .AddPresentation()
-    .AddInfrastructure(builder.Configuration);
+    .AddInfrastructure(builder.Configuration)
+    .AddGameRuntimeInfrastructure();
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
@@ -63,6 +67,8 @@ app.UseAuthorization();
 
 // REMARK: If you want to use Controllers, you'll need this.
 app.MapControllers();
+
+app.MapHub<GameRuntimeHub>(GameRuntimeHubConstants.HubUrl);
 
 await app.RunAsync();
 
