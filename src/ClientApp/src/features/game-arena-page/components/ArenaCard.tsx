@@ -9,13 +9,15 @@ import { useStartGame } from "@/features/game/api/useStartGame"
 import { toast } from "sonner"
 import { useNavigate, useParams } from "react-router-dom"
 import { useGameBootstrapStore } from "@/features/game/state/game.bootstrap.store"
+import { useCodeEditorStore } from "@/features/character-code-block/state/codeEditor.store"
 
 export function ArenaCard() {
   const navigate = useNavigate()
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
 
-  const arena = useArenaStore((s) => s.arena)
-  const character = useCharacterStore((s) => s.character)
+  const arena = useArenaStore(s => s.arena)
+  const character = useCharacterStore(s => s.character)
+  const getActiveCode = useCodeEditorStore(s => s.getActiveCode)
   const { start: startLoading, isLoading } = useGameBootstrapStore()
 
   const { mutateAsync: startGame } = useStartGame()
@@ -36,13 +38,19 @@ export function ArenaCard() {
       return
     }
 
+    const localCode = getActiveCode()
+    if (!localCode) {
+      toast.error("Пользовательский код не задан")
+      return
+    }
+
     startLoading()
 
     const sessionId = await startGame({
       arenaId: arenaId,
       mode: modeType,
       characterId: character.id,
-      code: ""
+      code: localCode.sourceCode
     })
 
     navigate(`/play/${modeType}/${arenaId}/${sessionId}`)

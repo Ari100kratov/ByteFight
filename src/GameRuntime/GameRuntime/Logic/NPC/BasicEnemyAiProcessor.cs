@@ -3,6 +3,7 @@ using Domain.GameRuntime.RuntimeLogEntries;
 using Domain.ValueObjects;
 using GameRuntime.Logic.Actions;
 using GameRuntime.Logic.NPC.PathFinding;
+using GameRuntime.Logic.Turns;
 using GameRuntime.World;
 using GameRuntime.World.Units;
 

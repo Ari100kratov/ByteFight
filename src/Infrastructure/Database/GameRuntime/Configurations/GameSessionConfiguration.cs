@@ -1,6 +1,4 @@
 ﻿using Domain;
-using Domain.GameRuntime.GameResults;
-using Domain.GameRuntime.GameSessionParticipants;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

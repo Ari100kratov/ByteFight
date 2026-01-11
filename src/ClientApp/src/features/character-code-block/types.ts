@@ -7,7 +7,7 @@ export const ChangeStatus = {
 
 type ChangeStatus = (typeof ChangeStatus)[keyof typeof ChangeStatus]
 
-export type LocalCode = {
+export type EditableCode = {
   id: string
   name: string
   sourceCode: string

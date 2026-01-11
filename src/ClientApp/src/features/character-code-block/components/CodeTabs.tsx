@@ -2,11 +2,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { CodeActionsMenu } from "./CodeActionsMenu"
-import type { LocalCode } from "../types"
+import type { EditableCode } from "../types"
 import { CodeEditor } from "@/features/code-editor/CodeEditor"
 
 type Props = {
-  codes: LocalCode[]
+  codes: EditableCode[]
   activeTab: string | undefined
   onTabChange: (id: string) => void
   onAdd: () => void

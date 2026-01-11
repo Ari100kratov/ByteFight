@@ -2,7 +2,7 @@
 using GameRuntime.World;
 using GameRuntime.World.Units;
 
-namespace GameRuntime.Logic.NPC;
+namespace GameRuntime.Logic.Turns;
 
 internal interface IUnitTurnProcessor
 {

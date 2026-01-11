@@ -39,6 +39,7 @@ internal sealed class GameHost(
                 "Failed to start game session. UserId {UserId}, ArenaId {ArenaId}, CharacterId {CharacterId}, Mode {Mode}",
                 initModel.UserId, initModel.ArenaId, initModel.CharacterId, initModel.Mode);
 
+            // TODO: Передавать причину ошибки?
             return Result.Failure<Guid>(GameHostErrors.StartFailure(initModel));
         }
     }

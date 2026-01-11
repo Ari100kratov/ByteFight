@@ -1,5 +1,4 @@
 ﻿using Domain.GameRuntime.RuntimeLogEntries;
-using GameRuntime.Logic.NPC;
 using GameRuntime.World;
 using GameRuntime.World.Units;
 
@@ -7,28 +6,26 @@ namespace GameRuntime.Logic.Turns;
 
 internal sealed class GameTurnProcessor : IGameTurnProcessor
 {
-    private readonly IUnitTurnProcessor _unitAi;
+    private readonly IUnitTurnProcessor _npcAi;
+    private readonly IUnitTurnProcessor _playerAi;
 
-    public GameTurnProcessor(IUnitTurnProcessor unitAi)
+    public GameTurnProcessor(IUnitTurnProcessor npcAi, IUnitTurnProcessor playerAi)
     {
-        _unitAi = unitAi;
+        _npcAi = npcAi;
+        _playerAi = playerAi;
     }
 
     public async Task<TurnLog> ProcessTurn(ArenaWorld world)
     {
         world.IncrementTurn();
 
-        IEnumerable<RuntimeLogEntry> logs = EnemiesTurn(world);
+        var logs = new List<RuntimeLogEntry>();
 
-        return new TurnLog
+        if (!world.Player.IsDead)
         {
-            TurnIndex = world.TurnIndex,
-            Logs = [.. logs]
-        };
-    }
+            logs.AddRange(_playerAi.ProcessTurn(world.Player, world));
+        }
 
-    private IEnumerable<RuntimeLogEntry> EnemiesTurn(ArenaWorld world)
-    {
         foreach (EnemyUnit enemy in world.Enemies)
         {
             if (world.Player.IsDead)
@@ -41,10 +38,13 @@ internal sealed class GameTurnProcessor : IGameTurnProcessor
                 continue;
             }
 
-            foreach (RuntimeLogEntry logEntry in _unitAi.ProcessTurn(enemy, world))
-            {
-                yield return logEntry;
-            }
+            logs.AddRange(_npcAi.ProcessTurn(enemy, world));
         }
+
+        return new TurnLog
+        {
+            TurnIndex = world.TurnIndex,
+            Logs = logs
+        };
     }
 }

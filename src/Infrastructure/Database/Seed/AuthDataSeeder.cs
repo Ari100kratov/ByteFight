@@ -22,7 +22,7 @@ public class AuthDataSeeder(
                 Email: "admin@bytefight.ru",
                 FirstName: "System",
                 LastName: "Admin",
-                Password: "Ari100krat"
+                Password: "admin123"
             ),
             cancellationToken
         );

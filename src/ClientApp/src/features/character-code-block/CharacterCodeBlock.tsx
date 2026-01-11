@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { LoaderState } from "@/components/common/LoaderState"
 import { useCharacterCodes } from "@/features/character-code-block/hooks/useCharacterCodes"
 import { useCodeTemplate } from "@/features/character-code-block/hooks/useCodeTemplate"
-import { useLocalCodes } from "./hooks/useLocalCodes"
+import { useCodeEditor } from "./hooks/useCodeEditor"
 import { CodeTabs } from "./components/CodeTabs"
 import { ChangeStatus } from "./types"
 import { ConfirmDialog } from "@/components/common/ConfirmDialog"
@@ -24,19 +24,19 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
   const templateQuery = useCodeTemplate()
   const { mutate: updateCodes, isPending } = useUpdateCodes()
 
-  const { localCodes, activeTab, setActiveTab, addCode, deleteCode, renameCode, changeSource, resetChanges } =
-    useLocalCodes(codesQuery, templateQuery)
+  const { codes, activeCodeId, setActiveCode, addCode, markCodeDeleted, renameCode, updateCodeSource, resetToBaseline } =
+    useCodeEditor(codesQuery, templateQuery)
 
-  const hasChanges = localCodes.some(c => c.status !== ChangeStatus.Unchanged)
+  const hasChanges = codes.some(c => c.status !== ChangeStatus.Unchanged)
 
   const handleSave = () => {
-    const created = localCodes
+    const created = codes
       .filter(c => c.status === ChangeStatus.Created)
       .map(({ id, name, sourceCode }) => ({ id, name, sourceCode }))
-    const updated = localCodes
+    const updated = codes
       .filter(c => c.status === ChangeStatus.Updated)
       .map(({ id, name, sourceCode }) => ({ id, name, sourceCode }))
-    const deletedIds = localCodes
+    const deletedIds = codes
       .filter(c => c.status === ChangeStatus.Deleted)
       .map(c => c.id)
 
@@ -70,15 +70,15 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
           }
           skeletonClassName="w-full h-full rounded-md"
         >
-          {localCodes.length > 0 && (
+          {codes.length > 0 && (
             <CodeTabs
-              codes={localCodes.filter(c => c.status !== "deleted")}
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
+              codes={codes.filter(c => c.status !== "deleted")}
+              activeTab={activeCodeId}
+              onTabChange={setActiveCode}
               onAdd={addCode}
               onRename={renameCode}
-              onDelete={deleteCode}
-              onChangeSource={changeSource}
+              onDelete={markCodeDeleted}
+              onChangeSource={updateCodeSource}
             />
           )}
         </LoaderState>
@@ -103,7 +103,7 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
             }
             title="Отменить изменения?"
             description="Все несохранённые изменения будут потеряны."
-            onConfirm={resetChanges}
+            onConfirm={resetToBaseline}
           />
           <Button onClick={handleSave} disabled={isPending}>
             {isPending ? (
