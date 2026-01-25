@@ -38,6 +38,10 @@ internal sealed class UserActionExecutor
         ArenaWorld world)
     {
         BaseUnit target = world.GetUnit(action.TargetId);
+        if (target.IsDead)
+        {
+            return [new IdleLogEntry(actor.Id)];
+        }
 
         int distance = actor.Position.ManhattanDistance(target.Position);
         int attackRange = (int)Math.Ceiling(actor.Stats.Get(StatType.AttackRange));

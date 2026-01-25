@@ -23,7 +23,15 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     if (!actionType) return undefined
     const character = get().character
     if (!character) return undefined
-    return character.class.actionAssets.find(a => a.actionType === actionType && a.variant === 0)?.spriteAnimation
+
+    const variants = character.class.actionAssets
+      .filter(a => a.actionType === actionType);
+
+    if (variants.length === 0) return undefined;
+
+    // выбираем случайный
+    const randomIndex = Math.floor(Math.random() * variants.length);
+    return variants[randomIndex].spriteAnimation;
   },
   reset: () => set({ character: undefined }),
 }))

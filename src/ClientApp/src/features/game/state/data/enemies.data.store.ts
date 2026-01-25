@@ -29,7 +29,15 @@ export const useEnemiesStore = create<EnemiesState>((set, get) => ({
     if (!enemyId || !actionType) return undefined
     const enemy = get().enemies[enemyId]
     if (!enemy) return undefined
-    return enemy.actionAssets.find(a => a.actionType === actionType)?.spriteAnimation
+
+    const variants = enemy.actionAssets
+      .filter(a => a.actionType === actionType);
+
+    if (variants.length === 0) return undefined;
+
+    // выбираем случайный
+    const randomIndex = Math.floor(Math.random() * variants.length);
+    return variants[randomIndex].spriteAnimation;
   },
   reset: () => set({ enemies: {} }),
 }))

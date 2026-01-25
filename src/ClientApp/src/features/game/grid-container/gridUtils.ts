@@ -1,3 +1,5 @@
+import type { Position } from "../types/common";
+
 export type GridSize = { width: number; height: number }
 export type CanvasSize = { width: number; height: number }
 
@@ -50,4 +52,18 @@ export function calculateGridLayout(gridSize: GridSize, canvasSize: CanvasSize):
   })
 
   return { gridSize, cellSize, gridPixelWidth, gridPixelHeight, offsetX, offsetY, cells }
+}
+
+const FOOT_OFFSET_Y = 10;
+
+export function gridToPixel(
+  pos: Position,
+  layout: GridLayout
+) {
+  const cell = layout.cells[pos.y][pos.x];
+
+  return {
+    x: cell.x + cell.width / 2,
+    y: cell.y + cell.height - FOOT_OFFSET_Y,
+  };
 }

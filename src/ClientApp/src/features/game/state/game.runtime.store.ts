@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { type TurnLog, isWalk } from "../types/TurnLog";
+import { type TurnLog } from "../types/TurnLog";
 import type { GameSession } from "../types/GameSession";
-import { moveUnitSmooth } from "../animation/animationController";
+import { playRuntimeLog } from "../runtime/playRuntimeLog";
 
 interface GameRuntimeState {
   session: GameSession | null;
@@ -36,9 +36,7 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
     set({ isProcessing: true });
 
     for (const entry of turn.logs) {
-      if (isWalk(entry)) {
-        await moveUnitSmooth(entry);
-      }
+      await playRuntimeLog(entry);
     }
 
     set((s) => ({

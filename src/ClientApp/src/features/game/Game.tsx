@@ -11,8 +11,8 @@ export function Game() {
     <Application width={canvasSize.width} height={canvasSize.height}>
       <BackgroundSprite />
       <GridContainer />
-      <CharacterAnimatedSprite />
       <ArenaEnemies />
+      <CharacterAnimatedSprite />
     </Application>
   )
 }
