@@ -1,6 +1,6 @@
-# ASP.NET Core 8 Project Rules
+# ASP.NET Core 10 Project Rules
 
-- Use C# 12 language features where appropriate
+- Use C# 14 language features where appropriate
 - Follow SOLID principles in class and interface design
 - Implement dependency injection for loose coupling
 - Use primary constructors for dependency injection in services, use cases, etc.
@@ -22,7 +22,7 @@
 - Implement proper CORS policies
 - Use secure communication with HTTPS
 - Implement proper model validation
-- Use Swagger/OpenAPI for API documentation
+- Use Scalar/OpenAPI for API documentation
 - Implement proper logging with structured logging
 - Use background services for long-running tasks
 - Favor explicit typing (this is very important). Only use var when evident.

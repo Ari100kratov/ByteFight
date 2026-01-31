@@ -7,14 +7,13 @@ using GameRuntime.Realtime;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Scalar.AspNetCore;
 using Web.Api;
 using Web.Api.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-
-builder.Services.AddSwaggerGenWithAuth();
 
 builder.Services.AddCors(options =>
 {
@@ -26,6 +25,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddOpenApi();
 
 builder.Services
     .AddApplication()
@@ -43,7 +43,8 @@ app.MapEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwaggerWithUi();
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 
     app.ApplyMigrations();
 
