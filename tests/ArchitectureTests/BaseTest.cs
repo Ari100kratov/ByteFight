@@ -2,7 +2,6 @@
 using Application.Abstractions.Messaging;
 using Domain.Auth.Users;
 using Infrastructure.Database.Auth;
-using Web.Api;
 
 namespace ArchitectureTests;
 
