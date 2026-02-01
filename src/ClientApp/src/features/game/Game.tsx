@@ -1,18 +1,23 @@
-import { Application } from "@pixi/react"
+import { Application, extend } from "@pixi/react"
+import { Container } from "pixi.js"
 import { GridContainer } from "./grid-container/GridContainer"
 import { BackgroundSprite } from "./background-sprite/BackgroundSprite"
 import { ArenaEnemies } from "./arena-enemies/ArenaEnemies"
-import { useGridStore } from "./state/game/grid.state.store"
 import { CharacterAnimatedSprite } from "./character-sprite/CharacterAnimatedSprite"
+import { ResizeHandler } from "./ResizeHandler"
+
+extend({ Container })
 
 export function Game() {
-  const canvasSize = useGridStore(s => s.canvasSize)
   return (
-    <Application width={canvasSize.width} height={canvasSize.height}>
+    <Application>
+      <ResizeHandler />
       <BackgroundSprite />
       <GridContainer />
-      <ArenaEnemies />
-      <CharacterAnimatedSprite />
+      <pixiContainer sortableChildren={true}>
+        <CharacterAnimatedSprite />
+        <ArenaEnemies />
+      </pixiContainer>
     </Application>
   )
 }

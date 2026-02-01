@@ -15,18 +15,17 @@ interface Props {
 export function UnitBars({ runtime, x, y, spriteHeight, cellWidth }: Props) {
   const barWidth = cellWidth - 12;
   const barHeight = 5;
-  const barYOffset = -5; // смещение сверху
+  const barYOffset = runtime.mp ? 3 : -2;
 
   const hpRatio = runtime.hp.current / runtime.hp.max;
   const mpRatio = runtime.mp ? runtime.mp.current / runtime.mp.max : 0;
 
-  // бар рисуем чуть выше спрайта
   const hpY = y - spriteHeight * 0.8 - barYOffset;
   const mpY = hpY + barHeight + 2;
   const barX = x - barWidth / 2
 
   return (
-    <pixiContainer>
+    <pixiContainer zIndex={1}>
       {/* HP */}
       <pixiGraphics
         draw={(g) => {

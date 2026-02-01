@@ -2,11 +2,17 @@
 
 namespace GameRuntime.Realtime;
 
-public sealed class GameRuntimeHub : Hub
+public sealed class GameRuntimeHub(IGameSessionRealtimeRegistry registry) : Hub
 {
-    public Task JoinGame(Guid gameSessionId)
-        => Groups.AddToGroupAsync(Context.ConnectionId, gameSessionId.ToString());
+    public async Task JoinGame(Guid gameSessionId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, gameSessionId.ToString());
+        registry.MarkClientConnected(gameSessionId);
+    }
 
-    public Task LeaveGame(Guid gameSessionId)
-        => Groups.RemoveFromGroupAsync(Context.ConnectionId, gameSessionId.ToString());
+    public async Task LeaveGame(Guid gameSessionId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameSessionId.ToString());
+        registry.MarkClientDisconnected(gameSessionId);
+    }
 }

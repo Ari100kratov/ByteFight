@@ -1,4 +1,4 @@
-import { AnimatedSprite, Texture } from "pixi.js";
+import { AnimatedSprite, Container, Texture } from "pixi.js";
 import { extend } from "@pixi/react";
 import { useGridStore } from "../../state/game/grid.state.store";
 import type { UnitRuntime } from "../../types/UnitRuntime";
@@ -8,7 +8,7 @@ import { FacingDirection } from "../../types/common";
 import { useRef } from "react";
 import { UnitController } from "../../units/controller/UnitController";
 
-extend({ AnimatedSprite });
+extend({ AnimatedSprite, Container });
 
 interface Props {
   runtime: UnitRuntime;
@@ -54,7 +54,9 @@ export function UnitAnimatedSprite({
   };
 
   return (
-    <>
+    <pixiContainer
+      zIndex={spriteY}
+    >
       <UnitBars
         runtime={runtime}
         x={spriteX}
@@ -71,6 +73,6 @@ export function UnitAnimatedSprite({
         scale={{ x: scaleX, y: spriteAnimation.scale.y }}
         autoPlay={false}
       />
-    </>
+    </pixiContainer>
   );
 }

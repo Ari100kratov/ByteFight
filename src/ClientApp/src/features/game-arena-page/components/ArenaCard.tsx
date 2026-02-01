@@ -10,10 +10,18 @@ import { toast } from "sonner"
 import { useNavigate, useParams } from "react-router-dom"
 import { useGameBootstrapStore } from "@/features/game/state/game.bootstrap.store"
 import { useCodeEditorStore } from "@/features/character-code-block/state/codeEditor.store"
+import { useResizeObserver } from "@/shared/hooks/useResizeObserver"
+import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
 
 export function ArenaCard() {
   const navigate = useNavigate()
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
+
+  const setViewportSize = useViewportStore(s => s.setSize)
+
+  const arenaRef = useResizeObserver(size => {
+    setViewportSize(size)
+  }, 50)
 
   const arena = useArenaStore(s => s.arena)
   const character = useCharacterStore(s => s.character)
@@ -67,7 +75,10 @@ export function ArenaCard() {
         <CardTitle>{arena.name}</CardTitle>
         <CardDescription>{arena.description}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 p-0 flex justify-center items-center">
+      <CardContent
+        ref={arenaRef}
+        className="flex-1 p-0 flex justify-center items-center"
+      >
         <Game />
       </CardContent>
       <CardFooter className="flex justify-end">

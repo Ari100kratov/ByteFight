@@ -24,11 +24,10 @@ export class UnitSprite {
     animation: SpriteAnimationDto,
     action: ActionType,
     loop: boolean,
-    onFrame?: (frame: number) => void
+    onFrame?: (frame: number) => void | Promise<void>
   ): Promise<void> {
     if (!this.sprite) return;
 
-    // защита от повторного запуска
     if (this.currentAnimation === animation.url && loop) return;
     this.currentAnimation = animation.url;
     this.updateRuntime({ action });
@@ -36,8 +35,6 @@ export class UnitSprite {
     const textures = await useTexturesStore
       .getState()
       .getOrLoadTextures(animation.url, animation.frameCount);
-
-    this.updateRuntime({ textureHeight: textures[0].height });
 
     const sprite = this.sprite;
     sprite.textures = textures;
@@ -47,9 +44,22 @@ export class UnitSprite {
 
     if (loop) return;
 
+    let framePromise: Promise<void> | null = null;
+
     return new Promise(resolve => {
-      sprite.onFrameChange = onFrame;
-      sprite.onComplete = () => {
+      sprite.onFrameChange = frame => {
+        if (onFrame) {
+          const result = onFrame(frame);
+          if (result instanceof Promise) {
+            framePromise = result;
+          }
+        }
+      };
+
+      sprite.onComplete = async () => {
+        if (framePromise) {
+          await framePromise;
+        }
         sprite.onFrameChange = undefined;
         sprite.onComplete = undefined;
         resolve();

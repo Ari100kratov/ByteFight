@@ -1,30 +1,21 @@
 import { create } from "zustand"
-import { calculateGridLayout, type GridLayout, type GridSize } from "../../grid-container/gridUtils"
-
-type CanvasSize = {
-  width: number
-  height: number
-}
+import { calculateGridLayout } from "../../grid-container/gridUtils"
+import type { GridLayout, GridSize } from "../../grid-container/gridUtils"
+import type { ViewportSize } from "../viewport/viewport.store"
 
 type GridState = {
-  canvasSize: CanvasSize
   layout?: GridLayout
-  setLayout: (gridSize: GridSize) => void
-  setCanvasSize: (canvasSize: CanvasSize) => void
+  updateLayout: (grid: GridSize, viewport: ViewportSize) => void
   reset: () => void
 }
 
 export const useGridStore = create<GridState>((set) => ({
-  canvasSize: { width: 650, height: 450 }, // TODO: сделать динамическим/адаптивным значением
   layout: undefined,
-  setLayout: (gridSize) =>
-    set((state) => ({
-      layout: calculateGridLayout(gridSize, state.canvasSize)
-    })),
-  setCanvasSize: (canvasSize) =>
-    set({ canvasSize: canvasSize }),
 
-  reset: () => set({
-    layout: undefined
-  }),
+  updateLayout: (grid, viewport) =>
+    set({
+      layout: calculateGridLayout(grid, viewport),
+    }),
+
+  reset: () => set({ layout: undefined }),
 }))

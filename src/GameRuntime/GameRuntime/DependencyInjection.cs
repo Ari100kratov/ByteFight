@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddSingleton<IPathFinder, PathFinder>();
 
         services.AddSignalR();
+        services.AddSingleton<IGameSessionRealtimeRegistry, GameSessionRealtimeRegistry>();
         services.AddSingleton<IGameRuntimeEventSender, GameRuntimeHubEventSender>();
 
         return services;

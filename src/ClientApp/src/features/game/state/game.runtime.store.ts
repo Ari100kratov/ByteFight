@@ -22,17 +22,19 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
   setSession: (session) => set({ session }),
 
   enqueueTurn: (turn) => {
-    const { queue, isProcessing, processNext } = get();
-    set({ queue: [...queue, turn] });
+    set((state) => ({
+      queue: [...state.queue, turn],
+    }));
 
-    if (!isProcessing) processNext();
+    get().processNext();
   },
 
   processNext: async () => {
-    const { queue, isProcessing } = get();
-    if (isProcessing || queue.length === 0) return;
+    if (get().isProcessing) return;
 
-    const turn = queue[0];
+    const turn = get().queue[0];
+    if (!turn) return;
+
     set({ isProcessing: true });
 
     for (const entry of turn.logs) {
@@ -44,7 +46,8 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
       isProcessing: false,
     }));
 
-    if (get().queue.length > 0) get().processNext();
+    // гарантированная последовательность
+    queueMicrotask(() => get().processNext());
   },
 
   reset: () =>

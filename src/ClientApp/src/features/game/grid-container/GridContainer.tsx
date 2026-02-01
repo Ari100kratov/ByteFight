@@ -3,18 +3,24 @@ import { Graphics, Text, Container } from "pixi.js"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useEffect } from "react"
 import { useArenaStore } from "../state/data/arena.data.store"
+import { useViewportStore } from "../state/viewport/viewport.store"
 
 extend({ Graphics, Text, Container })
 
 export function GridContainer() {
 
   const arena = useArenaStore((s) => s.arena)
-  const { layout, setLayout } = useGridStore()
+  const viewport = useViewportStore(s => s.size)
+  const { layout, updateLayout } = useGridStore()
 
   useEffect(() => {
-    if (arena)
-      setLayout({ width: arena.gridWidth, height: arena.gridHeight })
-  }, [arena])
+    if (!arena) return
+
+    updateLayout(
+      { width: arena.gridWidth, height: arena.gridHeight },
+      viewport
+    )
+  }, [arena, viewport.width, viewport.height])
 
   if (!layout)
     return null

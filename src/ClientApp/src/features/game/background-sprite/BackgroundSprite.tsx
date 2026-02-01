@@ -18,9 +18,9 @@ export function BackgroundSprite() {
 
   return <pixiSprite
     texture={texture}
-    x={offsetX}
-    y={offsetY}
-    width={gridPixelWidth}
-    height={gridPixelHeight}
+    x={offsetX + gridPixelWidth / 2}
+    y={offsetY + gridPixelHeight / 2}
+    anchor={0.5}
+    scale={gridPixelWidth / texture.width}
   />
 }

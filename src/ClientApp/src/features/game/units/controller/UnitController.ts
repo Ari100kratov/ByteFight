@@ -29,23 +29,10 @@ export class UnitController {
 
   async playIdle() {
     const animation = this.animations.getAnimation(ActionType.Idle);
-    if (animation) {
-      await this.sprite.playAnimation(animation, ActionType.Idle, true);
-    }
-  }
-
-  async playAttack(onHit: () => void) {
-    const animation = this.animations.getAnimation(ActionType.Attack);
     if (!animation) return;
 
-    await this.sprite.playAnimation(
-      animation,
-      ActionType.Attack,
-      false,
-      frame => frame === 1 && onHit()
-    );
-
-    await this.playIdle();
+    await this.sprite.playAnimation(animation, ActionType.Idle, true);
+    this.updateRuntime({ renderPosition: undefined });
   }
 
   async playHurt(hp: StatSnapshot) {
@@ -95,7 +82,7 @@ export class UnitController {
       false,
       frame => {
         if (frame === 1) {
-          target.playHurt(entry.targetHp);
+          return target.playHurt(entry.targetHp);
         }
       }
     );
