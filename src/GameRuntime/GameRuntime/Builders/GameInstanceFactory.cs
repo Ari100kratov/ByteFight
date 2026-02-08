@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.GameRuntime;
 using Domain.GameRuntime.GameSessions;
+using GameRuntime.Core;
 using GameRuntime.Hosting;
 using GameRuntime.Logic.NPC;
 using GameRuntime.Logic.Turns;
@@ -7,7 +8,6 @@ using GameRuntime.Logic.User.Api;
 using GameRuntime.Logic.User.Compilation;
 using GameRuntime.Logic.User.Execution;
 using GameRuntime.Persistence;
-using GameRuntime.World;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 

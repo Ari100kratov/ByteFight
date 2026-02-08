@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Application\Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\GameRuntime.Core\GameRuntime.Core.csproj" />
+    <ProjectReference Include="..\GameRuntime.Logic\GameRuntime.Logic.csproj" />
+    <ProjectReference Include="..\GameRuntime.Logic.User.Api\GameRuntime.Logic.User.Api.csproj" />
+    <ProjectReference Include="..\GameRuntime.Logic.User.Compilation\GameRuntime.Logic.User.Compilation.csproj" />
+    <ProjectReference Include="..\GameRuntime.Logic.User.Execution\GameRuntime.Logic.User.Execution.csproj" />
   </ItemGroup>
 
 </Project>

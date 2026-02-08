@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Application.Abstractions.GameRuntime;
 using GameRuntime.Builders;
-using GameRuntime.World;
+using GameRuntime.Core;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\GameRuntime.Logic\GameRuntime.Logic.csproj" />
+    <ProjectReference Include="..\GameRuntime.Logic.User.Api\GameRuntime.Logic.User.Api.csproj" />
+  </ItemGroup>
+</Project>
