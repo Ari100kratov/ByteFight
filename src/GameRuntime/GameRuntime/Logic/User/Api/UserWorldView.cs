@@ -3,10 +3,24 @@ using GameRuntime.World.Units;
 
 namespace GameRuntime.Logic.User.Api;
 
+/// <summary>
+/// Снимок состояния мира, доступный пользовательскому скрипту в методе <c>Decide</c>.
+/// </summary>
 public sealed class UserWorldView
 {
+    /// <summary>
+    /// Текущий управляемый игроком юнит.
+    /// </summary>
     public required UserUnitView Self { get; init; }
+
+    /// <summary>
+    /// Список вражеских юнитов на арене.
+    /// </summary>
     public required IReadOnlyList<UserUnitView> Enemies { get; init; }
+
+    /// <summary>
+    /// Порядковый номер текущего хода.
+    /// </summary>
     public int TurnIndex { get; init; }
 }
 

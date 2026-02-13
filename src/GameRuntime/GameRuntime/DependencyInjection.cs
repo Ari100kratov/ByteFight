@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddSingleton<BasicEnemyAiProcessor>();
         services.AddSingleton<UserActionExecutor>();
         services.AddSingleton<UserScriptCompiler>();
+        services.AddSingleton<UserScriptIntellisenseService>();
 
         services.AddSingleton<IGameSessionRepository, GameSessionRepository>();
         services.AddSingleton<IPathFinder, PathFinder>();

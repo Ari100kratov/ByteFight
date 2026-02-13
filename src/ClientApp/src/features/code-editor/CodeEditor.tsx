@@ -1,6 +1,8 @@
 import { Spinner } from "@/components/ui/spinner"
 import { useDebouncedCallback } from "@/shared/hooks/useDebouncedCallback"
-import { lazy, Suspense, useEffect, useState } from "react"
+import { lazy, Suspense, useEffect, useRef, useState } from "react"
+import type * as monaco from "monaco-editor"
+import { bindUserScriptDiagnostics, setupUserScriptIntellisense } from "./userScriptIntellisense"
 
 const MonacoEditor = lazy(() => import("@monaco-editor/react"))
 
@@ -15,6 +17,7 @@ export function CodeEditor({
 }: Props) {
 
   const [localValue, setLocalValue] = useState(value)
+  const disposeDiagnosticsRef = useRef<null | (() => void)>(null)
 
   useEffect(() => {
     setLocalValue(value)
@@ -24,6 +27,18 @@ export function CodeEditor({
     onChange?.(val)
   }, 300)
 
+
+  useEffect(() => {
+    return () => {
+      disposeDiagnosticsRef.current?.()
+    }
+  }, [])
+
+  const handleMount = (editor: monaco.editor.IStandaloneCodeEditor, monacoApi: typeof monaco) => {
+    setupUserScriptIntellisense(monacoApi)
+    disposeDiagnosticsRef.current?.()
+    disposeDiagnosticsRef.current = bindUserScriptDiagnostics(editor, monacoApi)
+  }
   const handleChange = (val: string | undefined) => {
     const newValue = val ?? ""
     setLocalValue(newValue)
@@ -38,6 +53,7 @@ export function CodeEditor({
         loading={<EditorLoader />}
         value={localValue}
         onChange={handleChange}
+        onMount={handleMount}
         options={{
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
