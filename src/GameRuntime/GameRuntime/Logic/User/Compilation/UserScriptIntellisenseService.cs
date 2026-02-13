@@ -1,10 +1,11 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using GameRuntime.Logic.User.Api;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.SignatureHelp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 namespace GameRuntime.Logic.User.Compilation;
@@ -47,7 +48,9 @@ public sealed class UserScriptIntellisenseService
         int column,
         CancellationToken cancellationToken)
     {
-        Document? document = CreateDocument(userCode);
+        using DocumentContext? context = CreateDocument(userCode);
+        Document? document = context?.Document;
+
         if (document is null)
         {
             return [];
@@ -84,7 +87,9 @@ public sealed class UserScriptIntellisenseService
 
     public async Task<UserScriptHoverDto?> GetHoverAsync(string userCode, int line, int column, CancellationToken cancellationToken)
     {
-        Document? document = CreateDocument(userCode);
+        using DocumentContext? context = CreateDocument(userCode);
+        Document? document = context?.Document;
+
         if (document is null)
         {
             return null;
@@ -102,13 +107,13 @@ public sealed class UserScriptIntellisenseService
         }
 
         SyntaxToken token = root.FindToken(sourcePosition);
-        if (token == default)
+        if (token == default || token.Parent is null)
         {
             return null;
         }
 
-        ISymbol? symbol = semanticModel.GetSymbolInfo(token.Parent!, cancellationToken).Symbol
-            ?? semanticModel.GetDeclaredSymbol(token.Parent!, cancellationToken);
+        ISymbol? symbol = semanticModel.GetSymbolInfo(token.Parent, cancellationToken).Symbol
+            ?? semanticModel.GetDeclaredSymbol(token.Parent, cancellationToken);
 
         if (symbol is null || IsForbiddenSymbol(symbol))
         {
@@ -136,40 +141,73 @@ public sealed class UserScriptIntellisenseService
 
     public async Task<UserScriptSignatureHelpDto?> GetSignatureHelpAsync(string userCode, int line, int column, CancellationToken cancellationToken)
     {
-        Document? document = CreateDocument(userCode);
+        using DocumentContext? context = CreateDocument(userCode);
+        Document? document = context?.Document;
+
         if (document is null)
         {
             return null;
         }
 
+        SourceText sourceText = await document.GetTextAsync(cancellationToken);
         int sourcePosition = await MapToSourceOffsetAsync(document, line, column, cancellationToken);
-        SignatureHelpService? service = SignatureHelpService.GetService(document);
+        SyntaxNode? root = await document.GetSyntaxRootAsync(cancellationToken);
+        SemanticModel? semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
-        if (service is null)
+        if (root is null || semanticModel is null)
         {
             return null;
         }
 
-        SignatureHelpItems? items = await service.GetItemsAsync(document, sourcePosition, cancellationToken: cancellationToken);
-        if (items is null || items.Items.Length == 0)
+        BaseArgumentListSyntax? argumentList = root
+            .FindToken(Math.Clamp(sourcePosition, 0, Math.Max(sourceText.Length - 1, 0)))
+            .Parent?
+            .AncestorsAndSelf()
+            .OfType<BaseArgumentListSyntax>()
+            .FirstOrDefault(x => x.FullSpan.Contains(sourcePosition));
+
+        if (argumentList is null)
         {
             return null;
         }
 
-        SignatureHelpItem selected = items.Items[Math.Clamp(items.SelectedItemIndex, 0, items.Items.Length - 1)];
+        int activeParameter = GetActiveParameterIndex(argumentList, sourcePosition);
+        SyntaxNode? callableNode = argumentList.Parent switch
+        {
+            InvocationExpressionSyntax invocation => invocation.Expression,
+            ObjectCreationExpressionSyntax creation => creation,
+            ConstructorInitializerSyntax initializer => initializer,
+            _ => null
+        };
 
-        string prefix = ToPlainText(selected.PrefixDisplayParts);
-        string separator = ToPlainText(selected.SeparatorDisplayParts);
-        string suffix = ToPlainText(selected.SuffixDisplayParts);
+        if (callableNode is null)
+        {
+            return null;
+        }
 
-        var parameters = selected.Parameters
-            .Select(p => ToPlainText(p.DisplayParts))
+        SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(callableNode, cancellationToken);
+        var candidateMethods = GetCandidateMethods(symbolInfo)
+            .Where(x => !IsForbiddenSymbol(x))
             .ToList();
 
-        string signature = prefix + string.Join(separator, parameters) + suffix;
-        string? documentation = FormatXmlDocumentation(ToPlainText(selected.DocumentationFactory(cancellationToken)));
+        if (candidateMethods.Count == 0)
+        {
+            return null;
+        }
 
-        return new UserScriptSignatureHelpDto(signature, documentation, items.ArgumentIndex, parameters);
+        IMethodSymbol selectedMethod = candidateMethods
+            .OrderByDescending(m => activeParameter >= 0 && activeParameter < m.Parameters.Length)
+            .ThenBy(m => Math.Abs(m.Parameters.Length - (activeParameter + 1)))
+            .First();
+
+        var parameters = selectedMethod.Parameters
+            .Select(p => p.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat))
+            .ToList();
+
+        string signature = selectedMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+        string? documentation = FormatXmlDocumentation(selectedMethod.GetDocumentationCommentXml(cancellationToken: cancellationToken));
+
+        return new UserScriptSignatureHelpDto(signature, documentation, activeParameter, parameters);
     }
 
     private static bool IsForbiddenSymbol(ISymbol symbol)
@@ -213,7 +251,7 @@ public sealed class UserScriptIntellisenseService
 
         return new UserScriptDiagnosticDto(
             diagnostic.Id,
-            diagnostic.GetMessage(),
+            diagnostic.GetMessage(CultureInfo.InvariantCulture),
             diagnostic.Severity.ToString(),
             mapped.StartLine + 1,
             mapped.StartColumn + 1,
@@ -221,7 +259,7 @@ public sealed class UserScriptIntellisenseService
             mapped.EndColumn + 1);
     }
 
-    private static Document? CreateDocument(string userCode)
+    private static DocumentContext? CreateDocument(string userCode)
     {
         var workspace = new AdhocWorkspace();
         ProjectId projectId = ProjectId.CreateNewId();
@@ -233,7 +271,49 @@ public sealed class UserScriptIntellisenseService
             .AddMetadataReferences(projectId, UserScriptCompilationReferences.Get())
             .AddDocument(documentId, "UserScript.cs", SourceText.From(UserScriptTemplate.Build(userCode)));
 
-        return solution.GetDocument(documentId);
+        Document? document = solution.GetDocument(documentId);
+        if (document is null)
+        {
+            workspace.Dispose();
+            return null;
+        }
+
+        return new DocumentContext(workspace, document);
+    }
+
+    private static IEnumerable<IMethodSymbol> GetCandidateMethods(SymbolInfo symbolInfo)
+    {
+        if (symbolInfo.Symbol is IMethodSymbol method)
+        {
+            yield return method;
+        }
+
+        foreach (ISymbol candidate in symbolInfo.CandidateSymbols)
+        {
+            if (candidate is IMethodSymbol candidateMethod)
+            {
+                yield return candidateMethod;
+            }
+        }
+    }
+
+    private static int GetActiveParameterIndex(BaseArgumentListSyntax argumentList, int sourcePosition)
+    {
+        SeparatedSyntaxList<ArgumentSyntax> args = argumentList.Arguments;
+        if (args.Count == 0)
+        {
+            return 0;
+        }
+
+        for (int i = 0; i < args.Count; i++)
+        {
+            if (sourcePosition <= args[i].Span.End)
+            {
+                return i;
+            }
+        }
+
+        return Math.Max(args.Count - 1, 0);
     }
 
     private static async Task<int> MapToSourceOffsetAsync(Document document, int line, int column, CancellationToken cancellationToken)
@@ -266,6 +346,13 @@ public sealed class UserScriptIntellisenseService
         text = Regex.Replace(text, "\\s+", " ").Trim();
 
         return string.IsNullOrWhiteSpace(text) ? null : text;
+    }
+
+    private sealed class DocumentContext(AdhocWorkspace workspace, Document document) : IDisposable
+    {
+        public Document Document { get; } = document;
+
+        public void Dispose() => workspace.Dispose();
     }
 }
 
