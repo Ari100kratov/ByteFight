@@ -46,7 +46,7 @@ internal sealed class GetIntellisense : IEndpoint
                 return error!;
             }
 
-            var completions = await intellisense.GetCompletionsAsync(
+            IReadOnlyList<UserScriptCompletionDto> completions = await intellisense.GetCompletionsAsync(
                 sourceCode,
                 safeLine,
                 safeColumn,
@@ -71,7 +71,7 @@ internal sealed class GetIntellisense : IEndpoint
                 return error!;
             }
 
-            var signatureHelp = await intellisense.GetSignatureHelpAsync(
+            UserScriptSignatureHelpDto? signatureHelp = await intellisense.GetSignatureHelpAsync(
                 sourceCode,
                 safeLine,
                 safeColumn,
@@ -81,6 +81,7 @@ internal sealed class GetIntellisense : IEndpoint
         })
         .WithTags(Tags.CharacterCodes)
         .RequireAuthorization();
+
         app.MapPost("characters/codes/intellisense/hover", async (
             HoverRequest request,
             UserScriptIntellisenseService intellisense,
@@ -94,7 +95,7 @@ internal sealed class GetIntellisense : IEndpoint
                 return error!;
             }
 
-            var hover = await intellisense.GetHoverAsync(
+            UserScriptHoverDto? hover = await intellisense.GetHoverAsync(
                 sourceCode,
                 safeLine,
                 safeColumn,

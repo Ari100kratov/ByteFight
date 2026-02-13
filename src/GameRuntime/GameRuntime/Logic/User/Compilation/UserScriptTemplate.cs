@@ -7,7 +7,7 @@ internal static class UserScriptTemplate
     private const string UserCodeBegin = "//__USER_CODE_BEGIN__";
     private const string UserCodeEnd = "//__USER_CODE_END__";
 
-    private static readonly string Prefix = $@"
+    private const string Prefix = $@"
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ public static class UserScript
         {UserCodeBegin}
 ";
 
-    private static readonly string Suffix = $@"
+    private const string Suffix = $@"
         {UserCodeEnd}
     }}
 }}

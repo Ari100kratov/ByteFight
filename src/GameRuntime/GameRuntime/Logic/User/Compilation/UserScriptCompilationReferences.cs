@@ -32,6 +32,6 @@ internal static class UserScriptCompilationReferences
                 string name = Path.GetFileNameWithoutExtension(path);
                 return AllowedAssemblies.Contains(name, StringComparer.OrdinalIgnoreCase);
             })
-            .Select(MetadataReference.CreateFromFile)];
+            .Select(path=> MetadataReference.CreateFromFile(path))];
     }
 }
