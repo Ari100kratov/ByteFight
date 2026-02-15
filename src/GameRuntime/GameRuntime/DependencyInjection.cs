@@ -5,6 +5,8 @@ using GameRuntime.Logic.NPC;
 using GameRuntime.Logic.NPC.PathFinding;
 using GameRuntime.Logic.User.Compilation;
 using GameRuntime.Logic.User.Execution;
+using GameRuntime.Logic.User.Intellisense.Services;
+using GameRuntime.Logic.User.Intellisense.Workspace;
 using GameRuntime.Persistence;
 using GameRuntime.Realtime;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,10 +24,18 @@ public static class DependencyInjection
 
         services.AddSingleton<ArenaWorldBuilder>();
         services.AddSingleton<GameInstanceFactory>();
-
         services.AddSingleton<BasicEnemyAiProcessor>();
+
+        // Compilation
         services.AddSingleton<UserActionExecutor>();
         services.AddSingleton<UserScriptCompiler>();
+
+        // Intellisense
+        services.AddSingleton<UserScriptWorkspace>();
+        services.AddSingleton<UserScriptCompletionService>();
+        services.AddSingleton<UserScriptDiagnosticsService>();
+        services.AddSingleton<UserScriptHoverService>();
+        services.AddSingleton<UserScriptSignatureHelpService>();
 
         services.AddSingleton<IGameSessionRepository, GameSessionRepository>();
         services.AddSingleton<IPathFinder, PathFinder>();

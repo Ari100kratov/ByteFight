@@ -11,18 +11,26 @@ internal sealed class GetCodeTemplateQueryHandler : IQueryHandler<GetCodeTemplat
         {
             Id = Guid.CreateVersion7(),
             Name = "Program.cs",
-            SourceCode = @"using System;
+            SourceCode = @"var target = world.Enemies
+    .Where(e => !e.IsDead)
+    .OrderBy(e => e.Position.ManhattanDistance(world.Self.Position))
+    .FirstOrDefault();
 
-public class Character
+if (target is null)
 {
-    public void Act()
-    {
-        // Напишите здесь поведение персонажа
-        Console.WriteLine(""Действие персонажа!"");
-    }
-}"
-        };
+    return new Idle();
+}
 
+var distance = target.Position.ManhattanDistance(world.Self.Position);
+var attackRange = world.Self.Stats.Get(StatType.AttackRange) ?? 1;
+
+if (distance <= attackRange)
+{
+    return new Attack(target.Id);
+}
+
+return new MoveTo(target.Position);"
+        };
 
         return Task.FromResult(Result.Success(codeTemplate));
     }

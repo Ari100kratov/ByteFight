@@ -25,6 +25,11 @@ public sealed record DeathLogEntry(Guid ActorId)
 public sealed record IdleLogEntry(Guid ActorId)
     : RuntimeLogEntry(ActorId, ActionType.Idle);
 
+/// <summary>
+/// Снапшот
+/// </summary>
+/// <param name="Current">Текущее значение</param>
+/// <param name="Max">Максимальное значение</param>
 public sealed record StatSnapshot(decimal Current, decimal Max);
 
 public enum FacingDirection

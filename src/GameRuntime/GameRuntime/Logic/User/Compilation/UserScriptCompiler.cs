@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using Domain.Game.Stats;
-using Domain.ValueObjects;
 using GameRuntime.Logic.User.Api;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,18 +11,22 @@ internal sealed class UserScriptCompiler
     public Func<UserWorldView, UserAction> Compile(string userCode)
     {
         string source = UserScriptTemplate.Build(userCode);
-
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
         var compilation = CSharpCompilation.Create(
             assemblyName: $"UserScript_{Guid.NewGuid()}",
             syntaxTrees: [syntaxTree],
-            references: GetReferences(),
+            references: UserScriptCompilationReferences.Get(),
             options: new CSharpCompilationOptions(
                 OutputKind.DynamicallyLinkedLibrary,
-                optimizationLevel: OptimizationLevel.Release
-            )
-        );
+                optimizationLevel: OptimizationLevel.Release));
+
+        IReadOnlyList<UserScriptSecurityIssue> securityIssues = UserScriptSecurityValidator.Validate(compilation, syntaxTree);
+        if (securityIssues.Count > 0)
+        {
+            string message = string.Join('\n', securityIssues.Select(i => $"{i.Code}: {i.Message} (L{i.StartLine}:{i.StartColumn})"));
+            throw new InvalidOperationException(message);
+        }
 
         using var ms = new MemoryStream();
         EmitResult result = compilation.Emit(ms);
@@ -35,8 +37,7 @@ internal sealed class UserScriptCompiler
                 "\n",
                 result.Diagnostics
                     .Where(d => d.Severity == DiagnosticSeverity.Error)
-                    .Select(d => d.ToString())
-            );
+                    .Select(d => d.ToString()));
 
             throw new InvalidOperationException(errors);
         }
@@ -50,37 +51,5 @@ internal sealed class UserScriptCompiler
 
         return world =>
             (UserAction)method.Invoke(null, [world])!;
-    }
-
-    private static IEnumerable<MetadataReference> GetReferences()
-    {
-        // Все базовые assemblies текущего runtime
-        string[] trustedAssemblies =
-            ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
-            .Split(Path.PathSeparator);
-
-        // Белый список — КРИТИЧНО
-        string[] allowed =
-        [
-            "System.Runtime",
-            "System.Private.CoreLib",
-            "System.Linq",
-            "System.Collections",
-            "System.Console",
-            "netstandard",
-
-        // твои доменные сборки
-        typeof(Position).Assembly.GetName().Name!,
-        typeof(StatType).Assembly.GetName().Name!,
-        typeof(UserWorldView).Assembly.GetName().Name!
-        ];
-
-        return trustedAssemblies
-            .Where(path =>
-            {
-                string name = Path.GetFileNameWithoutExtension(path);
-                return allowed.Contains(name, StringComparer.OrdinalIgnoreCase);
-            })
-            .Select(path => MetadataReference.CreateFromFile(path));
     }
 }
