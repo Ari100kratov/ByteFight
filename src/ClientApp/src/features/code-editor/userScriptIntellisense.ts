@@ -51,7 +51,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
   monacoApi.languages.registerCompletionItemProvider("csharp", {
     triggerCharacters: [".", "(", " "],
     provideCompletionItems: async (model, position) => {
-      const suggestions = await request<IntellisenseCompletion[]>("/characters/codes/intellisense/completions", {
+      const suggestions = await request<IntellisenseCompletion[]>("/intellisense/csharp/completions", {
         sourceCode: model.getValue(),
         position: toPosition(position),
       })
@@ -79,7 +79,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
 
   monacoApi.languages.registerHoverProvider("csharp", {
     provideHover: async (model, position) => {
-      const hover = await request<IntellisenseHover>("/characters/codes/intellisense/hover", {
+      const hover = await request<IntellisenseHover>("/intellisense/csharp/hover", {
         sourceCode: model.getValue(),
         position: toPosition(position),
       })
@@ -88,8 +88,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
         return null
       }
 
-      const docs = hover.documentation ? `\n\n${hover.documentation}` : ""
-
+      const docs = hover.documentation ? `\n\n${hover.documentation.replace(/\n/g, "  \n")}` : ""
       return {
         range: new monacoApi.Range(hover.startLine, hover.startColumn, hover.endLine, hover.endColumn),
         contents: [{ value: `\`\`\`csharp\n${hover.signature}\n\`\`\`${docs}` }],
@@ -101,7 +100,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
     signatureHelpTriggerCharacters: ["(", ","],
     signatureHelpRetriggerCharacters: [","],
     provideSignatureHelp: async (model, position) => {
-      const payload = await request<IntellisenseSignatureHelp>("/characters/codes/intellisense/signature-help", {
+      const payload = await request<IntellisenseSignatureHelp>("/intellisense/csharp/signature-help", {
         sourceCode: model.getValue(),
         position: toPosition(position),
       })
@@ -113,7 +112,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
             activeSignature: 0,
             activeParameter: 0,
           },
-          dispose: () => {},
+          dispose: () => { },
         }
       }
 
@@ -121,15 +120,15 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
         value: {
           signatures: [
             {
-              label: payload.signature,
-              documentation: payload.documentation,
-              parameters: payload.parameters.map(x => ({ label: x })),
+              label: payload.signature ?? "",
+              documentation: payload.documentation ?? "",
+              parameters: (payload.parameters ?? []).map(p => ({ label: p })),
             },
           ],
           activeSignature: 0,
-          activeParameter: payload.activeParameter,
+          activeParameter: payload.activeParameter ?? 0,
         },
-        dispose: () => {},
+        dispose: () => { },
       }
     },
   })
@@ -140,7 +139,7 @@ export function bindUserScriptDiagnostics(editor: monaco.editor.IStandaloneCodeE
     const model = editor.getModel()
     if (!model) return
 
-    const diagnostics = await request<IntellisenseDiagnostic[]>("/characters/codes/intellisense/diagnostics", {
+    const diagnostics = await request<IntellisenseDiagnostic[]>("/intellisense/csharp/diagnostics", {
       sourceCode: model.getValue(),
     })
 

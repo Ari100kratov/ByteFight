@@ -3,22 +3,22 @@
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
-/// Представление юнита в пользовательском API.
+/// Юнит.
 /// </summary>
 public sealed class UserUnitView
 {
     /// <summary>
-    /// Уникальный идентификатор юнита.
+    /// Уникальный идентификатор.
     /// </summary>
     public Guid Id { get; init; }
 
     /// <summary>
-    /// Текущая позиция юнита на арене.
+    /// Текущая позиция на арене.
     /// </summary>
     public Position Position { get; init; }
 
     /// <summary>
-    /// Снимок характеристик юнита.
+    /// Характеристики юнита.
     /// </summary>
     public UserStatsView Stats { get; init; }
 

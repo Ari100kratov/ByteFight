@@ -1,7 +1,7 @@
-using GameRuntime.Logic.User.Compilation;
-using Web.Api.Extensions;
+using GameRuntime.Logic.User.Intellisense.Dtos;
+using GameRuntime.Logic.User.Intellisense.Services;
 
-namespace Web.Api.Endpoints.Game.Characters.Codes;
+namespace Web.Api.Endpoints.Intellisense.CSharp;
 
 internal sealed class GetIntellisense : IEndpoint
 {
@@ -19,23 +19,26 @@ internal sealed class GetIntellisense : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("characters/codes/intellisense/diagnostics", (
+        app.MapPost("intellisense/csharp/diagnostics", async (
             DiagnosticsRequest request,
-            UserScriptIntellisenseService intellisense) =>
+            UserScriptDiagnosticsService intellisense,
+            CancellationToken cancellationToken) =>
         {
             if (!TryNormalizeInput(request.SourceCode, 1, 1, out string sourceCode, out _, out _, out IResult? error))
             {
                 return error!;
             }
 
-            return Results.Ok(intellisense.GetDiagnostics(sourceCode));
+            IReadOnlyList<UserScriptDiagnosticDto> diagnostics = await intellisense.GetDiagnostics(sourceCode, cancellationToken);
+
+            return Results.Ok(diagnostics);
         })
         .WithTags(Tags.CharacterCodes)
         .RequireAuthorization();
 
-        app.MapPost("characters/codes/intellisense/completions", async (
+        app.MapPost("intellisense/csharp/completions", async (
             CompletionsRequest request,
-            UserScriptIntellisenseService intellisense,
+            UserScriptCompletionService intellisense,
             CancellationToken cancellationToken) =>
         {
             int line = request.Position?.Line ?? 1;
@@ -46,7 +49,7 @@ internal sealed class GetIntellisense : IEndpoint
                 return error!;
             }
 
-            IReadOnlyList<UserScriptCompletionDto> completions = await intellisense.GetCompletionsAsync(
+            IReadOnlyList<UserScriptCompletionDto> completions = await intellisense.GetCompletions(
                 sourceCode,
                 safeLine,
                 safeColumn,
@@ -58,9 +61,9 @@ internal sealed class GetIntellisense : IEndpoint
         .RequireAuthorization();
 
 
-        app.MapPost("characters/codes/intellisense/signature-help", async (
+        app.MapPost("intellisense/csharp/signature-help", async (
             SignatureHelpRequest request,
-            UserScriptIntellisenseService intellisense,
+            UserScriptSignatureHelpService intellisense,
             CancellationToken cancellationToken) =>
         {
             int line = request.Position?.Line ?? 1;
@@ -82,9 +85,9 @@ internal sealed class GetIntellisense : IEndpoint
         .WithTags(Tags.CharacterCodes)
         .RequireAuthorization();
 
-        app.MapPost("characters/codes/intellisense/hover", async (
+        app.MapPost("intellisense/csharp/hover", async (
             HoverRequest request,
-            UserScriptIntellisenseService intellisense,
+            UserScriptHoverService intellisense,
             CancellationToken cancellationToken) =>
         {
             int line = request.Position?.Line ?? 1;

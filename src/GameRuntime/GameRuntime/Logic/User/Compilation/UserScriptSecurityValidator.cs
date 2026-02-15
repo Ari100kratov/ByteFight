@@ -55,7 +55,7 @@ internal static class UserScriptSecurityValidator
 
             if (node is InvocationExpressionSyntax invocation)
             {
-                IMethodSymbol? methodSymbol = semanticModel.GetSymbolInfo(invocation).Symbol as IMethodSymbol;
+                var methodSymbol = semanticModel.GetSymbolInfo(invocation).Symbol as IMethodSymbol;
                 if (IsForbidden(methodSymbol?.ContainingType))
                 {
                     issues.Add(CreateIssue("SEC003", "Calling this API is not allowed in user scripts.", invocation, syntaxTree));

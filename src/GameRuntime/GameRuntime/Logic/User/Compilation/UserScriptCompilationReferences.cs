@@ -1,7 +1,4 @@
 using System.Collections.Immutable;
-using Domain.Game.Stats;
-using Domain.ValueObjects;
-using GameRuntime.Logic.User.Api;
 using Microsoft.CodeAnalysis;
 
 namespace GameRuntime.Logic.User.Compilation;
@@ -15,9 +12,10 @@ internal static class UserScriptCompilationReferences
         "System.Linq",
         "System.Collections",
         "netstandard",
-        typeof(Position).Assembly.GetName().Name!,
-        typeof(StatType).Assembly.GetName().Name!,
-        typeof(UserWorldView).Assembly.GetName().Name!
+
+        typeof(Domain.ValueObjects.Position).Assembly.GetName().Name!,
+        typeof(Domain.Game.Stats.StatType).Assembly.GetName().Name!,
+        typeof(Api.UserWorldView).Assembly.GetName().Name!
     ];
 
     public static ImmutableArray<MetadataReference> Get()
@@ -27,11 +25,26 @@ internal static class UserScriptCompilationReferences
             .Split(Path.PathSeparator);
 
         return [.. trustedAssemblies
-            .Where(path =>
-            {
-                string name = Path.GetFileNameWithoutExtension(path);
-                return AllowedAssemblies.Contains(name, StringComparer.OrdinalIgnoreCase);
-            })
-            .Select(path=> MetadataReference.CreateFromFile(path))];
+            .Where(IsAllowed)
+            .Select(CreateReferenceWithDocumentation)];
+    }
+
+    private static bool IsAllowed(string path)
+    {
+        string name = Path.GetFileNameWithoutExtension(path);
+        return AllowedAssemblies.Contains(name, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static MetadataReference CreateReferenceWithDocumentation(string assemblyPath)
+    {
+        string xmlPath = Path.ChangeExtension(assemblyPath, ".xml");
+
+        DocumentationProvider provider = File.Exists(xmlPath)
+            ? XmlDocumentationProvider.CreateFromFile(xmlPath)
+            : DocumentationProvider.Default;
+
+        return MetadataReference.CreateFromFile(
+            assemblyPath,
+            documentation: provider);
     }
 }

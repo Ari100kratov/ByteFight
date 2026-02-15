@@ -13,7 +13,7 @@ internal sealed class UserScriptCompiler
         string source = UserScriptTemplate.Build(userCode);
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
 
-        CSharpCompilation compilation = CSharpCompilation.Create(
+        var compilation = CSharpCompilation.Create(
             assemblyName: $"UserScript_{Guid.NewGuid()}",
             syntaxTrees: [syntaxTree],
             references: UserScriptCompilationReferences.Get(),
@@ -43,7 +43,7 @@ internal sealed class UserScriptCompiler
         }
 
         ms.Seek(0, SeekOrigin.Begin);
-        Assembly assembly = Assembly.Load(ms.ToArray());
+        var assembly = Assembly.Load(ms.ToArray());
 
         MethodInfo method = assembly
             .GetType("UserScript")!
