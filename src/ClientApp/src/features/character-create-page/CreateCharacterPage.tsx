@@ -65,7 +65,7 @@ export default function CreateCharacterPage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex min-h-0 flex-col gap-6 p-4 w-full mx-auto h-full"
+      className="flex min-h-0 flex-1 flex-col gap-6 p-4 w-full mx-auto"
     >
       <Group
         id="create-character-layout-v2"
@@ -73,7 +73,7 @@ export default function CreateCharacterPage() {
         defaultLayout={createPageLayout.defaultLayout}
         onLayoutChanged={createPageLayout.onLayoutChanged}
         resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-        className="h-full min-h-[400px] w-full rounded-2xl border"
+        className="min-h-0 w-full flex-1 rounded-2xl border"
       >
         <Panel id="create-character-main-info" defaultSize="35%" minSize="25%">
           <Card className="flex h-full flex-col rounded-none border-0 border-r">

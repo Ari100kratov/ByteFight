@@ -56,7 +56,7 @@ export default function CharacterPage() {
   }, [character, setName])
 
   return (
-    <div className="flex min-h-0 flex-col gap-6 p-4 w-full h-full">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 p-4 w-full">
       <LoaderState
         isLoading={isLoading}
         error={error}
@@ -65,7 +65,7 @@ export default function CharacterPage() {
           <Group
             id="character-page-loading-layout"
             orientation="horizontal"
-            className="h-full min-h-[400px] w-full rounded-2xl border"
+            className="min-h-0 w-full flex-1 rounded-2xl border"
           >
             <Panel id="character-page-loading-left" defaultSize="40%" minSize="25%">
               <Group
@@ -98,7 +98,7 @@ export default function CharacterPage() {
             defaultLayout={pageLayout.defaultLayout}
             onLayoutChanged={pageLayout.onLayoutChanged}
             resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-            className="h-full min-h-[400px] w-full rounded-2xl border"
+            className="min-h-0 w-full flex-1 rounded-2xl border"
           >
             <Panel id="character-page-left-column" defaultSize="40%" minSize="25%">
               <Group

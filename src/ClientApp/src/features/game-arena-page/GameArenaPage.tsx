@@ -47,7 +47,7 @@ export default function GameArenaPage() {
   useGameSession(sessionId)
 
   return (
-    <div className="flex min-h-0 flex-col gap-6 p-4 w-full h-full">
+    <div className="flex min-h-0 flex-1 flex-col gap-6 p-4 w-full">
       <LoaderState
         isLoading={isLoading}
         error={error}
@@ -56,7 +56,7 @@ export default function GameArenaPage() {
           <Group
             id="game-arena-loading-layout"
             orientation="horizontal"
-            className="h-full min-h-[400px] w-full rounded-2xl border"
+            className="min-h-0 w-full flex-1 rounded-2xl border"
           >
             <Panel id="loading-left" defaultSize="40%" minSize="25%">
               <Group id="game-arena-loading-left-layout" orientation="vertical" className="h-full min-h-0 w-full">
@@ -86,7 +86,7 @@ export default function GameArenaPage() {
           defaultLayout={rootLayout.defaultLayout}
           onLayoutChanged={rootLayout.onLayoutChanged}
           resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-          className="h-full min-h-[400px] w-full rounded-2xl border"
+          className="min-h-0 w-full flex-1 rounded-2xl border"
         >
           <Panel id="left-column" defaultSize="40%" minSize="25%">
             <Group
