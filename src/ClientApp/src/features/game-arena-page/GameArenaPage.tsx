@@ -34,12 +34,12 @@ export default function GameArenaPage() {
   const character = useCharacterStore(s => s.character)
 
   const rootLayout = useDefaultLayout({
-    id: "game-arena-layout",
+    id: "game-arena-layout-v2",
     panelIds: ["left-column", "arena-panel"],
   })
 
   const leftColumnLayout = useDefaultLayout({
-    id: "left-column-layout",
+    id: "left-column-layout-v2",
     panelIds: ["character-panel", "code-panel"],
   })
 
@@ -58,15 +58,15 @@ export default function GameArenaPage() {
             orientation="horizontal"
             className="h-full w-full rounded-2xl border"
           >
-            <Panel id="loading-left" defaultSize={40} minSize={25}>
+            <Panel id="loading-left" defaultSize="40%" minSize="25%">
               <Group id="game-arena-loading-left-layout" orientation="vertical" className="h-full w-full">
-                <Panel id="loading-character" defaultSize={30} minSize={20}>
+                <Panel id="loading-character" defaultSize="30%" minSize="20%">
                   <Skeleton className="h-full w-full rounded-md" />
                 </Panel>
 
                 <ResizeHandle />
 
-                <Panel id="loading-code" defaultSize={70} minSize={30}>
+                <Panel id="loading-code" defaultSize="70%" minSize="30%">
                   <Skeleton className="h-full w-full rounded-md" />
                 </Panel>
               </Group>
@@ -74,36 +74,36 @@ export default function GameArenaPage() {
 
             <ResizeHandle />
 
-            <Panel id="loading-arena" defaultSize={60} minSize={35}>
+            <Panel id="loading-arena" defaultSize="60%" minSize="35%">
               <Skeleton className="h-full w-full rounded-md" />
             </Panel>
           </Group>
         }
       >
         <Group
-          id="game-arena-layout"
+          id="game-arena-layout-v2"
           orientation="horizontal"
           defaultLayout={rootLayout.defaultLayout}
           onLayoutChanged={rootLayout.onLayoutChanged}
           resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
           className="h-full w-full rounded-2xl border"
         >
-          <Panel id="left-column" defaultSize={40} minSize={25}>
+          <Panel id="left-column" defaultSize="40%" minSize="25%">
             <Group
-              id="left-column-layout"
+              id="left-column-layout-v2"
               orientation="vertical"
               defaultLayout={leftColumnLayout.defaultLayout}
               onLayoutChanged={leftColumnLayout.onLayoutChanged}
               resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
               className="h-full w-full"
             >
-              <Panel id="character-panel" defaultSize={40} minSize={25}>
+              <Panel id="character-panel" defaultSize="40%" minSize="25%">
                 <SelectCharacterCard />
               </Panel>
 
               <ResizeHandle />
 
-              <Panel id="code-panel" defaultSize={60} minSize={30}>
+              <Panel id="code-panel" defaultSize="60%" minSize="30%">
                 {character ? (
                   <div className="h-full overflow-auto">
                     <CharacterCodeBlock
@@ -129,7 +129,7 @@ export default function GameArenaPage() {
 
           <ResizeHandle />
 
-          <Panel id="arena-panel" defaultSize={60} minSize={35}>
+          <Panel id="arena-panel" defaultSize="60%" minSize="35%">
             <ArenaCard />
           </Panel>
         </Group>

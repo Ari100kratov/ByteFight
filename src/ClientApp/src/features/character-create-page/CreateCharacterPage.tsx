@@ -39,7 +39,7 @@ export default function CreateCharacterPage() {
   const { mutateAsync: create, isPending, error } = useCreateCharacter()
 
   const createPageLayout = useDefaultLayout({
-    id: "create-character-layout",
+    id: "create-character-layout-v2",
     panelIds: ["create-character-main-info", "create-character-class"],
   })
 
@@ -68,14 +68,14 @@ export default function CreateCharacterPage() {
       className="flex flex-col gap-6 p-4 w-full mx-auto h-full"
     >
       <Group
-        id="create-character-layout"
+        id="create-character-layout-v2"
         orientation="horizontal"
         defaultLayout={createPageLayout.defaultLayout}
         onLayoutChanged={createPageLayout.onLayoutChanged}
         resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
         className="h-full w-full rounded-2xl border"
       >
-        <Panel id="create-character-main-info" defaultSize={35} minSize={25}>
+        <Panel id="create-character-main-info" defaultSize="35%" minSize="25%">
           <Card className="flex h-full flex-col rounded-none border-0 border-r">
             <CardHeader>
               <CardTitle>Основная информация</CardTitle>
@@ -96,7 +96,7 @@ export default function CreateCharacterPage() {
 
         <ResizeHandle />
 
-        <Panel id="create-character-class" defaultSize={65} minSize={35}>
+        <Panel id="create-character-class" defaultSize="65%" minSize="35%">
           <div className="h-full overflow-auto">
             <CharacterClassSelector
               selectedClassId={selectedClassId}

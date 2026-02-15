@@ -40,12 +40,12 @@ export default function CharacterPage() {
   const { setName } = useBreadcrumbNames()
 
   const pageLayout = useDefaultLayout({
-    id: "character-page-layout",
+    id: "character-page-layout-v2",
     panelIds: ["character-page-left-column", "character-page-code"],
   })
 
   const leftColumnLayout = useDefaultLayout({
-    id: "character-page-left-column-layout",
+    id: "character-page-left-column-layout-v2",
     panelIds: ["character-page-main-info", "character-page-class"],
   })
 
@@ -67,17 +67,17 @@ export default function CharacterPage() {
             orientation="horizontal"
             className="h-full w-full rounded-2xl border"
           >
-            <Panel id="character-page-loading-left" defaultSize={40} minSize={25}>
+            <Panel id="character-page-loading-left" defaultSize="40%" minSize="25%">
               <Group
                 id="character-page-loading-left-column-layout"
                 orientation="vertical"
                 className="h-full w-full"
               >
-                <Panel id="character-page-loading-main-info" defaultSize={45} minSize={20}>
+                <Panel id="character-page-loading-main-info" defaultSize="45%" minSize="20%">
                   <Skeleton className="h-full w-full rounded-md" />
                 </Panel>
                 <ResizeHandle />
-                <Panel id="character-page-loading-class" defaultSize={55} minSize={30}>
+                <Panel id="character-page-loading-class" defaultSize="55%" minSize="30%">
                   <Skeleton className="h-full w-full rounded-md" />
                 </Panel>
               </Group>
@@ -85,7 +85,7 @@ export default function CharacterPage() {
 
             <ResizeHandle />
 
-            <Panel id="character-page-loading-code" defaultSize={60} minSize={35}>
+            <Panel id="character-page-loading-code" defaultSize="60%" minSize="35%">
               <Skeleton className="h-full w-full rounded-md" />
             </Panel>
           </Group>
@@ -93,23 +93,23 @@ export default function CharacterPage() {
       >
         {character && (
           <Group
-            id="character-page-layout"
+            id="character-page-layout-v2"
             orientation="horizontal"
             defaultLayout={pageLayout.defaultLayout}
             onLayoutChanged={pageLayout.onLayoutChanged}
             resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
             className="h-full w-full rounded-2xl border"
           >
-            <Panel id="character-page-left-column" defaultSize={40} minSize={25}>
+            <Panel id="character-page-left-column" defaultSize="40%" minSize="25%">
               <Group
-                id="character-page-left-column-layout"
+                id="character-page-left-column-layout-v2"
                 orientation="vertical"
                 defaultLayout={leftColumnLayout.defaultLayout}
                 onLayoutChanged={leftColumnLayout.onLayoutChanged}
                 resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
                 className="h-full w-full"
               >
-                <Panel id="character-page-main-info" defaultSize={40} minSize={25}>
+                <Panel id="character-page-main-info" defaultSize="40%" minSize="25%">
                   <Card className="flex h-full flex-col rounded-none border-0 border-b">
                     <CardHeader>
                       <CardTitle>Основная информация</CardTitle>
@@ -128,7 +128,7 @@ export default function CharacterPage() {
 
                 <ResizeHandle />
 
-                <Panel id="character-page-class" defaultSize={60} minSize={30}>
+                <Panel id="character-page-class" defaultSize="60%" minSize="30%">
                   <div className="h-full overflow-auto">
                     <CharacterClassSelector selectedClassId={character.classId} onSelectClass={() => { }} />
                   </div>
@@ -138,7 +138,7 @@ export default function CharacterPage() {
 
             <ResizeHandle />
 
-            <Panel id="character-page-code" defaultSize={60} minSize={35}>
+            <Panel id="character-page-code" defaultSize="60%" minSize="35%">
               <div className="h-full overflow-auto">
                 <CharacterCodeBlock characterId={id!} />
               </div>
