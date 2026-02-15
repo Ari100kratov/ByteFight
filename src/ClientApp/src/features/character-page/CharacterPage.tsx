@@ -56,7 +56,7 @@ export default function CharacterPage() {
   }, [character, setName])
 
   return (
-    <div className="flex flex-col gap-6 p-4 w-full h-full">
+    <div className="flex min-h-0 flex-col gap-6 p-4 w-full h-full">
       <LoaderState
         isLoading={isLoading}
         error={error}
@@ -65,13 +65,13 @@ export default function CharacterPage() {
           <Group
             id="character-page-loading-layout"
             orientation="horizontal"
-            className="h-full w-full rounded-2xl border"
+            className="h-full min-h-[400px] w-full rounded-2xl border"
           >
             <Panel id="character-page-loading-left" defaultSize="40%" minSize="25%">
               <Group
                 id="character-page-loading-left-column-layout"
                 orientation="vertical"
-                className="h-full w-full"
+                className="h-full min-h-0 w-full"
               >
                 <Panel id="character-page-loading-main-info" defaultSize="45%" minSize="20%">
                   <Skeleton className="h-full w-full rounded-md" />
@@ -98,7 +98,7 @@ export default function CharacterPage() {
             defaultLayout={pageLayout.defaultLayout}
             onLayoutChanged={pageLayout.onLayoutChanged}
             resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-            className="h-full w-full rounded-2xl border"
+            className="h-full min-h-[400px] w-full rounded-2xl border"
           >
             <Panel id="character-page-left-column" defaultSize="40%" minSize="25%">
               <Group
@@ -107,7 +107,7 @@ export default function CharacterPage() {
                 defaultLayout={leftColumnLayout.defaultLayout}
                 onLayoutChanged={leftColumnLayout.onLayoutChanged}
                 resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-                className="h-full w-full"
+                className="h-full min-h-0 w-full"
               >
                 <Panel id="character-page-main-info" defaultSize="40%" minSize="25%">
                   <Card className="flex h-full flex-col rounded-none border-0 border-b">
@@ -129,7 +129,7 @@ export default function CharacterPage() {
                 <ResizeHandle />
 
                 <Panel id="character-page-class" defaultSize="60%" minSize="30%">
-                  <div className="h-full overflow-auto">
+                  <div className="h-full min-h-0 overflow-auto">
                     <CharacterClassSelector selectedClassId={character.classId} onSelectClass={() => { }} />
                   </div>
                 </Panel>
@@ -139,7 +139,7 @@ export default function CharacterPage() {
             <ResizeHandle />
 
             <Panel id="character-page-code" defaultSize="60%" minSize="35%">
-              <div className="h-full overflow-auto">
+              <div className="h-full min-h-0 overflow-auto">
                 <CharacterCodeBlock characterId={id!} />
               </div>
             </Panel>
