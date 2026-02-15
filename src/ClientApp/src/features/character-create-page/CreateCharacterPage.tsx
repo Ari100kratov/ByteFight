@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useDefaultLayout } from "react-resizable-panels"
+import { Group, Panel, Separator, useDefaultLayout } from "react-resizable-panels"
+import { GripVerticalIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -14,11 +15,21 @@ import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { useCreateCharacter } from "./useCreateCharacter"
 import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
+import { cn } from "@/shared/lib/utils"
+
+function ResizeHandle() {
+  return (
+    <Separator
+      className={cn(
+        "bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden aria-[orientation=vertical]:h-px aria-[orientation=vertical]:w-full aria-[orientation=vertical]:after:left-0 aria-[orientation=vertical]:after:h-1 aria-[orientation=vertical]:after:w-full aria-[orientation=vertical]:after:translate-x-0 aria-[orientation=vertical]:after:-translate-y-1/2 [&[aria-orientation=vertical]>div]:rotate-90"
+      )}
+    >
+      <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
+        <GripVerticalIcon className="size-2.5" />
+      </div>
+    </Separator>
+  )
+}
 
 export default function CreateCharacterPage() {
   const [name, setName] = useState("")
@@ -56,15 +67,15 @@ export default function CreateCharacterPage() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-6 p-4 w-full mx-auto h-full"
     >
-      <ResizablePanelGroup
+      <Group
         id="create-character-layout"
-        direction="horizontal"
+        orientation="horizontal"
         defaultLayout={createPageLayout.defaultLayout}
         onLayoutChanged={createPageLayout.onLayoutChanged}
         resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-        className="h-full rounded-2xl border"
+        className="h-full w-full rounded-2xl border"
       >
-        <ResizablePanel id="create-character-main-info" defaultSize={35} minSize={25}>
+        <Panel id="create-character-main-info" defaultSize={35} minSize={25}>
           <Card className="flex h-full flex-col rounded-none border-0 border-r">
             <CardHeader>
               <CardTitle>Основная информация</CardTitle>
@@ -81,19 +92,19 @@ export default function CreateCharacterPage() {
               {error && <p className="text-sm text-red-500">{error.message}</p>}
             </CardContent>
           </Card>
-        </ResizablePanel>
+        </Panel>
 
-        <ResizableHandle withHandle />
+        <ResizeHandle />
 
-        <ResizablePanel id="create-character-class" defaultSize={65} minSize={35}>
+        <Panel id="create-character-class" defaultSize={65} minSize={35}>
           <div className="h-full overflow-auto">
             <CharacterClassSelector
               selectedClassId={selectedClassId}
               onSelectClass={setSelectedClassId}
             />
           </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </Panel>
+      </Group>
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isPending}>

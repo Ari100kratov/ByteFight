@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useParams } from "react-router-dom"
-import { useDefaultLayout } from "react-resizable-panels"
+import { Group, Panel, Separator, useDefaultLayout } from "react-resizable-panels"
+import { GripVerticalIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,11 +18,21 @@ import CharacterCodeBlock from "@/features/character-code-block/CharacterCodeBlo
 import { LoaderState } from "@/components/common/LoaderState"
 import { useCharacter } from "./useCharacter"
 import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
+import { cn } from "@/shared/lib/utils"
+
+function ResizeHandle() {
+  return (
+    <Separator
+      className={cn(
+        "bg-border focus-visible:ring-ring relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden aria-[orientation=vertical]:h-px aria-[orientation=vertical]:w-full aria-[orientation=vertical]:after:left-0 aria-[orientation=vertical]:after:h-1 aria-[orientation=vertical]:after:w-full aria-[orientation=vertical]:after:translate-x-0 aria-[orientation=vertical]:after:-translate-y-1/2 [&[aria-orientation=vertical]>div]:rotate-90"
+      )}
+    >
+      <div className="bg-border z-10 flex h-4 w-3 items-center justify-center rounded-xs border">
+        <GripVerticalIcon className="size-2.5" />
+      </div>
+    </Separator>
+  )
+}
 
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>()
@@ -51,55 +62,55 @@ export default function CharacterPage() {
         error={error}
         skeletonClassName="w-full h-full rounded-2xl"
         loadingFallback={
-          <ResizablePanelGroup
+          <Group
             id="character-page-loading-layout"
-            direction="horizontal"
-            className="h-full rounded-2xl border"
+            orientation="horizontal"
+            className="h-full w-full rounded-2xl border"
           >
-            <ResizablePanel id="character-page-loading-left" defaultSize={40} minSize={25}>
-              <ResizablePanelGroup
+            <Panel id="character-page-loading-left" defaultSize={40} minSize={25}>
+              <Group
                 id="character-page-loading-left-column-layout"
-                direction="vertical"
-                className="h-full"
+                orientation="vertical"
+                className="h-full w-full"
               >
-                <ResizablePanel id="character-page-loading-main-info" defaultSize={45} minSize={20}>
+                <Panel id="character-page-loading-main-info" defaultSize={45} minSize={20}>
                   <Skeleton className="h-full w-full rounded-md" />
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel id="character-page-loading-class" defaultSize={55} minSize={30}>
+                </Panel>
+                <ResizeHandle />
+                <Panel id="character-page-loading-class" defaultSize={55} minSize={30}>
                   <Skeleton className="h-full w-full rounded-md" />
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </ResizablePanel>
+                </Panel>
+              </Group>
+            </Panel>
 
-            <ResizableHandle withHandle />
+            <ResizeHandle />
 
-            <ResizablePanel id="character-page-loading-code" defaultSize={60} minSize={35}>
+            <Panel id="character-page-loading-code" defaultSize={60} minSize={35}>
               <Skeleton className="h-full w-full rounded-md" />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+            </Panel>
+          </Group>
         }
       >
         {character && (
-          <ResizablePanelGroup
+          <Group
             id="character-page-layout"
-            direction="horizontal"
+            orientation="horizontal"
             defaultLayout={pageLayout.defaultLayout}
             onLayoutChanged={pageLayout.onLayoutChanged}
             resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-            className="h-full rounded-2xl border"
+            className="h-full w-full rounded-2xl border"
           >
-            <ResizablePanel id="character-page-left-column" defaultSize={40} minSize={25}>
-              <ResizablePanelGroup
+            <Panel id="character-page-left-column" defaultSize={40} minSize={25}>
+              <Group
                 id="character-page-left-column-layout"
-                direction="vertical"
+                orientation="vertical"
                 defaultLayout={leftColumnLayout.defaultLayout}
                 onLayoutChanged={leftColumnLayout.onLayoutChanged}
                 resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
-                className="h-full"
+                className="h-full w-full"
               >
-                <ResizablePanel id="character-page-main-info" defaultSize={40} minSize={25}>
-                  <Card className="flex-1 h-full rounded-none border-0 border-b">
+                <Panel id="character-page-main-info" defaultSize={40} minSize={25}>
+                  <Card className="flex h-full flex-col rounded-none border-0 border-b">
                     <CardHeader>
                       <CardTitle>Основная информация</CardTitle>
                     </CardHeader>
@@ -113,26 +124,26 @@ export default function CharacterPage() {
                       <Button>Сохранить</Button>
                     </CardFooter>
                   </Card>
-                </ResizablePanel>
+                </Panel>
 
-                <ResizableHandle withHandle />
+                <ResizeHandle />
 
-                <ResizablePanel id="character-page-class" defaultSize={60} minSize={30}>
+                <Panel id="character-page-class" defaultSize={60} minSize={30}>
                   <div className="h-full overflow-auto">
                     <CharacterClassSelector selectedClassId={character.classId} onSelectClass={() => { }} />
                   </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </ResizablePanel>
+                </Panel>
+              </Group>
+            </Panel>
 
-            <ResizableHandle withHandle />
+            <ResizeHandle />
 
-            <ResizablePanel id="character-page-code" defaultSize={60} minSize={35}>
+            <Panel id="character-page-code" defaultSize={60} minSize={35}>
               <div className="h-full overflow-auto">
                 <CharacterCodeBlock characterId={id!} />
               </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+            </Panel>
+          </Group>
         )}
       </LoaderState>
     </div>
