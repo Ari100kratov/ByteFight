@@ -21,7 +21,7 @@ export function ArenaCard() {
 
   const arenaRef = useResizeObserver(size => {
     setViewportSize(size)
-  }, 50)
+  }, 200)
 
   const arena = useArenaStore(s => s.arena)
   const character = useCharacterStore(s => s.character)
@@ -70,16 +70,15 @@ export function ArenaCard() {
   }
 
   return (
-    <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col overflow-auto">
+    <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col overflow-hidden">
       <CardHeader>
         <CardTitle>{arena.name}</CardTitle>
         <CardDescription>{arena.description}</CardDescription>
       </CardHeader>
-      <CardContent
-        ref={arenaRef}
-        className="flex-1 p-0 flex justify-center items-center"
-      >
-        <Game />
+      <CardContent className="flex-1 p-0 flex justify-center items-center">
+        <div ref={arenaRef} className="w-full h-full">
+          <Game />
+        </div>
       </CardContent>
       <CardFooter className="flex justify-end">
         <Button size="lg" disabled={isLoading} onClick={handleStart}>
