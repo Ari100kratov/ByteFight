@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useParams } from "react-router-dom"
+import { useDefaultLayout } from "react-resizable-panels"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,11 +17,26 @@ import CharacterCodeBlock from "@/features/character-code-block/CharacterCodeBlo
 import { LoaderState } from "@/components/common/LoaderState"
 import { useCharacter } from "./useCharacter"
 import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
 
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>()
   const { data: character, isLoading, error } = useCharacter(id)
   const { setName } = useBreadcrumbNames()
+
+  const pageLayout = useDefaultLayout({
+    id: "character-page-layout",
+    panelIds: ["character-page-left-column", "character-page-code"],
+  })
+
+  const leftColumnLayout = useDefaultLayout({
+    id: "character-page-left-column-layout",
+    panelIds: ["character-page-main-info", "character-page-class"],
+  })
 
   useEffect(() => {
     if (character) {
@@ -35,44 +51,88 @@ export default function CharacterPage() {
         error={error}
         skeletonClassName="w-full h-full rounded-2xl"
         loadingFallback={
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-full">
-            <div className="flex flex-col gap-6">
-              <Skeleton className="h-40 rounded-2xl w-full" />
-              <Skeleton className="h-40 rounded-2xl w-full" />
-            </div>
-            <Skeleton className="h-full rounded-2xl w-full" />
-          </div>
+          <ResizablePanelGroup
+            id="character-page-loading-layout"
+            direction="horizontal"
+            className="h-full rounded-2xl border"
+          >
+            <ResizablePanel id="character-page-loading-left" defaultSize={40} minSize={25}>
+              <ResizablePanelGroup
+                id="character-page-loading-left-column-layout"
+                direction="vertical"
+                className="h-full"
+              >
+                <ResizablePanel id="character-page-loading-main-info" defaultSize={45} minSize={20}>
+                  <Skeleton className="h-full w-full rounded-md" />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel id="character-page-loading-class" defaultSize={55} minSize={30}>
+                  <Skeleton className="h-full w-full rounded-md" />
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            <ResizablePanel id="character-page-loading-code" defaultSize={60} minSize={35}>
+              <Skeleton className="h-full w-full rounded-md" />
+            </ResizablePanel>
+          </ResizablePanelGroup>
         }
       >
         {character && (
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-6 w-full h-full">
-            {/* Левая часть: Основная информация + Класс */}
-            <div className="md:col-span-3 flex flex-col gap-6">
-              {/* Основная информация */}
-              <Card className="flex-1">
-                <CardHeader>
-                  <CardTitle>Основная информация</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Имя</Label>
-                    <Input id="name" defaultValue={character.name} />
+          <ResizablePanelGroup
+            id="character-page-layout"
+            direction="horizontal"
+            defaultLayout={pageLayout.defaultLayout}
+            onLayoutChanged={pageLayout.onLayoutChanged}
+            resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
+            className="h-full rounded-2xl border"
+          >
+            <ResizablePanel id="character-page-left-column" defaultSize={40} minSize={25}>
+              <ResizablePanelGroup
+                id="character-page-left-column-layout"
+                direction="vertical"
+                defaultLayout={leftColumnLayout.defaultLayout}
+                onLayoutChanged={leftColumnLayout.onLayoutChanged}
+                resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
+                className="h-full"
+              >
+                <ResizablePanel id="character-page-main-info" defaultSize={40} minSize={25}>
+                  <Card className="flex-1 h-full rounded-none border-0 border-b">
+                    <CardHeader>
+                      <CardTitle>Основная информация</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="name">Имя</Label>
+                        <Input id="name" defaultValue={character.name} />
+                      </div>
+                    </CardContent>
+                    <CardFooter className="justify-end">
+                      <Button>Сохранить</Button>
+                    </CardFooter>
+                  </Card>
+                </ResizablePanel>
+
+                <ResizableHandle withHandle />
+
+                <ResizablePanel id="character-page-class" defaultSize={60} minSize={30}>
+                  <div className="h-full overflow-auto">
+                    <CharacterClassSelector selectedClassId={character.classId} onSelectClass={() => { }} />
                   </div>
-                </CardContent>
-                <CardFooter className="justify-end">
-                  <Button>Сохранить</Button>
-                </CardFooter>
-              </Card>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
 
-              {/* Класс */}
-              <CharacterClassSelector selectedClassId={character.classId} onSelectClass={() => { }} />
-            </div>
+            <ResizableHandle withHandle />
 
-            {/* Правая часть: Код */}
-            <div className="md:col-span-4 flex flex-col h-full">
-              <CharacterCodeBlock characterId={id!} />
-            </div>
-          </div>
+            <ResizablePanel id="character-page-code" defaultSize={60} minSize={35}>
+              <div className="h-full overflow-auto">
+                <CharacterCodeBlock characterId={id!} />
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         )}
       </LoaderState>
     </div>

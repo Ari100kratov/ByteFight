@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom"
+import { useDefaultLayout } from "react-resizable-panels"
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -21,6 +22,16 @@ export default function GameArenaPage() {
   const { data: arena, isLoading, error } = useArena(arenaId)
   const character = useCharacterStore(s => s.character)
 
+  const rootLayout = useDefaultLayout({
+    id: "game-arena-layout",
+    panelIds: ["left-column", "arena-panel"],
+  })
+
+  const leftColumnLayout = useDefaultLayout({
+    id: "left-column-layout",
+    panelIds: ["character-panel", "code-panel"],
+  })
+
   useArenaBreadcrumbs({ modeType, arena })
   useGameSession(sessionId)
 
@@ -31,17 +42,21 @@ export default function GameArenaPage() {
         error={error}
         skeletonClassName="w-full h-full rounded-2xl"
         loadingFallback={
-          <ResizablePanelGroup direction="horizontal" className="h-full rounded-2xl border">
+          <ResizablePanelGroup
+            id="game-arena-loading-layout"
+            direction="horizontal"
+            className="h-full rounded-2xl border"
+          >
             {/* Левая часть */}
-            <ResizablePanel defaultSize={40}>
-              <ResizablePanelGroup direction="vertical" className="h-full">
-                <ResizablePanel defaultSize={30}>
+            <ResizablePanel id="loading-left" defaultSize={40} minSize={25}>
+              <ResizablePanelGroup id="game-arena-loading-left-layout" direction="vertical" className="h-full">
+                <ResizablePanel id="loading-character" defaultSize={30} minSize={20}>
                   <Skeleton className="h-full w-full rounded-md" />
                 </ResizablePanel>
 
                 <ResizableHandle withHandle />
 
-                <ResizablePanel defaultSize={70}>
+                <ResizablePanel id="loading-code" defaultSize={70} minSize={30}>
                   <Skeleton className="h-full w-full rounded-md" />
                 </ResizablePanel>
               </ResizablePanelGroup>
@@ -50,25 +65,39 @@ export default function GameArenaPage() {
             <ResizableHandle withHandle />
 
             {/* Правая часть */}
-            <ResizablePanel defaultSize={60}>
+            <ResizablePanel id="loading-arena" defaultSize={60} minSize={35}>
               <Skeleton className="h-full w-full rounded-md" />
             </ResizablePanel>
           </ResizablePanelGroup>
         }
       >
-        <ResizablePanelGroup direction="horizontal" className="h-full rounded-2xl border">
+        <ResizablePanelGroup
+          id="game-arena-layout"
+          direction="horizontal"
+          defaultLayout={rootLayout.defaultLayout}
+          onLayoutChanged={rootLayout.onLayoutChanged}
+          resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
+          className="h-full rounded-2xl border"
+        >
           {/* Левая часть */}
-          <ResizablePanel defaultSize={40}>
-            <ResizablePanelGroup direction="vertical" className="h-full">
+          <ResizablePanel id="left-column" defaultSize={40} minSize={25}>
+            <ResizablePanelGroup
+              id="left-column-layout"
+              direction="vertical"
+              defaultLayout={leftColumnLayout.defaultLayout}
+              onLayoutChanged={leftColumnLayout.onLayoutChanged}
+              resizeTargetMinimumSize={{ coarse: 36, fine: 24 }}
+              className="h-full"
+            >
               {/* Блок персонажа */}
-              <ResizablePanel defaultSize={40}>
+              <ResizablePanel id="character-panel" defaultSize={40} minSize={25}>
                 <SelectCharacterCard />
               </ResizablePanel>
 
               <ResizableHandle withHandle />
 
               {/* Блок кода */}
-              <ResizablePanel defaultSize={60}>
+              <ResizablePanel id="code-panel" defaultSize={60} minSize={30}>
                 {character ? (
                   <div className="h-full overflow-auto">
                     <CharacterCodeBlock
@@ -95,7 +124,7 @@ export default function GameArenaPage() {
           <ResizableHandle withHandle />
 
           {/* Правая часть — арена */}
-          <ResizablePanel defaultSize={60}>
+          <ResizablePanel id="arena-panel" defaultSize={60} minSize={35}>
             <ArenaCard />
           </ResizablePanel>
         </ResizablePanelGroup>
