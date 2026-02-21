@@ -19,21 +19,23 @@ import { useCharacterStateStore } from "@/features/game/state/game/character.sta
 import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
 import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 import { StatType } from "@/shared/types/stat"
+import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 
 export function SelectCharacterCard() {
+  const arena = useArenaStore(s => s.arena)
   const { data: characters, isLoading, error } = useCharacters()
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>()
   const { data: character } = useCharacterDetails(selectedCharacterId)
   const init = useCharacterStateStore(s => s.init)
 
   useEffect(() => {
-    if (!character) return
+    if (!character || !arena) return
 
     const health = character.class.stats.find(s => s.statType === StatType.Health)?.value
     const mana = character.class.stats.find(s => s.statType === StatType.Mana)?.value
-    init({ characterId: character.id, maxHp: health ?? 0, maxMp: mana })
+    init({ characterId: character.id, maxHp: health ?? 0, maxMp: mana, startPosition: arena.startPosition })
 
-  }, [character?.id])
+  }, [character?.id, arena?.startPosition])
 
   const handleCreateClick = () => {
     window.open("/characters/create", "_blank")

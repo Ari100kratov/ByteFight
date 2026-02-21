@@ -27,6 +27,9 @@ internal sealed class ArenaConfiguration : IEntityTypeConfiguration<Arena>
             .HasConversion(v => v.Value, v => new UserId(v))
             .IsRequired();
 
+        builder.OwnsOne(x => x.StartPosition);
+        builder.OwnsMany(x => x.BlockedPositions);
+
         //builder.HasQueryFilter(a => a.IsActive);
     }
 }

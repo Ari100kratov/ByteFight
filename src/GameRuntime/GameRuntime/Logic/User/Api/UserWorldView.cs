@@ -9,6 +9,11 @@ namespace GameRuntime.Logic.User.Api;
 public sealed class UserWorldView
 {
     /// <summary>
+    /// Информация об игровой арене
+    /// </summary>
+    public required UserArenaDefinition Arena { get; init; }
+
+    /// <summary>
     /// Текущий управляемый игроком юнит.
     /// </summary>
     public required UserUnitView Self { get; init; }
@@ -31,6 +36,13 @@ internal static partial class Mapper
         return new UserWorldView
         {
             TurnIndex = world.TurnIndex,
+            Arena = new UserArenaDefinition
+            {
+                GridWidth = world.Arena.GridWidth,
+                GridHeight = world.Arena.GridHeight,
+                StartPosition = world.Arena.StartPosition,
+                BlockedPositions = world.Arena.BlockedPositions
+            },
             Self = new UserUnitView
             {
                 Id = actor.Id,

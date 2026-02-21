@@ -6,20 +6,16 @@ namespace GameRuntime.Logic.NPC.PathFinding;
 
 internal sealed class PathFinder : IPathFinder
 {
-    public List<Position>? FindPath(ArenaWorld world, Position start, Position goal)
+    public List<Position>? FindPath(ArenaWorld world, Position start, Position target)
     {
         ArenaDefinition arena = world.Arena;
 
-        if (!IsWithin(arena, start) || !IsWithin(arena, goal))
+        if (!IsWithin(arena, start) || !IsWithin(arena, target))
         {
             return null;
         }
 
-        var occupied = new HashSet<Position>
-        {
-            world.Player.Position
-        };
-
+        var occupied = new HashSet<Position> { world.Player.Position };
         foreach (EnemyUnit enemy in world.Enemies)
         {
             if (enemy.Position != start)
@@ -34,7 +30,7 @@ internal sealed class PathFinder : IPathFinder
         var fScore = new Dictionary<Position, int>();
 
         gScore[start] = 0;
-        fScore[start] = Heuristic(start, goal);
+        fScore[start] = Heuristic(start, target);
         open.Enqueue(start, fScore[start]);
 
         var visited = new HashSet<Position>();
@@ -43,26 +39,21 @@ internal sealed class PathFinder : IPathFinder
         {
             open.TryDequeue(out Position current, out _);
 
-            if (current!.Equals(goal))
+            if (current!.Equals(target))
             {
                 return ReconstructPath(cameFrom, current);
             }
 
             visited.Add(current);
 
-            foreach (Position neigh in GetNeighbors(current))
+            foreach (Position neigh in GetNeighbors(current, arena))
             {
-                if (!IsWithin(arena, neigh))
+                if ((occupied.Contains(neigh) || arena.BlockedPositions.Contains(neigh)) && !neigh.Equals(target))
                 {
                     continue;
                 }
 
-                if (occupied.Contains(neigh) && !neigh.Equals(goal))
-                {
-                    continue;
-                }
-
-                if (visited.Contains(neigh))
+                if (!IsWithin(arena, neigh) || visited.Contains(neigh))
                 {
                     continue;
                 }
@@ -73,7 +64,7 @@ internal sealed class PathFinder : IPathFinder
                 {
                     cameFrom[neigh] = current;
                     gScore[neigh] = tentativeG;
-                    fScore[neigh] = tentativeG + Heuristic(neigh, goal);
+                    fScore[neigh] = tentativeG + Heuristic(neigh, target);
                     open.Enqueue(neigh, fScore[neigh]);
                 }
             }
@@ -95,19 +86,27 @@ internal sealed class PathFinder : IPathFinder
         return total;
     }
 
-    private static int Heuristic(Position positionA, Position positionB) =>
-        positionA.ManhattanDistance(positionB);
-
-    private static IEnumerable<Position> GetNeighbors(Position p)
+    private static int Heuristic(Position from, Position to)
     {
-        yield return new Position(p.X + 1, p.Y);
+        return Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
+    }
+
+    private static IEnumerable<Position> GetNeighbors(Position p, ArenaDefinition arena)
+    {
+        if (p.X + 1 < arena.GridWidth)
+        {
+            yield return new Position(p.X + 1, p.Y);
+        }
 
         if (p.X - 1 >= 0)
         {
             yield return new Position(p.X - 1, p.Y);
         }
 
-        yield return new Position(p.X, p.Y + 1);
+        if (p.Y + 1 < arena.GridHeight)
+        {
+            yield return new Position(p.X, p.Y + 1);
+        }
 
         if (p.Y - 1 >= 0)
         {

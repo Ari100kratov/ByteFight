@@ -17,11 +17,15 @@ public sealed class MinioStorageService(IMinioClient minioClient) : IStorageServ
                 new GetObjectArgs()
                     .WithBucket(bucket)
                     .WithObject(key)
-                    .WithCallbackStream(async stream => await stream.CopyToAsync(memoryStream))
-            , cancellationToken);
+                    .WithCallbackStream(stream =>
+                    {
+                        // ВАЖНО: синхронно, пока не переделаю по-человечески -
+                        // чтобы браузер сам мог обращаться напрямую к MiniO
+                        stream.CopyTo(memoryStream);
+                    }),
+                cancellationToken);
 
             memoryStream.Position = 0;
-
             return memoryStream;
         }
         catch (BucketNotFoundException)

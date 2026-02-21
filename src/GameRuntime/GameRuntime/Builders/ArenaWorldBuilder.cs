@@ -3,7 +3,6 @@ using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Characters;
 using Domain.GameRuntime.RuntimeLogEntries;
-using Domain.ValueObjects;
 using GameRuntime.World;
 using GameRuntime.World.Stats;
 using GameRuntime.World.Units;
@@ -69,10 +68,12 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
             {
                 ArenaId = arena.Id,
                 GridWidth = arena.GridWidth,
-                GridHeight = arena.GridHeight
+                GridHeight = arena.GridHeight,
+                StartPosition = arena.StartPosition,
+                BlockedPositions = [.. arena.BlockedPositions]
             },
 
-            Player = new PlayerUnit(new Position(0, 0), FacingDirection.Right)
+            Player = new PlayerUnit(arena.StartPosition, FacingDirection.Right)
             {
                 CharacterId = character.Id,
                 Class = character.Class.Type,

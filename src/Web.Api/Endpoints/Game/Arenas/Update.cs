@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Application.Game.Arenas.Update;
 using Domain.Game.GameModes;
 using SharedKernel;
@@ -16,6 +17,8 @@ internal sealed class Update : IEndpoint
         string? BackgroundAsset,
         string? Description,
         List<GameModeType> GameModes,
+        PositionDto? StartPosition,
+        List<PositionDto>? BlockedPositions,
         bool IsActive
     );
 
@@ -35,6 +38,8 @@ internal sealed class Update : IEndpoint
                 request.BackgroundAsset,
                 request.Description,
                 request.GameModes,
+                request.StartPosition,
+                request.BlockedPositions,
                 request.IsActive
             );
 

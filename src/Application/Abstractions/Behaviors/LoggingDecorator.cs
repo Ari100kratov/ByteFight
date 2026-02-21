@@ -4,9 +4,9 @@ using SharedKernel;
 
 namespace Application.Abstractions.Behaviors;
 
-internal static class LoggingDecorator
+internal static partial class LoggingDecorator
 {
-    internal sealed class CommandHandler<TCommand, TResponse>(
+    internal sealed partial class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
         ILogger<CommandHandler<TCommand, TResponse>> logger)
         : ICommandHandler<TCommand, TResponse>
@@ -16,13 +16,13 @@ internal static class LoggingDecorator
         {
             string commandName = typeof(TCommand).Name;
 
-            logger.LogInformation("Processing command {Command}", commandName);
+            LogProcessingCommand(commandName);
 
             Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed command {Command}", commandName);
+                LogCompletedCommand(commandName);
             }
             else
             {
@@ -38,9 +38,15 @@ internal static class LoggingDecorator
 
             return result;
         }
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Processing command {Command}")]
+        private partial void LogProcessingCommand(string command);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Completed command {Command}")]
+        private partial void LogCompletedCommand(string command);
     }
 
-    internal sealed class CommandBaseHandler<TCommand>(
+    internal sealed partial class CommandBaseHandler<TCommand>(
         ICommandHandler<TCommand> innerHandler,
         ILogger<CommandBaseHandler<TCommand>> logger)
         : ICommandHandler<TCommand>
@@ -50,13 +56,13 @@ internal static class LoggingDecorator
         {
             string commandName = typeof(TCommand).Name;
 
-            logger.LogInformation("Processing command {Command}", commandName);
+            LogProcessingCommand(commandName);
 
             Result result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed command {Command}", commandName);
+                LogCompletedCommand(commandName);
             }
             else
             {
@@ -72,9 +78,15 @@ internal static class LoggingDecorator
 
             return result;
         }
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Processing command {Command}")]
+        private partial void LogProcessingCommand(string command);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Completed command {Command}")]
+        private partial void LogCompletedCommand(string command);
     }
 
-    internal sealed class QueryHandler<TQuery, TResponse>(
+    internal sealed partial class QueryHandler<TQuery, TResponse>(
         IQueryHandler<TQuery, TResponse> innerHandler,
         ILogger<QueryHandler<TQuery, TResponse>> logger)
         : IQueryHandler<TQuery, TResponse>
@@ -84,13 +96,13 @@ internal static class LoggingDecorator
         {
             string queryName = typeof(TQuery).Name;
 
-            logger.LogInformation("Processing query {Query}", queryName);
+            LogProcessingQuery(queryName);
 
             Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed query {Query}", queryName);
+                LogCompletedQuery(queryName);
             }
             else
             {
@@ -106,5 +118,11 @@ internal static class LoggingDecorator
 
             return result;
         }
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Processing query {Query}")]
+        private partial void LogProcessingQuery(string query);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Completed query {Query}")]
+        private partial void LogCompletedQuery(string query);
     }
 }

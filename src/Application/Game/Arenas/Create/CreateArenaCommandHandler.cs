@@ -1,8 +1,10 @@
 ﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Domain;
 using Domain.Game.Arenas;
+using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
@@ -28,15 +30,17 @@ internal sealed class CreateArenaCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             Name = name,
-            GridWidth = command.GridWidth,
-            GridHeight = command.GridHeight,
             BackgroundAsset = command.BackgroundAsset?.Trim(),
             Description = command.Description?.Trim(),
             GameModes = command.GameModes,
             IsActive = true,
             CreatedBy = new UserId(userContext.UserId),
-            CreatedAt = dateTimeProvider.UtcNow
+            CreatedAt = dateTimeProvider.UtcNow,
         };
+
+        arena.SetSize(command.GridWidth, command.GridHeight);
+        arena.SetStartPosition(command.StartPosition?.ToValueObject() ?? new Position(0, 0));
+        arena.SetBlockedPositions(command.BlockedPositions?.Select(x => x.ToValueObject()).ToArray() ?? []);
 
         dbContext.Arenas.Add(arena);
         await dbContext.SaveChangesAsync(cancellationToken);

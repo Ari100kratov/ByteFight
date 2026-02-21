@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Application.Game.Arenas.Create;
 using Domain.Game.GameModes;
 using SharedKernel;
@@ -14,7 +15,9 @@ internal sealed class Create : IEndpoint
         int GridHeight,
         string? BackgroundAsset,
         string? Description,
-        List<GameModeType> GameModes
+        List<GameModeType> GameModes,
+        PositionDto? StartPosition,
+        List<PositionDto>? BlockedPositions
     );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
@@ -30,7 +33,9 @@ internal sealed class Create : IEndpoint
                 request.GridHeight,
                 request.BackgroundAsset,
                 request.Description,
-                request.GameModes
+                request.GameModes,
+                request.StartPosition,
+                request.BlockedPositions
             );
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);

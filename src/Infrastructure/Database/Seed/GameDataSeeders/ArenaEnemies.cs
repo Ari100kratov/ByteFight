@@ -15,14 +15,14 @@ internal class ArenaEnemies
                 Id = Guid.CreateVersion7(),
                 ArenaId = seed.Arena_1,
                 EnemyId = seed.Orc_Warrior,
-                Position = new Position(2, 5)
+                Position = new Position(4, 5)
             },
             new()
             {
                 Id = Guid.CreateVersion7(),
                 ArenaId = seed.Arena_1,
                 EnemyId = seed.Orc_Warrior,
-                Position = new Position(6, 6)
+                Position = new Position(6, 1)
             }
         };
 

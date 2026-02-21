@@ -1,12 +1,13 @@
 import { create } from "zustand"
 import { ActionType } from "@/shared/types/action"
-import { FacingDirection } from "../../types/common"
+import { FacingDirection, type Position } from "../../types/common"
 import type { UnitRuntime } from "../../types/UnitRuntime"
 
 type InitPayload = {
   characterId: string
   maxHp: number
-  maxMp?: number
+  maxMp?: number,
+  startPosition: Position
 }
 
 type CharacterRuntimeState = {
@@ -29,7 +30,7 @@ export const useCharacterStateStore = create<CharacterRuntimeState>((set, get) =
           hp: { current: payload.maxHp, max: payload.maxHp },
           mp: payload.maxMp ? { current: payload.maxMp, max: payload.maxMp } : undefined,
           facing: FacingDirection.Right,
-          position: { x: 0, y: 0 },
+          position: payload.startPosition,
         },
       })
     }

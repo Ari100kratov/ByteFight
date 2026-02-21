@@ -1,4 +1,6 @@
-﻿namespace Application.Game.Arenas.GetById;
+﻿using Application.Contracts;
+
+namespace Application.Game.Arenas.GetById;
 
 public sealed record ArenaResponse(
     Guid Id,
@@ -6,5 +8,7 @@ public sealed record ArenaResponse(
     int GridWidth,
     int GridHeight,
     string? BackgroundAsset,
-    string? Description
+    string? Description,
+    PositionDto StartPosition,
+    PositionDto[] BlockedPositions
 );

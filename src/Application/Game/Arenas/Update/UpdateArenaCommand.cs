@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Domain.Game.GameModes;
 
 namespace Application.Game.Arenas.Update;
@@ -11,5 +12,7 @@ public sealed record UpdateArenaCommand(
     string? BackgroundAsset,
     string? Description,
     List<GameModeType> GameModes,
+    PositionDto? StartPosition,
+    List<PositionDto>? BlockedPositions,
     bool IsActive
 ) : ICommand;

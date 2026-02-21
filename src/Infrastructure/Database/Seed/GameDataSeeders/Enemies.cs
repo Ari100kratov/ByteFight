@@ -18,7 +18,7 @@ internal class Enemies
             Stats =
             [
                 new() { StatType = StatType.Health, Value = 100 },
-                new() { StatType = StatType.Attack, Value = 15 },
+                new() { StatType = StatType.Attack, Value = 20 },
                 new() { StatType = StatType.AttackRange, Value = 1 },
                 new() { StatType = StatType.MoveRange, Value = 1 },
             ],

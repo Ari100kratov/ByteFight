@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Application.Contracts;
 using Domain.Game.Arenas;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -14,7 +15,15 @@ internal sealed class GetArenaByIdQueryHandler(IGameDbContext dbContext)
         ArenaResponse? arena = await dbContext.Arenas
             .AsNoTracking()
             .Where(a => a.Id == query.Id)
-            .Select(a => new ArenaResponse(a.Id, a.Name, a.GridWidth, a.GridHeight, a.BackgroundAsset, a.Description))
+            .Select(a => new ArenaResponse(
+                a.Id, a.Name,
+                a.GridWidth,
+                a.GridHeight,
+                a.BackgroundAsset,
+                a.Description,
+                a.StartPosition.ToDto(),
+                a.BlockedPositions.Select(x => x.ToDto()).ToArray()
+                ))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (arena is null)

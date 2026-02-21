@@ -21,7 +21,7 @@ internal class CharacterClasses
             Description = "Сильный боец ближнего боя, мастер владения оружием.",
             Stats =
             [
-                new() { StatType = StatType.Health, Value = 150 },
+                new() { StatType = StatType.Health, Value = 180 },
                 new() { StatType = StatType.Attack, Value = 30 },
                 new() { StatType = StatType.AttackRange, Value = 1 },
                 new() { StatType = StatType.MoveRange, Value = 1 },
@@ -123,10 +123,10 @@ internal class CharacterClasses
             Description = "Могущественный заклинатель, владеющий разрушительной магией стихий. Слабо защищён в ближнем бою, но способен уничтожить врагов на расстоянии.",
             Stats =
             [
-                new() { StatType = StatType.Health, Value = 90 },
-                new() { StatType = StatType.Attack, Value = 50 },
-                new() { StatType = StatType.AttackRange, Value = 3 },
-                new() { StatType = StatType.MoveRange, Value = 2 },
+                new() { StatType = StatType.Health, Value = 110 },
+                new() { StatType = StatType.Attack, Value = 45 },
+                new() { StatType = StatType.AttackRange, Value = 2 },
+                new() { StatType = StatType.MoveRange, Value = 1 },
                 new() { StatType = StatType.Mana, Value = 100 }
             ],
             ActionAssets =
