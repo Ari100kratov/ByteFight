@@ -11,7 +11,7 @@ export function GridContainer() {
 
   const arena = useArenaStore((s) => s.arena)
   const viewport = useViewportStore(s => s.size)
-  const { layout, updateLayout } = useGridStore()
+  const { layout, updateLayout, showGrid } = useGridStore()
 
   useEffect(() => {
     if (!arena) return
@@ -25,7 +25,10 @@ export function GridContainer() {
   if (!layout)
     return null
 
-  const { gridSize, cellSize, gridPixelWidth, gridPixelHeight, offsetX, offsetY, cells } = layout
+  const { gridSize, offsetX, offsetY, cells } = layout
+  const blockedSet = new Set(
+    arena?.blockedPositions?.map(p => `${p.x}:${p.y}`)
+  )
 
   // cells сейчас хранит gridY = 0 снизу, и x/y — абсолютные пиксельные позиции (левый верх ячейки)
   // Но для упрощения рендеринга поместим всё в локальный контейнер со сдвигом offsetX/offsetY,
@@ -33,53 +36,55 @@ export function GridContainer() {
 
   return (
     <pixiContainer x={offsetX} y={offsetY}>
-      <pixiGraphics
-        draw={(g) => {
-          g.clear()
-          g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.25 })
 
-          for (let x = 0; x <= gridSize.width; x++) {
-            const px = x * cellSize
-            g.moveTo(px, 0)
-            g.lineTo(px, gridPixelHeight)
-          }
+      {/* Линии сетки */}
+      {showGrid && (
+        <pixiGraphics
+          draw={(g) => {
+            g.clear()
+            g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.25 })
 
-          for (let y = 0; y <= gridSize.height; y++) {
-            const py = y * cellSize
-            g.moveTo(0, py)
-            g.lineTo(gridPixelWidth, py)
-          }
+            for (const cell of cells.flat()) {
 
-          g.stroke()
-        }}
-      />
+              if (blockedSet.has(`${cell.gridX}:${cell.gridY}`))
+                continue
 
-      {cells.flat().map((cell) => {
-        const localX = cell.gridX * cell.width
-        const localY = (gridSize.height - 1 - cell.gridY) * cell.height
-        return (
-          <pixiText
-            key={`${cell.gridX}-${cell.gridY}`}
-            text={`(${cell.gridX}, ${cell.gridY})`}
-            x={localX + 4}
-            y={localY + 4}
-            style={{
-              fontSize: 10,
-              fill: 0xffffff,
-              align: "left"
-            }}
-            alpha={0.45}
-          />
-        )
-      })}
+              const x = cell.gridX * cell.width
+              const y = (gridSize.height - 1 - cell.gridY) * cell.height
 
-      {/* <pixiGraphics draw={(g) => {
-        g.beginFill(0xff0000, 0.6)
-        const markerX = 0 * cellSize + 2
-        const markerY = (gridSize.height - 1 - 0) * cellSize + 2
-        g.drawCircle(markerX + 6, markerY + 6, 4)
-        g.endFill()
-      }} /> */}
+              g.rect(x, y, cell.width, cell.height)
+            }
+
+            g.stroke()
+          }}
+        />
+      )}
+
+      {/* Координаты клеток */}
+      {showGrid &&
+        cells.flat().map((cell) => {
+
+          if (blockedSet.has(`${cell.gridX}:${cell.gridY}`))
+            return null
+
+          const localX = cell.gridX * cell.width
+          const localY = (gridSize.height - 1 - cell.gridY) * cell.height
+
+          return (
+            <pixiText
+              key={`${cell.gridX}-${cell.gridY}`}
+              text={`(${cell.gridX}, ${cell.gridY})`}
+              x={localX + 4}
+              y={localY + 4}
+              style={{
+                fontSize: 10,
+                fill: 0xffffff,
+                align: "left"
+              }}
+              alpha={0.45}
+            />
+          )
+        })}
     </pixiContainer>
   )
 }

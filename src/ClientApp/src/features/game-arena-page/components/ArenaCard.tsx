@@ -12,12 +12,15 @@ import { useGameBootstrapStore } from "@/features/game/state/game.bootstrap.stor
 import { useCodeEditorStore } from "@/features/character-code-block/state/codeEditor.store"
 import { useResizeObserver } from "@/shared/hooks/useResizeObserver"
 import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
+import { useGridStore } from "@/features/game/state/game/grid.state.store"
+import { Switch } from "@/components/ui/switch"
 
 export function ArenaCard() {
   const navigate = useNavigate()
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
 
   const setViewportSize = useViewportStore(s => s.setSize)
+  const { showGrid, setShowGrid } = useGridStore()
 
   const arenaRef = useResizeObserver(size => {
     setViewportSize(size)
@@ -80,7 +83,16 @@ export function ArenaCard() {
           <Game />
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={showGrid}
+            onCheckedChange={setShowGrid}
+          />
+          <span className="text-sm text-muted-foreground">
+            Показать сетку
+          </span>
+        </div>
         <Button size="lg" disabled={isLoading} onClick={handleStart}>
           {isLoading ? "Готовимся к бою..." : <><SwordsIcon /> В бой</>}
         </Button>
