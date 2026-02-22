@@ -1,9 +1,6 @@
 import { useParams } from "react-router-dom"
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable"
+import { useDefaultLayout } from "react-resizable-panels"
+
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
 import { SelectCharacterCard } from "./components/SelectCharacterCard"
 import { ArenaCard } from "./components/ArenaCard"
@@ -14,6 +11,7 @@ import { useArena } from "./hooks/useArena"
 import { useCharacterStore } from "../game/state/data/character.data.store"
 import { useGameSession } from "./hooks/useGameSession"
 import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
+import { Group, Panel, Separator } from "@/components/ui/resizable"
 
 export default function GameArenaPage() {
   const { modeType, arenaId, sessionId } = useParams()
@@ -24,60 +22,79 @@ export default function GameArenaPage() {
   useArenaBreadcrumbs({ modeType, arena })
   useGameSession(sessionId)
 
+  const {
+    defaultLayout,
+    onLayoutChanged
+  } = useDefaultLayout({
+    id: "game-arena-layout"
+  })
+
   return (
-    <div className="flex flex-col gap-6 p-4 w-full h-full">
+    <div className="flex flex-col gap-4 w-full h-full">
       <LoaderState
         isLoading={isLoading}
         error={error}
         skeletonClassName="w-full h-full rounded-2xl"
         loadingFallback={
-          <ResizablePanelGroup direction="horizontal" className="h-full rounded-2xl border">
-            {/* Левая часть */}
-            <ResizablePanel defaultSize={40}>
-              <ResizablePanelGroup direction="vertical" className="h-full">
-                <ResizablePanel defaultSize={30}>
+          <Group orientation="horizontal">
+            <Panel defaultSize="40%">
+              <Group orientation="vertical">
+                <Panel defaultSize="30%" className="p-2">
                   <Skeleton className="h-full w-full rounded-md" />
-                </ResizablePanel>
+                </Panel>
 
-                <ResizableHandle withHandle />
+                <Separator withHandle />
 
-                <ResizablePanel defaultSize={70}>
+                <Panel defaultSize="70%" className="p-2">
                   <Skeleton className="h-full w-full rounded-md" />
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </ResizablePanel>
+                </Panel>
+              </Group>
+            </Panel>
 
-            <ResizableHandle withHandle />
+            <Separator withHandle />
 
-            {/* Правая часть */}
-            <ResizablePanel defaultSize={60}>
+            <Panel defaultSize="60%" minSize="30%" className="p-2">
               <Skeleton className="h-full w-full rounded-md" />
-            </ResizablePanel>
-          </ResizablePanelGroup>
+            </Panel>
+          </Group>
         }
       >
-        <ResizablePanelGroup direction="horizontal" className="h-full rounded-2xl border">
+        <Group
+          orientation="horizontal"
+          defaultLayout={defaultLayout}
+          onLayoutChanged={onLayoutChanged}
+        >
           {/* Левая часть */}
-          <ResizablePanel defaultSize={40}>
-            <ResizablePanelGroup direction="vertical" className="h-full">
+          <Panel
+            id="left-panel"
+            defaultSize="40%"
+          >
+            <Group orientation="vertical">
               {/* Блок персонажа */}
-              <ResizablePanel defaultSize={40}>
+              <Panel
+                id="character-panel"
+                defaultSize="40%"
+                className="p-2"
+              >
                 <SelectCharacterCard />
-              </ResizablePanel>
+              </Panel>
 
-              <ResizableHandle withHandle />
+              <Separator withHandle />
 
               {/* Блок кода */}
-              <ResizablePanel defaultSize={60}>
+              <Panel
+                id="code-panel"
+                defaultSize="60%"
+                className="p-2"
+              >
                 {character ? (
                   <div className="h-full overflow-auto">
                     <CharacterCodeBlock
                       characterId={character.id}
-                      className="rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r"
                     />
                   </div>
                 ) : (
-                  <Card className="flex flex-col w-full h-full overflow-auto rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r overflow-auto">
+                  <Card className="flex flex-col w-full h-full overflow-auto">
                     <CardHeader>
                       <CardTitle>Поведение</CardTitle>
                     </CardHeader>
@@ -88,17 +105,22 @@ export default function GameArenaPage() {
                     </CardContent>
                   </Card>
                 )}
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          </ResizablePanel>
+              </Panel>
+            </Group>
+          </Panel>
 
-          <ResizableHandle withHandle />
+          <Separator withHandle />
 
           {/* Правая часть — арена */}
-          <ResizablePanel defaultSize={60}>
+          <Panel
+            id="arena-panel"
+            defaultSize="60%"
+            minSize="30%"
+            className="p-2"
+          >
             <ArenaCard />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+          </Panel>
+        </Group>
       </LoaderState>
     </div>
   )

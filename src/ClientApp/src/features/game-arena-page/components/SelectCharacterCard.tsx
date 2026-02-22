@@ -50,7 +50,7 @@ export function SelectCharacterCard() {
       skeletonClassName="w-full h-full rounded-2xl"
       loadingFallback={<Skeleton className="w-full h-full rounded-2xl" />}
     >
-      <Card className="h-full rounded-none md:rounded-tl-2xl border-0 border-b md:border-b-0 md:border-r overflow-auto">
+      <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Персонаж</CardTitle>
           <CardDescription>

@@ -73,7 +73,7 @@ export function ArenaCard() {
   }
 
   return (
-    <Card className="h-full rounded-none md:rounded-r-2xl flex flex-col overflow-hidden">
+    <Card className="h-full flex flex-col overflow-hidden">
       <CardHeader>
         <CardTitle>{arena.name}</CardTitle>
         <CardDescription>{arena.description}</CardDescription>

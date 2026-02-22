@@ -74,7 +74,7 @@ export function CharacterClassSelector({ selectedClassId, onSelectClass }: Props
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center text-muted-foreground">
-              Выберите класс, чтобы увидеть подробности
+              Выберите класс персонажа
             </div>
           )}
         </CardContent>
