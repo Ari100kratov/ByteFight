@@ -37,6 +37,7 @@ export const queryKeys = {
 
   gameSessions: {
     byId: (id: string | undefined) => ['game-sessions', 'byId', id] as const,
+    logs: (sessionId: string | undefined) => ['game-sessions', 'logs', sessionId] as const,
   }
 
 } as const

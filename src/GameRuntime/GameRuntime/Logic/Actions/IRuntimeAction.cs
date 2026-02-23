@@ -1,8 +1,9 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
+using GameRuntime.World;
 
 namespace GameRuntime.Logic.Actions;
 
 internal interface IRuntimeAction
 {
-    IEnumerable<RuntimeLogEntry> Execute();
+    IEnumerable<GameActionLogEntry> Execute(ArenaWorld world);
 }

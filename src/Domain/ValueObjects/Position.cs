@@ -1,4 +1,4 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
 
 namespace Domain.ValueObjects;
 

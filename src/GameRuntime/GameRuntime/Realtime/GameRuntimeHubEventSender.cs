@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.GameRuntime;
 using Application.Contracts.GameRuntime;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameSessions;
-using Domain.GameRuntime.RuntimeLogEntries;
 using Microsoft.AspNetCore.SignalR;
 
 namespace GameRuntime.Realtime;

@@ -1,11 +1,11 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
 
 namespace Application.Contracts.GameRuntime;
 
 public sealed record TurnLogDto
 {
     public int TurnIndex { get; init; }
-    public object[] Logs { get; init; } // TODO: object? Сомнительно, но окей...
+    public GameActionLogEntryDto[] Logs { get; init; }
 }
 
 public static partial class Mapper
@@ -17,7 +17,7 @@ public static partial class Mapper
             Logs = [.. entity.Logs.Select(x => x.ToDto())],
         };
 
-    private static object ToDto(this RuntimeLogEntry entity)
+    public static GameActionLogEntryDto ToDto(this GameActionLogEntry entity)
         => entity switch
         {
             AttackLogEntry attack => attack.ToDto(),
@@ -30,7 +30,12 @@ public static partial class Mapper
     private static AttackLogEntryDto ToDto(this AttackLogEntry e)
         => new()
         {
+            Id = e.Id,
             ActorId = e.ActorId,
+            Info = e.Info,
+            TurnIndex = e.TurnIndex,
+            CreatedAt = e.CreatedAt,
+
             TargetId = e.TargetId,
             Damage = e.Damage,
             FacingDirection = e.FacingDirection,
@@ -40,14 +45,33 @@ public static partial class Mapper
     private static WalkLogEntryDto ToDto(this WalkLogEntry e)
         => new()
         {
+            Id = e.Id,
             ActorId = e.ActorId,
+            Info = e.Info,
+            TurnIndex = e.TurnIndex,
+            CreatedAt = e.CreatedAt,
+
             FacingDirection = e.FacingDirection,
             To = e.To.ToDto()
         };
 
     private static DeathLogEntryDto ToDto(this DeathLogEntry e)
-        => new() { ActorId = e.ActorId };
+        => new()
+        {
+            Id = e.Id,
+            ActorId = e.ActorId,
+            Info = e.Info,
+            TurnIndex = e.TurnIndex,
+            CreatedAt = e.CreatedAt,
+        };
 
     private static IdleLogEntryDto ToDto(this IdleLogEntry e)
-        => new() { ActorId = e.ActorId };
+        => new()
+        {
+            Id = e.Id,
+            ActorId = e.ActorId,
+            Info = e.Info,
+            TurnIndex = e.TurnIndex,
+            CreatedAt = e.CreatedAt,
+        };
 }

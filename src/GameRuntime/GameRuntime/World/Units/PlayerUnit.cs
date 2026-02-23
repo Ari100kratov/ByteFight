@@ -1,5 +1,5 @@
 ﻿using Domain.Game.CharacterClasses;
-using Domain.GameRuntime.RuntimeLogEntries;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 
 namespace GameRuntime.World.Units;

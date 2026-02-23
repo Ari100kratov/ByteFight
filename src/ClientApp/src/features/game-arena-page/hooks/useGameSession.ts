@@ -7,9 +7,10 @@ import { isGameSessionActive, type GameSession } from "@/features/game/types/Gam
 import { apiFetch, type ApiException } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 import { useGameBootstrapStore } from "@/features/game/state/game.bootstrap.store"
+import type { TurnLog } from "@/features/game/types/TurnLog"
 
 export function useGameSession(sessionId?: string) {
-  const setSession = useGameRuntimeStore(s => s.setSession)
+  const { setSession, setTurnLogs } = useGameRuntimeStore()
 
   const { data: session, isLoading } = useQuery<GameSession, ApiException>({
     queryKey: queryKeys.gameSessions.byId(sessionId),
@@ -17,6 +18,14 @@ export function useGameSession(sessionId?: string) {
     enabled: !!sessionId,
     retry: false,
   })
+
+  const { data: logs } = useQuery<TurnLog[], ApiException>({
+    queryKey: queryKeys.gameSessions.logs(sessionId),
+    queryFn: () => apiFetch(`/game/sessions/${sessionId}/logs`),
+    enabled: !!sessionId,
+    retry: false,
+  });
+
 
   useEffect(() => {
     if (isLoading) useGameBootstrapStore.getState().start()
@@ -30,13 +39,19 @@ export function useGameSession(sessionId?: string) {
 
   useEffect(() => {
     if (!session) return
+    setSession(session)
+  }, [session])
 
-    if (!isGameSessionActive(session)) {
+  useEffect(() => {
+    if (!logs?.length) return
+    setTurnLogs(logs)
+  }, [logs])
+
+  useEffect(() => {
+    if (!session || !isGameSessionActive(session)) {
       useGameBootstrapStore.getState().end()
       return
     }
-
-    setSession(session)
 
     gameHub.connect(session.id)
       .catch(err => {
@@ -49,5 +64,5 @@ export function useGameSession(sessionId?: string) {
     return () => {
       gameHub.disconnect(session.id).catch(() => { })
     }
-  }, [session, sessionId, setSession])
+  }, [session?.id])
 }

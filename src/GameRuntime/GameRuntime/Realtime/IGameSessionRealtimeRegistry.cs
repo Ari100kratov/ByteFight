@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using Domain.GameRuntime.RuntimeLogEntries;
+using Domain.GameRuntime.GameActionLogs;
 
 namespace GameRuntime.Realtime;
 

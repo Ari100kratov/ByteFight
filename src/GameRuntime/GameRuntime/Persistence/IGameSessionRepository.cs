@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.GameRuntime;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessions;
 
@@ -6,7 +7,9 @@ namespace GameRuntime.Persistence;
 
 internal interface IGameSessionRepository
 {
-    Task<GameSession> Create(GameInitModel initModel, IEnumerable<Guid> arenaEnemyIds, CancellationToken ct);
+    Task<GameSession> Create(Guid id, GameInitModel initModel, IEnumerable<Guid> arenaEnemyIds, CancellationToken ct);
+
+    Task Save(IEnumerable<GameActionLogEntry> gameActionLogEntries);
 
     Task<GameSession> MarkStarted(Guid id);
 

@@ -1,5 +1,5 @@
-﻿using Domain.GameRuntime.GameSessions;
-using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameSessions;
 
 namespace Application.Abstractions.GameRuntime;
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Infrastructure.Database.GameRuntime;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.GameRuntime.Migrations
 {
     [DbContext(typeof(GameRuntimeDbContext))]
-    partial class GameRuntimeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222210510_AddGameActionLogEntry")]
+    partial class AddGameActionLogEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

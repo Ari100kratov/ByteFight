@@ -1,4 +1,4 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
 using GameRuntime.Logic.Turns;
 using GameRuntime.Logic.User.Api;
 using GameRuntime.World;
@@ -19,7 +19,7 @@ internal sealed class ScriptedUnitTurnProcessor : IUnitTurnProcessor
         _executor = executor;
     }
 
-    public IEnumerable<RuntimeLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
+    public IEnumerable<GameActionLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
     {
         UserWorldView view = world.ToView(actor);
         UserAction action;
@@ -28,10 +28,9 @@ internal sealed class ScriptedUnitTurnProcessor : IUnitTurnProcessor
         {
             action = _decide(view);
         }
-        catch
+        catch (Exception ex)
         {
-            // need log
-            return [new IdleLogEntry(actor.Id)];
+            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.UserError(ex.Message))];
         }
 
         return _executor.Execute(action, actor, world);

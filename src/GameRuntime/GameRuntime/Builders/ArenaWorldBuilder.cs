@@ -2,7 +2,7 @@
 using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Characters;
-using Domain.GameRuntime.RuntimeLogEntries;
+using Domain.GameRuntime.GameActionLogs;
 using GameRuntime.World;
 using GameRuntime.World.Stats;
 using GameRuntime.World.Units;

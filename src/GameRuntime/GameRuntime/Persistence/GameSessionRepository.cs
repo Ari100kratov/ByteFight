@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.GameRuntime;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ internal sealed class GameSessionRepository(IServiceScopeFactory scopeFactory, I
     : IGameSessionRepository
 {
     public async Task<GameSession> Create(
+        Guid id,
         GameInitModel initModel,
         IEnumerable<Guid> arenaEnemyIds,
         CancellationToken ct)
@@ -20,6 +22,7 @@ internal sealed class GameSessionRepository(IServiceScopeFactory scopeFactory, I
         IGameRuntimeDbContext dbContext = scope.ServiceProvider.GetRequiredService<IGameRuntimeDbContext>();
 
         var gameSession = GameSession.New(
+            id,
             initModel.Mode,
             initModel.ArenaId,
             initModel.CharacterId,
@@ -31,6 +34,15 @@ internal sealed class GameSessionRepository(IServiceScopeFactory scopeFactory, I
         await dbContext.SaveChangesAsync(ct);
 
         return gameSession;
+    }
+
+    public async Task Save(IEnumerable<GameActionLogEntry> gameActionLogEntries)
+    {
+        using IServiceScope scope = scopeFactory.CreateScope();
+        IGameRuntimeDbContext dbContext = scope.ServiceProvider.GetRequiredService<IGameRuntimeDbContext>();
+
+        await dbContext.GameActionLogEntries.AddRangeAsync(gameActionLogEntries);
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task<GameSession> MarkStarted(Guid id)

@@ -1,4 +1,4 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
 using GameRuntime.World;
 using GameRuntime.World.Units;
 
@@ -19,7 +19,7 @@ internal sealed class GameTurnProcessor : IGameTurnProcessor
     {
         world.IncrementTurn();
 
-        var logs = new List<RuntimeLogEntry>();
+        var logs = new List<GameActionLogEntry>();
 
         if (!world.Player.IsDead)
         {

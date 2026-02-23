@@ -1,4 +1,6 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
+using Domain.ValueObjects;
+using GameRuntime.World;
 using GameRuntime.World.Units;
 
 namespace GameRuntime.Logic.Actions;
@@ -16,25 +18,25 @@ internal sealed class AttackAction : IRuntimeAction
         Damage = damage;
     }
 
-    public IEnumerable<RuntimeLogEntry> Execute()
+    public IEnumerable<GameActionLogEntry> Execute(ArenaWorld world)
     {
         FacingDirection facing = Actor.Position.CalculateFacing(TargetUnit.Position);
         Actor.Turn(facing);
 
         StatSnapshot hpSnapshot = TargetUnit.Stats.ApplyDamage(Damage);
 
-        yield return new AttackLogEntry(
-            ActorId: Actor.Id,
-            TargetId: TargetUnit.Id,
-            Damage: Damage,
-            FacingDirection: facing,
-            TargetHp: hpSnapshot
+        yield return world.CreateAttackLogEntry(
+            actorId: Actor.Id,
+            targetId: TargetUnit.Id,
+            damage: Damage,
+            facingDirection: facing,
+            targetHp: hpSnapshot
         );
 
         if (TargetUnit.IsDead)
         {
             TargetUnit.MarkKilledBy(Actor.Id);
-            yield return new DeathLogEntry(ActorId: TargetUnit.Id);
+            yield return world.CreateDeathLogEntry(TargetUnit.Id);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Domain.Game.Stats;
-using Domain.GameRuntime.RuntimeLogEntries;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Logic.Actions;
 using GameRuntime.Logic.NPC.PathFinding;
@@ -18,7 +18,7 @@ internal sealed class UserActionExecutor
         _pathFinder = pathFinder;
     }
 
-    public IEnumerable<RuntimeLogEntry> Execute(
+    public IEnumerable<GameActionLogEntry> Execute(
         UserAction action,
         BaseUnit actor,
         ArenaWorld world)
@@ -27,12 +27,12 @@ internal sealed class UserActionExecutor
         {
             Attack a => ExecuteAttack(a, actor, world),
             MoveTo m => ExecuteMoveTo(m, actor, world),
-            Idle => [new IdleLogEntry(actor.Id)],
-            _ => [new IdleLogEntry(actor.Id)]
+            Idle => [world.CreateIdleLogEntry(actor.Id, IdleReasons.ManualIdle)],
+            _ => [world.CreateIdleLogEntry(actor.Id, IdleReasons.InvalidAction)]
         };
     }
 
-    private IEnumerable<RuntimeLogEntry> ExecuteAttack(
+    private IEnumerable<GameActionLogEntry> ExecuteAttack(
         Attack action,
         BaseUnit actor,
         ArenaWorld world)
@@ -40,7 +40,7 @@ internal sealed class UserActionExecutor
         BaseUnit target = world.GetUnit(action.TargetId);
         if (target.IsDead)
         {
-            return [new IdleLogEntry(actor.Id)];
+            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.TargetDead)];
         }
 
         int distance = actor.Position.ManhattanDistance(target.Position);
@@ -48,14 +48,14 @@ internal sealed class UserActionExecutor
 
         if (distance > attackRange)
         {
-            return [new IdleLogEntry(actor.Id)];
+            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.OutOfRange)];
         }
 
         decimal damage = actor.Stats.Get(StatType.Attack);
-        return new AttackAction(actor, target, damage).Execute();
+        return new AttackAction(actor, target, damage).Execute(world);
     }
 
-    private IEnumerable<RuntimeLogEntry> ExecuteMoveTo(MoveTo action, BaseUnit actor, ArenaWorld world)
+    private IEnumerable<GameActionLogEntry> ExecuteMoveTo(MoveTo action, BaseUnit actor, ArenaWorld world)
     {
         // 1. Находим путь
         List<Position>? path = _pathFinder.FindPath(
@@ -66,7 +66,7 @@ internal sealed class UserActionExecutor
 
         if (path is null || path.Count < 2)
         {
-            return [new IdleLogEntry(actor.Id)];
+            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.NoPath)];
         }
 
         // 2. Ограничиваем дальность
@@ -78,6 +78,6 @@ internal sealed class UserActionExecutor
             .Last();
 
         // 3. Выполняем
-        return new MoveAction(actor, target).Execute();
+        return new MoveAction(actor, target).Execute(world);
     }
 }

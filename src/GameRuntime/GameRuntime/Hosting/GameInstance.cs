@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.GameRuntime;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessions;
-using Domain.GameRuntime.RuntimeLogEntries;
 using GameRuntime.Logic.Turns;
 using GameRuntime.Persistence;
 using GameRuntime.World;
@@ -58,6 +58,8 @@ internal sealed class GameInstance
                 }
 
                 TurnLog turnLog = await _gameTurnProcessor.ProcessTurn(_world);
+
+                await _sessionRepository.Save(turnLog.Logs);
                 await _eventSender.SendTick(SessionId, turnLog, CancellationToken.None);
 
                 GameResult? gameResult = _world.CheckGameOver();

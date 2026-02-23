@@ -1,4 +1,6 @@
-﻿using Domain.GameRuntime.GameResults;
+﻿using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameResults;
+using Domain.ValueObjects;
 using GameRuntime.World.Units;
 using SharedKernel;
 
@@ -6,6 +8,8 @@ namespace GameRuntime.World;
 
 internal sealed class ArenaWorld
 {
+    public Guid GameSessionId { get; } = Guid.CreateVersion7();
+
     public required ArenaDefinition Arena { get; init; }
 
     public required PlayerUnit Player { get; init; }
@@ -70,4 +74,16 @@ internal sealed class ArenaWorld
 
         return null;
     }
+
+    public IdleLogEntry CreateIdleLogEntry(Guid actorId, string? info)
+        => new(GameSessionId, actorId, info, TurnIndex);
+
+    public WalkLogEntry CreateWalkLogEntry(Guid actorId, FacingDirection facingDirection, Position to)
+        => new(GameSessionId, actorId, null, facingDirection, to, TurnIndex);
+
+    public AttackLogEntry CreateAttackLogEntry(Guid actorId, Guid targetId, decimal damage, FacingDirection facingDirection, StatSnapshot targetHp)
+        => new(GameSessionId, actorId, null, targetId, damage, facingDirection, targetHp, TurnIndex);
+
+    public DeathLogEntry CreateDeathLogEntry(Guid actorId)
+        => new(GameSessionId, actorId, null, TurnIndex);
 }

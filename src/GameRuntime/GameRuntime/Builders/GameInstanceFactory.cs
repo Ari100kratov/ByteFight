@@ -62,7 +62,7 @@ internal sealed class GameInstanceFactory
 
         // Создаем игровую сессию
         IEnumerable<Guid> arenaEnemyIds = world.Enemies.Select(x => x.ArenaEnemyId);
-        GameSession gameSession = await _sessionRepository.Create(initModel, arenaEnemyIds, ct);
+        GameSession gameSession = await _sessionRepository.Create(world.GameSessionId, initModel, arenaEnemyIds, ct);
 
         // Создаём GameInstance
         return new GameInstance(

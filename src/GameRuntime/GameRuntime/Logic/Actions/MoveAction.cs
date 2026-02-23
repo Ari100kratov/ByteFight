@@ -1,5 +1,6 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
+using GameRuntime.World;
 using GameRuntime.World.Units;
 
 namespace GameRuntime.Logic.Actions;
@@ -15,10 +16,10 @@ internal sealed class MoveAction : IRuntimeAction
         Position = position;
     }
 
-    public IEnumerable<RuntimeLogEntry> Execute()
+    public IEnumerable<GameActionLogEntry> Execute(ArenaWorld world)
     {
         Actor.Move(Position);
 
-        yield return new WalkLogEntry(Actor.Id, Actor.FacingDirection, Actor.Position);
+        yield return world.CreateWalkLogEntry(Actor.Id, Actor.FacingDirection, Actor.Position);
     }
 }

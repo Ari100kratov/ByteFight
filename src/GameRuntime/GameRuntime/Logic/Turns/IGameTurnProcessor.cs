@@ -1,4 +1,4 @@
-﻿using Domain.GameRuntime.RuntimeLogEntries;
+﻿using Domain.GameRuntime.GameActionLogs;
 using GameRuntime.World;
 
 namespace GameRuntime.Logic.Turns;

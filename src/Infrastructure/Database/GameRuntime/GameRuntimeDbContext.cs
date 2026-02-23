@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Data;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameSessionParticipants;
 using Domain.GameRuntime.GameSessions;
 using Infrastructure.Database.Game;
@@ -16,6 +17,8 @@ public sealed class GameRuntimeDbContext(
     public DbSet<GameSession> GameSessions { get; set; }
 
     public DbSet<GameSessionParticipant> GameSessionParticipants { get; set; }
+
+    public DbSet<GameActionLogEntry> GameActionLogEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

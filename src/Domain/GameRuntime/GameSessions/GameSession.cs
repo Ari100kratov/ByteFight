@@ -1,4 +1,5 @@
 ﻿using Domain.Game.GameModes;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessionParticipants;
 using SharedKernel;
@@ -23,9 +24,14 @@ public class GameSession : Entity
     private readonly List<GameSessionParticipant> _participants = [];
     public IReadOnlyCollection<GameSessionParticipant> Participants => _participants.AsReadOnly();
 
+    private readonly List<GameActionLogEntry> _actionLogs = [];
+    public IReadOnlyCollection<GameActionLogEntry> ActionLogs => _actionLogs.AsReadOnly();
+
+
     public bool IsOver => Status is GameStatus.Completed or GameStatus.Failed or GameStatus.Aborted;
 
     public static GameSession New(
+        Guid id,
         GameModeType mode,
         Guid arenaId,
         Guid characterId,
@@ -35,7 +41,7 @@ public class GameSession : Entity
     {
         var gameSession = new GameSession
         {
-            Id = Guid.CreateVersion7(),
+            Id = id,
             Mode = mode,
             ArenaId = new ArenaId(arenaId),
             UserIds = [userId],

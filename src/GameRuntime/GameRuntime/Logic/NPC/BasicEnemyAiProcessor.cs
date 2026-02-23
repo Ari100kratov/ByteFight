@@ -1,5 +1,5 @@
 ﻿using Domain.Game.Stats;
-using Domain.GameRuntime.RuntimeLogEntries;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Logic.Actions;
 using GameRuntime.Logic.NPC.PathFinding;
@@ -18,7 +18,7 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
         _pathFinder = pathFinder;
     }
 
-    public IEnumerable<RuntimeLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
+    public IEnumerable<GameActionLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
     {
         int distance = actor.Position.ManhattanDistance(world.Player.Position);
         int attackRange = (int)Math.Ceiling(actor.Stats.Get(StatType.AttackRange));
@@ -29,7 +29,7 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
             decimal damage = actor.Stats.Get(StatType.Attack);
 
             var attackAction = new AttackAction(actor, world.Player, damage);
-            return attackAction.Execute();
+            return attackAction.Execute(world);
         }
 
         // Иначе пробуем двигаться в сторону персонажа игрока
@@ -37,13 +37,13 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
 
         if (path is null || path.Count == 0)
         {
-            return [new IdleLogEntry(actor.Id)];
+            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.NoPath)];
         }
 
         var trimmed = path.Skip(1).ToList();
         if (!trimmed.Any())
         {
-            return [new IdleLogEntry(actor.Id)];
+            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.MoveImpossible)];
         }
 
         int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
@@ -51,6 +51,6 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
         Position target = trimmed[stepsToMove - 1];
 
         var moveAction = new MoveAction(actor, target);
-        return moveAction.Execute();
+        return moveAction.Execute(world);
     }
 }

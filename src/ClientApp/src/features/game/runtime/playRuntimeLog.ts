@@ -1,7 +1,7 @@
-import { isAttack, isDeath, isWalk, type RuntimeLogEntry } from "../types/TurnLog";
+import { isAttack, isDeath, isWalk, type GameActionLogEntry } from "../types/TurnLog";
 import { unitRegistry } from "../units/controller/UnitRegistry";
 
-export async function playRuntimeLog(entry: RuntimeLogEntry) {
+export async function playRuntimeLog(entry: GameActionLogEntry) {
   if (isWalk(entry)) {
     const actor = unitRegistry.get(entry.actorId);
     await actor.walkTo(entry);

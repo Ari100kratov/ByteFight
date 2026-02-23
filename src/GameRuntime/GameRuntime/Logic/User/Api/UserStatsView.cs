@@ -1,5 +1,5 @@
 ﻿using Domain.Game.Stats;
-using Domain.GameRuntime.RuntimeLogEntries;
+using Domain.ValueObjects;
 using GameRuntime.World.Stats;
 
 namespace GameRuntime.Logic.User.Api;
