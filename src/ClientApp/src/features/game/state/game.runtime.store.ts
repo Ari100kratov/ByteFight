@@ -4,7 +4,7 @@ import type { GameSession } from "../types/GameSession";
 import { playRuntimeLog } from "../runtime/playRuntimeLog";
 
 interface GameRuntimeState {
-  session: GameSession | null;
+  session?: GameSession;
   setSession: (session: GameSession) => void;
   turnLogs: TurnLog[]
   setTurnLogs: (turnLogs: TurnLog[]) => void;
@@ -17,7 +17,7 @@ interface GameRuntimeState {
 }
 
 export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
-  session: null,
+  session: undefined,
   setSession: (session) => set({ session }),
 
   turnLogs: [],
@@ -108,7 +108,7 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
 
   reset: () =>
     set({
-      session: null,
+      session: undefined,
       turnLogs: [],
       queue: [],
       isProcessing: false,

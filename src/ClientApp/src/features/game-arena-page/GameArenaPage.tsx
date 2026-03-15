@@ -14,6 +14,65 @@ import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
 import { Group, Panel, Separator } from "@/components/ui/resizable"
 import { CombatLogPanel } from "../game/combat-log/CombatLogPanel"
 
+function GameArenaPageSkeleton() {
+  return (
+    <Group orientation="horizontal">
+      {/* Левая часть */}
+      <Panel id="left-panel-skeleton" defaultSize="30%">
+        <Group orientation="vertical">
+          <Panel
+            id="character-panel-skeleton"
+            defaultSize="40%"
+            className="p-2"
+          >
+            <Skeleton className="h-full w-full rounded-md" />
+          </Panel>
+
+          <Separator withHandle />
+
+          <Panel
+            id="code-panel-skeleton"
+            defaultSize="60%"
+            className="p-2"
+          >
+            <Skeleton className="h-full w-full rounded-md" />
+          </Panel>
+        </Group>
+      </Panel>
+
+      <Separator withHandle />
+
+      {/* Правая часть */}
+      <Panel
+        id="right-panel-skeleton"
+        defaultSize="70%"
+        minSize="30%"
+      >
+        <Group orientation="horizontal">
+          <Panel
+            id="arena-panel-skeleton"
+            defaultSize="70%"
+            minSize="40%"
+            className="p-2"
+          >
+            <Skeleton className="h-full w-full rounded-md" />
+          </Panel>
+
+          <Separator withHandle />
+
+          <Panel
+            id="combat-log-panel-skeleton"
+            defaultSize="30%"
+            className="p-2"
+          >
+            <Skeleton className="h-full w-full rounded-md" />
+          </Panel>
+        </Group>
+      </Panel>
+    </Group>
+  )
+}
+
 export default function GameArenaPage() {
   const { modeType, arenaId, sessionId } = useParams()
 
@@ -24,10 +83,24 @@ export default function GameArenaPage() {
   useGameSession(sessionId)
 
   const {
-    defaultLayout,
-    onLayoutChanged
+    defaultLayout: rootDefaultLayout,
+    onLayoutChanged: onRootLayoutChanged
   } = useDefaultLayout({
     id: "game-arena-layout"
+  })
+
+  const {
+    defaultLayout: leftDefaultLayout,
+    onLayoutChanged: onLeftLayoutChanged
+  } = useDefaultLayout({
+    id: "game-arena-left-layout"
+  })
+
+  const {
+    defaultLayout: rightDefaultLayout,
+    onLayoutChanged: onRightLayoutChanged
+  } = useDefaultLayout({
+    id: "game-arena-right-layout"
   })
 
   return (
@@ -36,41 +109,20 @@ export default function GameArenaPage() {
         isLoading={isLoading}
         error={error}
         skeletonClassName="w-full h-full rounded-2xl"
-        loadingFallback={
-          <Group orientation="horizontal">
-            <Panel defaultSize="40%">
-              <Group orientation="vertical">
-                <Panel defaultSize="30%" className="p-2">
-                  <Skeleton className="h-full w-full rounded-md" />
-                </Panel>
-
-                <Separator withHandle />
-
-                <Panel defaultSize="70%" className="p-2">
-                  <Skeleton className="h-full w-full rounded-md" />
-                </Panel>
-              </Group>
-            </Panel>
-
-            <Separator withHandle />
-
-            <Panel defaultSize="60%" minSize="30%" className="p-2">
-              <Skeleton className="h-full w-full rounded-md" />
-            </Panel>
-          </Group>
-        }
+        loadingFallback={<GameArenaPageSkeleton />}
       >
         <Group
           orientation="horizontal"
-          defaultLayout={defaultLayout}
-          onLayoutChanged={onLayoutChanged}
+          defaultLayout={rootDefaultLayout}
+          onLayoutChanged={onRootLayoutChanged}
         >
           {/* Левая часть */}
-          <Panel
-            id="left-panel"
-            defaultSize="30%"
-          >
-            <Group orientation="vertical">
+          <Panel id="left-panel" defaultSize="30%">
+            <Group
+              orientation="vertical"
+              defaultLayout={leftDefaultLayout}
+              onLayoutChanged={onLeftLayoutChanged}
+            >
               {/* Блок персонажа */}
               <Panel
                 id="character-panel"
@@ -90,9 +142,7 @@ export default function GameArenaPage() {
               >
                 {character ? (
                   <div className="h-full overflow-auto">
-                    <CharacterCodeBlock
-                      characterId={character.id}
-                    />
+                    <CharacterCodeBlock characterId={character.id} />
                   </div>
                 ) : (
                   <Card className="flex flex-col w-full h-full overflow-auto">
@@ -113,21 +163,36 @@ export default function GameArenaPage() {
           <Separator withHandle />
 
           {/* Правая часть */}
-          <Panel defaultSize="70%" minSize="30%">
-            <Group orientation="horizontal">
-
+          <Panel
+            id="right-panel"
+            defaultSize="70%"
+            minSize="30%"
+          >
+            <Group
+              orientation="horizontal"
+              defaultLayout={rightDefaultLayout}
+              onLayoutChanged={onRightLayoutChanged}
+            >
               {/* Арена */}
-              <Panel defaultSize="70%" minSize="40%" className="p-2">
+              <Panel
+                id="arena-panel"
+                defaultSize="70%"
+                minSize="40%"
+                className="p-2"
+              >
                 <ArenaCard />
               </Panel>
 
               <Separator withHandle />
 
               {/* Журнал боя */}
-              <Panel defaultSize="30%" className="p-2">
+              <Panel
+                id="combat-log-panel"
+                defaultSize="30%"
+                className="p-2"
+              >
                 <CombatLogPanel />
               </Panel>
-
             </Group>
           </Panel>
         </Group>

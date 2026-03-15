@@ -20,28 +20,49 @@ import { SpriteAnimationPlayer } from "@/features/character-class-selector/compo
 import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 import { StatType } from "@/shared/types/stat"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
+import { useCharacterSelectionState } from "../hooks/useCharacterSelectionState"
 
 export function SelectCharacterCard() {
   const arena = useArenaStore(s => s.arena)
   const { data: characters, isLoading, error } = useCharacters()
+
+  const {
+    sessionCharacterId,
+    isCharacterSelectionDisabled,
+  } = useCharacterSelectionState()
+
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>()
+
   const { data: character } = useCharacterDetails(selectedCharacterId)
   const init = useCharacterStateStore(s => s.init)
+
+  useEffect(() => {
+    if (!sessionCharacterId) return
+
+    setSelectedCharacterId(prev =>
+      prev === sessionCharacterId ? prev : sessionCharacterId
+    )
+  }, [sessionCharacterId])
 
   useEffect(() => {
     if (!character || !arena) return
 
     const health = character.class.stats.find(s => s.statType === StatType.Health)?.value
     const mana = character.class.stats.find(s => s.statType === StatType.Mana)?.value
-    init({ characterId: character.id, maxHp: health ?? 0, maxMp: mana, startPosition: arena.startPosition })
 
+    init({
+      characterId: character.id,
+      maxHp: health ?? 0,
+      maxMp: mana,
+      startPosition: arena.startPosition,
+    })
   }, [character?.id, arena?.startPosition])
 
   const handleCreateClick = () => {
     window.open("/characters/create", "_blank")
   }
 
-  const hasCharacters = characters && characters.length > 0
+  const hasCharacters = Boolean(characters && characters.length > 0)
 
   return (
     <LoaderState
@@ -58,6 +79,7 @@ export function SelectCharacterCard() {
               <Select
                 value={selectedCharacterId}
                 onValueChange={setSelectedCharacterId}
+                disabled={isCharacterSelectionDisabled}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Выберите персонажа" />
@@ -65,7 +87,7 @@ export function SelectCharacterCard() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Ваши персонажи</SelectLabel>
-                    {characters.map((char) => (
+                    {characters!.map((char) => (
                       <SelectItem key={char.id} value={char.id}>
                         {char.name}
                       </SelectItem>
@@ -80,20 +102,23 @@ export function SelectCharacterCard() {
         <CardContent className="flex flex-col md:flex-row gap-4">
           {!hasCharacters && (
             <div className="flex flex-1 items-center justify-center py-8">
-              <Button onClick={handleCreateClick} className="gap-2">
-                <Plus className="w-4 h-4" /> Создать персонажа
+              <Button
+                onClick={handleCreateClick}
+                className="gap-2"
+                disabled={isCharacterSelectionDisabled}
+              >
+                <Plus className="w-4 h-4" />
+                Создать персонажа
               </Button>
             </div>
           )}
 
           {character && (
             <>
-              {/* Левая часть — спрайт */}
               <div className="flex items-center justify-center p-4">
                 <SpriteAnimationPlayer actionAssets={character.class.actionAssets} />
               </div>
 
-              {/* Правая часть — характеристики */}
               <CharacterStats stats={character.class.stats} />
             </>
           )}

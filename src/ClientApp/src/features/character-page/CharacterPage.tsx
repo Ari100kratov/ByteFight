@@ -19,13 +19,70 @@ import { useCharacter } from "./useCharacter"
 import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
 import { Group, Panel, Separator } from "@/components/ui/resizable"
 
+function CharacterPageSkeleton() {
+  return (
+    <Group orientation="horizontal">
+      {/* Левая часть */}
+      <Panel
+        id="left-panel-skeleton"
+        defaultSize="40%"
+        minSize="30%"
+      >
+        <Group orientation="vertical">
+          <Panel
+            id="info-panel-skeleton"
+            defaultSize="35%"
+            minSize="30%"
+            className="p-2"
+          >
+            <Skeleton className="h-full w-full rounded-md" />
+          </Panel>
+
+          <Separator withHandle />
+
+          <Panel
+            id="class-panel-skeleton"
+            defaultSize="65%"
+            minSize="40%"
+            className="p-2"
+          >
+            <Skeleton className="h-full w-full rounded-md" />
+          </Panel>
+        </Group>
+      </Panel>
+
+      <Separator withHandle />
+
+      {/* Правая часть */}
+      <Panel
+        id="code-panel-skeleton"
+        defaultSize="60%"
+        minSize="30%"
+        className="p-2"
+      >
+        <Skeleton className="h-full w-full rounded-md" />
+      </Panel>
+    </Group>
+  )
+}
+
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>()
   const { data: character, isLoading, error } = useCharacter(id)
   const { setName } = useBreadcrumbNames()
 
-  const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: "character-layout"
+  const {
+    defaultLayout: rootDefaultLayout,
+    onLayoutChanged: onRootLayoutChanged,
+  } = useDefaultLayout({
+    id: "character-layout",
+  })
+
+  const {
+    defaultLayout: leftDefaultLayout,
+    onLayoutChanged: onLeftLayoutChanged,
+  } = useDefaultLayout({
+    id: "character-left-layout",
   })
 
   useEffect(() => {
@@ -40,35 +97,13 @@ export default function CharacterPage() {
         isLoading={isLoading}
         error={error}
         skeletonClassName="w-full h-full rounded-2xl"
-        loadingFallback={
-          <Group orientation="horizontal">
-            {/* Левая часть */}
-            <Panel defaultSize="40%">
-              <Group orientation="vertical">
-                <Panel defaultSize="40%" className="p-2">
-                  <Skeleton className="h-full w-full rounded-md" />
-                </Panel>
-                <Separator withHandle />
-                <Panel defaultSize="60%" className="p-2 flex-1">
-                  <Skeleton className="h-full w-full rounded-md" />
-                </Panel>
-              </Group>
-            </Panel>
-
-            <Separator withHandle />
-
-            {/* Правая часть */}
-            <Panel defaultSize="60%" className="p-2">
-              <Skeleton className="h-full w-full rounded-md" />
-            </Panel>
-          </Group>
-        }
+        loadingFallback={<CharacterPageSkeleton />}
       >
         {character && (
           <Group
             orientation="horizontal"
-            defaultLayout={defaultLayout}
-            onLayoutChanged={onLayoutChanged}
+            defaultLayout={rootDefaultLayout}
+            onLayoutChanged={onRootLayoutChanged}
           >
             {/* Левая часть */}
             <Panel
@@ -77,9 +112,14 @@ export default function CharacterPage() {
               minSize="30%"
               collapsible
             >
-              <Group orientation="vertical">
+              <Group
+                orientation="vertical"
+                defaultLayout={leftDefaultLayout}
+                onLayoutChanged={onLeftLayoutChanged}
+              >
                 {/* Основная информация */}
-                <Panel id="info-panel"
+                <Panel
+                  id="info-panel"
                   defaultSize="35%"
                   minSize="30%"
                   className="p-2"
@@ -89,12 +129,14 @@ export default function CharacterPage() {
                     <CardHeader>
                       <CardTitle>Основная информация</CardTitle>
                     </CardHeader>
+
                     <CardContent className="flex flex-col gap-4">
                       <div className="grid gap-2">
                         <Label htmlFor="name">Имя</Label>
                         <Input id="name" defaultValue={character.name} />
                       </div>
                     </CardContent>
+
                     <CardFooter className="justify-end">
                       <Button>Сохранить</Button>
                     </CardFooter>

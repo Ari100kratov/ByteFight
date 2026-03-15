@@ -15,6 +15,7 @@ import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
 import { useGridStore } from "@/features/game/state/game/grid.state.store"
 import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { useArenaBattleState } from "../hooks/useArenaBattleState"
 
 export function ArenaCard() {
   const navigate = useNavigate()
@@ -34,7 +35,22 @@ export function ArenaCard() {
 
   const { mutateAsync: startGame } = useStartGame()
 
+  const { isBattleBusy, hasSession } = useArenaBattleState()
+  const isStartDisabled = isLoading || isBattleBusy
+
+  const startButtonText = (() => {
+    if (isLoading) return "Готовимся к бою..."
+    if (isBattleBusy) return "Идет бой"
+    if (hasSession) return "Снова в бой"
+
+    return "В бой"
+  })()
+
   async function handleStart() {
+    if (isStartDisabled) {
+      return
+    }
+
     if (!arenaId) {
       toast.error("Арена не выбрана")
       return
@@ -111,14 +127,23 @@ export function ArenaCard() {
           <Switch
             checked={showGrid}
             onCheckedChange={setShowGrid}
+            aria-label="Показать сетку"
           />
           <span className="text-sm text-muted-foreground">
             Показать сетку
           </span>
         </div>
 
-        <Button size="lg" disabled={isLoading} onClick={handleStart}>
-          {isLoading ? "Готовимся к бою..." : <><SwordsIcon /> В бой</>}
+        <Button
+          size="lg"
+          disabled={isStartDisabled}
+          onClick={handleStart}
+          aria-busy={isLoading}
+        >
+          <>
+            <SwordsIcon />
+            {startButtonText}
+          </>
         </Button>
       </CardFooter>
     </Card>

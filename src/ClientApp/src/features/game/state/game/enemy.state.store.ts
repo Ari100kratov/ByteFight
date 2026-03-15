@@ -23,12 +23,10 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
   arenaEnemies: {},
 
   init: (arenaEnemies) => {
-    const current = get().arenaEnemies
-    const updated = { ...current }
+    const next: Record<string, UnitRuntime> = {}
 
     for (const { arenaEnemyId, position, maxHp, maxMp } of arenaEnemies) {
-      if (updated[arenaEnemyId]) continue
-      updated[arenaEnemyId] = {
+      next[arenaEnemyId] = {
         id: arenaEnemyId,
         action: ActionType.Idle,
         hp: { current: maxHp, max: maxHp },
@@ -38,7 +36,7 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
       }
     }
 
-    set({ arenaEnemies: updated })
+    set({ arenaEnemies: next })
   },
 
   set: (arenaEnemyId, partial) => {

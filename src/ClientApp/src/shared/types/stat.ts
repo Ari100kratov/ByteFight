@@ -19,7 +19,7 @@ export function getStatName(type: number) {
     case StatType.Mana: return "Мана"
     case StatType.Attack: return "Атака"
     case StatType.AttackRange: return "Дальность атаки"
-    case StatType.MoveRange: return "Скорость перемещения"
+    case StatType.MoveRange: return "Перемещение"
     default: return "?"
   }
 }

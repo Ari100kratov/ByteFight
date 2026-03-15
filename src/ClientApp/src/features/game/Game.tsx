@@ -10,7 +10,7 @@ extend({ Container })
 
 export function Game() {
   return (
-    <Application>
+    <Application backgroundColor={0xf0f0f0}>
       <ResizeHandler />
       <BackgroundSprite />
       <GridContainer />
