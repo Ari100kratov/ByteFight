@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { gameHub } from "@/features/game/api/gameHub"
 import { useGameRuntimeStore } from "@/features/game/state/game.runtime.store"
 import { resetGameStores } from "@/features/game/state/stateReset"
@@ -10,13 +10,15 @@ import { useGameBootstrapStore } from "@/features/game/state/game.bootstrap.stor
 import type { TurnLog } from "@/features/game/types/TurnLog"
 
 export function useGameSession(sessionId?: string) {
-  const { setSession, setTurnLogs } = useGameRuntimeStore()
+  const prevSessionId = useRef<string | undefined>(undefined)
+  const { setSession, replaceTurnLogs, reset } = useGameRuntimeStore()
 
   const { data: session, isLoading } = useQuery<GameSession, ApiException>({
     queryKey: queryKeys.gameSessions.byId(sessionId),
     queryFn: () => apiFetch(`/game/sessions/${sessionId}`),
     enabled: !!sessionId,
     retry: false,
+    refetchOnMount: "always"
   })
 
   const { data: logs } = useQuery<TurnLog[], ApiException>({
@@ -24,6 +26,7 @@ export function useGameSession(sessionId?: string) {
     queryFn: () => apiFetch(`/game/sessions/${sessionId}/logs`),
     enabled: !!sessionId,
     retry: false,
+    refetchOnMount: "always"
   })
 
   useEffect(() => {
@@ -39,14 +42,29 @@ export function useGameSession(sessionId?: string) {
   }, [])
 
   useEffect(() => {
-    if (!session) return
-    setSession(session)
-  }, [session, setSession])
+    if (prevSessionId.current === sessionId) return
+
+    reset()
+    prevSessionId.current = sessionId
+
+    if (!sessionId) {
+      useGameBootstrapStore.getState().end()
+    }
+  }, [sessionId, reset])
 
   useEffect(() => {
-    if (!logs?.length) return
-    setTurnLogs(logs)
-  }, [logs, setTurnLogs])
+    if (!sessionId || !session) return
+    setSession(session)
+  }, [sessionId, session, setSession])
+
+  useEffect(() => {
+    if (!sessionId) {
+      replaceTurnLogs([])
+      return
+    }
+
+    replaceTurnLogs(logs ?? [])
+  }, [sessionId, logs, replaceTurnLogs])
 
   const isActive = session ? isGameSessionActive(session) : false
 

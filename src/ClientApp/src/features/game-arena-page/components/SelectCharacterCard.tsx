@@ -20,13 +20,19 @@ import { SpriteAnimationPlayer } from "@/features/character-class-selector/compo
 import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 import { StatType } from "@/shared/types/stat"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
+import { useGameRuntimeStore } from "@/features/game/state/game.runtime.store"
+import { isGameSessionActive } from "@/features/game/types/GameSession"
 
 export function SelectCharacterCard() {
   const arena = useArenaStore(s => s.arena)
+  const session = useGameRuntimeStore(s => s.session)
+  const runtimeVersion = useGameRuntimeStore(s => s.runtimeVersion)
   const { data: characters, isLoading, error } = useCharacters()
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>()
   const { data: character } = useCharacterDetails(selectedCharacterId)
   const init = useCharacterStateStore(s => s.init)
+
+  const isCharacterLocked = isGameSessionActive(session)
 
   useEffect(() => {
     if (!character || !arena) return
@@ -35,7 +41,21 @@ export function SelectCharacterCard() {
     const mana = character.class.stats.find(s => s.statType === StatType.Mana)?.value
     init({ characterId: character.id, maxHp: health ?? 0, maxMp: mana, startPosition: arena.startPosition })
 
-  }, [character?.id, arena?.startPosition])
+  }, [character?.id, arena?.startPosition, runtimeVersion, init])
+
+  useEffect(() => {
+    if (!characters?.length) return
+
+    if (session?.characterId) {
+      const exists = characters.some(c => c.id === session.characterId)
+      if (exists) {
+        setSelectedCharacterId(session.characterId)
+        return
+      }
+    }
+
+    setSelectedCharacterId(prev => prev ?? characters[0]?.id)
+  }, [characters, session?.characterId])
 
   const handleCreateClick = () => {
     window.open("/characters/create", "_blank")
@@ -58,6 +78,7 @@ export function SelectCharacterCard() {
               <Select
                 value={selectedCharacterId}
                 onValueChange={setSelectedCharacterId}
+                disabled={isCharacterLocked}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Выберите персонажа" />
@@ -88,12 +109,10 @@ export function SelectCharacterCard() {
 
           {character && (
             <>
-              {/* Левая часть — спрайт */}
               <div className="flex items-center justify-center p-4">
                 <SpriteAnimationPlayer actionAssets={character.class.actionAssets} />
               </div>
 
-              {/* Правая часть — характеристики */}
               <CharacterStats stats={character.class.stats} />
             </>
           )}

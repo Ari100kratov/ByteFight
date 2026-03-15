@@ -21,19 +21,16 @@ export const useCharacterStateStore = create<CharacterRuntimeState>((set, get) =
   runtime: undefined,
 
   init: (payload) => {
-    const prev = get().runtime
-    if (!prev || prev.id !== payload.characterId) {
-      set({
-        runtime: {
-          id: payload.characterId,
-          action: ActionType.Idle,
-          hp: { current: payload.maxHp, max: payload.maxHp },
-          mp: payload.maxMp ? { current: payload.maxMp, max: payload.maxMp } : undefined,
-          facing: FacingDirection.Right,
-          position: payload.startPosition,
-        },
-      })
-    }
+    set({
+      runtime: {
+        id: payload.characterId,
+        action: ActionType.Idle,
+        hp: { current: payload.maxHp, max: payload.maxHp },
+        mp: payload.maxMp ? { current: payload.maxMp, max: payload.maxMp } : undefined,
+        facing: FacingDirection.Right,
+        position: payload.startPosition,
+      },
+    })
   },
 
   set: (runtime) => {

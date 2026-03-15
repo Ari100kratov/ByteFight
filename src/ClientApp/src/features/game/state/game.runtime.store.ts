@@ -5,12 +5,14 @@ import { playRuntimeLog } from "../runtime/playRuntimeLog";
 
 interface GameRuntimeState {
   session: GameSession | null;
-  setSession: (session: GameSession) => void;
+  setSession: (session: GameSession | null) => void;
   turnLogs: TurnLog[]
   setTurnLogs: (turnLogs: TurnLog[]) => void;
+  replaceTurnLogs: (turnLogs: TurnLog[]) => void;
 
   queue: TurnLog[];
   isProcessing: boolean;
+  runtimeVersion: number;
   enqueueTurn: (turnLog: TurnLog) => void;
   processNext: () => Promise<void>;
   reset: () => void;
@@ -55,8 +57,11 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
     })
   },
 
+  replaceTurnLogs: (turnLogs) => set({ turnLogs }),
+
   queue: [],
   isProcessing: false,
+  runtimeVersion: 0,
 
   enqueueTurn: (turnLog) => {
     set((state) => ({
@@ -72,10 +77,15 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
     const turn = get().queue[0];
     if (!turn) return;
 
+    const currentRuntimeVersion = get().runtimeVersion
     set({ isProcessing: true });
 
     for (const entry of turn.logs) {
-      // добавляем лог в стор по одному
+      if (get().runtimeVersion !== currentRuntimeVersion) {
+        set({ isProcessing: false })
+        return
+      }
+
       set((state) => {
         const turns = [...state.turnLogs]
         let targetTurn = turns.find(t => t.turnIndex === entry.turnIndex)
@@ -97,20 +107,25 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
       await playRuntimeLog(entry);
     }
 
+    if (get().runtimeVersion !== currentRuntimeVersion) {
+      set({ isProcessing: false })
+      return
+    }
+
     set((s) => ({
       queue: s.queue.slice(1),
       isProcessing: false,
     }));
 
-    // гарантированная последовательность
     queueMicrotask(() => get().processNext());
   },
 
   reset: () =>
-    set({
+    set((state) => ({
       session: null,
       turnLogs: [],
       queue: [],
       isProcessing: false,
-    }),
+      runtimeVersion: state.runtimeVersion + 1,
+    })),
 }));

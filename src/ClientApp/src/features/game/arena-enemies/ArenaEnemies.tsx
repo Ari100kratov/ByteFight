@@ -5,11 +5,13 @@ import { useArenaEnemies } from "./useArenaEnemies"
 import { fetchEnemy } from "./fetchEnemy"
 import { useEnemyStateStore } from "../state/game/enemy.state.store"
 import { StatType } from "@/shared/types/stat"
+import { useGameRuntimeStore } from "../state/game.runtime.store"
 
 export function ArenaEnemies() {
   const { data: arenaEnemies } = useArenaEnemies()
   const setEnemies = useEnemiesStore(s => s.setEnemies)
   const init = useEnemyStateStore(s => s.init)
+  const runtimeVersion = useGameRuntimeStore(s => s.runtimeVersion)
 
   useEffect(() => {
     if (!arenaEnemies) return
@@ -37,7 +39,7 @@ export function ArenaEnemies() {
         init(initPayload)
       })
       .catch(console.error)
-  }, [arenaEnemies])
+  }, [arenaEnemies, runtimeVersion, setEnemies, init])
 
   if (!arenaEnemies)
     return null

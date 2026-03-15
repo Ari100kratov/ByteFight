@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Info, SwordsIcon } from "lucide-react"
+import { Info, RotateCcw, SwordsIcon } from "lucide-react"
 import { Game } from "@/features/game/Game"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -15,10 +15,13 @@ import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
 import { useGridStore } from "@/features/game/state/game/grid.state.store"
 import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { useGameRuntimeStore } from "@/features/game/state/game.runtime.store"
+import { isGameSessionActive } from "@/features/game/types/GameSession"
+import { resetGameWorldState } from "@/features/game/state/stateReset"
 
 export function ArenaCard() {
   const navigate = useNavigate()
-  const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
+  const { modeType, arenaId, sessionId } = useParams<{ modeType: string; arenaId: string; sessionId?: string }>()
 
   const setViewportSize = useViewportStore(s => s.setSize)
   const { showGrid, setShowGrid } = useGridStore()
@@ -29,19 +32,15 @@ export function ArenaCard() {
 
   const arena = useArenaStore(s => s.arena)
   const character = useCharacterStore(s => s.character)
+  const session = useGameRuntimeStore(s => s.session)
   const getActiveCode = useCodeEditorStore(s => s.getActiveCode)
   const { start: startLoading, isLoading } = useGameBootstrapStore()
 
   const { mutateAsync: startGame } = useStartGame()
 
-  async function handleStart() {
+  async function startSession(characterId: string) {
     if (!arenaId) {
       toast.error("Арена не выбрана")
-      return
-    }
-
-    if (!character) {
-      toast.error("Персонаж не выбран")
       return
     }
 
@@ -56,21 +55,45 @@ export function ArenaCard() {
       return
     }
 
+    resetGameWorldState()
     startLoading()
 
-    const sessionId = await startGame({
+    const newSessionId = await startGame({
       arenaId,
       mode: modeType,
-      characterId: character.id,
+      characterId,
       code: localCode.sourceCode
     })
 
-    navigate(`/play/${modeType}/${arenaId}/${sessionId}`)
+    navigate(`/play/${modeType}/${arenaId}/${newSessionId}`)
+  }
+
+  async function handleStart() {
+    if (!character) {
+      toast.error("Персонаж не выбран")
+      return
+    }
+
+    await startSession(character.id)
+  }
+
+  async function handleRestart() {
+    const restartCharacterId = session?.characterId ?? character?.id
+
+    if (!restartCharacterId) {
+      toast.error("Персонаж не выбран")
+      return
+    }
+
+    await startSession(restartCharacterId)
   }
 
   if (!arena) {
     return <Skeleton className="w-full h-full rounded-none md:rounded-r-2xl" />
   }
+
+  const isSessionActive = isGameSessionActive(session)
+  const canRestart = Boolean(sessionId && session && !isSessionActive)
 
   return (
     <Card className="flex h-full min-h-0 flex-col overflow-hidden">
@@ -117,9 +140,17 @@ export function ArenaCard() {
           </span>
         </div>
 
-        <Button size="lg" disabled={isLoading} onClick={handleStart}>
-          {isLoading ? "Готовимся к бою..." : <><SwordsIcon /> В бой</>}
-        </Button>
+        <div className="flex items-center gap-2">
+          {canRestart && (
+            <Button size="lg" variant="outline" disabled={isLoading} onClick={handleRestart}>
+              <RotateCcw /> Повторить бой
+            </Button>
+          )}
+
+          <Button size="lg" disabled={isLoading || isSessionActive} onClick={handleStart}>
+            {isLoading ? "Готовимся к бою..." : <><SwordsIcon /> В бой</>}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )

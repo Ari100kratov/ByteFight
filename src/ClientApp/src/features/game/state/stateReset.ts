@@ -16,11 +16,15 @@ export function resetGameStores() {
   useEnemiesStore.getState().reset()
   useTexturesStore.getState().reset()
 
+  resetGameWorldState()
+}
+
+export function resetGameWorldState() {
+
   useCharacterStateStore.getState().reset()
   useEnemyStateStore.getState().reset()
   useGridStore.getState().reset()
 
   useGameRuntimeStore.getState().reset()
   useGameBootstrapStore.getState().end()
-
 }
