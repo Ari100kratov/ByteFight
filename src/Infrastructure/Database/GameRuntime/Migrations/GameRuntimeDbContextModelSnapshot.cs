@@ -39,6 +39,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("actor_id");
 
+                    b.Property<string>("ActorName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("actor_name");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -167,6 +173,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid")
                         .HasColumnName("target_id");
+
+                    b.Property<string>("TargetName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("target_name");
 
                     b.ToTable("game_action_log_entries", "game_runtime");
 

@@ -20,6 +20,7 @@ export type GameModeType = (typeof GameModeType)[keyof typeof GameModeType];
 
 export type GameSession = {
   id: string;
+  characterId: string;
   mode: GameModeType;
 
   startedAt: string;

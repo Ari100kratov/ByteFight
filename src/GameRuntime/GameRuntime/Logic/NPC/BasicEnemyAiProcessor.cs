@@ -37,13 +37,13 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
 
         if (path is null || path.Count == 0)
         {
-            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.NoPath)];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
         }
 
         var trimmed = path.Skip(1).ToList();
         if (!trimmed.Any())
         {
-            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.MoveImpossible)];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
         }
 
         int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));

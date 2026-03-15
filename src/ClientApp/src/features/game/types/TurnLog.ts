@@ -10,6 +10,7 @@ export type BaseLogEntry = {
   id: string;
   actionType: ActionType;
   actorId: string;
+  actorName: string;
   info?: string | null;
   turnIndex: number;
   createdAt: string;
@@ -26,6 +27,7 @@ export type AttackLogEntry = BaseLogEntry & {
   actionType: typeof ActionType.Attack;
 
   targetId: string;
+  targetName: string;
   damage: number;
   facingDirection: FacingDirection;
   targetHp: StatSnapshot;

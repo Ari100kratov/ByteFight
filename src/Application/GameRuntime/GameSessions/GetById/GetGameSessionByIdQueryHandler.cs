@@ -16,7 +16,7 @@ internal sealed class GetGameSessionByIdQueryHandler(IGameRuntimeDbContext dbCon
         GameSessionDto? session = await dbContext.GameSessions
             .AsNoTracking()
             .Where(c => c.Id == query.Id && c.UserIds.Contains(userContext.UserId))
-            .Select(c => c.ToDto())
+            .Select(Mapper.ToDto())
             .SingleOrDefaultAsync(cancellationToken);
 
         if (session is null)

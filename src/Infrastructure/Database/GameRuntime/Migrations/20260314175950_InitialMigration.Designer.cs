@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.GameRuntime.Migrations
 {
     [DbContext(typeof(GameRuntimeDbContext))]
-    [Migration("20260222210510_AddGameActionLogEntry")]
-    partial class AddGameActionLogEntry
+    [Migration("20260314175950_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Property<Guid>("ActorId")
                         .HasColumnType("uuid")
                         .HasColumnName("actor_id");
+
+                    b.Property<string>("ActorName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("actor_name");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -170,6 +176,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uuid")
                         .HasColumnName("target_id");
+
+                    b.Property<string>("TargetName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("target_name");
 
                     b.ToTable("game_action_log_entries", "game_runtime");
 

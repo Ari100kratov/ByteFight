@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { SwordsIcon } from "lucide-react"
+import { Info, SwordsIcon } from "lucide-react"
 import { Game } from "@/features/game/Game"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -14,6 +14,7 @@ import { useResizeObserver } from "@/shared/hooks/useResizeObserver"
 import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
 import { useGridStore } from "@/features/game/state/game/grid.state.store"
 import { Switch } from "@/components/ui/switch"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export function ArenaCard() {
   const navigate = useNavigate()
@@ -58,7 +59,7 @@ export function ArenaCard() {
     startLoading()
 
     const sessionId = await startGame({
-      arenaId: arenaId,
+      arenaId,
       mode: modeType,
       characterId: character.id,
       code: localCode.sourceCode
@@ -67,23 +68,45 @@ export function ArenaCard() {
     navigate(`/play/${modeType}/${arenaId}/${sessionId}`)
   }
 
-
   if (!arena) {
     return <Skeleton className="w-full h-full rounded-none md:rounded-r-2xl" />
   }
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden">
-      <CardHeader>
-        <CardTitle>{arena.name}</CardTitle>
-        <CardDescription>{arena.description}</CardDescription>
+    <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+      <CardHeader className="shrink-0">
+        <div className="flex items-center gap-2">
+          <CardTitle>{arena.name}</CardTitle>
+
+          {arena.description && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Описание арены"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-xs text-sm">
+                {arena.description}
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
       </CardHeader>
-      <CardContent className="flex-1 p-0 flex justify-center items-center">
-        <div ref={arenaRef} className="w-full h-full">
+
+      <CardContent className="flex-1 min-h-0 overflow-hidden p-0">
+        <div
+          ref={arenaRef}
+          className="h-full w-full min-h-0 overflow-hidden"
+        >
           <Game />
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between items-center">
+
+      <CardFooter className="shrink-0 flex justify-between items-center gap-4">
         <div className="flex items-center gap-2">
           <Switch
             checked={showGrid}
@@ -93,6 +116,7 @@ export function ArenaCard() {
             Показать сетку
           </span>
         </div>
+
         <Button size="lg" disabled={isLoading} onClick={handleStart}>
           {isLoading ? "Готовимся к бою..." : <><SwordsIcon /> В бой</>}
         </Button>

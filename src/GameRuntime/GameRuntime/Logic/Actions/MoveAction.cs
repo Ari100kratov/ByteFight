@@ -20,6 +20,6 @@ internal sealed class MoveAction : IRuntimeAction
     {
         Actor.Move(Position);
 
-        yield return world.CreateWalkLogEntry(Actor.Id, Actor.FacingDirection, Actor.Position);
+        yield return world.CreateWalkLogEntry(Actor);
     }
 }

@@ -7,15 +7,12 @@ export function ResizeHandler() {
   const { width, height } = useViewportStore(s => s.size)
 
   useEffect(() => {
-    if (!app)
-      return
+    const renderer = app?.app?.renderer
+    if (!renderer) return
 
-    if (width === 0 || height === 0)
-      return
+    if (width === 0 || height === 0) return
 
-    const renderer = app.app.renderer
-    if (renderer.width === width && renderer.height === height)
-      return
+    if (renderer.width === width && renderer.height === height) return
 
     renderer.resize(width, height)
   }, [app, width, height])

@@ -8,10 +8,11 @@ public sealed class DeathLogEntry : GameActionLogEntry
 
     public DeathLogEntry(
         Guid sessionId,
-        Guid actorId,
+        UnitId actorId,
+        string actorName,
         string? info,
         int turnIndex)
-        : base(sessionId, actorId, ActionType.Dead, info, turnIndex)
+        : base(sessionId, actorId, actorName, ActionType.Dead, info, turnIndex)
     {
     }
 }

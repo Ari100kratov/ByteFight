@@ -8,10 +8,11 @@ public sealed class IdleLogEntry : GameActionLogEntry
 
     public IdleLogEntry(
         Guid sessionId,
-        Guid actorId,
+        UnitId actorId,
+        string actorName,
         string? info,
         int turnIndex)
-        : base(sessionId, actorId, ActionType.Idle, info, turnIndex)
+        : base(sessionId, actorId, actorName, ActionType.Idle, info, turnIndex)
     {
     }
 }

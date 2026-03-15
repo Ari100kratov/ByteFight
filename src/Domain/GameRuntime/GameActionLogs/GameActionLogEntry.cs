@@ -8,7 +8,8 @@ public abstract class GameActionLogEntry : Entity
     public Guid Id { get; protected set; }
     public Guid SessionId { get; protected set; }
 
-    public Guid ActorId { get; protected set; }
+    public UnitId ActorId { get; protected set; }
+    public string ActorName { get; protected set; }
     public ActionType ActionType { get; protected set; }
     public string? Info { get; protected set; }
 
@@ -19,7 +20,8 @@ public abstract class GameActionLogEntry : Entity
 
     protected GameActionLogEntry(
         Guid sessionId,
-        Guid actorId,
+        UnitId actorId,
+        string actorName,
         ActionType actionType,
         string? info,
         int turnIndex)
@@ -27,6 +29,7 @@ public abstract class GameActionLogEntry : Entity
         Id = Guid.CreateVersion7();
         SessionId = sessionId;
         ActorId = actorId;
+        ActorName = actorName;
         ActionType = actionType;
         Info = info;
         TurnIndex = turnIndex;

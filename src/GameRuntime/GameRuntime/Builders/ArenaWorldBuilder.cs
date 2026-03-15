@@ -54,6 +54,7 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
         {
             var enemyUnit = new EnemyUnit(arenaEnemy.Position, FacingDirection.Left)
             {
+                Name = arenaEnemy.Enemy.Name,
                 ArenaEnemyId = arenaEnemy.Id,
                 EnemyId = arenaEnemy.EnemyId,
                 Stats = new RuntimeStats(arenaEnemy.Enemy.Stats.Select(x => (x.StatType, x.Value)))
@@ -75,6 +76,7 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
 
             Player = new PlayerUnit(arena.StartPosition, FacingDirection.Right)
             {
+                Name = character.Name,
                 CharacterId = character.Id,
                 Class = character.Class.Type,
                 Stats = new RuntimeStats(character.Class.Stats.Select(x => (x.StatType, x.Value)))

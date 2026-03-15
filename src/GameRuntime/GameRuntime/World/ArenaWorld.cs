@@ -1,4 +1,6 @@
-﻿using Domain.GameRuntime.GameActionLogs;
+﻿using System.Reactive;
+using Domain;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.ValueObjects;
 using GameRuntime.World.Units;
@@ -75,15 +77,15 @@ internal sealed class ArenaWorld
         return null;
     }
 
-    public IdleLogEntry CreateIdleLogEntry(Guid actorId, string? info)
-        => new(GameSessionId, actorId, info, TurnIndex);
+    public IdleLogEntry CreateIdleLogEntry(BaseUnit actor, string? info)
+        => new(GameSessionId, new UnitId(actor.Id), actor.Name, info, TurnIndex);
 
-    public WalkLogEntry CreateWalkLogEntry(Guid actorId, FacingDirection facingDirection, Position to)
-        => new(GameSessionId, actorId, null, facingDirection, to, TurnIndex);
+    public WalkLogEntry CreateWalkLogEntry(BaseUnit actor)
+        => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, actor.FacingDirection, actor.Position, TurnIndex);
 
-    public AttackLogEntry CreateAttackLogEntry(Guid actorId, Guid targetId, decimal damage, FacingDirection facingDirection, StatSnapshot targetHp)
-        => new(GameSessionId, actorId, null, targetId, damage, facingDirection, targetHp, TurnIndex);
+    public AttackLogEntry CreateAttackLogEntry(BaseUnit actor, BaseUnit target, decimal damage, StatSnapshot targetHp)
+        => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, new UnitId(target.Id), target.Name, damage, actor.FacingDirection, targetHp, TurnIndex);
 
-    public DeathLogEntry CreateDeathLogEntry(Guid actorId)
-        => new(GameSessionId, actorId, null, TurnIndex);
+    public DeathLogEntry CreateDeathLogEntry(BaseUnit actor)
+        => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, TurnIndex);
 }

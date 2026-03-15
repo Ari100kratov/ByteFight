@@ -1,4 +1,5 @@
-﻿using Domain.Game.Actions;
+﻿using Domain;
+using Domain.Game.Actions;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,14 @@ internal sealed class GameActionLogEntryConfiguration
 
         builder.Property(c => c.Info)
             .HasMaxLength(256);
+
+        builder.Property(e => e.ActorId)
+            .HasConversion(v => v.Value, v => new UnitId(v))
+            .IsRequired();
+
+        builder.Property(c => c.ActorName)
+            .IsRequired()
+            .HasMaxLength(32);
 
         builder.HasDiscriminator(x => x.ActionType)
             .HasValue<AttackLogEntry>(ActionType.Attack)

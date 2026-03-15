@@ -26,17 +26,16 @@ internal sealed class AttackAction : IRuntimeAction
         StatSnapshot hpSnapshot = TargetUnit.Stats.ApplyDamage(Damage);
 
         yield return world.CreateAttackLogEntry(
-            actorId: Actor.Id,
-            targetId: TargetUnit.Id,
+            Actor,
+            TargetUnit,
             damage: Damage,
-            facingDirection: facing,
             targetHp: hpSnapshot
         );
 
         if (TargetUnit.IsDead)
         {
             TargetUnit.MarkKilledBy(Actor.Id);
-            yield return world.CreateDeathLogEntry(TargetUnit.Id);
+            yield return world.CreateDeathLogEntry(TargetUnit);
         }
     }
 }

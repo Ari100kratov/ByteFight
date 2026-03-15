@@ -26,6 +26,8 @@ internal record BaseUnit
 
     public virtual Guid Id { get; }
 
+    public required string Name { get; init; }
+
     public bool IsDead => Stats.Current[StatType.Health] <= 0;
 
     public void Move(Position newPosition)

@@ -12,12 +12,13 @@ public sealed class WalkLogEntry : GameActionLogEntry
 
     public WalkLogEntry(
         Guid sessionId,
-        Guid actorId,
+        UnitId actorId,
+        string actorName,
         string? info,
         FacingDirection facingDirection,
         Position to,
         int turnIndex)
-        : base(sessionId, actorId, ActionType.Walk, info, turnIndex)
+        : base(sessionId, actorId, actorName, ActionType.Walk, info, turnIndex)
     {
         FacingDirection = facingDirection;
         To = to;

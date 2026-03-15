@@ -5,7 +5,8 @@ namespace Domain.GameRuntime.GameActionLogs;
 
 public sealed class AttackLogEntry : GameActionLogEntry
 {
-    public Guid TargetId { get; private set; }
+    public UnitId TargetId { get; private set; }
+    public string TargetName { get; private set; }
     public decimal Damage { get; private set; }
     public FacingDirection FacingDirection { get; private set; }
     public StatSnapshot TargetHp { get; private set; }
@@ -14,16 +15,19 @@ public sealed class AttackLogEntry : GameActionLogEntry
 
     public AttackLogEntry(
         Guid sessionId,
-        Guid actorId,
+        UnitId actorId,
+        string actorName,
         string? info,
-        Guid targetId,
+        UnitId targetId,
+        string targetName,
         decimal damage,
         FacingDirection facingDirection,
         StatSnapshot targetHp,
         int turnIndex)
-        : base(sessionId, actorId, ActionType.Attack, info, turnIndex)
+        : base(sessionId, actorId, actorName, ActionType.Attack, info, turnIndex)
     {
         TargetId = targetId;
+        TargetName = targetName;
         Damage = damage;
         FacingDirection = facingDirection;
         TargetHp = targetHp;

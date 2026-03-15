@@ -1,4 +1,5 @@
-﻿using Domain.GameRuntime.GameActionLogs;
+﻿using Domain;
+using Domain.GameRuntime.GameActionLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,5 +11,13 @@ internal sealed class AttackLogEntryConfiguration
     public void Configure(EntityTypeBuilder<AttackLogEntry> builder)
     {
         builder.OwnsOne(x => x.TargetHp);
+
+        builder.Property(e => e.TargetId)
+            .HasConversion(v => v.Value, v => new UnitId(v))
+            .IsRequired();
+
+        builder.Property(c => c.TargetName)
+            .IsRequired()
+            .HasMaxLength(32);
     }
 }

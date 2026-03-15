@@ -31,12 +31,14 @@ public static partial class Mapper
         => new()
         {
             Id = e.Id,
-            ActorId = e.ActorId,
+            ActorId = e.ActorId.Value,
+            ActorName = e.ActorName,
             Info = e.Info,
             TurnIndex = e.TurnIndex,
             CreatedAt = e.CreatedAt,
 
-            TargetId = e.TargetId,
+            TargetId = e.TargetId.Value,
+            TargetName = e.TargetName,
             Damage = e.Damage,
             FacingDirection = e.FacingDirection,
             TargetHp = new StatSnapshotDto(e.TargetHp.Current, e.TargetHp.Max)
@@ -46,7 +48,8 @@ public static partial class Mapper
         => new()
         {
             Id = e.Id,
-            ActorId = e.ActorId,
+            ActorId = e.ActorId.Value,
+            ActorName = e.ActorName,
             Info = e.Info,
             TurnIndex = e.TurnIndex,
             CreatedAt = e.CreatedAt,
@@ -59,7 +62,8 @@ public static partial class Mapper
         => new()
         {
             Id = e.Id,
-            ActorId = e.ActorId,
+            ActorId = e.ActorId.Value,
+            ActorName = e.ActorName,
             Info = e.Info,
             TurnIndex = e.TurnIndex,
             CreatedAt = e.CreatedAt,
@@ -69,7 +73,8 @@ public static partial class Mapper
         => new()
         {
             Id = e.Id,
-            ActorId = e.ActorId,
+            ActorId = e.ActorId.Value,
+            ActorName = e.ActorName,
             Info = e.Info,
             TurnIndex = e.TurnIndex,
             CreatedAt = e.CreatedAt,

@@ -12,6 +12,7 @@ import { useCharacterStore } from "../game/state/data/character.data.store"
 import { useGameSession } from "./hooks/useGameSession"
 import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
 import { Group, Panel, Separator } from "@/components/ui/resizable"
+import { CombatLogPanel } from "../game/combat-log/CombatLogPanel"
 
 export default function GameArenaPage() {
   const { modeType, arenaId, sessionId } = useParams()
@@ -67,7 +68,7 @@ export default function GameArenaPage() {
           {/* Левая часть */}
           <Panel
             id="left-panel"
-            defaultSize="40%"
+            defaultSize="30%"
           >
             <Group orientation="vertical">
               {/* Блок персонажа */}
@@ -111,14 +112,23 @@ export default function GameArenaPage() {
 
           <Separator withHandle />
 
-          {/* Правая часть — арена */}
-          <Panel
-            id="arena-panel"
-            defaultSize="60%"
-            minSize="30%"
-            className="p-2"
-          >
-            <ArenaCard />
+          {/* Правая часть */}
+          <Panel defaultSize="70%" minSize="30%">
+            <Group orientation="horizontal">
+
+              {/* Арена */}
+              <Panel defaultSize="70%" minSize="40%" className="p-2">
+                <ArenaCard />
+              </Panel>
+
+              <Separator withHandle />
+
+              {/* Журнал боя */}
+              <Panel defaultSize="30%" className="p-2">
+                <CombatLogPanel />
+              </Panel>
+
+            </Group>
           </Panel>
         </Group>
       </LoaderState>

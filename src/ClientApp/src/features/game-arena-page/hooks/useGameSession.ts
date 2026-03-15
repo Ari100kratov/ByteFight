@@ -24,11 +24,12 @@ export function useGameSession(sessionId?: string) {
     queryFn: () => apiFetch(`/game/sessions/${sessionId}/logs`),
     enabled: !!sessionId,
     retry: false,
-  });
-
+  })
 
   useEffect(() => {
-    if (isLoading) useGameBootstrapStore.getState().start()
+    if (isLoading) {
+      useGameBootstrapStore.getState().start()
+    }
   }, [isLoading])
 
   useEffect(() => {
@@ -40,15 +41,19 @@ export function useGameSession(sessionId?: string) {
   useEffect(() => {
     if (!session) return
     setSession(session)
-  }, [session])
+  }, [session, setSession])
 
   useEffect(() => {
     if (!logs?.length) return
     setTurnLogs(logs)
-  }, [logs])
+  }, [logs, setTurnLogs])
+
+  const isActive = session ? isGameSessionActive(session) : false
 
   useEffect(() => {
-    if (!session || !isGameSessionActive(session)) {
+    if (!session) return
+
+    if (!isActive) {
       useGameBootstrapStore.getState().end()
       return
     }
@@ -64,5 +69,5 @@ export function useGameSession(sessionId?: string) {
     return () => {
       gameHub.disconnect(session.id).catch(() => { })
     }
-  }, [session?.id])
+  }, [session?.id, isActive])
 }

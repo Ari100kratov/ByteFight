@@ -13,6 +13,7 @@ public abstract record GameActionLogEntryDto
 {
     public required Guid Id { get; init; }
     public required Guid ActorId { get; init; }
+    public required string ActorName { get; init; }
     public required string? Info { get; init; }
     public required int TurnIndex { get; init; }
     public required DateTime CreatedAt { get; init; }
@@ -31,6 +32,7 @@ public sealed record WalkLogEntryDto : GameActionLogEntryDto
 public sealed record AttackLogEntryDto : GameActionLogEntryDto
 {
     public required Guid TargetId { get; init; }
+    public required string TargetName { get; init; }
     public required decimal Damage { get; init; }
     public required FacingDirection FacingDirection { get; init; }
     public required StatSnapshotDto TargetHp { get; init; }

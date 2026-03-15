@@ -30,7 +30,7 @@ internal sealed class ScriptedUnitTurnProcessor : IUnitTurnProcessor
         }
         catch (Exception ex)
         {
-            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.UserError(ex.Message))];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.UserError(ex.Message))];
         }
 
         return _executor.Execute(action, actor, world);

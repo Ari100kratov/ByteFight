@@ -27,8 +27,8 @@ internal sealed class UserActionExecutor
         {
             Attack a => ExecuteAttack(a, actor, world),
             MoveTo m => ExecuteMoveTo(m, actor, world),
-            Idle => [world.CreateIdleLogEntry(actor.Id, IdleReasons.ManualIdle)],
-            _ => [world.CreateIdleLogEntry(actor.Id, IdleReasons.InvalidAction)]
+            Idle => [world.CreateIdleLogEntry(actor, IdleReasons.ManualIdle)],
+            _ => [world.CreateIdleLogEntry(actor, IdleReasons.InvalidAction)]
         };
     }
 
@@ -40,7 +40,7 @@ internal sealed class UserActionExecutor
         BaseUnit target = world.GetUnit(action.TargetId);
         if (target.IsDead)
         {
-            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.TargetDead)];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.TargetDead)];
         }
 
         int distance = actor.Position.ManhattanDistance(target.Position);
@@ -48,7 +48,7 @@ internal sealed class UserActionExecutor
 
         if (distance > attackRange)
         {
-            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.OutOfRange)];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.OutOfRange)];
         }
 
         decimal damage = actor.Stats.Get(StatType.Attack);
@@ -66,7 +66,7 @@ internal sealed class UserActionExecutor
 
         if (path is null || path.Count < 2)
         {
-            return [world.CreateIdleLogEntry(actor.Id, IdleReasons.NoPath)];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
         }
 
         // 2. Ограничиваем дальность
