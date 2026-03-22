@@ -11,6 +11,7 @@ import { BreadcrumbProvider } from "./layouts/BreadcrumbProvider"
 import GameModesPage from "./features/game-modes-page/GameModesPage"
 import GameArenasPage from "./features/game-arenas-page/GameArenasPage"
 import GameArenaPage from "./features/game-arena-page/GameArenaPage"
+import NotFoundPage from "./pages/NotFoundPage"
 
 export default function App() {
   return (
@@ -31,14 +32,13 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          {/* вложенные страницы */}
           <Route index element={<Navigate to="/play" replace />} />
 
           <Route path="play">
             <Route index element={<GameModesPage />} />
             <Route path=":modeType" element={<GameArenasPage />} />
-            <Route path=":modeType/:arenaId" element={<GameArenaPage />} key={window.location.pathname} />
-            <Route path=":modeType/:arenaId/:sessionId" element={<GameArenaPage />} key={window.location.pathname} />
+            <Route path=":modeType/:arenaId" element={<GameArenaPage />} />
+            <Route path=":modeType/:arenaId/:sessionId" element={<GameArenaPage />} />
           </Route>
 
           <Route path="characters">
@@ -49,10 +49,13 @@ export default function App() {
 
           <Route path="docs" element={<InProgressPage title="Документация" />} />
           <Route path="settings" element={<InProgressPage title="Настройки" />} />
+
+          {/* fallback внутри авторизованной части */}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
-        {/* fallback */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* глобальный fallback */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   )
