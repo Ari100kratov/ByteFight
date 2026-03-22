@@ -15,7 +15,11 @@ import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
 import { useGridStore } from "@/features/game/state/game/grid.state.store"
 import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { useArenaBattleState } from "../hooks/useArenaBattleState"
+import { useArenaBattleState } from "./hooks/useArenaBattleState"
+import { BattleResultOverlay } from "../battle-result-overlay/BattleResultOverlay"
+import { useArenaBattleResult } from "./hooks/useArenaBattleResult"
+import { BattleResultTrigger } from "../battle-result-overlay/BattleResultTrigger"
+import { ModeNames } from "@/shared/hooks/useArenaBreadcrumbs"
 
 export function ArenaCard() {
   const navigate = useNavigate()
@@ -96,6 +100,14 @@ export function ArenaCard() {
     navigate(`/play/${modeType}/${arenaId}/${sessionId}`)
   }
 
+  const {
+    resultView,
+    canShowResult,
+    isResultOpen,
+    openResult,
+    closeResult,
+  } = useArenaBattleResult()
+
   if (!arena) {
     return <Skeleton className="w-full h-full rounded-none md:rounded-r-2xl" />
   }
@@ -126,11 +138,33 @@ export function ArenaCard() {
       </CardHeader>
 
       <CardContent className="flex-1 min-h-0 overflow-hidden p-0">
-        <div
-          ref={arenaRef}
-          className="h-full w-full min-h-0 overflow-hidden"
-        >
-          <Game />
+        <div className="relative h-full w-full min-h-0 overflow-hidden">
+          <div
+            ref={arenaRef}
+            className="h-full w-full min-h-0 overflow-hidden"
+          >
+            <Game />
+          </div>
+
+          {canShowResult && isResultOpen && resultView && (
+            <BattleResultOverlay
+              title={resultView.title}
+              description={resultView.description}
+              tone={resultView.tone}
+              Icon={resultView.Icon}
+              totalTurns={resultView.totalTurns}
+              startedAt={resultView.startedAt}
+              endedAt={resultView.endedAt}
+
+              characterName={character?.name}
+              characterClassName={character?.class.name}
+
+              arenaName={arena.name}
+              arenaModeName={ModeNames[modeType ?? ""]}
+
+              onClose={closeResult}
+            />
+          )}
         </div>
       </CardContent>
 
@@ -146,17 +180,28 @@ export function ArenaCard() {
           </span>
         </div>
 
-        <Button
-          size="lg"
-          disabled={isStartDisabled}
-          onClick={handleStart}
-          aria-busy={isLoading}
-        >
-          <>
-            {startButtonIcon}
-            {startButtonText}
-          </>
-        </Button>
+        <div className="flex items-center gap-2">
+          {canShowResult && resultView && (
+            <BattleResultTrigger
+              title={resultView.title}
+              tone={resultView.tone}
+              Icon={resultView.Icon}
+              onClick={openResult}
+            />
+          )}
+
+          <Button
+            size="lg"
+            disabled={isStartDisabled}
+            onClick={handleStart}
+            aria-busy={isLoading}
+          >
+            <>
+              {startButtonIcon}
+              {startButtonText}
+            </>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )

@@ -3,7 +3,7 @@ import { useDefaultLayout } from "react-resizable-panels"
 
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
 import { SelectCharacterCard } from "./components/select-character-card/SelectCharacterCard"
-import { ArenaCard } from "./components/ArenaCard"
+import { ArenaCard } from "./components/arena-card/ArenaCard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
