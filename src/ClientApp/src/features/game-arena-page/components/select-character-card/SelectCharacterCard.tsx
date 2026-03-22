@@ -13,14 +13,15 @@ import {
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useCharacters } from "@/features/characters-page/useCharacters"
-import { useEffect, useState } from "react"
-import { useCharacterDetails } from "../hooks/useCharacterDetails"
+import { useEffect } from "react"
+import { useCharacterDetails } from "./hooks/useCharacterDetails"
 import { useCharacterStateStore } from "@/features/game/state/game/character.state.store"
 import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
 import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 import { StatType } from "@/shared/types/stat"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
-import { useCharacterSelectionState } from "../hooks/useCharacterSelectionState"
+import { useCharacterSelectionState } from "./hooks/useCharacterSelectionState"
+import { useSelectedCharacterId } from "./hooks/useSelectedCharacterId"
 
 export function SelectCharacterCard() {
   const arena = useArenaStore(s => s.arena)
@@ -31,18 +32,16 @@ export function SelectCharacterCard() {
     isCharacterSelectionDisabled,
   } = useCharacterSelectionState()
 
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>()
+  const {
+    selectedCharacterId,
+    setSelectedCharacterId,
+  } = useSelectedCharacterId({
+    characters,
+    sessionCharacterId,
+  })
 
   const { data: character } = useCharacterDetails(selectedCharacterId)
   const init = useCharacterStateStore(s => s.init)
-
-  useEffect(() => {
-    if (!sessionCharacterId) return
-
-    setSelectedCharacterId(prev =>
-      prev === sessionCharacterId ? prev : sessionCharacterId
-    )
-  }, [sessionCharacterId])
 
   useEffect(() => {
     if (!character || !arena) return
@@ -56,7 +55,7 @@ export function SelectCharacterCard() {
       maxMp: mana,
       startPosition: arena.startPosition,
     })
-  }, [character?.id, arena?.startPosition])
+  }, [character?.id, arena?.startPosition, init])
 
   const handleCreateClick = () => {
     window.open("/characters/create", "_blank")

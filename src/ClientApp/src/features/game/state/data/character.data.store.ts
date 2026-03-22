@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import type { ActionType } from "@/shared/types/action"
-import type { CharacterResponse } from "@/features/game-arena-page/hooks/useCharacterDetails"
+import type { CharacterResponse } from "@/features/game-arena-page/components/select-character-card/hooks/useCharacterDetails"
 
 export type Character = CharacterResponse
 

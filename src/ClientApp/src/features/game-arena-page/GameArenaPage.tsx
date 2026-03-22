@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom"
 import { useDefaultLayout } from "react-resizable-panels"
 
 import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
-import { SelectCharacterCard } from "./components/SelectCharacterCard"
+import { SelectCharacterCard } from "./components/select-character-card/SelectCharacterCard"
 import { ArenaCard } from "./components/ArenaCard"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
@@ -13,6 +13,7 @@ import { useGameSession } from "./hooks/useGameSession"
 import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
 import { Group, Panel, Separator } from "@/components/ui/resizable"
 import { CombatLogPanel } from "../game/combat-log/CombatLogPanel"
+import { useEffect, useRef } from "react"
 
 function GameArenaPageSkeleton() {
   return (
@@ -75,6 +76,35 @@ function GameArenaPageSkeleton() {
 
 export default function GameArenaPage() {
   const { modeType, arenaId, sessionId } = useParams()
+
+  // Да, это костыль — но зато рабочий.
+  // Я честно пытался нормально сбрасывать состояние при выходе из сессии,
+  // но из-за анимаций, асинхронных событий с сервера, глобальных сторов
+  // и всевозможных гонок состояний всё это превращается в ад:
+  // где-то не доинициализировалось, где-то остался старый controller,
+  // где-то не применились текстуры, где-то отвалились подписки и т.д.
+  //
+  // В какой-то момент стало понятно, что пытаться это всё аккуратно
+  // синхронизировать — это бесконечная борьба с edge-case'ами.
+  //
+  // Поэтому делаем максимально тупо, но надежно:
+  // при исчезновении sessionId просто делаем полный reload страницы.
+  // Это гарантированно очищает ВСЁ состояние (включая сторы, registry,
+  // Pixi-инстансы и прочие сайд-эффекты) и возвращает приложение
+  // в полностью консистентное состояние.
+  //
+  // Если когда-нибудь захочется "сделать правильно" — удачи тому герою :)
+  const prevSessionIdRef = useRef<string | undefined>(sessionId)
+  useEffect(() => {
+    const prevSessionId = prevSessionIdRef.current
+
+    if (prevSessionId && !sessionId) {
+      window.location.reload()
+      return
+    }
+
+    prevSessionIdRef.current = sessionId
+  }, [sessionId])
 
   const { data: arena, isLoading, error } = useArena(arenaId)
   const character = useCharacterStore(s => s.character)

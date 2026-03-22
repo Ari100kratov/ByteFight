@@ -12,8 +12,14 @@ type Props = {
 };
 
 export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
-  const arenaEnemy = useArenaEnemiesStore(s => s.getArenaEnemy(arenaEnemyId));
-  const runtime = useEnemyStateStore(s => s.get(arenaEnemy?.id));
+  const arenaEnemy = useArenaEnemiesStore(s =>
+    arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined
+  );
+
+  const runtime = useEnemyStateStore(s =>
+    arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined
+  );
+
   const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action));
 
   const controller = useMemo(() => {
@@ -26,7 +32,7 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
 
     unitRegistry.bind(arenaEnemy.id, controller);
     return controller;
-  }, [arenaEnemy?.id]);
+  }, [arenaEnemy?.id, arenaEnemy?.enemyId]);
 
   if (!runtime || !spriteAnimation || !controller)
     return null;

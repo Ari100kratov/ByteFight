@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Info, SwordsIcon } from "lucide-react"
+import { Info, LogOut, SwordsIcon } from "lucide-react"
 import { Game } from "@/features/game/Game"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -41,13 +41,25 @@ export function ArenaCard() {
   const startButtonText = (() => {
     if (isLoading) return "Готовимся к бою..."
     if (isBattleBusy) return "Идет бой"
-    if (hasSession) return "Снова в бой"
+    if (hasSession) return "Выйти из боя"
 
     return "В бой"
   })()
 
+  const startButtonIcon = (() => {
+    if (isLoading || isBattleBusy) return <SwordsIcon />
+    if (hasSession) return <LogOut />
+
+    return <SwordsIcon />
+  })()
+
   async function handleStart() {
     if (isStartDisabled) {
+      return
+    }
+
+    if (hasSession) {
+      navigate(`/play/${modeType}/${arenaId}`)
       return
     }
 
@@ -141,7 +153,7 @@ export function ArenaCard() {
           aria-busy={isLoading}
         >
           <>
-            <SwordsIcon />
+            {startButtonIcon}
             {startButtonText}
           </>
         </Button>

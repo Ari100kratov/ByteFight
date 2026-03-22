@@ -12,17 +12,19 @@ import type { TurnLog } from "@/features/game/types/TurnLog"
 export function useGameSession(sessionId?: string) {
   const { setSession, setTurnLogs } = useGameRuntimeStore()
 
+  const hasSessionId = !!sessionId
+
   const { data: session, isLoading } = useQuery<GameSession, ApiException>({
     queryKey: queryKeys.gameSessions.byId(sessionId),
     queryFn: () => apiFetch(`/game/sessions/${sessionId}`),
-    enabled: !!sessionId,
+    enabled: hasSessionId,
     retry: false,
   })
 
   const { data: logs } = useQuery<TurnLog[], ApiException>({
     queryKey: queryKeys.gameSessions.logs(sessionId),
     queryFn: () => apiFetch(`/game/sessions/${sessionId}/logs`),
-    enabled: !!sessionId,
+    enabled: hasSessionId,
     retry: false,
   })
 
@@ -44,8 +46,7 @@ export function useGameSession(sessionId?: string) {
   }, [session, setSession])
 
   useEffect(() => {
-    if (!logs?.length) return
-    setTurnLogs(logs)
+    setTurnLogs(logs ?? [])
   }, [logs, setTurnLogs])
 
   const isActive = session ? isGameSessionActive(session) : false

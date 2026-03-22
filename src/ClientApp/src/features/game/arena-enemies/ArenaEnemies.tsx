@@ -39,19 +39,16 @@ export function ArenaEnemies() {
       .catch(console.error)
   }, [arenaEnemies])
 
-  if (!arenaEnemies)
-    return null
+  if (!arenaEnemies) return null
 
   return (
     <>
-      {arenaEnemies.map((arenaEnemy) => {
-        return (
-          <EnemyAnimatedSprite
-            key={arenaEnemy.id}
-            arenaEnemyId={arenaEnemy.id}
-          />
-        )
-      })}
+      {arenaEnemies.map((arenaEnemy) => (
+        <EnemyAnimatedSprite
+          key={arenaEnemy.id}
+          arenaEnemyId={arenaEnemy.id}
+        />
+      ))}
     </>
   )
 }
