@@ -13,7 +13,6 @@ import { useUpdateCodes } from "./hooks/useUpdateCodes"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/shared/lib/utils"
-import { useConfirmPageLeave } from "./hooks/useConfirmPageLeave"
 
 type Props = {
   characterId: string
@@ -29,7 +28,6 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
     useCodeEditor(codesQuery, templateQuery)
 
   const hasChanges = codes.some(c => c.status !== ChangeStatus.Unchanged)
-  useConfirmPageLeave(hasChanges)
 
   const handleSave = () => {
     const created = codes

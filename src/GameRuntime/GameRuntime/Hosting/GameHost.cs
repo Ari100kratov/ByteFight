@@ -15,38 +15,94 @@ internal sealed class GameHost(
 {
     private readonly ConcurrentDictionary<Guid, GameInstance> _running = new();
 
+    /// <summary>
+    /// Множество пользователей, у которых прямо сейчас есть активная
+    /// или запускающаяся игровая сессия.
+    /// </summary>
+    private readonly ConcurrentDictionary<Guid, byte> _usersInGame = new();
+
     public async Task<Result<Guid>> StartGame(GameInitModel initModel, CancellationToken ct)
     {
+        // Атомарно резервируем слот пользователя.
+        if (!_usersInGame.TryAdd(initModel.UserId, 0))
+        {
+            return Result.Failure<Guid>(GameHostErrors.AlreadyRunningForUser(initModel.UserId));
+        }
+
         try
         {
-            Result<ArenaWorld> buildResult = await arenaWorldBuilder.Build(initModel.ArenaId, initModel.CharacterId, ct);
+            Result<ArenaWorld> buildResult =
+                await arenaWorldBuilder.Build(initModel.ArenaId, initModel.CharacterId, ct);
+
             if (buildResult.IsFailure)
             {
+                _usersInGame.TryRemove(initModel.UserId, out _);
                 return Result.Failure<Guid>(buildResult.Error);
             }
 
-            GameInstance gameInstance = await gameInstanceFactory.Create(initModel, buildResult.Value, OnGameCompleted, ct);
-            _running[gameInstance.SessionId] = gameInstance;
+            Result<GameInstance> createResult =
+                await gameInstanceFactory.Create(
+                    initModel,
+                    buildResult.Value,
+                    sessionId => OnGameCompleted(initModel.UserId, sessionId),
+                    ct);
+
+            if (createResult.IsFailure)
+            {
+                _usersInGame.TryRemove(initModel.UserId, out _);
+                return Result.Failure<Guid>(createResult.Error);
+            }
+
+            GameInstance gameInstance = createResult.Value;
+
+            if (!_running.TryAdd(gameInstance.SessionId, gameInstance))
+            {
+                _usersInGame.TryRemove(initModel.UserId, out _);
+                return Result.Failure<Guid>(GameHostErrors.SessionAlreadyRegistered(gameInstance.SessionId));
+            }
 
             // TODO: в будущем реализовать полноценные очереди
-            _ = Task.Run(() => gameInstance.Run(), CancellationToken.None);
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await gameInstance.Run();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(
+                        ex,
+                        "Unhandled error while running game session {SessionId} for user {UserId}",
+                        gameInstance.SessionId,
+                        initModel.UserId);
+
+                    OnGameCompleted(initModel.UserId, gameInstance.SessionId);
+                }
+            }, CancellationToken.None);
 
             return gameInstance.SessionId;
         }
+        catch (OperationCanceledException)
+        {
+            _usersInGame.TryRemove(initModel.UserId, out _);
+            throw;
+        }
         catch (Exception ex)
         {
+            _usersInGame.TryRemove(initModel.UserId, out _);
+
             logger.LogError(ex,
                 "Failed to start game session. UserId {UserId}, ArenaId {ArenaId}, CharacterId {CharacterId}, Mode {Mode}",
                 initModel.UserId, initModel.ArenaId, initModel.CharacterId, initModel.Mode);
 
-            // TODO: Передавать причину ошибки?
             return Result.Failure<Guid>(GameHostErrors.StartFailure(initModel));
         }
     }
 
-    private void OnGameCompleted(Guid sessionId)
+    private void OnGameCompleted(Guid userId, Guid sessionId)
     {
         _running.TryRemove(sessionId, out _);
+        _usersInGame.TryRemove(userId, out _);
     }
 
     public Result CancelGame(Guid sessionId)
@@ -59,14 +115,4 @@ internal sealed class GameHost(
 
         return Result.Failure(GameHostErrors.NotFound(sessionId));
     }
-}
-
-internal static class GameHostErrors
-{
-    public static Error NotFound(Guid sessionId) =>
-        Error.NotFound("GameHost.NotRunning", $"Игровая сессия с Id = {sessionId} не найдена.");
-
-    public static Error StartFailure(GameInitModel initModel) => Error.Failure(
-        "GameHost.StartFailed",
-        $"Не удалось начать игровую сессию. UserId {initModel.UserId}, ArenaId {initModel.ArenaId}, CharacterId {initModel.CharacterId}, Mode {initModel.Mode}");
 }

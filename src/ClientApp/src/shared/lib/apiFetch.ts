@@ -18,6 +18,8 @@ export type ApiError = {
 export class ApiException extends Error {
   public readonly status: number
   public readonly type: string
+  public readonly title: string
+  public readonly detail: string
   public readonly errors?: Record<string, string[]>
   public readonly traceId?: string
 
@@ -26,6 +28,8 @@ export class ApiException extends Error {
     this.name = "ApiException"
     this.status = problem.status
     this.type = problem.type
+    this.title = problem.title
+    this.detail = problem.detail
     this.errors = problem.errors
     this.traceId = problem.traceId
   }
@@ -50,7 +54,6 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
 
   let res = await makeRequest(accessToken)
 
-  // Если accessToken недействителен
   if (res.status === 401) {
     try {
       accessToken = await refreshAccessToken()
@@ -70,15 +73,20 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
       throw new Error(`Ошибка ${res.status}`)
     }
 
-    // RFC7807-ошибка
     if (body?.type && body?.title && body?.status) {
-      throw new ApiException(body as ApiError)
+      throw new ApiException({
+        type: body.type,
+        title: body.title,
+        status: body.status,
+        detail: body.detail,
+        errors: body.errors,
+        traceId: body.traceId,
+      })
     }
 
     throw new Error(body.message ?? body.detail ?? `Ошибка ${res.status}`)
   }
 
-  // 204 No Content
   if (res.status === 204) {
     return {} as T
   }
@@ -86,12 +94,9 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   return res.json()
 }
 
-/**
- * Обновление access токена через refresh токен
- */
 async function refreshAccessToken(): Promise<string> {
   const refreshToken = getRefreshToken()
-  if (!refreshToken) 
+  if (!refreshToken)
     throw new Error("Нет refresh-токена")
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/users/refresh-token`, {

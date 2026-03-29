@@ -55,4 +55,63 @@ public sealed record Position
     /// </summary>
     public FacingDirection CalculateFacing(Position targetPosition) =>
         targetPosition.X < X ? FacingDirection.Left : FacingDirection.Right;
+
+    /// <summary>
+    /// Возвращает четыре соседние клетки по ортогонали:
+    /// вправо, влево, вниз и вверх.
+    ///
+    /// Метод не проверяет, находятся ли возвращаемые клетки
+    /// внутри границ конкретной арены, поэтому результат при необходимости
+    /// нужно дополнительно фильтровать через <c>UserArenaDefinition.IsWithin</c>
+    /// или аналогичную проверку.
+    /// </summary>
+    public IEnumerable<Position> GetNeighbors4()
+    {
+        yield return new Position(X + 1, Y);
+
+        if (X > 0)
+        {
+            yield return new Position(X - 1, Y);
+        }
+
+        yield return new Position(X, Y + 1);
+
+        if (Y > 0)
+        {
+            yield return new Position(X, Y - 1);
+        }
+    }
+
+    /// <summary>
+    /// Возвращает все соседние клетки по ортогонали и диагонали.
+    ///
+    /// Полезно для более сложной логики, если в будущем
+    /// потребуется анализировать ближайшее окружение шире, чем только
+    /// клетки, достижимые обычным шагом.
+    ///
+    /// Метод не фильтрует клетки по границам арены.
+    /// </summary>
+    public IEnumerable<Position> GetNeighbors8()
+    {
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx == 0 && dy == 0)
+                {
+                    continue;
+                }
+
+                int x = X + dx;
+                int y = Y + dy;
+
+                if (x < 0 || y < 0)
+                {
+                    continue;
+                }
+
+                yield return new Position(x, y);
+            }
+        }
+    }
 }

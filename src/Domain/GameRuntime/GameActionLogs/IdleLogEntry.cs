@@ -25,6 +25,9 @@ public static class IdleReasons
     public static string UserError(string message) =>
         $"Что-то пошло не так. Очень не так: {message}";
 
+    public const string Timeout =
+        "Думал слишком долго (>3 сек). Решил ничего не делать.";
+
     public const string InvalidAction =
         "Попытался сделать что-то странное. В итоге просто стоит.";
 

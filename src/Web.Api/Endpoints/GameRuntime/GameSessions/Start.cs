@@ -3,6 +3,7 @@ using Application.Abstractions.GameRuntime;
 using Domain.Game.GameModes;
 using SharedKernel;
 using Web.Api.Extensions;
+using Web.Api.Infrastructure;
 
 namespace Web.Api.Endpoints.GameRuntime.GameSessions;
 
@@ -21,8 +22,16 @@ internal sealed class Start : IEndpoint
             // TODO: передавать enum в API
             if (!Enum.TryParse(request.Mode, true, out GameModeType parsedMode))
             {
-                return Results.BadRequest($"Invalid mode: {parsedMode}");
+                return CustomResults.Problem(
+                    Result.Failure(StartErrors.InvalidMode(request.Mode)));
             }
+
+            if (string.IsNullOrWhiteSpace(request.Code))
+            {
+                return CustomResults.Problem(
+                    Result.Failure(StartErrors.CodeIsRequired()));
+            }
+
 
             var init = new GameInitModel(
                 userContext.UserId,
@@ -38,4 +47,17 @@ internal sealed class Start : IEndpoint
         .WithTags(Tags.Game)
         .RequireAuthorization();
     }
+}
+
+internal static class StartErrors
+{
+    public static Error InvalidMode(string mode) =>
+        Error.Validation(
+            "GameSession.InvalidMode",
+            $"Неизвестный режим игры: {mode}");
+
+    public static Error CodeIsRequired() =>
+        Error.Validation(
+            "GameSession.CodeIsRequired",
+            "Пользовательский код обязателен для запуска боя.");
 }

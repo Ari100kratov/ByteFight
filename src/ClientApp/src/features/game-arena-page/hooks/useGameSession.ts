@@ -26,6 +26,7 @@ export function useGameSession(sessionId?: string) {
     queryFn: () => apiFetch(`/game/sessions/${sessionId}/logs`),
     enabled: hasSessionId,
     retry: false,
+    refetchOnWindowFocus: false,
   })
 
   useEffect(() => {

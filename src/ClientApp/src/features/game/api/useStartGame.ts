@@ -18,6 +18,7 @@ export function useStartGame() {
       if (!data.arenaId) throw new Error("Не указан ArenaId")
       if (!data.characterId) throw new Error("Не выбран персонаж")
       if (!data.mode) throw new Error("Не указан режим игры")
+      if (!data.code?.trim()) throw new Error("Пользовательский код не задан")
 
       const response = await apiFetch<StartGameResponse>("/game/start", {
         method: "POST",

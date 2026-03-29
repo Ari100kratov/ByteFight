@@ -38,7 +38,7 @@ internal sealed class GameInstanceFactory
         _loggerFactory = loggerFactory;
     }
 
-    public async Task<GameInstance> Create(
+    public async Task<Result<GameInstance>> Create(
         GameInitModel initModel,
         ArenaWorld world,
         Action<Guid> onCompleted,
@@ -53,7 +53,9 @@ internal sealed class GameInstanceFactory
         }
         catch (Exception ex)
         {
-            throw new DomainException("USER_CODE_COMPILATION_FAILED", ex.Message);
+            return Result.Failure<GameInstance>(
+                GameHostErrors.UserCodeCompilationFailed(
+                    $"Не удалось скомпилировать пользовательский код: {ex.Message}"));
         }
 
         // Создаём player AI

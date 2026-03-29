@@ -1,4 +1,5 @@
-﻿using GameRuntime.World;
+﻿using Domain.ValueObjects;
+using GameRuntime.World;
 using GameRuntime.World.Units;
 
 namespace GameRuntime.Logic.User.Api;
@@ -24,9 +25,58 @@ public sealed class UserWorldView
     public required IReadOnlyList<UserUnitView> Enemies { get; init; }
 
     /// <summary>
+    /// Список живых вражеских юнитов.
+    /// </summary>
+    public IEnumerable<UserUnitView> AliveEnemies => Enemies.Where(e => e.IsAlive);
+
+    /// <summary>
     /// Порядковый номер текущего хода.
     /// </summary>
     public int TurnIndex { get; init; }
+
+    /// <summary>
+    /// Проверяет, занята ли клетка живым юнитом.
+    ///
+    /// Учитывает как управляемого игроком юнита, так и живых врагов.
+    /// </summary>
+    /// <param name="position">Позиция для проверки.</param>
+    public bool IsOccupied(Position position)
+    {
+        if (Self.Position == position)
+        {
+            return true;
+        }
+
+        return Enemies.Any(e => e.IsAlive && e.Position == position);
+    }
+
+    /// <summary>
+    /// Проверяет, можно ли перемещаться в указанную клетку.
+    ///
+    /// Клетка считается проходимой, если:
+    /// она находится в пределах арены;
+    /// не является статическим препятствием;
+    /// не занята живым юнитом.
+    /// </summary>
+    /// <param name="position">Позиция для проверки.</param>
+    public bool IsWalkable(Position position)
+        => Arena.IsWithin(position)
+           && !Arena.IsBlocked(position)
+           && !IsOccupied(position);
+
+    /// <summary>
+    /// Возвращает соседние по ортогонали клетки, в которые можно перемещаться.
+    /// </summary>
+    /// <param name="position">Центральная позиция.</param>
+    public IEnumerable<Position> GetWalkableNeighbors4(Position position)
+        => Arena.GetNeighbors4(position).Where(IsWalkable);
+
+    /// <summary>
+    /// Возвращает соседние по ортогонали клетки для позиции текущего игрока,
+    /// в которые можно перемещаться.
+    /// </summary>
+    public IEnumerable<Position> GetWalkableNeighbors4()
+        => GetWalkableNeighbors4(Self.Position);
 }
 
 internal static partial class Mapper
