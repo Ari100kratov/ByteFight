@@ -1,12 +1,38 @@
-﻿namespace Infrastructure.Authorization;
+﻿using Infrastructure.Database.Auth;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
-internal sealed class PermissionProvider
+namespace Infrastructure.Authorization;
+
+internal sealed class PermissionProvider(
+    AuthDbContext dbContext,
+    IMemoryCache cache)
 {
-    public Task<HashSet<string>> GetForUserIdAsync(Guid userId)
-    {
-        // TODO: Here you'll implement your logic to fetch permissions.
-        HashSet<string> permissionsSet = [];
+    private static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(10);
 
-        return Task.FromResult(permissionsSet);
+    public Task<HashSet<string>> GetForUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        string cacheKey = GetCacheKey(userId);
+
+        return cache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = CacheLifetime;
+
+            string[] permissions = await dbContext.UserRoles
+                .AsNoTracking()
+                .Where(ur => ur.UserId == userId)
+                .SelectMany(ur => ur.Role.RolePermissions.Select(rp => rp.Permission))
+                .Distinct()
+                .ToArrayAsync(cancellationToken);
+
+            return permissions.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        })!;
     }
+
+    public void Invalidate(Guid userId)
+    {
+        cache.Remove(GetCacheKey(userId));
+    }
+
+    private static string GetCacheKey(Guid userId) => $"auth:permissions:{userId}";
 }

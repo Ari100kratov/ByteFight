@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Auth.RefreshTokens;
+using Domain.Auth.Roles;
 using Domain.Auth.Users;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,10 @@ public sealed class AuthDbContext(
     : DbContext(options), IAuthDbContext
 {
     public DbSet<User> Users { get; set; }
-
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<RolePermission> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -76,7 +76,8 @@ public static class DependencyInjection
         services.AddScoped<IGameRuntimeDbContext>(sp => sp.GetRequiredService<GameRuntimeDbContext>());
 
         services.AddScoped<DatabaseSeeder>();
-        services.AddScoped<AuthDataSeeder>();
+        services.AddScoped<AuthorizationDataSeeder>();
+        services.AddScoped<UserDataSeeder>();
         services.AddScoped<GameDataSeeder>();
 
         return services;

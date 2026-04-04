@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Authorization;
+using Application.Abstractions.Messaging;
 using Application.Contracts;
 using Application.Game.Arenas.Update;
 using Domain.Game.GameModes;

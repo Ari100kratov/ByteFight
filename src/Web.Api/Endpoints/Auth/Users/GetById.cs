@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Authorization;
+using Application.Abstractions.Messaging;
 using Application.Auth.Users.GetById;
 using SharedKernel;
 using Web.Api.Extensions;

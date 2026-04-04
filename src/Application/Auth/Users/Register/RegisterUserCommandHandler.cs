@@ -1,13 +1,17 @@
 ﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Auth.Roles;
 using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Application.Auth.Users.Register;
 
-internal sealed class RegisterUserCommandHandler(IAuthDbContext context, IPasswordHasher passwordHasher)
+internal sealed class RegisterUserCommandHandler(
+    IAuthDbContext context,
+    IPasswordHasher passwordHasher)
     : ICommandHandler<RegisterUserCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -17,6 +21,10 @@ internal sealed class RegisterUserCommandHandler(IAuthDbContext context, IPasswo
             return Result.Failure<Guid>(UserErrors.EmailNotUnique);
         }
 
+        Role? defaultRole = await context.Roles
+            .SingleOrDefaultAsync(r => r.Name == Roles.User, cancellationToken)
+            ?? throw new InvalidOperationException($"Default role '{Roles.User}' was not found.");
+
         var user = new User
         {
             Id = Guid.CreateVersion7(),
@@ -25,6 +33,12 @@ internal sealed class RegisterUserCommandHandler(IAuthDbContext context, IPasswo
             LastName = command.LastName,
             PasswordHash = passwordHasher.Hash(command.Password)
         };
+
+        user.UserRoles.Add(new UserRole
+        {
+            UserId = user.Id,
+            RoleId = defaultRole.Id
+        });
 
         user.Raise(new UserRegisteredDomainEvent(user.Id));
 
