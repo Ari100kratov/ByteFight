@@ -1,6 +1,6 @@
 ﻿using Domain.ValueObjects;
-using GameRuntime.World;
-using GameRuntime.World.Units;
+using GameRuntime.Common.World;
+using GameRuntime.Common.World.Units;
 
 namespace GameRuntime.Logic.NPC.PathFinding;
 

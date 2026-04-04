@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <UserSecretsId>7af30323-108a-4923-bd46-e13b7648968c</UserSecretsId>
@@ -23,5 +23,52 @@
     <ProjectReference Include="..\GameRuntime\GameRuntime\GameRuntime.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
+
+  <!--Собираем worker для выполнения пользовательского кода и кладем его в подпапку user-code-worker-->
+  <Target Name="BuildUserCodeWorker" AfterTargets="Build">
+    <PropertyGroup>
+      <UserCodeWorkerProject>..\GameRuntime\GameRuntime.UserCodeWorker\GameRuntime.UserCodeWorker.csproj</UserCodeWorkerProject>
+      <UserCodeWorkerOutputDir>$(OutDir)user-code-worker\</UserCodeWorkerOutputDir>
+    </PropertyGroup>
+
+    <MSBuild
+      Projects="$(UserCodeWorkerProject)"
+      Targets="Build"
+      Properties="Configuration=$(Configuration);TargetFramework=net10.0" />
+
+    <MakeDir Directories="$(UserCodeWorkerOutputDir)" />
+
+    <ItemGroup>
+      <UserCodeWorkerFiles Include="..\GameRuntime\GameRuntime.UserCodeWorker\bin\$(Configuration)\net10.0\**\*.*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(UserCodeWorkerFiles)"
+      DestinationFiles="@(UserCodeWorkerFiles->'$(UserCodeWorkerOutputDir)%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="BuildUserCodeWorker" AfterTargets="Build">
+    <PropertyGroup>
+      <UserCodeWorkerProject>..\GameRuntime\GameRuntime.UserCodeWorker\GameRuntime.UserCodeWorker.csproj</UserCodeWorkerProject>
+      <UserCodeWorkerOutputDir>$(OutDir)user-code-worker\</UserCodeWorkerOutputDir>
+    </PropertyGroup>
+
+    <MSBuild
+      Projects="$(UserCodeWorkerProject)"
+      Targets="Build"
+      Properties="Configuration=$(Configuration);TargetFramework=net10.0" />
+
+    <MakeDir Directories="$(UserCodeWorkerOutputDir)" />
+
+    <ItemGroup>
+      <UserCodeWorkerFiles Include="..\GameRuntime\GameRuntime.UserCodeWorker\bin\$(Configuration)\net10.0\**\*.*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(UserCodeWorkerFiles)"
+      DestinationFiles="@(UserCodeWorkerFiles->'$(UserCodeWorkerOutputDir)%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>

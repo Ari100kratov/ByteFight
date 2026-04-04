@@ -1,9 +1,9 @@
 ﻿using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 
-namespace GameRuntime.World.Units;
+namespace GameRuntime.Common.World.Units;
 
-internal sealed record EnemyUnit : BaseUnit
+public sealed record EnemyUnit : BaseUnit
 {
     public EnemyUnit(Position position, FacingDirection facingDirection)
         : base(position, facingDirection) { }

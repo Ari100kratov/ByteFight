@@ -10,6 +10,7 @@ using GameRuntime.Logic.User.Intellisense.Workspace;
 using GameRuntime.Persistence;
 using GameRuntime.Realtime;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace GameRuntime;
 
@@ -29,6 +30,19 @@ public static class DependencyInjection
         // Compilation
         services.AddSingleton<UserActionExecutor>();
         services.AddSingleton<UserScriptCompiler>();
+        services.AddSingleton(new UserCodeExecutionOptions { Timeout = TimeSpan.FromSeconds(3) });
+        services.AddSingleton<IUserCodeRunner>(sp =>
+        {
+            ILogger<ProcessUserCodeRunner> logger = sp.GetRequiredService<ILogger<ProcessUserCodeRunner>>();
+
+            string workerExePath = Path.Combine(
+                AppContext.BaseDirectory,
+                "user-code-worker",
+                "GameRuntime.UserCodeWorker.exe");
+
+            return new ProcessUserCodeRunner(workerExePath, logger);
+        });
+
 
         // Intellisense
         services.AddSingleton<UserScriptWorkspace>();

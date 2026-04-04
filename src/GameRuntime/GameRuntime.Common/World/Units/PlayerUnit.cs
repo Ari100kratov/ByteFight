@@ -2,9 +2,9 @@
 using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 
-namespace GameRuntime.World.Units;
+namespace GameRuntime.Common.World.Units;
 
-internal sealed record PlayerUnit : BaseUnit
+public sealed record PlayerUnit : BaseUnit
 {
     public PlayerUnit(Position position, FacingDirection facingDirection)
         : base(position, facingDirection) { }

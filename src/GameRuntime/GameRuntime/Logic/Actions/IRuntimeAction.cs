@@ -1,5 +1,5 @@
 ﻿using Domain.GameRuntime.GameActionLogs;
-using GameRuntime.World;
+using GameRuntime.Common.World;
 
 namespace GameRuntime.Logic.Actions;
 

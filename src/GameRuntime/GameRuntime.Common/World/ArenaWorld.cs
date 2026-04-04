@@ -1,14 +1,13 @@
-﻿using System.Reactive;
-using Domain;
+﻿using Domain;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.ValueObjects;
-using GameRuntime.World.Units;
+using GameRuntime.Common.World.Units;
 using SharedKernel;
 
-namespace GameRuntime.World;
+namespace GameRuntime.Common.World;
 
-internal sealed class ArenaWorld
+public sealed class ArenaWorld
 {
     public Guid GameSessionId { get; } = Guid.CreateVersion7();
 

@@ -1,5 +1,5 @@
 ﻿using Domain.ValueObjects;
-using GameRuntime.World;
+using GameRuntime.Common.World;
 
 namespace GameRuntime.Logic.NPC.PathFinding;
 

@@ -31,7 +31,7 @@ public abstract class GameActionLogEntry : Entity
         ActorId = actorId;
         ActorName = actorName;
         ActionType = actionType;
-        Info = info;
+        Info = info?.Length > 256 ? info[..256] : info;
         TurnIndex = turnIndex;
         CreatedAt = DateTime.UtcNow;
     }

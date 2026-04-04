@@ -1,8 +1,8 @@
 ﻿using Domain.ValueObjects;
 
-namespace GameRuntime.World;
+namespace GameRuntime.Common.World;
 
-internal sealed record ArenaDefinition
+public sealed record ArenaDefinition
 {
     public required Guid ArenaId { get; init; }
     public required int GridWidth { get; init; }

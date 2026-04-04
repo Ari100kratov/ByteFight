@@ -1,6 +1,7 @@
-﻿using Domain.ValueObjects;
-using GameRuntime.World;
-using GameRuntime.World.Units;
+﻿using Domain.Game.Stats;
+using Domain.ValueObjects;
+using GameRuntime.Common.World;
+using GameRuntime.Common.World.Units;
 
 namespace GameRuntime.Logic.User.Api;
 
@@ -79,7 +80,7 @@ public sealed class UserWorldView
         => GetWalkableNeighbors4(Self.Position);
 }
 
-internal static partial class Mapper
+public static partial class Mapper
 {
     public static UserWorldView ToView(this ArenaWorld world, BaseUnit actor)
     {
@@ -97,7 +98,11 @@ internal static partial class Mapper
             {
                 Id = actor.Id,
                 Position = actor.Position,
-                Stats = new UserStatsView(actor.Stats),
+                Stats = new UserStatsView
+                {
+                    Current = new Dictionary<StatType, decimal>(actor.Stats.Current),
+                    Max = new Dictionary<StatType, decimal>(actor.Stats.Max)
+                },
                 IsDead = actor.IsDead
             },
             Enemies = [.. world.Enemies
@@ -105,7 +110,11 @@ internal static partial class Mapper
                 {
                     Id = enemy.Id,
                     Position = enemy.Position,
-                    Stats = new UserStatsView(enemy.Stats),
+                    Stats = new UserStatsView
+                    {
+                        Current = new Dictionary<StatType, decimal>(enemy.Stats.Current),
+                        Max = new Dictionary<StatType, decimal>(enemy.Stats.Max)
+                    },
                     IsDead = enemy.IsDead
                 })]
         };

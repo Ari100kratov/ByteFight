@@ -1,6 +1,5 @@
 ﻿using Domain.Game.Stats;
 using Domain.ValueObjects;
-using GameRuntime.World.Stats;
 
 namespace GameRuntime.Logic.User.Api;
 
@@ -9,12 +8,8 @@ namespace GameRuntime.Logic.User.Api;
 /// </summary>
 public sealed class UserStatsView
 {
-    private readonly RuntimeStats _stats;
-
-    internal UserStatsView(RuntimeStats stats)
-    {
-        _stats = stats;
-    }
+    public required IReadOnlyDictionary<StatType, decimal> Current { get; init; }
+    public required IReadOnlyDictionary<StatType, decimal> Max { get; init; }
 
     /// <summary>
     /// Возвращает текущее значение характеристики.
@@ -22,7 +17,7 @@ public sealed class UserStatsView
     /// <param name="statType">Тип характеристики.</param>
     /// <returns>Текущее значение или <c>null</c>, если характеристика недоступна.</returns>
     public decimal? Get(StatType statType)
-        => _stats.Current.TryGetValue(statType, out decimal value)
+        => Current.TryGetValue(statType, out decimal value)
             ? value
             : null;
 
@@ -32,7 +27,7 @@ public sealed class UserStatsView
     /// <param name="stat">Тип характеристики.</param>
     /// <returns>Снапшот характеристики или <c>null</c>, если характеристика отсутствует.</returns>
     public StatSnapshot? GetSnapshot(StatType stat)
-        => _stats.Current.TryGetValue(stat, out decimal value)
-            ? new StatSnapshot(value, _stats.Max[stat])
+        => Current.TryGetValue(stat, out decimal value) && Max.TryGetValue(stat, out decimal max)
+            ? new StatSnapshot(value, max)
             : null;
 }

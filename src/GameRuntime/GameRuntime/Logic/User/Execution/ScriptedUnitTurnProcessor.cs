@@ -1,54 +1,70 @@
 ﻿using Domain.GameRuntime.GameActionLogs;
+using GameRuntime.Common.World;
+using GameRuntime.Common.World.Units;
 using GameRuntime.Logic.Turns;
 using GameRuntime.Logic.User.Api;
-using GameRuntime.World;
-using GameRuntime.World.Units;
+using GameRuntime.Logic.User.Compilation;
 
 namespace GameRuntime.Logic.User.Execution;
 
-internal sealed class ScriptedUnitTurnProcessor : IUnitTurnProcessor
+internal sealed class ScriptedUnitTurnProcessor : IUnitTurnProcessor, IDisposable
 {
-    private readonly Func<UserWorldView, UserAction> _decide;
+    private readonly CompiledUserScript _script;
+    private readonly IUserCodeRunner _runner;
     private readonly UserActionExecutor _executor;
+    private readonly UserCodeExecutionOptions _options;
+    private bool _disposed;
 
     public ScriptedUnitTurnProcessor(
-        Func<UserWorldView, UserAction> decide,
-        UserActionExecutor executor)
+        CompiledUserScript script,
+        IUserCodeRunner runner,
+        UserActionExecutor executor,
+        UserCodeExecutionOptions options)
     {
-        _decide = decide;
+        _script = script;
+        _runner = runner;
         _executor = executor;
+        _options = options;
     }
 
     public IEnumerable<GameActionLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         UserWorldView view = world.ToView(actor);
 
         try
         {
-            UserAction action = ExecuteWithTimeout(() => _decide(view), TimeSpan.FromSeconds(3));
+            UserAction action = _runner.Run(
+                _script,
+                view,
+                _options.Timeout);
 
             return _executor.Execute(action, actor, world);
         }
         catch (TimeoutException)
         {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.Timeout)];
+            return [world.CreateIdleLogEntry(actor, IdleReasons.Timeout(_options.Timeout))];
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             return [world.CreateIdleLogEntry(actor, IdleReasons.UserError(ex.Message))];
         }
+        catch (Exception ex)
+        {
+            return [world.CreateIdleLogEntry(actor, IdleReasons.UserError(
+                $"Внутренняя ошибка выполнения пользовательского кода: {ex.Message}"))];
+        }
     }
 
-    private static T ExecuteWithTimeout<T>(Func<T> func, TimeSpan timeout)
+    public void Dispose()
     {
-        Task<T> task = Task.Run(func);
-
-        if (task.Wait(timeout))
+        if (_disposed)
         {
-            // пробрасываем исключение если было
-            return task.GetAwaiter().GetResult();
+            return;
         }
 
-        throw new TimeoutException();
+        _disposed = true;
+        _script.Dispose();
     }
 }

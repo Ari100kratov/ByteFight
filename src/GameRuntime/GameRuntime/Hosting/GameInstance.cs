@@ -2,18 +2,21 @@
 using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessions;
+using GameRuntime.Common.World;
 using GameRuntime.Logic.Turns;
 using GameRuntime.Persistence;
-using GameRuntime.World;
 using Microsoft.Extensions.Logging;
 
 namespace GameRuntime.Hosting;
 
-internal sealed class GameInstance
+internal sealed class GameInstance : IDisposable
 {
     public Guid SessionId { get; }
     private readonly ArenaWorld _world;
     private readonly Action<Guid> _onCompleted;
+
+    private readonly IDisposable? _disposableResource;
+    private bool _disposed;
 
     private readonly IGameSessionRepository _sessionRepository;
     private readonly IGameTurnProcessor _gameTurnProcessor;
@@ -23,6 +26,7 @@ internal sealed class GameInstance
     public GameInstance(Guid sessionId,
         ArenaWorld world,
         Action<Guid> onCompleted,
+        IDisposable? disposableResource,
         IGameSessionRepository sessionRepository,
         IGameTurnProcessor gameTurnProcessor,
         IGameRuntimeEventSender eventSender,
@@ -31,6 +35,7 @@ internal sealed class GameInstance
         SessionId = sessionId;
         _world = world;
         _onCompleted = onCompleted;
+        _disposableResource = disposableResource;
 
         _sessionRepository = sessionRepository;
         _logger = logger;
@@ -83,12 +88,30 @@ internal sealed class GameInstance
         }
         finally
         {
-            _onCompleted(SessionId);
+            try
+            {
+                Dispose();
+            }
+            finally
+            {
+                _onCompleted(SessionId);
+            }
         }
     }
 
     public void RequestCancel()
     {
         _cancelRequested = true;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        _disposableResource?.Dispose();
     }
 }

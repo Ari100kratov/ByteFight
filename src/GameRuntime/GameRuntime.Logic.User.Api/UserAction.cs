@@ -1,10 +1,17 @@
-﻿using Domain.ValueObjects;
+﻿using System.Text.Json.Serialization;
+using Domain.ValueObjects;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Базовый тип действия юнита.
 /// </summary>
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonDerivedType(typeof(Attack), "attack")]
+[JsonDerivedType(typeof(MoveTo), "moveTo")]
+[JsonDerivedType(typeof(MoveTowards), "moveTowards")]
+[JsonDerivedType(typeof(MoveAwayFrom), "moveAwayFrom")]
+[JsonDerivedType(typeof(Idle), "idle")]
 public abstract record UserAction;
 
 /// <summary>

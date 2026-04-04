@@ -103,7 +103,7 @@ public class GameSession : Entity
         }
 
         Status = GameStatus.Failed;
-        ErrorMessage = reason;
+        ErrorMessage = reason?.Length > 256 ? reason[..256] : reason;
         TotalTurns = turns;
         EndedAt = dateTimeProvider.UtcNow;
     }

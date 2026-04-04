@@ -28,7 +28,6 @@ public sealed class UserUnitView
     /// </summary>
     public bool IsDead { get; init; }
 
-
     /// <summary>
     /// Признак того, что юнит жив.
     /// </summary>

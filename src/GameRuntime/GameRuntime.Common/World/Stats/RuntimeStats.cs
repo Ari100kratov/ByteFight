@@ -1,9 +1,9 @@
 ﻿using Domain.Game.Stats;
 using Domain.ValueObjects;
 
-namespace GameRuntime.World.Stats;
+namespace GameRuntime.Common.World.Stats;
 
-internal sealed class RuntimeStats
+public sealed class RuntimeStats
 {
     public Dictionary<StatType, decimal> Current { get; }
     public Dictionary<StatType, decimal> Max { get; }

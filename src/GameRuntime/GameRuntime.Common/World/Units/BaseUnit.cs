@@ -1,11 +1,11 @@
 ﻿using Domain.Game.Stats;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
-using GameRuntime.World.Stats;
+using GameRuntime.Common.World.Stats;
 
-namespace GameRuntime.World.Units;
+namespace GameRuntime.Common.World.Units;
 
-internal record BaseUnit
+public record BaseUnit
 {
     public BaseUnit(Position position, FacingDirection facingDirection)
     {
