@@ -45,7 +45,8 @@ public static class DependencyInjection
 
 
         // Intellisense
-        services.AddSingleton<UserScriptWorkspace>();
+        services.AddSingleton<UserScriptRoslynContextFactory>();
+
         services.AddSingleton<UserScriptCompletionService>();
         services.AddSingleton<UserScriptDiagnosticsService>();
         services.AddSingleton<UserScriptHoverService>();

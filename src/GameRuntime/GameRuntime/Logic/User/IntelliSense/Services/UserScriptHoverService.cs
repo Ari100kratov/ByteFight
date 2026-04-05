@@ -5,22 +5,16 @@ using Microsoft.CodeAnalysis;
 
 namespace GameRuntime.Logic.User.Intellisense.Services;
 
-public sealed class UserScriptHoverService
+public sealed class UserScriptHoverService(UserScriptRoslynContextFactory contextFactory)
 {
-    private readonly UserScriptWorkspace _workspace;
-
-    public UserScriptHoverService(UserScriptWorkspace workspace)
-    {
-        _workspace = workspace;
-    }
-
     public async Task<UserScriptHoverDto?> GetHoverAsync(
         string userCode,
         int line,
         int column,
         CancellationToken ct)
     {
-        Document document = _workspace.UpdateDocument(userCode);
+        using UserScriptRoslynContext context = contextFactory.CreateContext(userCode);
+        Document document = context.Document;
 
         SyntaxNode? root = await document.GetSyntaxRootAsync(ct);
         SemanticModel? semanticModel = await document.GetSemanticModelAsync(ct);

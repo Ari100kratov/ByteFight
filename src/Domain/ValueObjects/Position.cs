@@ -20,7 +20,7 @@ public sealed record Position
     private Position() { } // Необходимо для EF
 
     /// <summary>
-    /// Создаёт позицию на сетке.
+    /// Создаёт модель позиции с координатами.
     /// </summary>
     /// <param name="x">Координата X (неотрицательная).</param>
     /// <param name="y">Координата Y (неотрицательная).</param>

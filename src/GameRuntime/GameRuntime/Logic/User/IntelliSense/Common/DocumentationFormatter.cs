@@ -30,7 +30,7 @@ public static partial class DocumentationFormatter
 
         if (summaryNode != null)
         {
-            sb.AppendLine(WebUtility.HtmlDecode(summaryNode.InnerText.Trim()));
+            sb.AppendLine(Normalize(summaryNode.InnerText));
         }
 
         if (paramNodes != null && paramNodes.Count > 0)
@@ -38,17 +38,27 @@ public static partial class DocumentationFormatter
             foreach (XmlNode param in paramNodes)
             {
                 string name = param.Attributes?["name"]?.Value ?? "?";
-                string desc = WebUtility.HtmlDecode(param.InnerText.Trim());
+                string desc = Normalize(param.InnerText);
                 sb.AppendLine(culture, $"• {name}: {desc}");
             }
         }
 
         if (returnsNode != null)
         {
-            sb.AppendLine(culture, $"Returns: {WebUtility.HtmlDecode(returnsNode.InnerText.Trim())}");
+            sb.AppendLine(culture, $"Returns: {Normalize(returnsNode.InnerText)}");
         }
 
         string result = sb.ToString().Trim();
         return string.IsNullOrWhiteSpace(result) ? null : result;
+    }
+
+    private static string Normalize(string text)
+    {
+        return string.Join(
+            "\n",
+            WebUtility.HtmlDecode(text)
+                .Split('\n')
+                .Select(line => line.Trim())
+                .Where(line => !string.IsNullOrWhiteSpace(line)));
     }
 }

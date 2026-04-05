@@ -24,7 +24,11 @@ public sealed record UserScriptHoverDto(
     int EndColumn);
 
 public sealed record UserScriptSignatureHelpDto(
+    IReadOnlyList<UserScriptSignatureDto> Signatures,
+    int ActiveSignature,
+    int ActiveParameter);
+
+public sealed record UserScriptSignatureDto(
     string Signature,
     string? Documentation,
-    int ActiveParameter,
     IReadOnlyList<string> Parameters);

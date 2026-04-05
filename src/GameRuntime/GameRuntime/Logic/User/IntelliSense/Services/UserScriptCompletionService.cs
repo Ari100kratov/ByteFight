@@ -5,25 +5,22 @@ using GameRuntime.Logic.User.Intellisense.Dtos;
 using GameRuntime.Logic.User.Intellisense.Workspace;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.Text;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace GameRuntime.Logic.User.Intellisense.Services;
 
-public sealed class UserScriptCompletionService
+public sealed class UserScriptCompletionService(UserScriptRoslynContextFactory contextFactory)
 {
-    private readonly UserScriptWorkspace _workspace;
-
-    public UserScriptCompletionService(UserScriptWorkspace workspace)
-    {
-        _workspace = workspace;
-    }
-
     public async Task<IReadOnlyList<UserScriptCompletionDto>> GetCompletions(
         string userCode,
         int line,
         int column,
         CancellationToken ct)
     {
-        Document document = _workspace.UpdateDocument(userCode);
+        using UserScriptRoslynContext context = contextFactory.CreateContext(userCode);
+        Document document = context.Document;
+
         int position = await RoslynMappingHelpers.MapToSourceOffsetAsync(document, line, column, ct);
 
         var completionService = CompletionService.GetService(document);
@@ -33,7 +30,11 @@ public sealed class UserScriptCompletionService
         }
 
         CompletionList? completionList = await completionService
-            .GetCompletionsAsync(document, position, cancellationToken: ct);
+            .GetCompletionsAsync(
+            document,
+            position,
+            trigger: CompletionTrigger.CreateInsertionTrigger('.'),
+            cancellationToken: ct);
 
         if (completionList is null)
         {

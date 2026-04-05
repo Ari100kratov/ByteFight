@@ -55,7 +55,7 @@ public static class UserScript
     public static void MapUserPositionToGenerated(int userLine, int userColumn, out int generatedLine, out int generatedColumn)
     {
         generatedLine = Math.Max(userLine, 0) + UserCodeStartLine;
-        generatedColumn = Math.Max(userColumn - 1, 0);
+        generatedColumn = Math.Max(userColumn, 0);
         //generatedColumn = Math.Max(userColumn, 0);
     }
 

@@ -5,23 +5,19 @@ using GameRuntime.Logic.User.Intellisense.Workspace;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace GameRuntime.Logic.User.Intellisense.Services;
 
-public sealed class UserScriptDiagnosticsService
+public sealed class UserScriptDiagnosticsService(UserScriptRoslynContextFactory contextFactory)
 {
-    private readonly UserScriptWorkspace _workspace;
-
-    public UserScriptDiagnosticsService(UserScriptWorkspace workspace)
-    {
-        _workspace = workspace;
-    }
-
     public async Task<IReadOnlyList<UserScriptDiagnosticDto>> GetDiagnostics(
         string userCode,
         CancellationToken ct)
     {
-        Document document = _workspace.UpdateDocument(userCode);
+        using UserScriptRoslynContext context = contextFactory.CreateContext(userCode);
+        Document document = context.Document;
+
         if (await document.Project.GetCompilationAsync(ct) is not CSharpCompilation compilation)
         {
             return [];

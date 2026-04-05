@@ -59,7 +59,22 @@ export function CodeEditor({
           scrollBeyondLastLine: false,
           fontSize: 14,
           automaticLayout: true,
-          smoothScrolling: true
+          smoothScrolling: true,
+
+          fixedOverflowWidgets: true,
+
+          quickSuggestions: {
+            other: true,
+            comments: false,
+            strings: false,
+          },
+
+          parameterHints: {
+            enabled: true,
+          },
+
+          suggestOnTriggerCharacters: true,
+          acceptSuggestionOnEnter: "on",
         }}
       />
     </Suspense>

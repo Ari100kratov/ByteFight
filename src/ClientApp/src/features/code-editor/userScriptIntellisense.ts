@@ -33,10 +33,13 @@ type IntellisenseHover = {
 }
 
 type IntellisenseSignatureHelp = {
-  signature: string
-  documentation?: string
+  signatures: {
+    signature: string
+    documentation?: string
+    parameters: string[]
+  }[]
+  activeSignature: number
   activeParameter: number
-  parameters: string[]
 }
 
 let initialized = false
@@ -49,7 +52,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
   initialized = true
 
   monacoApi.languages.registerCompletionItemProvider("csharp", {
-    triggerCharacters: [".", "(", " "],
+    triggerCharacters: ["."],
     provideCompletionItems: async (model, position) => {
       const suggestions = await request<IntellisenseCompletion[]>("/intellisense/csharp/completions", {
         sourceCode: model.getValue(),
@@ -118,14 +121,12 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
 
       return {
         value: {
-          signatures: [
-            {
-              label: payload.signature ?? "",
-              documentation: payload.documentation ?? "",
-              parameters: (payload.parameters ?? []).map(p => ({ label: p })),
-            },
-          ],
-          activeSignature: 0,
+          signatures: (payload.signatures ?? []).map(s => ({
+            label: s.signature ?? "",
+            documentation: s.documentation ?? "",
+            parameters: (s.parameters ?? []).map(p => ({ label: p })),
+          })),
+          activeSignature: payload.activeSignature ?? 0,
           activeParameter: payload.activeParameter ?? 0,
         },
         dispose: () => { },
