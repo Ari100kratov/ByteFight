@@ -1,28 +1,28 @@
 # ByteFight
 
 <p align="center">
-  <a href="https://github.com/<OWNER>/ByteFight/actions/workflows/build.yml">
-    <img alt="Build" src="https://github.com/<OWNER>/ByteFight/actions/workflows/build.yml/badge.svg" />
+  <a href="https://github.com/Ari100kratov/ByteFight/actions/workflows/build.yml">
+    <img alt="Build" src="https://github.com/Ari100kratov/ByteFight/actions/workflows/build.yml/badge.svg" />
   </a>
-  <a href="https://github.com/<OWNER>/ByteFight/blob/main/LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/<OWNER>/ByteFight?style=flat-square" />
+  <a href="https://github.com/Ari100kratov/ByteFight/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/Ari100kratov/ByteFight?style=flat-square" />
   </a>
-  <a href="https://github.com/<OWNER>/ByteFight/commits/main">
-    <img alt="Last commit" src="https://img.shields.io/github/last-commit/<OWNER>/ByteFight/main?style=flat-square" />
+  <a href="https://github.com/Ari100kratov/ByteFight/commits/main">
+    <img alt="Last commit" src="https://img.shields.io/github/last-commit/Ari100kratov/ByteFight/main?style=flat-square" />
   </a>
-  <a href="https://github.com/<OWNER>/ByteFight/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/<OWNER>/ByteFight?style=flat-square" />
+  <a href="https://github.com/Ari100kratov/ByteFight/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/Ari100kratov/ByteFight?style=flat-square" />
   </a>
-  <a href="https://github.com/<OWNER>/ByteFight/pulls">
-    <img alt="PRs" src="https://img.shields.io/github/issues-pr/<OWNER>/ByteFight?style=flat-square" />
+  <a href="https://github.com/Ari100kratov/ByteFight/pulls">
+    <img alt="PRs" src="https://img.shields.io/github/issues-pr/Ari100kratov/ByteFight?style=flat-square" />
   </a>
-  <a href="https://github.com/<OWNER>/ByteFight/stargazers">
-    <img alt="Stars" src="https://img.shields.io/github/stars/<OWNER>/ByteFight?style=flat-square" />
+  <a href="https://github.com/Ari100kratov/ByteFight/stargazers">
+    <img alt="Stars" src="https://img.shields.io/github/stars/Ari100kratov/ByteFight?style=flat-square" />
   </a>
 </p>
 
 > [!IMPORTANT]
-> Замените `<OWNER>` в ссылках и бейджах на ваш GitHub-логин/организацию.
+> Замените `Ari100kratov` в ссылках и бейджах на ваш GitHub-логин/организацию.
 
 ## Содержание
 - [О проекте](#-о-проекте)
@@ -196,7 +196,7 @@ src/
 ### 2) Клонирование
 
 ```powershell
-git clone https://github.com/<OWNER>/ByteFight.git
+git clone https://github.com/Ari100kratov/ByteFight.git
 cd ByteFight
 ```
 
