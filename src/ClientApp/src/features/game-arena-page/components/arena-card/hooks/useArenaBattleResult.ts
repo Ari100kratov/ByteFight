@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react"
 import { useGameRuntimeStore } from "@/features/game/state/game.runtime.store"
-import { isGameSessionActive } from "@/features/game/types/GameSession"
+import { GameStatus, isGameSessionActive } from "@/features/game/types/GameSession"
 import { useBattleResultUiStore } from "../../battle-result-overlay/hooks/useBattleResultUiStore"
-import { getBattleResultMeta } from "../../battle-result-overlay/helpers/getBattleResultMeta"
+import { mapBattleResultMeta } from "../../battle-result-overlay/helpers/mapBattleResultMeta"
 import { useArenaBattleState } from "./useArenaBattleState"
 
 export function useArenaBattleResult() {
@@ -14,13 +14,17 @@ export function useArenaBattleResult() {
   const open = useBattleResultUiStore(s => s.open)
   const close = useBattleResultUiStore(s => s.close)
 
-  const hasResult = Boolean(session?.result)
   const isSessionFinished = Boolean(session) && !isGameSessionActive(session)
+
+  const hasDisplayableResult =
+    session?.status === GameStatus.Completed ||
+    session?.status === GameStatus.Aborted ||
+    session?.status === GameStatus.Failed
 
   const canShowResult =
     Boolean(session?.id) &&
-    hasResult &&
     isSessionFinished &&
+    hasDisplayableResult &&
     !isBattleBusy
 
   useEffect(() => {
@@ -32,13 +36,23 @@ export function useArenaBattleResult() {
   }, [session?.id, canShowResult, showForSession])
 
   const resultMeta = useMemo(() => {
-  return hasResult
-    ? getBattleResultMeta(session?.result?.outcome, session?.id)
-    : null
-}, [hasResult, session?.result?.outcome, session?.id])
+    if (!session || !hasDisplayableResult) {
+      return null
+    }
+
+    return mapBattleResultMeta({
+      status: session.status,
+      outcome: session.result?.outcome,
+      sessionId: session.id,
+      errorMessage: session.errorMessage,
+    })
+  }, [
+    session,
+    hasDisplayableResult,
+  ])
 
   const resultView = useMemo(() => {
-    if (!session?.result || !resultMeta) {
+    if (!session || !resultMeta) {
       return null
     }
 
@@ -47,10 +61,10 @@ export function useArenaBattleResult() {
       description: resultMeta.description,
       tone: resultMeta.tone,
       Icon: resultMeta.icon,
-      totalTurns: session.totalTurns ?? null,
+      totalTurns: session.totalTurns ?? 0,
       startedAt: session.startedAt,
       endedAt: session.endedAt,
-      outcome: session.result.outcome,
+      outcome: session.result?.outcome,
     }
   }, [session, resultMeta])
 

@@ -12,6 +12,7 @@ import GameModesPage from "./features/game-modes-page/GameModesPage"
 import GameArenasPage from "./features/game-arenas-page/GameArenasPage"
 import GameArenaPage from "./features/game-arena-page/GameArenaPage"
 import NotFoundPage from "./pages/NotFoundPage"
+import BattleHistoryPage from "./features/battle-history-page/BattleHistoryPage"
 
 export default function App() {
   return (
@@ -45,6 +46,13 @@ export default function App() {
             <Route index element={<CharactersPage />} />
             <Route path="create" element={<CreateCharacterPage />} />
             <Route path=":id" element={<CharacterPage />} />
+          </Route>
+
+          <Route path="analytics">
+            <Route index element={<Navigate to="history" replace />} />
+            <Route path="history" element={<BattleHistoryPage />} />
+            <Route path="stats" element={<InProgressPage title="Статистика" />} />
+            <Route path="leaderboard" element={<InProgressPage title="Лидеры" />} />
           </Route>
 
           <Route path="docs" element={<InProgressPage title="Документация" />} />

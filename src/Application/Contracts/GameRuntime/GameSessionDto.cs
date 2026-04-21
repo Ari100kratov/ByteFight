@@ -14,6 +14,7 @@ public sealed record GameSessionDto
     public required DateTime? EndedAt { get; init; }
     public required int TotalTurns { get; init; }
     public required GameStatus Status { get; init; }
+    public required string? ErrorMessage { get; init; }
     public required GameResultDto? Result { get; init; }
 }
 
@@ -31,6 +32,7 @@ public static partial class Mapper
             EndedAt = entity.EndedAt,
             TotalTurns = entity.TotalTurns,
             Status = entity.Status,
+            ErrorMessage = entity.ErrorMessage,
             Result = entity.Result.ToDto()
         };
     }
@@ -47,6 +49,7 @@ public static partial class Mapper
             EndedAt = entity.EndedAt,
             TotalTurns = entity.TotalTurns,
             Status = entity.Status,
+            ErrorMessage = entity.ErrorMessage,
             Result = entity.Result.ToDto()
         };
     }

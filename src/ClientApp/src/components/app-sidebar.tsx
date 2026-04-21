@@ -9,9 +9,10 @@ import {
   // PieChart,
   Send,
   Settings2,
-  Github,
+  FolderGit2,
   Swords,
-  Gamepad2
+  Gamepad2,
+  BarChart3
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -27,6 +28,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom"
 
 const data = {
   user: {
@@ -39,27 +41,37 @@ const data = {
       title: "Играть",
       url: "/play",
       icon: Swords,
-      isActive: true,
-      // items: [
-      //   {
-      //     title: "PvE",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "PvP",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Тренировка",
-      //     url: "#",
-      //   },
-      // ],
+      items: [ // сделать динамическим?
+        {
+          title: "Тренировка",
+          url: "/play/training",
+        },
+        {
+          title: "PvE",
+          url: "/play/pve",
+        },
+        {
+          title: "PvP",
+          url: "/play/pvp",
+        },
+      ],
     },
     {
       title: "Мои персонажи",
       url: "/characters",
       icon: Bot,
       // items: [ Здесь хочу выводить персонажи пользователя списком ]
+    },
+    {
+      title: "Бои и статистика",
+      url: "/analytics",
+      icon: BarChart3,
+      items: [
+        {
+          title: "История боев",
+          url: "/analytics/history"
+        }
+      ]
     },
     {
       title: "Документация",
@@ -76,7 +88,7 @@ const data = {
     {
       title: "Github",
       url: "https://github.com/Ari100kratov/ByteFight",
-      icon: Github,
+      icon: FolderGit2,
     },
     {
       title: "Обратная связь",
@@ -111,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/">
+              <Link to="/">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Gamepad2 className="size-4" />
                 </div>
@@ -119,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate font-medium">ByteFight</span>
                   <span className="truncate text-xs">Online</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

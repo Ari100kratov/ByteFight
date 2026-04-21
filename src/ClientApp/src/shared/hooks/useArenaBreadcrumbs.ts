@@ -1,11 +1,6 @@
 import { useEffect } from "react"
 import { useBreadcrumbNames } from "@/layouts/BreadcrumbProvider"
-
-export const ModeNames: Record<string, string> = {
-  training: "Тренировка",
-  pve: "PvE",
-  pvp: "PvP",
-}
+import { formatModeNameByString } from "../types/modeNames"
 
 export function useArenaBreadcrumbs(params: {
   modeType?: string
@@ -16,7 +11,7 @@ export function useArenaBreadcrumbs(params: {
 
   useEffect(() => {
     if (!modeType) return
-    setName(`/play/${modeType}`, ModeNames[modeType] ?? "Неизвестный режим")
+    setName(`/play/${modeType}`, formatModeNameByString(modeType))
   }, [modeType])
 
   useEffect(() => {

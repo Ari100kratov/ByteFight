@@ -28,6 +28,7 @@ export type GameSession = {
 
   totalTurns: number;
   status: GameStatus;
+  errorMessage?: string | null;
 
   result?: GameResult | null;
 };

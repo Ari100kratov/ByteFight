@@ -20,7 +20,7 @@ import { useArenaBattleState } from "./hooks/useArenaBattleState"
 import { BattleResultOverlay } from "../battle-result-overlay/BattleResultOverlay"
 import { useArenaBattleResult } from "./hooks/useArenaBattleResult"
 import { BattleResultTrigger } from "../battle-result-overlay/BattleResultTrigger"
-import { ModeNames } from "@/shared/hooks/useArenaBreadcrumbs"
+import { formatModeNameByString } from "@/shared/types/modeNames"
 import { GameStartErrorDialog } from "./components/GameStartErrorDialog"
 import { mapStartGameError, type StartGameUiError } from "@/features/game/api/startGame.errors"
 import { useUnsavedChangesConfirm } from "./hooks/useUnsavedChangesDialog"
@@ -190,7 +190,7 @@ export function ArenaCard() {
                 characterName={character?.name}
                 characterClassName={character?.class.name}
                 arenaName={arena.name}
-                arenaModeName={ModeNames[modeType ?? ""]}
+                arenaModeName={formatModeNameByString(modeType)}
                 onClose={closeResult}
               />
             )}

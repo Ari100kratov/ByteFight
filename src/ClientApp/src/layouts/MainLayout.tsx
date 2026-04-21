@@ -22,6 +22,9 @@ const routeNames: Record<string, string> = {
   characters: "Мои персонажи",
   create: "Создание персонажа",
 
+  analytics: "Бои и статистика",
+  history: "История боев",
+
   docs: "Документация",
   settings: "Настройки",
 }
