@@ -44,7 +44,7 @@ export function ErrorAlert({ error }: ErrorAlertProps) {
         </AlertDescription>
       </Alert>
 
-      {process.env.NODE_ENV === "development" && details && (
+      {import.meta.env.DEV && details && (
         <pre className="w-full max-h-64 overflow-auto rounded bg-muted p-2 text-xs text-muted-foreground whitespace-pre-wrap">
           {details}
         </pre>

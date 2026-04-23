@@ -17,6 +17,7 @@ internal sealed class GetGameModesQueryHandler
                 Id = (int)m.Type,
                 Slug = m.Slug,
                 Name = m.Name,
+                ImageUrl = m.ImageUrl,
                 Description = m.Description
             })
             .ToList();

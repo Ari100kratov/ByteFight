@@ -11,7 +11,7 @@ import {
   Settings2,
   FolderGit2,
   Swords,
-  Gamepad2,
+  // Gamepad2,
   BarChart3
 } from "lucide-react"
 
@@ -124,9 +124,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Gamepad2 className="size-4" />
-                </div>
+                {/* <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <img src="/logo.png" className="size-4" />
+                </div> */}
+                <img src="/logo.png" className="size-10 object-contain" />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">ByteFight</span>
                   <span className="truncate text-xs">Online</span>

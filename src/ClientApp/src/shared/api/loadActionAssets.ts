@@ -78,3 +78,8 @@ export async function loadTextureFromUrl(url: string): Promise<Texture | null> {
     return null
   }
 }
+
+export function getAssetUrl(assetKey?: string | null) {
+  if (!assetKey) return null
+  return `${import.meta.env.VITE_API_URL}/assets/${assetKey}`
+}

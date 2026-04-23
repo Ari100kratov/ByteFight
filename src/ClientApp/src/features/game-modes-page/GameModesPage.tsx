@@ -9,19 +9,19 @@ export default function GameModesPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col gap-4 p-6">
+    <div className="flex flex-col gap-6 p-6">
       <LoaderState
         isLoading={isLoading}
         error={error}
-        empty={<div className="text-muted-foreground text-center">Режимы игры пока недоступны.</div>}
+        empty={<div className="text-center text-muted-foreground">Режимы игры пока недоступны.</div>}
         loadingFallback={
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex flex-col rounded-2xl overflow-hidden shadow-sm">
-                <Skeleton className="h-40 w-full" /> {/* Заглушка под изображение */}
-                <div className="p-4 space-y-2">
-                  <Skeleton className="h-5 w-2/3" /> {/* Название */}
-                  <Skeleton className="h-4 w-full" /> {/* Описание */}
+              <div key={i} className="overflow-hidden rounded-2xl border shadow-sm">
+                <Skeleton className="aspect-video w-full" />
+                <div className="space-y-3 p-5">
+                  <Skeleton className="h-6 w-2/3" />
+                  <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-5/6" />
                 </div>
               </div>
@@ -30,12 +30,13 @@ export default function GameModesPage() {
         }
       >
         {modes && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {modes.map((mode) => (
-              <GameModeCard 
-              key={mode.id} 
-              mode={mode} 
-              onSelect={(mode) => navigate(`/play/${mode.slug}`)} />
+              <GameModeCard
+                key={mode.id}
+                mode={mode}
+                onSelect={(mode) => navigate(`/play/${mode.slug}`)}
+              />
             ))}
           </div>
         )}

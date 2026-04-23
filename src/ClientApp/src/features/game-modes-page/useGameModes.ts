@@ -6,6 +6,7 @@ export type GameModeResponse = {
   id: number
   slug: string
   name: string
+  imageUrl: string
   description: string
 }
 
