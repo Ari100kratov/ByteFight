@@ -14,12 +14,16 @@ interface Props {
   runtime: UnitRuntime;
   spriteAnimation: SpriteAnimationDto;
   controller: UnitController;
+  clickable?: boolean
+  onClick?: (position: { x: number; y: number }) => void
 }
 
 export function UnitAnimatedSprite({
   runtime,
   spriteAnimation,
   controller,
+  clickable,
+  onClick
 }: Props) {
   const layout = useGridStore(s => s.layout);
   const spriteRef = useRef<AnimatedSprite | null>(null);
@@ -72,6 +76,21 @@ export function UnitAnimatedSprite({
         anchor={{ x: 0.5, y: 1 }}
         scale={{ x: scaleX, y: spriteAnimation.scale.y }}
         autoPlay={false}
+
+        eventMode={clickable ? "static" : "none"}
+        cursor={clickable ? "pointer" : "default"}
+        onPointerTap={() => onClick?.({ x: spriteX, y: spriteY - spriteHeight })}
+
+        onPointerOver={() => {
+          if (spriteRef.current) {
+            spriteRef.current.alpha = 0.85
+          }
+        }}
+        onPointerOut={() => {
+          if (spriteRef.current) {
+            spriteRef.current.alpha = 1
+          }
+        }}
       />
     </pixiContainer>
   );

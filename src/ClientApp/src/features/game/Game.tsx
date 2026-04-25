@@ -6,20 +6,26 @@ import { ArenaEnemies } from "./arena-enemies/ArenaEnemies"
 import { CharacterAnimatedSprite } from "./character-sprite/CharacterAnimatedSprite"
 import { ResizeHandler } from "./ResizeHandler"
 import { DamageTextLayer } from "./damage-text/DamageTextLayer"
+import { EnemyInfoPopover } from "./enemy-info-popover/EnemyInfoPopover"
 
 extend({ Container })
 
 export function Game() {
   return (
-    <Application backgroundColor={0xf0f0f0}>
-      <ResizeHandler />
-      <BackgroundSprite />
-      <GridContainer />
-      <pixiContainer sortableChildren={true}>
-        <CharacterAnimatedSprite />
-        <ArenaEnemies />
-        <DamageTextLayer />
-      </pixiContainer>
-    </Application>
+    <div className="relative h-full w-full">
+      <Application backgroundColor={0xf0f0f0}>
+        <ResizeHandler />
+        <BackgroundSprite />
+        <GridContainer />
+
+        <pixiContainer sortableChildren={true}>
+          <CharacterAnimatedSprite />
+          <ArenaEnemies />
+          <DamageTextLayer />
+        </pixiContainer>
+      </Application>
+
+      <EnemyInfoPopover />
+    </div>
   )
 }

@@ -6,20 +6,16 @@ import { UnitAnimatedSprite } from "../shared/unit-animated-sprite/UnitAnimatedS
 import { UnitController } from "../units/controller/UnitController";
 import { unitRegistry } from "../units/controller/UnitRegistry";
 import { EnemyAnimationResolver } from "../units/animation/EnemyAnimationResolver";
+import { useEnemySelectionStore } from "../state/data/enemy.selection.store";
 
 type Props = {
   arenaEnemyId: string;
 };
 
 export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
-  const arenaEnemy = useArenaEnemiesStore(s =>
-    arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined
-  );
-
-  const runtime = useEnemyStateStore(s =>
-    arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined
-  );
-
+  const arenaEnemy = useArenaEnemiesStore(s => arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined);
+  const runtime = useEnemyStateStore(s => arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined);
+  const selectEnemy = useEnemySelectionStore(s => s.selectEnemy)
   const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action));
 
   const controller = useMemo(() => {
@@ -42,6 +38,8 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
       runtime={runtime}
       spriteAnimation={spriteAnimation}
       controller={controller}
+      clickable
+      onClick={(position) => selectEnemy(arenaEnemyId, position)}
     />
   );
 }
