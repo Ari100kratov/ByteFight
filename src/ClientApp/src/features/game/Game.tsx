@@ -5,6 +5,7 @@ import { BackgroundSprite } from "./background-sprite/BackgroundSprite"
 import { ArenaEnemies } from "./arena-enemies/ArenaEnemies"
 import { CharacterAnimatedSprite } from "./character-sprite/CharacterAnimatedSprite"
 import { ResizeHandler } from "./ResizeHandler"
+import { DamageTextLayer } from "./damage-text/DamageTextLayer"
 
 extend({ Container })
 
@@ -17,6 +18,7 @@ export function Game() {
       <pixiContainer sortableChildren={true}>
         <CharacterAnimatedSprite />
         <ArenaEnemies />
+        <DamageTextLayer />
       </pixiContainer>
     </Application>
   )

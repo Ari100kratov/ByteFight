@@ -26,45 +26,67 @@ export class UnitSprite {
     loop: boolean,
     onFrame?: (frame: number) => void | Promise<void>
   ): Promise<void> {
-    if (!this.sprite) return;
+    if (!this.sprite) return
 
-    if (this.currentAnimation === animation.url && loop) return;
-    this.currentAnimation = animation.url;
-    this.updateRuntime({ action });
+    if (this.currentAnimation === animation.url && loop) return
+
+    const sprite = this.sprite
 
     const textures = await useTexturesStore
       .getState()
-      .getOrLoadTextures(animation.url, animation.frameCount);
+      .getOrLoadTextures(animation.url, animation.frameCount)
 
-    const sprite = this.sprite;
-    sprite.textures = textures;
-    sprite.animationSpeed = animation.animationSpeed;
-    sprite.loop = loop;
-    sprite.gotoAndPlay(0);
+    if (!textures.length) return
+    if (this.sprite !== sprite) return
 
-    if (loop) return;
+    this.currentAnimation = animation.url
 
-    let framePromise: Promise<void> | null = null;
+    sprite.stop()
+    sprite.onFrameChange = undefined
+    sprite.onComplete = undefined
+
+    sprite.textures = textures
+    sprite.animationSpeed = animation.animationSpeed
+    sprite.loop = loop
+
+    // action меняем только когда текстуры уже готовы
+    this.updateRuntime({ action })
+
+    if (loop) {
+      sprite.gotoAndPlay(0)
+      return
+    }
+
+    let framePromise: Promise<void> | null = null
+    const handledFrames = new Set<number>()
 
     return new Promise(resolve => {
       sprite.onFrameChange = frame => {
-        if (onFrame) {
-          const result = onFrame(frame);
-          if (result instanceof Promise) {
-            framePromise = result;
-          }
+        if (!onFrame) return
+        if (handledFrames.has(frame)) return
+
+        handledFrames.add(frame)
+
+        const result = onFrame(frame)
+        if (result instanceof Promise) {
+          framePromise = result
         }
-      };
+      }
 
       sprite.onComplete = async () => {
+        sprite.stop()
+        sprite.onFrameChange = undefined
+        sprite.onComplete = undefined
+
         if (framePromise) {
-          await framePromise;
+          await framePromise
         }
-        sprite.onFrameChange = undefined;
-        sprite.onComplete = undefined;
-        resolve();
-      };
-    });
+
+        resolve()
+      }
+
+      sprite.gotoAndPlay(0)
+    })
   }
 
   moveToPx(

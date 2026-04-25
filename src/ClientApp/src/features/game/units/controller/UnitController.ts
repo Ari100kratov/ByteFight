@@ -6,6 +6,7 @@ import { useGridStore } from "../../state/game/grid.state.store";
 import { gridToPixel } from "../../grid-container/gridUtils";
 import type { AttackLogEntry, WalkLogEntry } from "../../types/TurnLog";
 import type { StatSnapshot } from "../../types/common";
+import { useDamageTextStore } from "../../state/game/damage.text.store";
 
 export class UnitController {
   sprite: UnitSprite;
@@ -82,6 +83,7 @@ export class UnitController {
       false,
       frame => {
         if (frame === 1) {
+          useDamageTextStore.getState().add(entry.targetId, entry.damage);
           return target.playHurt(entry.targetHp);
         }
       }
