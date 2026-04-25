@@ -10,6 +10,7 @@ type DamageTextStore = {
   items: DamageText[];
   add: (unitId: string, value: number) => void;
   remove: (id: string) => void;
+  reset: () => void;
 };
 
 export const useDamageTextStore = create<DamageTextStore>((set) => ({
@@ -31,4 +32,6 @@ export const useDamageTextStore = create<DamageTextStore>((set) => ({
     set((s) => ({
       items: s.items.filter((x) => x.id !== id),
     })),
+
+  reset: () => set({ items: [] }),
 }));

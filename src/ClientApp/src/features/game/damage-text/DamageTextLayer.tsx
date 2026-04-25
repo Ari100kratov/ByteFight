@@ -1,5 +1,5 @@
 import { useCharacterStateStore } from "../state/game/character.state.store";
-import { useDamageTextStore } from "../state/game/damage.text.store";
+import { useDamageTextStore } from "../state/ui/damage.text.store";
 import { useEnemyStateStore } from "../state/game/enemy.state.store";
 import { useGridStore } from "../state/game/grid.state.store";
 import { DamageText } from "./DamageText";

@@ -5,6 +5,7 @@ type EnemySelectionState = {
   position?: { x: number; y: number }
   selectEnemy: (arenaEnemyId: string, position: { x: number; y: number }) => void
   clearSelection: () => void
+  reset: () => void
 }
 
 export const useEnemySelectionStore = create<EnemySelectionState>((set) => ({
@@ -15,5 +16,8 @@ export const useEnemySelectionStore = create<EnemySelectionState>((set) => ({
     set({ selectedArenaEnemyId, position }),
 
   clearSelection: () =>
+    set({ selectedArenaEnemyId: undefined, position: undefined }),
+
+  reset: () =>
     set({ selectedArenaEnemyId: undefined, position: undefined }),
 }))

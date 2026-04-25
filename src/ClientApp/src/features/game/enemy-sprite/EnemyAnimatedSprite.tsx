@@ -6,7 +6,7 @@ import { UnitAnimatedSprite } from "../shared/unit-animated-sprite/UnitAnimatedS
 import { UnitController } from "../units/controller/UnitController";
 import { unitRegistry } from "../units/controller/UnitRegistry";
 import { EnemyAnimationResolver } from "../units/animation/EnemyAnimationResolver";
-import { useEnemySelectionStore } from "../state/data/enemy.selection.store";
+import { useEnemySelectionStore } from "../state/ui/enemy.selection.store";
 
 type Props = {
   arenaEnemyId: string;

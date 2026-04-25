@@ -3,7 +3,7 @@ import { useArenaEnemiesStore } from "../state/data/arena-enemies.store"
 import { useEnemiesStore } from "../state/data/enemies.data.store"
 import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
 import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
-import { useEnemySelectionStore } from "../state/data/enemy.selection.store"
+import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 
 export function EnemyInfoPopover() {
   const selectedArenaEnemyId = useEnemySelectionStore(s => s.selectedArenaEnemyId)
