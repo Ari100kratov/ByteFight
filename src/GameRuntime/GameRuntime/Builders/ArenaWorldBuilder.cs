@@ -31,9 +31,11 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
 
         Character? character = await dbContext.Characters
             .AsNoTracking()
-            .Where(a => a.Id == characterId)
-            .Include(a => a.Class)
-                .ThenInclude(c => c.Stats)
+            .Where(x => x.Id == characterId)
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Stats)
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Class)
             .SingleOrDefaultAsync(ct);
 
         if (character is null)
@@ -78,8 +80,8 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
             {
                 Name = character.Name,
                 CharacterId = character.Id,
-                Class = character.Class.Type,
-                Stats = new RuntimeStats(character.Class.Stats.Select(x => (x.StatType, x.Value)))
+                Spec = character.Spec.Type,
+                Stats = new RuntimeStats(character.Spec.Stats.Select(x => (x.StatType, x.Value)))
             },
 
             Enemies = enemyUnits

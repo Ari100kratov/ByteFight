@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Infrastructure.Database.Game.Migrations;
 
 /// <inheritdoc />
-public partial class InitialMigration : Migration
+public partial class Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +26,8 @@ public partial class InitialMigration : Migration
                 background_asset = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                 description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                 game_modes = table.Column<int[]>(type: "integer[]", nullable: false),
+                start_position_x = table.Column<int>(type: "integer", nullable: false),
+                start_position_y = table.Column<int>(type: "integer", nullable: false),
                 is_active = table.Column<bool>(type: "boolean", nullable: false),
                 created_by = table.Column<Guid>(type: "uuid", nullable: false),
                 created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -65,69 +68,44 @@ public partial class InitialMigration : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "character_class_action_assets",
+            name: "arenas_blocked_positions",
             schema: "game",
             columns: table => new
             {
-                character_class_id = table.Column<Guid>(type: "uuid", nullable: false),
-                action_type = table.Column<int>(type: "integer", nullable: false),
-                variant = table.Column<int>(type: "integer", nullable: false),
-                animation_url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                animation_frame_count = table.Column<int>(type: "integer", nullable: false),
-                animation_animation_speed = table.Column<float>(type: "real", nullable: false),
-                animation_scale_x = table.Column<float>(type: "real", nullable: false),
-                animation_scale_y = table.Column<float>(type: "real", nullable: false)
+                arena_id = table.Column<Guid>(type: "uuid", nullable: false),
+                id = table.Column<int>(type: "integer", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                x = table.Column<int>(type: "integer", nullable: false),
+                y = table.Column<int>(type: "integer", nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("pk_character_class_action_assets", x => new { x.character_class_id, x.action_type, x.variant });
+                table.PrimaryKey("pk_arenas_blocked_positions", x => new { x.arena_id, x.id });
                 table.ForeignKey(
-                    name: "fk_character_class_action_assets_character_classes_character_c",
-                    column: x => x.character_class_id,
+                    name: "fk_arenas_blocked_positions_arenas_arena_id",
+                    column: x => x.arena_id,
                     principalSchema: "game",
-                    principalTable: "character_classes",
+                    principalTable: "arenas",
                     principalColumn: "id",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateTable(
-            name: "character_class_stats",
-            schema: "game",
-            columns: table => new
-            {
-                character_class_id = table.Column<Guid>(type: "uuid", nullable: false),
-                stat_type = table.Column<int>(type: "integer", nullable: false),
-                value = table.Column<decimal>(type: "numeric", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_character_class_stats", x => new { x.character_class_id, x.stat_type });
-                table.ForeignKey(
-                    name: "fk_character_class_stats_character_classes_character_class_id",
-                    column: x => x.character_class_id,
-                    principalSchema: "game",
-                    principalTable: "character_classes",
-                    principalColumn: "id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "characters",
+            name: "character_specs",
             schema: "game",
             columns: table => new
             {
                 id = table.Column<Guid>(type: "uuid", nullable: false),
-                name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                 class_id = table.Column<Guid>(type: "uuid", nullable: false),
-                created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                type = table.Column<int>(type: "integer", nullable: false),
+                description = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true)
             },
             constraints: table =>
             {
-                table.PrimaryKey("pk_characters", x => x.id);
+                table.PrimaryKey("pk_character_specs", x => x.id);
                 table.ForeignKey(
-                    name: "fk_characters_character_classes_class_id",
+                    name: "fk_character_specs_character_classes_class_id",
                     column: x => x.class_id,
                     principalSchema: "game",
                     principalTable: "character_classes",
@@ -213,6 +191,77 @@ public partial class InitialMigration : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "character_spec_action_assets",
+            schema: "game",
+            columns: table => new
+            {
+                character_spec_id = table.Column<Guid>(type: "uuid", nullable: false),
+                action_type = table.Column<int>(type: "integer", nullable: false),
+                variant = table.Column<int>(type: "integer", nullable: false),
+                animation_url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                animation_frame_count = table.Column<int>(type: "integer", nullable: false),
+                animation_animation_speed = table.Column<float>(type: "real", nullable: false),
+                animation_scale_x = table.Column<float>(type: "real", nullable: false),
+                animation_scale_y = table.Column<float>(type: "real", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_character_spec_action_assets", x => new { x.character_spec_id, x.action_type, x.variant });
+                table.ForeignKey(
+                    name: "fk_character_spec_action_assets_character_specs_character_spec",
+                    column: x => x.character_spec_id,
+                    principalSchema: "game",
+                    principalTable: "character_specs",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "character_spec_stats",
+            schema: "game",
+            columns: table => new
+            {
+                character_spec_id = table.Column<Guid>(type: "uuid", nullable: false),
+                stat_type = table.Column<int>(type: "integer", nullable: false),
+                value = table.Column<decimal>(type: "numeric", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_character_spec_stats", x => new { x.character_spec_id, x.stat_type });
+                table.ForeignKey(
+                    name: "fk_character_spec_stats_character_specs_character_spec_id",
+                    column: x => x.character_spec_id,
+                    principalSchema: "game",
+                    principalTable: "character_specs",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "characters",
+            schema: "game",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                spec_id = table.Column<Guid>(type: "uuid", nullable: false),
+                created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                user_id = table.Column<Guid>(type: "uuid", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_characters", x => x.id);
+                table.ForeignKey(
+                    name: "fk_characters_character_specs_spec_id",
+                    column: x => x.spec_id,
+                    principalSchema: "game",
+                    principalTable: "character_specs",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
             name: "character_codes",
             schema: "game",
             columns: table => new
@@ -270,10 +319,17 @@ public partial class InitialMigration : Migration
             column: "character_id");
 
         migrationBuilder.CreateIndex(
-            name: "ix_characters_class_id",
+            name: "ix_character_specs_class_id",
             schema: "game",
-            table: "characters",
+            table: "character_specs",
             column: "class_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_character_specs_name",
+            schema: "game",
+            table: "character_specs",
+            column: "name",
+            unique: true);
 
         migrationBuilder.CreateIndex(
             name: "ix_characters_name",
@@ -281,6 +337,12 @@ public partial class InitialMigration : Migration
             table: "characters",
             column: "name",
             unique: true);
+
+        migrationBuilder.CreateIndex(
+            name: "ix_characters_spec_id",
+            schema: "game",
+            table: "characters",
+            column: "spec_id");
     }
 
     /// <inheritdoc />
@@ -291,15 +353,19 @@ public partial class InitialMigration : Migration
             schema: "game");
 
         migrationBuilder.DropTable(
-            name: "character_class_action_assets",
-            schema: "game");
-
-        migrationBuilder.DropTable(
-            name: "character_class_stats",
+            name: "arenas_blocked_positions",
             schema: "game");
 
         migrationBuilder.DropTable(
             name: "character_codes",
+            schema: "game");
+
+        migrationBuilder.DropTable(
+            name: "character_spec_action_assets",
+            schema: "game");
+
+        migrationBuilder.DropTable(
+            name: "character_spec_stats",
             schema: "game");
 
         migrationBuilder.DropTable(
@@ -320,6 +386,10 @@ public partial class InitialMigration : Migration
 
         migrationBuilder.DropTable(
             name: "enemies",
+            schema: "game");
+
+        migrationBuilder.DropTable(
+            name: "character_specs",
             schema: "game");
 
         migrationBuilder.DropTable(

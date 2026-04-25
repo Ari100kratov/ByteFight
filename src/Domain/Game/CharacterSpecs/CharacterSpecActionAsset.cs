@@ -1,14 +1,14 @@
 ﻿using Domain.Game.Actions;
 using Domain.ValueObjects;
 
-namespace Domain.Game.CharacterClasses;
+namespace Domain.Game.CharacterSpecs;
 
-public sealed class CharacterClassActionAsset
+public sealed class CharacterSpecActionAsset
 {
-    public Guid CharacterClassId { get; set; }
+    public Guid CharacterSpecId { get; set; }
     public ActionType ActionType { get; set; }
     public int Variant { get; set; }
     public SpriteAnimation Animation { get; set; }
 
-    public CharacterClass CharacterClass { get; set; }
+    public CharacterSpec CharacterSpec { get; set; }
 }

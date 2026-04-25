@@ -1,5 +1,4 @@
-﻿using Application.Contracts;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Application.Game.CharacterClasses.Update;
 
@@ -13,11 +12,5 @@ internal sealed class UpdateClassCommandValidator : AbstractValidator<UpdateClas
 
         RuleFor(x => x.Description)
             .MaximumLength(512);
-
-        RuleForEach(x => x.Stats)
-            .SetValidator(new StatDtoValidator());
-
-        RuleForEach(x => x.ActionAssets)
-            .SetValidator(new ActionAssetDtoValidator());
     }
 }

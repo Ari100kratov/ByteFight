@@ -4,7 +4,7 @@ import { queryKeys } from '@/shared/lib/queryKeys'
 
 export type CreateCharacterRequest = {
   name: string
-  classId: string
+  specId: string
 }
 
 export type CreateCharacterResponse = {
@@ -19,8 +19,8 @@ export function useCreateCharacter() {
       if (!data.name?.trim())
         throw new Error('Имя персонажа обязательно')
 
-      if (!data.classId)
-        throw new Error('Не выбран класс персонажа')
+      if (!data.specId)
+        throw new Error('Не выбран класс и специализация персонажа')
 
       const response = await apiFetch<CreateCharacterResponse>('/characters', {
         method: 'POST',

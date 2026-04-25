@@ -7,7 +7,7 @@ namespace Web.Api.Endpoints.Game.Characters;
 
 internal sealed class Create : IEndpoint
 {
-    public sealed record Request(string Name, Guid ClassId);
+    public sealed record Request(string Name, Guid SpecId);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -16,7 +16,7 @@ internal sealed class Create : IEndpoint
             ICommandHandler<CreateCharacterCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new CreateCharacterCommand(request.Name, request.ClassId);
+            var command = new CreateCharacterCommand(request.Name, request.SpecId);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 

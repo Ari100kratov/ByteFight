@@ -20,6 +20,7 @@ import { Group, Panel, Separator } from "@/components/ui/resizable"
 export default function CreateCharacterPage() {
   const [name, setName] = useState("")
   const [selectedClassId, setSelectedClassId] = useState<string>()
+  const [selectedSpecId, setSelectedSpecId] = useState<string>()
 
   const navigate = useNavigate()
   const { mutateAsync: create, isPending, error } = useCreateCharacter()
@@ -31,13 +32,13 @@ export default function CreateCharacterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    if (!selectedClassId) {
-      toast.error("Необходимо выбрать класс персонажа")
+    if (!selectedSpecId) {
+      toast.error("Необходимо выбрать класс и специализацию персонажа")
       return
     }
 
     create(
-      { name, classId: selectedClassId },
+      { name, specId: selectedSpecId },
       {
         onSuccess: (id) => {
           navigate(`/characters/${id}`)
@@ -45,6 +46,11 @@ export default function CreateCharacterPage() {
         },
       }
     )
+  }
+
+  function handleSelectClass(classId: string) {
+    setSelectedClassId(classId)
+    setSelectedSpecId(undefined)
   }
 
   return (
@@ -97,7 +103,9 @@ export default function CreateCharacterPage() {
         >
           <CharacterClassSelector
             selectedClassId={selectedClassId}
-            onSelectClass={setSelectedClassId}
+            selectedSpecId={selectedSpecId}
+            onSelectClass={handleSelectClass}
+            onSelectSpec={setSelectedSpecId}
           />
 
           <div className="flex justify-end mt-auto pt-4">

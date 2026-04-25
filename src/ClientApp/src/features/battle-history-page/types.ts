@@ -9,7 +9,8 @@ export type GameSessionListItem = {
   arenaName: string
 
   characterName?: string | null
-  characterClass?: string | null
+  characterClassName?: string | null
+  characterSpecName?: string | null
 
   startedAt: string
   endedAt?: string | null

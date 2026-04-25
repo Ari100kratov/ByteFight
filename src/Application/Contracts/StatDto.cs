@@ -1,4 +1,4 @@
-﻿using Domain.Game.CharacterClasses;
+﻿using Domain.Game.CharacterSpecs;
 using Domain.Game.Enemies;
 using Domain.Game.Stats;
 using FluentValidation;
@@ -11,7 +11,7 @@ internal static partial class Mapper
 {
     public static StatDto ToDto(this EnemyStat entity) => new(entity.StatType, entity.Value);
 
-    public static StatDto ToDto(this CharacterClassStat entity) => new(entity.StatType, entity.Value);
+    public static StatDto ToDto(this CharacterSpecStat entity) => new(entity.StatType, entity.Value);
 
     public static EnemyStat ToEnemyStat(this StatDto dto, Guid enemyId)
     {
@@ -23,11 +23,11 @@ internal static partial class Mapper
         };
     }
 
-    public static CharacterClassStat ToCharacterClassStat(this StatDto dto, Guid characterClassId)
+    public static CharacterSpecStat ToCharacterSpecStat(this StatDto dto, Guid characterSpecId)
     {
-        return new CharacterClassStat
+        return new CharacterSpecStat
         {
-            CharacterClassId = characterClassId,
+            CharacterSpecId = characterSpecId,
             StatType = dto.StatType,
             Value = dto.Value,
         };

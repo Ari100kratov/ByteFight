@@ -6,20 +6,16 @@ namespace Application.GameRuntime.GameSessions.GetList;
 
 public sealed class GameSessionListItemDto
 {
-    public Guid Id { get; init; }
-
-    public GameModeType Mode { get; init; }
-    public Guid ArenaId { get; init; }
-    public string? ArenaName { get; init; }
-
-    public string? CharacterName { get; set; }
-    public string? CharacterClass { get; set; }
-
-    public DateTime StartedAt { get; init; }
-    public DateTime? EndedAt { get; init; }
-
-    public int TotalTurns { get; init; }
-    public GameStatus Status { get; init; }
-
-    public GameOutcome? Outcome { get; init; }
+    public required Guid Id { get; init; }
+    public required GameModeType Mode { get; init; }
+    public required Guid ArenaId { get; init; }
+    public required string? ArenaName { get; init; }
+    public required string? CharacterName { get; init; }
+    public required string? CharacterClassName { get; init; }
+    public required string? CharacterSpecName { get; init; }
+    public required DateTime StartedAt { get; init; }
+    public required DateTime? EndedAt { get; init; }
+    public required int TotalTurns { get; init; }
+    public required GameStatus Status { get; init; }
+    public required GameOutcome? Outcome { get; init; }
 }

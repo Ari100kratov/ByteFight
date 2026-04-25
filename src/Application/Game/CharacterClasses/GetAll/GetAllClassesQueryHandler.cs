@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Contracts;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
@@ -16,9 +15,7 @@ internal sealed class GetAllClassesQueryHandler(IGameDbContext dbContext)
                 x.Id,
                 x.Name,
                 x.Type,
-                x.Description,
-                x.Stats.Select(s => s.ToDto()).ToArray(),
-                x.ActionAssets.Select(a => a.ToDto()).ToArray()
+                x.Description
             ))
             .ToListAsync(cancellationToken);
 

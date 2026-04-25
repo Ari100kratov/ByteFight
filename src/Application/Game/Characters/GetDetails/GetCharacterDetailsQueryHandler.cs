@@ -16,16 +16,18 @@ internal sealed class GetCharacterDetailsQueryHandler(IGameDbContext dbContext, 
     {
         CharacterResponse? character = await dbContext.Characters
             .AsNoTracking()
-            .Include(x => x.Class)
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Class)
             .Where(c => c.Id == query.Id && c.UserId == new UserId(userContext.UserId))
             .Select(c => new CharacterResponse(c.Id, c.Name,
-                new ClassResponse(
-                    c.Class.Id,
-                    c.Class.Name,
-                    c.Class.Type,
-                    c.Class.Description,
-                    c.Class.Stats.Select(x => x.ToDto()).ToArray(),
-                    c.Class.ActionAssets.Select(x => x.ToDto()).ToArray())))
+                new SpecResponse(
+                    c.Spec.Id,
+                    c.Spec.Name,
+                    c.Spec.Class.Name,
+                    c.Spec.Type,
+                    c.Spec.Description,
+                    c.Spec.Stats.Select(x => x.ToDto()).ToArray(),
+                    c.Spec.ActionAssets.Select(x => x.ToDto()).ToArray())))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (character is null)

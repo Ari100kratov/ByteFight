@@ -2,6 +2,7 @@
 using Domain.Game.Stats;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
+using GameRuntime.Common;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Units;
 using GameRuntime.Logic.Actions;
@@ -90,9 +91,9 @@ internal sealed class UserActionExecutor
         ArenaWorld world)
     {
         List<Position>? path = _pathFinder.FindPath(
-            world,
-            actor.Position,
-            action.Target);
+        world,
+        actor.Position,
+        action.Target);
 
         if (path is null || path.Count < 2)
         {
@@ -101,10 +102,16 @@ internal sealed class UserActionExecutor
 
         int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
 
-        Position target = path
-            .Skip(1)
-            .Take(moveRange)
-            .Last();
+        Position? target = MovementRules.SelectMoveTarget(
+            world,
+            actor,
+            path,
+            moveRange);
+
+        if (target is null)
+        {
+            return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
+        }
 
         return new MoveAction(actor, target).Execute(world);
     }
@@ -151,7 +158,7 @@ internal sealed class UserActionExecutor
         }
 
         int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
-        ImmutableHashSet<Position> reachable = GetReachableCells(world, actor.Position, moveRange);
+        ImmutableHashSet<Position> reachable = GetReachableCells(world, actor, actor.Position, moveRange);
 
         Position? bestPosition = reachable
             .Where(p => p != actor.Position)
@@ -177,16 +184,18 @@ internal sealed class UserActionExecutor
     /// </summary>
     private ImmutableHashSet<Position> GetReachableCells(
         ArenaWorld world,
+        BaseUnit actor,
         Position start,
         int maxDistance)
     {
         var result = new HashSet<Position> { start };
         var queue = new Queue<(Position Position, int Distance)>();
+
         queue.Enqueue((start, 0));
 
         while (queue.Count > 0)
         {
-            (Position? current, int distance) = queue.Dequeue();
+            (Position current, int distance) = queue.Dequeue();
 
             if (distance >= maxDistance)
             {
@@ -200,21 +209,7 @@ internal sealed class UserActionExecutor
                     continue;
                 }
 
-                if (!neighbor.IsWithinGrid(world.Arena.GridWidth, world.Arena.GridHeight))
-                {
-                    continue;
-                }
-
-                if (world.Arena.BlockedPositions.Contains(neighbor))
-                {
-                    continue;
-                }
-
-                bool occupied =
-                    world.Player.Position == neighbor && neighbor != start ||
-                    world.Enemies.Any(e => !e.IsDead && e.Position == neighbor && neighbor != start);
-
-                if (occupied)
+                if (!MovementRules.CanStandOn(world, actor, neighbor))
                 {
                     continue;
                 }

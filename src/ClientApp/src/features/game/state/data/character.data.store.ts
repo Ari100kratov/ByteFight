@@ -7,7 +7,7 @@ export type Character = CharacterResponse
 type CharacterState = {
   character?: Character
   setCharacter: (character: CharacterResponse) => void
-  getSpriteAnimation: (actionType?: ActionType) => Character["class"]["actionAssets"][number]["spriteAnimation"] | undefined
+  getSpriteAnimation: (actionType?: ActionType) => Character["spec"]["actionAssets"][number]["spriteAnimation"] | undefined
   reset: () => void
 }
 
@@ -24,7 +24,7 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     const character = get().character
     if (!character) return undefined
 
-    const variants = character.class.actionAssets
+    const variants = character.spec.actionAssets
       .filter(a => a.actionType === actionType);
 
     if (variants.length === 0) return undefined;

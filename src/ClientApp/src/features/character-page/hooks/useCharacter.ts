@@ -6,7 +6,7 @@ export type CharacterResponse = {
   id: string
   name: string
   classId: string
-  userId: string
+  specId: string
 }
 
 export function useCharacter(id: string | undefined) {

@@ -35,10 +35,7 @@
       <UserCodeWorkerOutputDir>$(OutDir)user-code-worker\</UserCodeWorkerOutputDir>
     </PropertyGroup>
 
-    <MSBuild
-      Projects="$(UserCodeWorkerProject)"
-      Targets="Build"
-      Properties="Configuration=$(Configuration);TargetFramework=net10.0" />
+    <MSBuild Projects="$(UserCodeWorkerProject)" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=net10.0" />
 
     <MakeDir Directories="$(UserCodeWorkerOutputDir)" />
 
@@ -46,10 +43,7 @@
       <UserCodeWorkerFiles Include="..\GameRuntime\GameRuntime.UserCodeWorker\bin\$(Configuration)\net10.0\**\*.*" />
     </ItemGroup>
 
-    <Copy
-      SourceFiles="@(UserCodeWorkerFiles)"
-      DestinationFiles="@(UserCodeWorkerFiles->'$(UserCodeWorkerOutputDir)%(RecursiveDir)%(Filename)%(Extension)')"
-      SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(UserCodeWorkerFiles)" DestinationFiles="@(UserCodeWorkerFiles->'$(UserCodeWorkerOutputDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="PublishUserCodeWorker" AfterTargets="Publish">
@@ -58,10 +52,7 @@
       <UserCodeWorkerPublishDir>$(PublishDir)user-code-worker\</UserCodeWorkerPublishDir>
     </PropertyGroup>
 
-    <MSBuild
-      Projects="$(UserCodeWorkerProject)"
-      Targets="Publish"
-      Properties="Configuration=$(Configuration);TargetFramework=net10.0;PublishDir=$(UserCodeWorkerPublishDir)" />
+    <MSBuild Projects="$(UserCodeWorkerProject)" Targets="Publish" Properties="Configuration=$(Configuration);TargetFramework=net10.0;PublishDir=$(UserCodeWorkerPublishDir)" />
   </Target>
 
 </Project>

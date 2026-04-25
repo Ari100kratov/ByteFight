@@ -1,4 +1,4 @@
-﻿using Domain.Game.Characters;
+﻿using Domain.Game.CharacterSpecs;
 using SharedKernel;
 
 namespace Domain.Game.CharacterClasses;
@@ -10,7 +10,5 @@ public class CharacterClass : Entity
     public CharacterClassType Type { get; set; }
     public string? Description { get; set; }
 
-    public IReadOnlyCollection<CharacterClassActionAsset> ActionAssets { get; set; }
-    public IReadOnlyCollection<CharacterClassStat> Stats { get; set; }
-    public IReadOnlyCollection<Character> Characters { get; set; }
+    public IReadOnlyCollection<CharacterSpec> Specs { get; set; }
 }

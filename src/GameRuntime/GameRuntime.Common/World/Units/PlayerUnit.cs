@@ -1,4 +1,4 @@
-﻿using Domain.Game.CharacterClasses;
+﻿using Domain.Game.CharacterSpecs;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 
@@ -13,5 +13,5 @@ public sealed record PlayerUnit : BaseUnit
 
     public required Guid CharacterId { get; init; }
 
-    public required CharacterClassType Class { get; init; }
+    public required CharacterSpecType Spec { get; init; }
 }

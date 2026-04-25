@@ -17,6 +17,7 @@ type BattleResultOverlayProps = {
 
   characterName?: string | null
   characterClassName?: string | null
+  characterSpecName?: string | null
   arenaName?: string | null
   arenaModeName?: string | null
 
@@ -50,7 +51,6 @@ function ResultInfoBlock({
         </div>
       </div>
 
-      {/* Добавить расцветку для мета-информации (класс персонажа и режим арены) */}
       {meta && (
         <Badge variant="secondary">
           {meta}
@@ -71,11 +71,16 @@ export function BattleResultOverlay({
 
   characterName,
   characterClassName,
+  characterSpecName,
   arenaName,
   arenaModeName,
 
   onClose,
 }: BattleResultOverlayProps) {
+  const characterMeta = [characterClassName, characterSpecName]
+    .filter(Boolean)
+    .join(" · ")
+
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/65 p-4 backdrop-blur-[3px]">
       <div
@@ -117,7 +122,7 @@ export function BattleResultOverlay({
             <ResultInfoBlock
               label="Персонаж"
               value={characterName}
-              meta={characterClassName}
+              meta={characterMeta}
             />
 
             <ResultInfoBlock

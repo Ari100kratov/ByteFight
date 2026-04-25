@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Contracts;
 using Domain.Game.CharacterClasses;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -13,8 +12,6 @@ internal sealed class UpdateClassCommandHandler(IGameDbContext dbContext)
     public async Task<Result> Handle(UpdateClassCommand command, CancellationToken cancellationToken)
     {
         CharacterClass? characterClass = await dbContext.CharacterClasses
-            .Include(e => e.Stats)
-            .Include(e => e.ActionAssets)
             .SingleOrDefaultAsync(e => e.Id == command.Id, cancellationToken);
 
         if (characterClass is null)
@@ -24,12 +21,6 @@ internal sealed class UpdateClassCommandHandler(IGameDbContext dbContext)
 
         characterClass.Name = command.Name;
         characterClass.Description = command.Description;
-
-        dbContext.CharacterClassStats.RemoveRange(characterClass.Stats);
-        characterClass.Stats = [.. command.Stats.Select(s => s.ToCharacterClassStat(characterClass.Id))];
-
-        dbContext.CharacterClassActionAssets.RemoveRange(characterClass.ActionAssets);
-        characterClass.ActionAssets = [.. command.ActionAssets.Select(a => a.ToCharacterClassActionAsset(characterClass.Id))];
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

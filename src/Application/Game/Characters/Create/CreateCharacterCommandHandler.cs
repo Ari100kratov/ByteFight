@@ -2,8 +2,8 @@ using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain;
-using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
+using Domain.Game.CharacterSpecs;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
@@ -25,19 +25,19 @@ internal sealed class CreateCharacterCommandHandler(
             return Result.Failure<Guid>(CharacterErrors.NameNotUnique);
         }
 
-        bool characterClassExists = await dbContext.CharacterClasses
-            .AnyAsync(x => x.Id == command.ClassId, cancellationToken);
+        bool characterClassExists = await dbContext.CharacterSpecs
+            .AnyAsync(x => x.Id == command.SpecId, cancellationToken);
 
         if (!characterClassExists)
         {
-            return Result.Failure<Guid>(CharacterClassErrors.NotFound(command.ClassId));
+            return Result.Failure<Guid>(CharacterSpecErrors.NotFound(command.SpecId));
         }
 
         var character = new Character
         {
             Id = Guid.CreateVersion7(),
             Name = name,
-            ClassId = command.ClassId,
+            SpecId = command.SpecId,
             CreatedAt = dateTimeProvider.UtcNow,
             UserId = new UserId(userContext.UserId)
         };

@@ -18,7 +18,7 @@ namespace Infrastructure.Database.Game.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("game")
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -144,47 +144,7 @@ namespace Infrastructure.Database.Game.Migrations
                     b.ToTable("character_classes", "game");
                 });
 
-            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassActionAsset", b =>
-                {
-                    b.Property<Guid>("CharacterClassId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("character_class_id");
-
-                    b.Property<int>("ActionType")
-                        .HasColumnType("integer")
-                        .HasColumnName("action_type");
-
-                    b.Property<int>("Variant")
-                        .HasColumnType("integer")
-                        .HasColumnName("variant");
-
-                    b.HasKey("CharacterClassId", "ActionType", "Variant")
-                        .HasName("pk_character_class_action_assets");
-
-                    b.ToTable("character_class_action_assets", "game");
-                });
-
-            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassStat", b =>
-                {
-                    b.Property<Guid>("CharacterClassId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("character_class_id");
-
-                    b.Property<int>("StatType")
-                        .HasColumnType("integer")
-                        .HasColumnName("stat_type");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("numeric")
-                        .HasColumnName("value");
-
-                    b.HasKey("CharacterClassId", "StatType")
-                        .HasName("pk_character_class_stats");
-
-                    b.ToTable("character_class_stats", "game");
-                });
-
-            modelBuilder.Entity("Domain.Game.Characters.Character", b =>
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpec", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -195,6 +155,81 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("class_id");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_character_specs");
+
+                    b.HasIndex("ClassId")
+                        .HasDatabaseName("ix_character_specs_class_id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_character_specs_name");
+
+                    b.ToTable("character_specs", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpecActionAsset", b =>
+                {
+                    b.Property<Guid>("CharacterSpecId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("character_spec_id");
+
+                    b.Property<int>("ActionType")
+                        .HasColumnType("integer")
+                        .HasColumnName("action_type");
+
+                    b.Property<int>("Variant")
+                        .HasColumnType("integer")
+                        .HasColumnName("variant");
+
+                    b.HasKey("CharacterSpecId", "ActionType", "Variant")
+                        .HasName("pk_character_spec_action_assets");
+
+                    b.ToTable("character_spec_action_assets", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpecStat", b =>
+                {
+                    b.Property<Guid>("CharacterSpecId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("character_spec_id");
+
+                    b.Property<int>("StatType")
+                        .HasColumnType("integer")
+                        .HasColumnName("stat_type");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric")
+                        .HasColumnName("value");
+
+                    b.HasKey("CharacterSpecId", "StatType")
+                        .HasName("pk_character_spec_stats");
+
+                    b.ToTable("character_spec_stats", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.Characters.Character", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -204,6 +239,10 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasColumnName("name");
+
+                    b.Property<Guid>("SpecId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("spec_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -216,12 +255,12 @@ namespace Infrastructure.Database.Game.Migrations
                     b.HasKey("Id")
                         .HasName("pk_characters");
 
-                    b.HasIndex("ClassId")
-                        .HasDatabaseName("ix_characters_class_id");
-
                     b.HasIndex("Name")
                         .IsUnique()
                         .HasDatabaseName("ix_characters_name");
+
+                    b.HasIndex("SpecId")
+                        .HasDatabaseName("ix_characters_spec_id");
 
                     b.ToTable("characters", "game");
                 });
@@ -441,26 +480,38 @@ namespace Infrastructure.Database.Game.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassActionAsset", b =>
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpec", b =>
                 {
-                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "CharacterClass")
-                        .WithMany("ActionAssets")
-                        .HasForeignKey("CharacterClassId")
+                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "Class")
+                        .WithMany("Specs")
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_character_class_action_assets_character_classes_character_c");
+                        .HasConstraintName("fk_character_specs_character_classes_class_id");
+
+                    b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpecActionAsset", b =>
+                {
+                    b.HasOne("Domain.Game.CharacterSpecs.CharacterSpec", "CharacterSpec")
+                        .WithMany("ActionAssets")
+                        .HasForeignKey("CharacterSpecId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_character_spec_action_assets_character_specs_character_spec");
 
                     b.OwnsOne("Domain.ValueObjects.SpriteAnimation", "Animation", b1 =>
                         {
-                            b1.Property<Guid>("CharacterClassActionAssetCharacterClassId")
+                            b1.Property<Guid>("CharacterSpecActionAssetCharacterSpecId")
                                 .HasColumnType("uuid")
-                                .HasColumnName("character_class_id");
+                                .HasColumnName("character_spec_id");
 
-                            b1.Property<int>("CharacterClassActionAssetActionType")
+                            b1.Property<int>("CharacterSpecActionAssetActionType")
                                 .HasColumnType("integer")
                                 .HasColumnName("action_type");
 
-                            b1.Property<int>("CharacterClassActionAssetVariant")
+                            b1.Property<int>("CharacterSpecActionAssetVariant")
                                 .HasColumnType("integer")
                                 .HasColumnName("variant");
 
@@ -478,25 +529,25 @@ namespace Infrastructure.Database.Game.Migrations
                                 .HasColumnType("character varying(256)")
                                 .HasColumnName("animation_url");
 
-                            b1.HasKey("CharacterClassActionAssetCharacterClassId", "CharacterClassActionAssetActionType", "CharacterClassActionAssetVariant");
+                            b1.HasKey("CharacterSpecActionAssetCharacterSpecId", "CharacterSpecActionAssetActionType", "CharacterSpecActionAssetVariant");
 
-                            b1.ToTable("character_class_action_assets", "game");
+                            b1.ToTable("character_spec_action_assets", "game");
 
                             b1.WithOwner()
-                                .HasForeignKey("CharacterClassActionAssetCharacterClassId", "CharacterClassActionAssetActionType", "CharacterClassActionAssetVariant")
-                                .HasConstraintName("fk_character_class_action_assets_character_class_action_assets");
+                                .HasForeignKey("CharacterSpecActionAssetCharacterSpecId", "CharacterSpecActionAssetActionType", "CharacterSpecActionAssetVariant")
+                                .HasConstraintName("fk_character_spec_action_assets_character_spec_action_assets_c");
 
                             b1.OwnsOne("Domain.ValueObjects.Scale", "Scale", b2 =>
                                 {
-                                    b2.Property<Guid>("SpriteAnimationCharacterClassActionAssetCharacterClassId")
+                                    b2.Property<Guid>("SpriteAnimationCharacterSpecActionAssetCharacterSpecId")
                                         .HasColumnType("uuid")
-                                        .HasColumnName("character_class_id");
+                                        .HasColumnName("character_spec_id");
 
-                                    b2.Property<int>("SpriteAnimationCharacterClassActionAssetActionType")
+                                    b2.Property<int>("SpriteAnimationCharacterSpecActionAssetActionType")
                                         .HasColumnType("integer")
                                         .HasColumnName("action_type");
 
-                                    b2.Property<int>("SpriteAnimationCharacterClassActionAssetVariant")
+                                    b2.Property<int>("SpriteAnimationCharacterSpecActionAssetVariant")
                                         .HasColumnType("integer")
                                         .HasColumnName("variant");
 
@@ -508,13 +559,13 @@ namespace Infrastructure.Database.Game.Migrations
                                         .HasColumnType("real")
                                         .HasColumnName("animation_scale_y");
 
-                                    b2.HasKey("SpriteAnimationCharacterClassActionAssetCharacterClassId", "SpriteAnimationCharacterClassActionAssetActionType", "SpriteAnimationCharacterClassActionAssetVariant");
+                                    b2.HasKey("SpriteAnimationCharacterSpecActionAssetCharacterSpecId", "SpriteAnimationCharacterSpecActionAssetActionType", "SpriteAnimationCharacterSpecActionAssetVariant");
 
-                                    b2.ToTable("character_class_action_assets", "game");
+                                    b2.ToTable("character_spec_action_assets", "game");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("SpriteAnimationCharacterClassActionAssetCharacterClassId", "SpriteAnimationCharacterClassActionAssetActionType", "SpriteAnimationCharacterClassActionAssetVariant")
-                                        .HasConstraintName("fk_character_class_action_assets_character_class_action_assets");
+                                        .HasForeignKey("SpriteAnimationCharacterSpecActionAssetCharacterSpecId", "SpriteAnimationCharacterSpecActionAssetActionType", "SpriteAnimationCharacterSpecActionAssetVariant")
+                                        .HasConstraintName("fk_character_spec_action_assets_character_spec_action_assets_c");
                                 });
 
                             b1.Navigation("Scale")
@@ -524,31 +575,31 @@ namespace Infrastructure.Database.Game.Migrations
                     b.Navigation("Animation")
                         .IsRequired();
 
-                    b.Navigation("CharacterClass");
+                    b.Navigation("CharacterSpec");
                 });
 
-            modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClassStat", b =>
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpecStat", b =>
                 {
-                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "CharacterClass")
+                    b.HasOne("Domain.Game.CharacterSpecs.CharacterSpec", "CharacterSpec")
                         .WithMany("Stats")
-                        .HasForeignKey("CharacterClassId")
+                        .HasForeignKey("CharacterSpecId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_character_class_stats_character_classes_character_class_id");
+                        .HasConstraintName("fk_character_spec_stats_character_specs_character_spec_id");
 
-                    b.Navigation("CharacterClass");
+                    b.Navigation("CharacterSpec");
                 });
 
             modelBuilder.Entity("Domain.Game.Characters.Character", b =>
                 {
-                    b.HasOne("Domain.Game.CharacterClasses.CharacterClass", "Class")
+                    b.HasOne("Domain.Game.CharacterSpecs.CharacterSpec", "Spec")
                         .WithMany("Characters")
-                        .HasForeignKey("ClassId")
+                        .HasForeignKey("SpecId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_characters_character_classes_class_id");
+                        .HasConstraintName("fk_characters_character_specs_spec_id");
 
-                    b.Navigation("Class");
+                    b.Navigation("Spec");
                 });
 
             modelBuilder.Entity("Domain.Game.Characters.CharacterCodes.CharacterCode", b =>
@@ -665,6 +716,11 @@ namespace Infrastructure.Database.Game.Migrations
                 });
 
             modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClass", b =>
+                {
+                    b.Navigation("Specs");
+                });
+
+            modelBuilder.Entity("Domain.Game.CharacterSpecs.CharacterSpec", b =>
                 {
                     b.Navigation("ActionAssets");
 

@@ -11,40 +11,30 @@ internal sealed class GetCodeTemplateQueryHandler : IQueryHandler<GetCodeTemplat
         {
             Id = Guid.CreateVersion7(),
             Name = "Program.cs",
-            SourceCode = @"var target = world.AliveEnemies
-    .OrderBy(e => world.Self.DistanceTo(e))
+            SourceCode = @"// Выбираем цель:
+// 1. Сначала тех, кто уже в радиусе атаки
+// 2. Затем с наименьшим здоровьем
+// 3. Затем ближайшего
+var target = world.AliveEnemies
+    .OrderBy(e => world.Self.IsInAttackRange(e) ? 0 : 1)
+    .ThenBy(e => e.Health)
+    .ThenBy(e => world.Self.DistanceTo(e))
     .FirstOrDefault();
 
+// Если врагов нет — ничего не делаем
 if (target is null)
 {
     return new Idle();
 }
 
+// Если можем атаковать — атакуем
 if (world.Self.IsInAttackRange(target))
 {
     return new Attack(target.Id);
 }
 
+// Иначе двигаемся к цели
 return new MoveTowards(target.Id);"
-            //            SourceCode = @"var target = world.Enemies
-            //    .Where(e => !e.IsDead)
-            //    .OrderBy(e => e.Position.ManhattanDistance(world.Self.Position))
-            //    .FirstOrDefault();
-
-            //if (target is null)
-            //{
-            //    return new Idle();
-            //}
-
-            //var distance = target.Position.ManhattanDistance(world.Self.Position);
-            //var attackRange = world.Self.Stats.Get(StatType.AttackRange) ?? 1;
-
-            //if (distance <= attackRange)
-            //{
-            //    return new Attack(target.Id);
-            //}
-
-            //return new MoveTo(target.Position);"
         };
 
         return Task.FromResult(Result.Success(codeTemplate));

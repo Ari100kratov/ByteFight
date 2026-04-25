@@ -5,8 +5,8 @@ import { queryKeys } from "@/shared/lib/queryKeys"
 export type CharacterResponse = {
   id: string
   name: string
-  classId: string
-  userId: string
+  className: string
+  specName: string
 }
 
 export function useCharacters() {

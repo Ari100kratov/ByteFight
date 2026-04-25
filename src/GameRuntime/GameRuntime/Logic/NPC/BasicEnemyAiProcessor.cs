@@ -1,6 +1,7 @@
 ﻿using Domain.Game.Stats;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
+using GameRuntime.Common;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Units;
 using GameRuntime.Logic.Actions;
@@ -40,15 +41,18 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
             return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
         }
 
-        var trimmed = path.Skip(1).ToList();
-        if (!trimmed.Any())
+        int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
+
+        Position? target = MovementRules.SelectMoveTarget(
+            world,
+            actor,
+            path,
+            moveRange);
+
+        if (target is null)
         {
             return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
         }
-
-        int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
-        int stepsToMove = Math.Min(moveRange, trimmed.Count);
-        Position target = trimmed[stepsToMove - 1];
 
         var moveAction = new MoveAction(actor, target);
         return moveAction.Execute(world);

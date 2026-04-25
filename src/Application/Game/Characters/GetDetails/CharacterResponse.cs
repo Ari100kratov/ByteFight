@@ -1,14 +1,15 @@
 using Application.Contracts;
-using Domain.Game.CharacterClasses;
+using Domain.Game.CharacterSpecs;
 
 namespace Application.Game.Characters.GetDetails;
 
-public sealed record CharacterResponse(Guid Id, string Name, ClassResponse Class);
+public sealed record CharacterResponse(Guid Id, string Name, SpecResponse Spec);
 
-public sealed record ClassResponse(
+public sealed record SpecResponse(
     Guid Id,
     string Name,
-    CharacterClassType Type,
+    string ClassName,
+    CharacterSpecType Type,
     string? Description,
     IReadOnlyList<StatDto> Stats,
     IReadOnlyList<ActionAssetDto> ActionAssets

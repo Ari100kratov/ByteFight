@@ -10,5 +10,5 @@ public static class CharacterClassErrors
 
     public static readonly Error NameNotUnique = Error.Conflict(
         "CharacterClasses.NameNotUnique",
-        "Имя класс персонажа уже занято");
+        "Имя класса персонажа уже занято");
 }

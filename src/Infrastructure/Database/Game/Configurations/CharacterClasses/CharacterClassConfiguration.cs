@@ -19,19 +19,9 @@ internal sealed class CharacterClassConfiguration : IEntityTypeConfiguration<Cha
         builder.Property(e => e.Description)
             .HasMaxLength(512);
 
-        builder.HasMany(e => e.Stats)
-            .WithOne(s => s.CharacterClass)
-            .HasForeignKey(s => s.CharacterClassId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(e => e.ActionAssets)
-            .WithOne(a => a.CharacterClass)
-            .HasForeignKey(a => a.CharacterClassId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(e => e.Characters)
-            .WithOne(a => a.Class)
-            .HasForeignKey(a => a.ClassId)
+        builder.HasMany(e => e.Specs)
+            .WithOne(s => s.Class)
+            .HasForeignKey(s => s.ClassId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

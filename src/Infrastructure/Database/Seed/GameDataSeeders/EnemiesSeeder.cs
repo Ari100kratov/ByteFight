@@ -6,7 +6,7 @@ using Domain.ValueObjects;
 
 namespace Infrastructure.Database.Seed.GameDataSeeders;
 
-internal class Enemies
+internal class EnemiesSeeder
 {
     public static void Seed(SeedContext seed, IGameDbContext dbContext)
     {

@@ -25,15 +25,21 @@ export default function CharactersPage() {
         loadingFallback={
           <div className="grid gap-4 md:grid-cols-3">
             {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-40 rounded-2xl" />
+              <Skeleton key={i} className="h-48 rounded-2xl" />
             ))}
           </div>
         }
       >
         {characters && (
-          <div className="grid gap-4 md:grid-cols-3">
-            {characters.map((ch) => (
-              <CharacterCard key={ch.id} id={ch.id} name={ch.name} />
+          <div className="grid gap-4 md:grid-cols-4">
+            {characters.map((c) => (
+              <CharacterCard
+                key={c.id}
+                id={c.id}
+                name={c.name}
+                className={c.className}
+                specName={c.specName}
+              />
             ))}
           </div>
         )}

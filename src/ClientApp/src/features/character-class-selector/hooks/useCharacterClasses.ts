@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys";
-import type { StatDto } from "@/shared/types/stat";
-import type { ActionAssetDto } from "@/shared/types/action";
 
 export const CharacterClassType = {
   Warrior: 1,
@@ -16,8 +14,6 @@ export type CharacterClassResponse = {
   name: string
   type: CharacterClassType,
   description?: string
-  stats: StatDto[]
-  actionAssets: ActionAssetDto[]
 }
 
 export function useCharacterClasses() {

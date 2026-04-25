@@ -1,5 +1,5 @@
 ﻿using Domain.Game.Actions;
-using Domain.Game.CharacterClasses;
+using Domain.Game.CharacterSpecs;
 using Domain.Game.Enemies;
 using FluentValidation;
 
@@ -18,7 +18,7 @@ internal static partial class Mapper
         );
     }
 
-    public static ActionAssetDto ToDto(this CharacterClassActionAsset entity)
+    public static ActionAssetDto ToDto(this CharacterSpecActionAsset entity)
     {
         return new ActionAssetDto(
             entity.ActionType,
@@ -38,11 +38,11 @@ internal static partial class Mapper
         };
     }
 
-    public static CharacterClassActionAsset ToCharacterClassActionAsset(this ActionAssetDto dto, Guid characterClassId)
+    public static CharacterSpecActionAsset ToCharacterSpecActionAsset(this ActionAssetDto dto, Guid characterSpecId)
     {
-        return new CharacterClassActionAsset
+        return new CharacterSpecActionAsset
         {
-            CharacterClassId = characterClassId,
+            CharacterSpecId = characterSpecId,
             ActionType = dto.ActionType,
             Variant = dto.Variant,
             Animation = dto.SpriteAnimation.ToValueObject()

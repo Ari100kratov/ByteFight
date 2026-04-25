@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Authorization;
 using Application.Abstractions.Messaging;
-using Application.Contracts;
 using Application.Game.CharacterClasses.Update;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -12,9 +11,7 @@ internal sealed class Update : IEndpoint
 {
     public sealed record Request(
         string Name,
-        string? Description,
-        List<StatDto> Stats,
-        List<ActionAssetDto> Assets
+        string? Description
     );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
@@ -27,9 +24,7 @@ internal sealed class Update : IEndpoint
         {
             var command = new UpdateClassCommand(id,
                 request.Name,
-                request.Description,
-                request.Stats,
-                request.Assets);
+                request.Description);
 
             Result result = await handler.Handle(command, cancellationToken);
 

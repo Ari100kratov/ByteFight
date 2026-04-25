@@ -2,20 +2,21 @@ import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys";
 import type { StatDto } from "@/shared/types/stat";
 import type { ActionAssetDto } from "@/shared/types/action";
-import type { CharacterClassType } from "@/features/character-class-selector/useCharacterClasses";
+import type { CharacterSpecType } from "@/features/character-class-selector/hooks/useCharacterSpecs";
 import { useStoreQuery } from "@/shared/hooks/useStoreQuery";
 import { useCharacterStore } from "@/features/game/state/data/character.data.store";
 
 export type CharacterResponse = {
   id: string
   name: string
-  class: ClassResponse
+  spec: SpecResponse
 }
 
-export type ClassResponse = {
+export type SpecResponse = {
   id: string
   name: string
-  type: CharacterClassType
+  className: string
+  type: CharacterSpecType
   description?: string
   stats: StatDto[]
   actionAssets: ActionAssetDto[]

@@ -2,7 +2,6 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Contracts;
-using Application.Contracts.GameRuntime;
 using Domain.Game.GameModes;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessionParticipants;
@@ -79,11 +78,12 @@ internal sealed class GetGameSessionsQueryHandler(
                 {
                     x.Id,
                     x.Name,
-                    ClassName = x.Class.Name
+                    ClassName = x.Spec.Class.Name,
+                    SpecName = x.Spec.Name
                 })
                 .ToDictionaryAsync(
                     x => x.Id,
-                    x => new CharacterLookupItem(x.Name, x.ClassName),
+                    x => new CharacterLookupItem(x.Name, x.ClassName, x.SpecName),
                     cancellationToken);
 
         Dictionary<Guid, string> arenas = arenaIds.Length == 0
@@ -123,7 +123,8 @@ internal sealed class GetGameSessionsQueryHandler(
                     Status = session.Status,
                     Outcome = session.Outcome,
                     CharacterName = character?.Name,
-                    CharacterClass = character?.ClassName
+                    CharacterClassName = character?.ClassName,
+                    CharacterSpecName = character?.SpecName,
                 };
             })
             .ToList();
@@ -150,5 +151,6 @@ internal sealed class GetGameSessionsQueryHandler(
 
     private sealed record CharacterLookupItem(
         string Name,
-        string? ClassName);
+        string? ClassName,
+        string? SpecName);
 }

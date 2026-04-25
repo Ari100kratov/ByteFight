@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { LoaderState } from "@/components/common/LoaderState"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -22,32 +22,33 @@ import { StatType } from "@/shared/types/stat"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 import { useCharacterSelectionState } from "./hooks/useCharacterSelectionState"
 import { useSelectedCharacterId } from "./hooks/useSelectedCharacterId"
+import { CharacterIdentity } from "@/features/characters/components/CharacterIdentity"
 
 export function SelectCharacterCard() {
-  const arena = useArenaStore(s => s.arena)
+  const arena = useArenaStore((s) => s.arena)
   const { data: characters, isLoading, error } = useCharacters()
 
-  const {
-    sessionCharacterId,
-    isCharacterSelectionDisabled,
-  } = useCharacterSelectionState()
+  const { sessionCharacterId, isCharacterSelectionDisabled } =
+    useCharacterSelectionState()
 
-  const {
-    selectedCharacterId,
-    setSelectedCharacterId,
-  } = useSelectedCharacterId({
+  const { selectedCharacterId, setSelectedCharacterId } = useSelectedCharacterId({
     characters,
     sessionCharacterId,
   })
 
   const { data: character } = useCharacterDetails(selectedCharacterId)
-  const init = useCharacterStateStore(s => s.init)
+  const init = useCharacterStateStore((s) => s.init)
 
   useEffect(() => {
     if (!character || !arena) return
 
-    const health = character.class.stats.find(s => s.statType === StatType.Health)?.value
-    const mana = character.class.stats.find(s => s.statType === StatType.Mana)?.value
+    const health = character.spec.stats.find(
+      (s) => s.statType === StatType.Health
+    )?.value
+
+    const mana = character.spec.stats.find(
+      (s) => s.statType === StatType.Mana
+    )?.value
 
     init({
       characterId: character.id,
@@ -73,29 +74,39 @@ export function SelectCharacterCard() {
       <Card className="h-full overflow-auto">
         <CardHeader>
           <CardTitle>Персонаж</CardTitle>
-          <CardDescription>
-            {hasCharacters && (
-              <Select
-                value={selectedCharacterId}
-                onValueChange={setSelectedCharacterId}
-                disabled={isCharacterSelectionDisabled}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Выберите персонажа" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Ваши персонажи</SelectLabel>
-                    {characters!.map((char) => (
-                      <SelectItem key={char.id} value={char.id}>
-                        {char.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            )}
-          </CardDescription>
+
+          {hasCharacters && (
+            <Select
+              value={selectedCharacterId}
+              onValueChange={setSelectedCharacterId}
+              disabled={isCharacterSelectionDisabled}
+            >
+              <SelectTrigger className="h-auto min-h-14 w-full items-start py-2 text-left">
+                <SelectValue placeholder="Выберите персонажа" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Ваши персонажи</SelectLabel>
+
+                  {characters!.map((char) => (
+                    <SelectItem
+                      key={char.id}
+                      value={char.id}
+                      className="py-2"
+                    >
+                      <CharacterIdentity
+                        name={char.name}
+                        className={char.className}
+                        specName={char.specName}
+                        size="sm"
+                      />
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
         </CardHeader>
 
         <CardContent className="flex flex-col md:flex-row gap-4">
@@ -115,10 +126,10 @@ export function SelectCharacterCard() {
           {character && (
             <>
               <div className="flex items-center justify-center p-4">
-                <SpriteAnimationPlayer actionAssets={character.class.actionAssets} />
+                <SpriteAnimationPlayer actionAssets={character.spec.actionAssets} />
               </div>
 
-              <CharacterStats stats={character.class.stats} />
+              <CharacterStats stats={character.spec.stats} />
             </>
           )}
         </CardContent>

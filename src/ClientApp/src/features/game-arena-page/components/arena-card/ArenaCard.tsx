@@ -188,7 +188,8 @@ export function ArenaCard() {
                 startedAt={resultView.startedAt}
                 endedAt={resultView.endedAt}
                 characterName={character?.name}
-                characterClassName={character?.class.name}
+                characterClassName={character?.spec.className}
+                characterSpecName={character?.spec.name}
                 arenaName={arena.name}
                 arenaModeName={formatModeNameByString(modeType)}
                 onClose={closeResult}

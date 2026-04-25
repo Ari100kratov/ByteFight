@@ -3,6 +3,7 @@ using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
+using Domain.Game.CharacterSpecs;
 using Domain.Game.Enemies;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,8 +22,10 @@ public interface IGameDbContext
     DbSet<EnemyStat> EnemyStats { get; }
 
     DbSet<CharacterClass> CharacterClasses { get; }
-    DbSet<CharacterClassActionAsset> CharacterClassActionAssets { get; }
-    DbSet<CharacterClassStat> CharacterClassStats { get; }
+
+    DbSet<CharacterSpec> CharacterSpecs { get; }
+    DbSet<CharacterSpecActionAsset> CharacterSpecActionAssets { get; }
+    DbSet<CharacterSpecStat> CharacterSpecStats { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

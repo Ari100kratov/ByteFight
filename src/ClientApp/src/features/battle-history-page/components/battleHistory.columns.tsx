@@ -4,6 +4,7 @@ import { formatBattleDuration } from "@/features/game-arena-page/components/batt
 import { formatModeNameByType } from "@/shared/types/modeNames"
 import { mapBattleHistoryResult } from "../helpers/mapBattleHistoryResult"
 import { BattleHistoryResultBadge } from "./BattleHistoryResultBadge"
+import { CharacterIdentity } from "@/features/characters/components/CharacterIdentity"
 
 function formatDate(value: string) {
   return new Date(value).toLocaleString("ru-RU", {
@@ -18,19 +19,19 @@ function formatDate(value: string) {
 function CharacterCell({
   name,
   className,
+  specName,
 }: {
   name?: string | null
   className?: string | null
+  specName?: string | null
 }) {
   return (
-    <div className="min-w-0">
-      <div className="line-clamp-1 font-medium">
-        {name ?? "—"}
-      </div>
-      <div className="line-clamp-1 text-xs text-muted-foreground">
-        {className ?? "Без класса"}
-      </div>
-    </div>
+    <CharacterIdentity
+      name={name}
+      className={className}
+      specName={specName}
+      size="sm"
+    />
   )
 }
 
@@ -69,7 +70,8 @@ export function createBattleHistoryColumns(): ColumnDef<GameSessionListItem>[] {
       cell: ({ row }) => (
         <CharacterCell
           name={row.original.characterName}
-          className={row.original.characterClass}
+          className={row.original.characterClassName}
+          specName={row.original.characterSpecName}
         />
       ),
     },

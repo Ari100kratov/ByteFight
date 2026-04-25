@@ -5,7 +5,6 @@ using GameRuntime.Logic.User.Intellisense.Workspace;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace GameRuntime.Logic.User.Intellisense.Services;
 

@@ -13,12 +13,12 @@ public class GameDataSeeder(IGameDbContext dbContext)
             return;
         }
 
-        Arenas.Seed(seed, dbContext);
+        ArenasSeeder.Seed(seed, dbContext);
 
-        Enemies.Seed(seed, dbContext);
-        ArenaEnemies.Seed(seed, dbContext);
+        EnemiesSeeder.Seed(seed, dbContext);
+        ArenaEnemiesSeeder.Seed(seed, dbContext);
 
-        CharacterClasses.Seed(seed, dbContext);
+        CharacterClassesSeeder.Seed(seed, dbContext);
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
 using Application.Contracts;
-using Application.Contracts.GameRuntime;
 using Application.GameRuntime.GameSessions.GetList;
 using SharedKernel;
 using Web.Api.Extensions;

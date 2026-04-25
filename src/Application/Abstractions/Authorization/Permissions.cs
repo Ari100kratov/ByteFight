@@ -28,6 +28,13 @@ public static class Permissions
         public const string Delete = "character-classes:delete";
     }
 
+    public static class CharacterSpecs
+    {
+        public const string Create = "character-specs:create";
+        public const string Edit = "character-specs:edit";
+        public const string Delete = "character-specs:delete";
+    }
+
     public static readonly string[] All =
     [
         Users.Access,
@@ -42,6 +49,10 @@ public static class Permissions
 
         CharacterClasses.Create,
         CharacterClasses.Edit,
-        CharacterClasses.Delete
+        CharacterClasses.Delete,
+
+        CharacterSpecs.Create,
+        CharacterSpecs.Edit,
+        CharacterSpecs.Delete
     ];
 }

@@ -15,8 +15,9 @@ internal sealed class GetCharacterByIdQueryHandler(IGameDbContext dbContext, IUs
     {
         CharacterResponse? character = await dbContext.Characters
             .AsNoTracking()
+            .Include(x => x.Spec)
             .Where(c => c.Id == query.Id && c.UserId == new UserId(userContext.UserId))
-            .Select(c => new CharacterResponse(c.Id, c.Name, c.ClassId))
+            .Select(c => new CharacterResponse(c.Id, c.Name, c.Spec.ClassId, c.SpecId))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (character is null)
