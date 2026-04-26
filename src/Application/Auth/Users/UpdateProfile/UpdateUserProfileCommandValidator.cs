@@ -1,10 +1,11 @@
 ﻿using FluentValidation;
 
-namespace Application.Auth.Users.Register;
+namespace Application.Auth.Users.UpdateProfile;
 
-internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
+internal sealed class UpdateUserProfileCommandValidator
+    : AbstractValidator<UpdateUserProfileCommand>
 {
-    public RegisterUserCommandValidator()
+    public UpdateUserProfileCommandValidator()
     {
         RuleFor(c => c.FirstName)
             .NotEmpty()
@@ -18,10 +19,5 @@ internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterU
             .NotEmpty()
             .MaximumLength(256)
             .EmailAddress();
-
-        RuleFor(c => c.Password)
-            .NotEmpty()
-            .MinimumLength(8)
-            .MaximumLength(128);
     }
 }

@@ -13,6 +13,7 @@ import GameArenasPage from "./features/game-arenas-page/GameArenasPage"
 import GameArenaPage from "./features/game-arena-page/GameArenaPage"
 import NotFoundPage from "./pages/NotFoundPage"
 import BattleHistoryPage from "./features/battle-history-page/BattleHistoryPage"
+import AccountPage from "./features/account-page/AccountPage"
 
 export default function App() {
   return (
@@ -57,6 +58,8 @@ export default function App() {
 
           <Route path="docs" element={<InProgressPage title="Документация" />} />
           <Route path="settings" element={<InProgressPage title="Настройки" />} />
+
+          <Route path="account" element={<AccountPage />} />
 
           {/* fallback внутри авторизованной части */}
           <Route path="*" element={<NotFoundPage />} />

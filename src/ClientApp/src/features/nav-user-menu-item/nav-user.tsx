@@ -14,6 +14,7 @@ import { Spinner } from "../../components/ui/spinner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useCurrentUser } from "./hooks/useCurrentUser"
 import useLogout from "./hooks/useLogout"
+import { useNavigate } from "react-router-dom"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -24,6 +25,8 @@ export function NavUser() {
   async function handleLogout() {
     await logout.mutateAsync()
   }
+
+  const navigate = useNavigate()
 
   if (!user)
     return (
@@ -83,7 +86,7 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/account")}>
                 <BadgeCheck />
                 Аккаунт
               </DropdownMenuItem>

@@ -1,5 +1,11 @@
 import { clearAuth, getAccessToken, getRefreshToken, saveAuthTokens } from "./auth"
 
+export type ApiErrorItem = {
+  code?: string
+  description?: string
+  type?: number
+}
+
 /**
  * Формат ошибки, возвращаемый API (RFC 7807 / CustomResults.Problem)
  */
@@ -8,7 +14,7 @@ export type ApiError = {
   title: string
   status: number
   detail: string
-  errors?: Record<string, string[]>
+  errors?: Record<string, string[]> | ApiErrorItem[]
   traceId?: string
 }
 
@@ -20,7 +26,7 @@ export class ApiException extends Error {
   public readonly type: string
   public readonly title: string
   public readonly detail: string
-  public readonly errors?: Record<string, string[]>
+  public readonly errors?: Record<string, string[]> | ApiErrorItem[]
   public readonly traceId?: string
 
   constructor(problem: ApiError) {

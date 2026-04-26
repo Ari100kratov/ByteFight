@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Grid3X3, Skull } from "lucide-react"
 import { getAssetUrl } from "@/shared/api/loadActionAssets"
 import type { ArenaResponse } from "../useArenasByMode"
@@ -41,7 +40,7 @@ export function GameArenaCard({ arena, onSelect }: Props) {
           {arena.name}
         </CardTitle>
 
-        <CardDescription className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
+        <CardDescription className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
           {arena.description || "Описание отсутствует."}
         </CardDescription>
 

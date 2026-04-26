@@ -19,4 +19,8 @@ public static class UserErrors
     public static readonly Error EmailNotUnique = Error.Conflict(
         "Users.EmailNotUnique",
         "Указанный email уже используется");
+
+    public static readonly Error InvalidCurrentPassword = Error.Validation(
+        "Users.InvalidCurrentPassword",
+        "Текущий пароль указан неверно");
 }
