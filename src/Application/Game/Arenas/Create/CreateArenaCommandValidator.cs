@@ -13,6 +13,10 @@ internal sealed class CreateArenaCommandValidator : AbstractValidator<CreateAren
         RuleFor(a => a.BackgroundAsset)
             .MaximumLength(256);
 
+        RuleFor(a => a.ImageUrl)
+            .Must(uri => uri.ToString().Length <= 256)
+            .WithMessage("ImageUrl не должен превышать 256 символов");
+
         RuleFor(a => a.Description)
             .MaximumLength(256);
 

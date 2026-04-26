@@ -10,7 +10,7 @@ export type ArenaResponse = {
   description?: string
   gridWidth: number
   gridHeight: number
-  backgroundAsset?: string,
+  backgroundAsset: string,
   startPosition: Position
   blockedPositions: Position[]
 }

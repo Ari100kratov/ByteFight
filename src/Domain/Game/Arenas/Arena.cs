@@ -15,7 +15,9 @@ public sealed class Arena : Entity
 
     public int GridHeight { get; private set; }
 
-    public string? BackgroundAsset { get; set; }
+    public string BackgroundAsset { get; set; }
+
+    public string ImageUrl { get; set; }
 
     public string? Description { get; set; }
 

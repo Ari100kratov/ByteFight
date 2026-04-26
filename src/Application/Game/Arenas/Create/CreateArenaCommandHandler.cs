@@ -30,7 +30,8 @@ internal sealed class CreateArenaCommandHandler(
         {
             Id = Guid.CreateVersion7(),
             Name = name,
-            BackgroundAsset = command.BackgroundAsset?.Trim(),
+            BackgroundAsset = command.BackgroundAsset.Trim(),
+            ImageUrl = command.ImageUrl.ToString(),
             Description = command.Description?.Trim(),
             GameModes = command.GameModes,
             IsActive = true,

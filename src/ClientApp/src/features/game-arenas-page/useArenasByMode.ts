@@ -2,12 +2,20 @@ import { useQuery } from "@tanstack/react-query"
 import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 
+export type ArenaEnemySummaryResponse = {
+  enemyId: string
+  name: string
+  count: number
+}
+
 export type ArenaResponse = {
   id: string
   name: string
+  imageUrl: string
   description?: string
   gridWidth: number
   gridHeight: number
+  enemies: ArenaEnemySummaryResponse[]
 }
 
 export function useArenasByMode(mode: string | undefined) {

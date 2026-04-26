@@ -7,7 +7,7 @@ public sealed record ArenaResponse(
     string Name,
     int GridWidth,
     int GridHeight,
-    string? BackgroundAsset,
+    string BackgroundAsset,
     string? Description,
     PositionDto StartPosition,
     PositionDto[] BlockedPositions

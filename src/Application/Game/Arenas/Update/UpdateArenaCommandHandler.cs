@@ -39,7 +39,8 @@ internal sealed class UpdateArenaCommandHandler(
         }
 
         arena.Name = name;
-        arena.BackgroundAsset = command.BackgroundAsset?.Trim();
+        arena.BackgroundAsset = command.BackgroundAsset.Trim();
+        arena.ImageUrl = command.ImageUrl.ToString();
         arena.Description = command.Description?.Trim();
         arena.GameModes = command.GameModes;
         arena.IsActive = command.IsActive;

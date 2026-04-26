@@ -20,6 +20,9 @@ internal sealed class ArenaConfiguration : IEntityTypeConfiguration<Arena>
         builder.Property(a => a.BackgroundAsset)
             .HasMaxLength(256);
 
+        builder.Property(a => a.ImageUrl)
+            .HasMaxLength(256);
+
         builder.Property(a => a.Description)
             .HasMaxLength(256);
 

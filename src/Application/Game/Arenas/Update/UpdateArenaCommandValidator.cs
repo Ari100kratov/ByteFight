@@ -16,6 +16,10 @@ internal sealed class UpdateArenaCommandValidator : AbstractValidator<UpdateAren
         RuleFor(a => a.Description)
             .MaximumLength(256);
 
+        RuleFor(a => a.ImageUrl)
+            .Must(uri => uri.ToString().Length <= 256)
+            .WithMessage("ImageUrl не должен превышать 256 символов");
+
         RuleFor(a => a.GridWidth).GreaterThan(0);
         RuleFor(a => a.GridHeight).GreaterThan(0);
         RuleFor(a => a.GameModes).NotEmpty();
