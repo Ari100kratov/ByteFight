@@ -97,7 +97,7 @@
 #### Отображение игры
 - Отрисовка арены и персонажей
 - Анимации действий
-- Боевой лог
+- Журнал боя
 - Отображение результата
   
 ---
@@ -119,7 +119,7 @@
 
 ### Авторизация
 - JWT Bearer Authentication
-- Refresh-токены
+- Refresh Tokens
 - Permission-based authorization
 
 ### Игровой runtime
@@ -146,8 +146,8 @@
 - `Web.Api` выступает как тонкий слой доставки (HTTP) без бизнес-логики.
 - Выделен отдельный контур выполнения — `GameRuntime`:
   - реализует игровой цикл,
-  - выполняет пользовательский код,
-  - изолирован от основной системы.
+  - выполняет пользовательский код (изолированно от основного процесса),
+  - содержит API и IntelliSense для пользовательского кода
 
 ---
 
@@ -157,9 +157,9 @@
 - React 19 + TypeScript
 - Vite
 - react-router-dom
-- @tanstack/react-query
+- tanstack/react-query
 - zustand
-- @microsoft/signalr
+- microsoft/signalr
 - monaco-editor + @monaco-editor/react
 - pixi.js + @pixi/react
 - Tailwind CSS 4 + Radix UI + shadcn/ui-паттерны.
@@ -335,7 +335,8 @@ pnpm build
 ### Обратная связь
 
 - Issues: https://github.com/Ari100kratov/ByteFight/issues  
-- Telegram: https://t.me/whatislovesir  
+- Telegram: https://t.me/whatislovesir
+- Google-форма: https://docs.google.com/forms/d/e/1FAIpQLSd-krD2U1ENQKC0zog9loBzZQvXJMm3sfrzJ-w8HAjb2lGZOw/viewform?usp=dialog
 
 ---
 
@@ -343,7 +344,7 @@ pnpm build
 
 ### Игровые режимы
 - **PvP** режим
-- Полноценный **PvE** режим
+- Полноценный **PvE** режим (сюжет)
 - **Кооперативный PvE** режим (совместное прохождение)
 
 ### Геймдизайн и боевая система
