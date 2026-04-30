@@ -13,6 +13,7 @@ export default function GameModesPage() {
       <LoaderState
         isLoading={isLoading}
         error={error}
+        isEmpty={!modes || modes.length === 0}
         empty={<div className="text-center text-muted-foreground">Режимы игры пока недоступны.</div>}
         loadingFallback={
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">

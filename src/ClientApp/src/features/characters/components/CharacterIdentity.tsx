@@ -45,7 +45,14 @@ export function CharacterIdentity({
       )}
 
       {meta && variant === "badge" && (
-        <Badge variant="secondary" className="mt-1">
+        <Badge
+          variant="secondary"
+          className={cn(
+            size === "sm" && "mt-1 text-xs px-2 py-0.5",
+            size === "md" && "mt-1.5 text-sm px-3 py-1",
+            size === "lg" && "mt-1.5 text-sm px-3 py-1"
+          )}
+        >
           {meta}
         </Badge>
       )}

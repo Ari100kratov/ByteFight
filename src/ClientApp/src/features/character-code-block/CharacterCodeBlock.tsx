@@ -63,6 +63,7 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
         <LoaderState
           isLoading={codesQuery.isLoading}
           error={codesQuery.error}
+          isEmpty={!codes || codes.length === 0}
           empty={
             <div className="flex flex-col items-center gap-2 text-muted-foreground">
               <Button onClick={addCode}><Plus /> Добавить</Button>

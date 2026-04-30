@@ -173,6 +173,12 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("name");
 
+                    b.Property<string>("PortraitUrl")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("portrait_url");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer")
                         .HasColumnName("type");

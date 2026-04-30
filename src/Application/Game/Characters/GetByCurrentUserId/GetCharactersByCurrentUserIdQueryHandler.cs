@@ -17,7 +17,12 @@ public sealed class GetCharactersByCurrentUserIdQueryHandler(IGameDbContext dbCo
             .Include(x => x.Spec)
                 .ThenInclude(x => x.Class)
             .Where(c => c.UserId == new UserId(userContext.UserId))
-            .Select(c => new CharacterResponse(c.Id, c.Name, c.Spec.Class.Name, c.Spec.Name))
+            .Select(c => new CharacterResponse(
+                c.Id,
+                c.Name,
+                c.Spec.Class.Name,
+                c.Spec.Name,
+                new Uri(c.Spec.PortraitUrl, UriKind.Relative)))
             .ToListAsync(cancellationToken);
 
         return Result.Success(characters);

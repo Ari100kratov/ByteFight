@@ -22,6 +22,7 @@ export default function GameArenasPage() {
       <LoaderState
         isLoading={isLoading}
         error={error}
+        isEmpty={!arenas || arenas.length === 0}
         empty={
           <div className="mt-8 text-center text-muted-foreground">
             Для этого режима пока нет доступных арен.

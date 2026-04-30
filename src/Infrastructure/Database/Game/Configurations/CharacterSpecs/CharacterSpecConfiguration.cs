@@ -16,6 +16,9 @@ internal sealed class CharacterSpecConfiguration : IEntityTypeConfiguration<Char
 
         builder.HasIndex(c => c.Name).IsUnique();
 
+        builder.Property(e => e.PortraitUrl)
+            .HasMaxLength(256);
+
         builder.Property(e => e.Description)
             .HasMaxLength(512);
 

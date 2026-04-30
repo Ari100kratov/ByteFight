@@ -16,6 +16,10 @@ public static class UserErrors
         "Users.NotFoundByEmail",
         "Пользователь с указанным email не найден");
 
+    public static readonly Error InvalidCredentials = Error.Validation(
+        "Users.InvalidCredentials",
+        "Неверный email или пароль");
+
     public static readonly Error EmailNotUnique = Error.Conflict(
         "Users.EmailNotUnique",
         "Указанный email уже используется");

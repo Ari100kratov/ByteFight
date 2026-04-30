@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -6,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Game.Migrations;
 
 /// <inheritdoc />
-public partial class Initial : Migration
+public partial class InitialMigration : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +24,8 @@ public partial class Initial : Migration
                 name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                 grid_width = table.Column<int>(type: "integer", nullable: false),
                 grid_height = table.Column<int>(type: "integer", nullable: false),
-                background_asset = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                background_asset = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                image_url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                 description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                 game_modes = table.Column<int[]>(type: "integer[]", nullable: false),
                 start_position_x = table.Column<int>(type: "integer", nullable: false),
@@ -98,6 +100,7 @@ public partial class Initial : Migration
                 id = table.Column<Guid>(type: "uuid", nullable: false),
                 class_id = table.Column<Guid>(type: "uuid", nullable: false),
                 name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                portrait_url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                 type = table.Column<int>(type: "integer", nullable: false),
                 description = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true)
             },

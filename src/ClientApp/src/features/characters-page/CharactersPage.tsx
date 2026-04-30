@@ -21,7 +21,8 @@ export default function CharactersPage() {
       <LoaderState
         isLoading={isLoading}
         error={error}
-        empty={<div className="text-muted-foreground">У вас пока нет персонажей.</div>}
+        isEmpty={!characters || characters.length === 0}
+        empty={<div className="text-muted-foreground text-center">У вас пока нет персонажей.</div>}
         loadingFallback={
           <div className="grid gap-4 md:grid-cols-3">
             {[...Array(3)].map((_, i) => (
@@ -39,6 +40,7 @@ export default function CharactersPage() {
                 name={c.name}
                 className={c.className}
                 specName={c.specName}
+                portraitUrl={c.portraitUrl}
               />
             ))}
           </div>

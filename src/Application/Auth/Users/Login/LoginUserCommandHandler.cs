@@ -22,14 +22,14 @@ internal sealed class LoginUserCommandHandler(
 
         if (user is null)
         {
-            return Result.Failure<LoginUserResponse>(UserErrors.NotFoundByEmail);
+            return Result.Failure<LoginUserResponse>(UserErrors.InvalidCredentials);
         }
 
         bool verified = passwordHasher.Verify(command.Password, user.PasswordHash);
 
         if (!verified)
         {
-            return Result.Failure<LoginUserResponse>(UserErrors.NotFoundByEmail);
+            return Result.Failure<LoginUserResponse>(UserErrors.InvalidCredentials);
         }
 
         string accessToken = tokenProvider.Create(user);

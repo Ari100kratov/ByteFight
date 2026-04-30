@@ -9,6 +9,7 @@ public sealed class CharacterSpec : Entity
     public Guid Id { get; set; }
     public Guid ClassId { get; set; }
     public string Name { get; set; }
+    public string PortraitUrl { get; set; }
     public CharacterSpecType Type { get; set; }
     public string? Description { get; set; }
 

@@ -7,6 +7,7 @@ export type CharacterResponse = {
   name: string
   className: string
   specName: string
+  portraitUrl: string
 }
 
 export function useCharacters() {

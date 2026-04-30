@@ -145,6 +145,7 @@ internal static class CharacterClassesSeeder
             ClassId = characterClass.Id,
             Type = type,
             Name = name,
+            PortraitUrl = $"{GetSpecFolder(CharacterClassType.Warrior, folder)}/Portrait.png",
             Description = description,
             Stats =
             [
@@ -182,6 +183,7 @@ internal static class CharacterClassesSeeder
             ClassId = characterClass.Id,
             Type = type,
             Name = name,
+            PortraitUrl = $"{GetSpecFolder(CharacterClassType.Mage, folder)}/Portrait.png",
             Description = description,
             Stats =
             [

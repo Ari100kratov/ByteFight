@@ -6,6 +6,7 @@ type LoaderStateProps = {
   isLoading: boolean
   error: unknown
   children: ReactNode
+  isEmpty?: boolean
   empty?: ReactNode
   loadingFallback?: ReactNode
   skeletonClassName?: string
@@ -16,10 +17,10 @@ export function LoaderState({
   error,
   children,
   empty = <div className="text-muted-foreground">Нет данных</div>,
+  isEmpty = false,
   loadingFallback,
   skeletonClassName = "w-full h-64 rounded-md",
 }: LoaderStateProps) {
-  
   if (isLoading) {
     return loadingFallback ?? <Skeleton className={skeletonClassName} />
   }
@@ -27,10 +28,6 @@ export function LoaderState({
   if (error) {
     return <ErrorAlert error={error} />
   }
-
-  const isEmpty =
-    !children ||
-    (Array.isArray(children) && children.length === 0)
 
   return <>{isEmpty ? empty : children}</>
 }

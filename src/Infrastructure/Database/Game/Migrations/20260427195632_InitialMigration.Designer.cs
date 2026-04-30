@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Game.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20260426095843_AddImageUrlToArena")]
-    partial class AddImageUrlToArena
+    [Migration("20260427195632_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -175,6 +175,12 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasColumnName("name");
+
+                    b.Property<string>("PortraitUrl")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("portrait_url");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer")
