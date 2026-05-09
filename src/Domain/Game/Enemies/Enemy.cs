@@ -10,4 +10,5 @@ public sealed class Enemy : Entity
 
     public ICollection<EnemyStat> Stats { get; set; }
     public ICollection<EnemyActionAsset> ActionAssets { get; set; }
+    public ICollection<EnemyAbility> Abilities { get; set; }
 }

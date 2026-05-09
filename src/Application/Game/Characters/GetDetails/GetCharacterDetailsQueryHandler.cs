@@ -14,27 +14,50 @@ internal sealed class GetCharacterDetailsQueryHandler(IGameDbContext dbContext, 
 {
     public async Task<Result<CharacterResponse>> Handle(GetCharacterDetailsQuery query, CancellationToken cancellationToken)
     {
-        CharacterResponse? character = await dbContext.Characters
+        Character? character = await dbContext.Characters
             .AsNoTracking()
             .Include(x => x.Spec)
                 .ThenInclude(x => x.Class)
-            .Where(c => c.Id == query.Id && c.UserId == new UserId(userContext.UserId))
-            .Select(c => new CharacterResponse(c.Id, c.Name,
-                new SpecResponse(
-                    c.Spec.Id,
-                    c.Spec.Name,
-                    c.Spec.Class.Name,
-                    c.Spec.Type,
-                    c.Spec.Description,
-                    c.Spec.Stats.Select(x => x.ToDto()).ToArray(),
-                    c.Spec.ActionAssets.Select(x => x.ToDto()).ToArray())))
-            .SingleOrDefaultAsync(cancellationToken);
+
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Stats)
+
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.ActionAssets)
+
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Abilities)
+                    .ThenInclude(a => a.Stats)
+
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Abilities)
+                    .ThenInclude(a => a.ActionAssets)
+
+            .SingleOrDefaultAsync(
+                c => c.Id == query.Id && c.UserId == new UserId(userContext.UserId),
+                cancellationToken);
 
         if (character is null)
         {
-            return Result.Failure<CharacterResponse>(CharacterErrors.NotFound(query.Id));
+            return Result.Failure<CharacterResponse>(
+                CharacterErrors.NotFound(query.Id));
         }
 
-        return Result.Success(character);
+        var response = new CharacterResponse(
+            character.Id,
+            character.Name,
+            new SpecResponse(
+                character.Spec.Id,
+                character.Spec.Name,
+                character.Spec.Class.Name,
+                character.Spec.Type,
+                character.Spec.Description,
+                character.Spec.Stats.Select(x => x.ToDto()).ToArray(),
+                character.Spec.ActionAssets.Select(x => x.ToDto()).ToArray(),
+                character.Spec.Abilities.Select(x => x.ToDto()).ToArray()
+            )
+        );
+
+        return Result.Success(response);
     }
 }

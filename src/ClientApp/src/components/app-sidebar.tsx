@@ -12,7 +12,8 @@ import {
   FolderGit2,
   Swords,
   // Gamepad2,
-  BarChart3
+  BarChart3,
+  ClipboardList
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -91,9 +92,14 @@ const data = {
       icon: FolderGit2,
     },
     {
-      title: "Обратная связь",
+      title: "Связаться со мной",
       url: "https://t.me/whatislovesir",
       icon: Send,
+    },
+    {
+      title: "Обратная связь",
+      url: "https://docs.google.com/forms/d/e/1FAIpQLSd-krD2U1ENQKC0zog9loBzZQvXJMm3sfrzJ-w8HAjb2lGZOw/viewform?usp=dialog",
+      icon: ClipboardList,
     },
   ],
   // projects: [

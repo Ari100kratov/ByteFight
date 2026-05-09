@@ -16,7 +16,12 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
   const arenaEnemy = useArenaEnemiesStore(s => arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined);
   const runtime = useEnemyStateStore(s => arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined);
   const selectEnemy = useEnemySelectionStore(s => s.selectEnemy)
-  const spriteAnimation = useEnemiesStore(s => s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action));
+
+  const fallbackAnimation = useEnemiesStore(s =>
+    s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action)
+  )
+
+  const spriteAnimation = runtime?.spriteAnimation ?? fallbackAnimation
 
   const controller = useMemo(() => {
     if (!arenaEnemy) return null;

@@ -33,7 +33,7 @@ internal sealed class GetIntellisense : IEndpoint
 
             return Results.Ok(diagnostics);
         })
-        .WithTags(Tags.CharacterCodes)
+        .WithTags(Tags.IntelliSense)
         .RequireAuthorization();
 
         app.MapPost("intellisense/csharp/completions", async (
@@ -57,7 +57,7 @@ internal sealed class GetIntellisense : IEndpoint
 
             return Results.Ok(completions);
         })
-        .WithTags(Tags.CharacterCodes)
+        .WithTags(Tags.IntelliSense)
         .RequireAuthorization();
 
 
@@ -82,7 +82,7 @@ internal sealed class GetIntellisense : IEndpoint
 
             return signatureHelp is null ? Results.NoContent() : Results.Ok(signatureHelp);
         })
-        .WithTags(Tags.CharacterCodes)
+        .WithTags(Tags.IntelliSense)
         .RequireAuthorization();
 
         app.MapPost("intellisense/csharp/hover", async (
@@ -106,7 +106,7 @@ internal sealed class GetIntellisense : IEndpoint
 
             return hover is null ? Results.NoContent() : Results.Ok(hover);
         })
-        .WithTags(Tags.CharacterCodes)
+        .WithTags(Tags.IntelliSense)
         .RequireAuthorization();
     }
 

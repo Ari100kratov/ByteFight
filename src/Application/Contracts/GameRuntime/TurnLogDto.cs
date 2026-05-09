@@ -20,14 +20,16 @@ public static partial class Mapper
     public static GameActionLogEntryDto ToDto(this GameActionLogEntry entity)
         => entity switch
         {
-            AttackLogEntry attack => attack.ToDto(),
+            AbilityUsedLogEntry abilityUsed => abilityUsed.ToDto(),
             WalkLogEntry walk => walk.ToDto(),
             DeathLogEntry death => death.ToDto(),
             IdleLogEntry idle => idle.ToDto(),
-            _ => throw new ArgumentOutOfRangeException(nameof(entity), $"Unknown RuntimeLogEntry type: {entity.GetType().Name}")
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(entity),
+                $"Unknown RuntimeLogEntry type: {entity.GetType().Name}")
         };
 
-    private static AttackLogEntryDto ToDto(this AttackLogEntry e)
+    private static AbilityUsedLogEntryDto ToDto(this AbilityUsedLogEntry e)
         => new()
         {
             Id = e.Id,
@@ -37,9 +39,13 @@ public static partial class Mapper
             TurnIndex = e.TurnIndex,
             CreatedAt = e.CreatedAt,
 
+            AbilityType = e.AbilityType,
+            EffectType = e.EffectType,
+            AbilityName = e.AbilityName,
+
             TargetId = e.TargetId.Value,
             TargetName = e.TargetName,
-            Damage = e.Damage,
+            Value = e.Value,
             FacingDirection = e.FacingDirection,
             TargetHp = new StatSnapshotDto(e.TargetHp.Current, e.TargetHp.Max)
         };

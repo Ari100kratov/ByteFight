@@ -1,8 +1,10 @@
-﻿using Domain.Game.Actions;
-using SharedKernel;
+﻿using SharedKernel;
 
 namespace Domain.GameRuntime.GameActionLogs;
 
+/// <summary>
+/// Базовая запись журнала боя.
+/// </summary>
 public abstract class GameActionLogEntry : Entity
 {
     public Guid Id { get; protected set; }
@@ -10,19 +12,26 @@ public abstract class GameActionLogEntry : Entity
 
     public UnitId ActorId { get; protected set; }
     public string ActorName { get; protected set; }
-    public ActionType ActionType { get; protected set; }
+
+    /// <summary>
+    /// Тип записи журнала.
+    /// </summary>
+    public GameActionLogEntryType EntryType { get; protected set; }
+
     public string? Info { get; protected set; }
 
     public int TurnIndex { get; protected set; }
     public DateTime CreatedAt { get; protected set; }
 
-    protected GameActionLogEntry() { } // EF
+    protected GameActionLogEntry()
+    {
+    }
 
     protected GameActionLogEntry(
         Guid sessionId,
         UnitId actorId,
         string actorName,
-        ActionType actionType,
+        GameActionLogEntryType entryType,
         string? info,
         int turnIndex)
     {
@@ -30,7 +39,7 @@ public abstract class GameActionLogEntry : Entity
         SessionId = sessionId;
         ActorId = actorId;
         ActorName = actorName;
-        ActionType = actionType;
+        EntryType = entryType;
         Info = info?.Length > 256 ? info[..256] : info;
         TurnIndex = turnIndex;
         CreatedAt = DateTime.UtcNow;

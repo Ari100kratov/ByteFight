@@ -16,13 +16,12 @@ import { useCharacters } from "@/features/characters-page/useCharacters"
 import { useEffect } from "react"
 import { useCharacterDetails } from "./hooks/useCharacterDetails"
 import { useCharacterStateStore } from "@/features/game/state/game/character.state.store"
-import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
-import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 import { StatType } from "@/shared/types/stat"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 import { useCharacterSelectionState } from "./hooks/useCharacterSelectionState"
 import { useSelectedCharacterId } from "./hooks/useSelectedCharacterId"
 import { CharacterIdentity } from "@/features/characters/components/CharacterIdentity"
+import { UnitPreview } from "@/features/unit-preview/UnitPreview"
 
 export function SelectCharacterCard() {
   const arena = useArenaStore((s) => s.arena)
@@ -124,13 +123,11 @@ export function SelectCharacterCard() {
           )}
 
           {character && (
-            <>
-              <div className="flex items-center justify-center p-4">
-                <SpriteAnimationPlayer actionAssets={character.spec.actionAssets} />
-              </div>
-
-              <CharacterStats stats={character.spec.stats} />
-            </>
+            <UnitPreview
+              stats={character.spec.stats}
+              actionAssets={character.spec.actionAssets}
+              abilities={character.spec.abilities}
+            />
           )}
         </CardContent>
       </Card>

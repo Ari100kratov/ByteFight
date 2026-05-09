@@ -4,6 +4,7 @@ using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Common;
 using GameRuntime.Common.World;
+using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Units;
 using GameRuntime.Logic.Actions;
 using GameRuntime.Logic.NPC.PathFinding;
@@ -67,15 +68,15 @@ internal sealed class UserActionExecutor
         }
 
         int distance = actor.Position.ManhattanDistance(target.Position);
-        int attackRange = (int)Math.Ceiling(actor.Stats.Get(StatType.AttackRange));
 
-        if (distance > attackRange)
+        RuntimeAbility? attack = actor.Abilities.FindBestBasicAttack(distance);
+
+        if (attack is null)
         {
             return [world.CreateIdleLogEntry(actor, IdleReasons.OutOfRange)];
         }
 
-        decimal damage = actor.Stats.Get(StatType.Attack);
-        return new AttackAction(actor, target, damage).Execute(world);
+        return new UseAbilityAction(actor, target, attack).Execute(world);
     }
 
     /// <summary>

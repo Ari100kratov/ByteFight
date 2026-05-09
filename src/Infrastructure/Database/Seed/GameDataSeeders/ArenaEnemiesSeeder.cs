@@ -10,24 +10,34 @@ internal static class ArenaEnemiesSeeder
     {
         List<ArenaEnemy> arenaEnemies =
         [
-            ..CreateTrainingArenaEnemies(seed),
-            ..CreateSkeletonCryptArenaEnemies(seed)
+            ..CreateQuietClearingArenaEnemies(seed),
+            ..CreateSkeletonCryptArenaEnemies(seed),
+            ..CreateOrcRitualArenaEnemies(seed)
         ];
 
         dbContext.ArenaEnemies.AddRange(arenaEnemies);
     }
 
-    private static ArenaEnemy[] CreateTrainingArenaEnemies(SeedContext seed) =>
+    private static ArenaEnemy[] CreateQuietClearingArenaEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.TrainingArena, seed.Orc_Warrior, new Position(4, 5)),
-        CreateArenaEnemy(seed.TrainingArena, seed.Orc_Warrior, new Position(6, 1))
+        CreateArenaEnemy(seed.Quiet_Clearing_Arena, seed.Orc_Warrior, new Position(5, 3)),
+        CreateArenaEnemy(seed.Quiet_Clearing_Arena, seed.Orc_Warrior, new Position(6, 5))
     ];
 
     private static ArenaEnemy[] CreateSkeletonCryptArenaEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.SkeletonCryptArena, seed.Skeleton, new Position(8, 6)),
-        CreateArenaEnemy(seed.SkeletonCryptArena, seed.Skeleton, new Position(8, 4)),
-        CreateArenaEnemy(seed.SkeletonCryptArena, seed.Skeleton, new Position(3, 3))
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(6, 5)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(7, 3)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(3, 3)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(2, 5)),
+        //CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(4, 7)),
+    ];
+
+    private static ArenaEnemy[] CreateOrcRitualArenaEnemies(SeedContext seed) =>
+    [
+        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(3, 6)),
+        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(9, 3)),
+        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Shaman, new Position(8, 6))
     ];
 
     private static ArenaEnemy CreateArenaEnemy(

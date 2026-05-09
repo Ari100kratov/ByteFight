@@ -8,7 +8,11 @@ import { CharacterAnimationResolver } from "../units/animation/CharacterAnimatio
 
 export function CharacterAnimatedSprite() {
   const runtime = useCharacterStateStore(s => s.runtime);
-  const spriteAnimation = useCharacterStore(s => s.getSpriteAnimation(runtime?.action));
+  const fallbackAnimation = useCharacterStore(s =>
+    s.getSpriteAnimation(runtime?.action)
+  )
+
+  const spriteAnimation = runtime?.spriteAnimation ?? fallbackAnimation
 
   const controller = useMemo(() => {
     if (!runtime) return null;

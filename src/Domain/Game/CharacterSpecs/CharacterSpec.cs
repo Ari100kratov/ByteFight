@@ -1,5 +1,6 @@
 ﻿using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
+using Domain.Game.CharacterSpecAbilities;
 using SharedKernel;
 
 namespace Domain.Game.CharacterSpecs;
@@ -14,7 +15,10 @@ public sealed class CharacterSpec : Entity
     public string? Description { get; set; }
 
     public CharacterClass Class { get; set; }
+
     public IReadOnlyCollection<CharacterSpecStat> Stats { get; set; }
     public IReadOnlyCollection<CharacterSpecActionAsset> ActionAssets { get; set; }
+    public IReadOnlyCollection<CharacterSpecAbility> Abilities { get; set; }
+
     public IReadOnlyCollection<Character> Characters { get; set; }
 }

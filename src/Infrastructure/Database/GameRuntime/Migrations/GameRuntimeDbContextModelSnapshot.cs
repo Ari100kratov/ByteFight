@@ -19,7 +19,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("game_runtime")
-                .HasAnnotation("ProductVersion", "10.0.3")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -30,10 +30,6 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    b.Property<int>("ActionType")
-                        .HasColumnType("integer")
-                        .HasColumnName("action_type");
 
                     b.Property<Guid>("ActorId")
                         .HasColumnType("uuid")
@@ -48,6 +44,10 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("EntryType")
+                        .HasColumnType("integer")
+                        .HasColumnName("entry_type");
 
                     b.Property<string>("Info")
                         .HasMaxLength(256)
@@ -70,7 +70,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
 
                     b.ToTable("game_action_log_entries", "game_runtime");
 
-                    b.HasDiscriminator<int>("ActionType");
+                    b.HasDiscriminator<int>("EntryType");
 
                     b.UseTphMappingStrategy();
                 });
@@ -158,13 +158,22 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.ToTable("game_sessions", "game_runtime");
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.AttackLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.AbilityUsedLogEntry", b =>
                 {
                     b.HasBaseType("Domain.GameRuntime.GameActionLogs.GameActionLogEntry");
 
-                    b.Property<decimal>("Damage")
-                        .HasColumnType("numeric")
-                        .HasColumnName("damage");
+                    b.Property<string>("AbilityName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("ability_name");
+
+                    b.Property<int>("AbilityType")
+                        .HasColumnType("integer")
+                        .HasColumnName("ability_type");
+
+                    b.Property<int>("EffectType")
+                        .HasColumnType("integer")
+                        .HasColumnName("effect_type");
 
                     b.Property<int>("FacingDirection")
                         .HasColumnType("integer")
@@ -180,9 +189,13 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("target_name");
 
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric")
+                        .HasColumnName("value");
+
                     b.ToTable("game_action_log_entries", "game_runtime");
 
-                    b.HasDiscriminator().HasValue(4);
+                    b.HasDiscriminator().HasValue(3);
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.DeathLogEntry", b =>
@@ -191,7 +204,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
 
                     b.ToTable("game_action_log_entries", "game_runtime");
 
-                    b.HasDiscriminator().HasValue(8);
+                    b.HasDiscriminator().HasValue(4);
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.IdleLogEntry", b =>
@@ -270,11 +283,11 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Navigation("Result");
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.AttackLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.AbilityUsedLogEntry", b =>
                 {
                     b.OwnsOne("Domain.ValueObjects.StatSnapshot", "TargetHp", b1 =>
                         {
-                            b1.Property<Guid>("AttackLogEntryId")
+                            b1.Property<Guid>("AbilityUsedLogEntryId")
                                 .HasColumnType("uuid")
                                 .HasColumnName("id");
 
@@ -286,12 +299,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                                 .HasColumnType("numeric")
                                 .HasColumnName("target_hp_max");
 
-                            b1.HasKey("AttackLogEntryId");
+                            b1.HasKey("AbilityUsedLogEntryId");
 
                             b1.ToTable("game_action_log_entries", "game_runtime");
 
                             b1.WithOwner()
-                                .HasForeignKey("AttackLogEntryId")
+                                .HasForeignKey("AbilityUsedLogEntryId")
                                 .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
                         });
 

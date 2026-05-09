@@ -11,30 +11,61 @@ internal sealed class GetCodeTemplateQueryHandler : IQueryHandler<GetCodeTemplat
         {
             Id = Guid.CreateVersion7(),
             Name = "Program.cs",
-            SourceCode = @"// Выбираем цель:
-// 1. Сначала тех, кто уже в радиусе атаки
-// 2. Затем с наименьшим здоровьем
-// 3. Затем ближайшего
-var target = world.AliveEnemies
-    .OrderBy(e => world.Self.IsInAttackRange(e) ? 0 : 1)
-    .ThenBy(e => e.Health)
-    .ThenBy(e => world.Self.DistanceTo(e))
-    .FirstOrDefault();
+            SourceCode = @"// Это шаблон поведения персонажа.
+// Каждый ход игра вызывает этот код и ожидает одно действие:
+// Например: Attack, MoveTowards, MoveAwayFrom, Idle.
+
+// 1. Оцени ситуацию на арене:
+// - где находится персонаж
+// - какие враги живы
+// - кто рядом
+// - кого можно атаковать
+// - куда лучше двигаться
+
+var enemies = world.AliveEnemies;
 
 // Если врагов нет — ничего не делаем
+if (!enemies.Any())
+{
+    return new Idle();
+}
+
+// 2. Выбери цель.
+// Подумай, что важнее в этой стратегии:
+// - атаковать ближайшего?
+// - добивать врага с малым здоровьем?
+// - держаться подальше от опасного врага?
+// - сначала уничтожать особые цели?
+
+var target = enemies
+    // TODO: выбери подходящую сортировку или условие
+    .FirstOrDefault();
+
+// Если цель не выбрана — ничего не делаем
 if (target is null)
 {
     return new Idle();
 }
 
-// Если можем атаковать — атакуем
-if (world.Self.IsInAttackRange(target))
-{
-    return new Attack(target.Id);
-}
+// 3. Реши, что делать с выбранной целью.
+// Подумай:
+// - можно ли атаковать прямо сейчас?
+// - нужно ли приблизиться?
+// - нужно ли отступить?
+// - стоит ли пропустить ход?
 
-// Иначе двигаемся к цели
-return new MoveTowards(target.Id);"
+// TODO: добавь проверку возможности атаки
+// Пример идеи:
+// if (...)
+// {
+//     return new Attack(target.Id);
+// }
+
+// TODO: выбери подходящее движение
+// Пример идеи:
+// return new MoveTowards(target.Id);
+
+return new Idle();"
         };
 
         return Task.FromResult(Result.Success(codeTemplate));

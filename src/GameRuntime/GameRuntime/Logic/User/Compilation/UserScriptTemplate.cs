@@ -14,6 +14,7 @@ using System.Collections.Generic;
 
 using Domain.ValueObjects;
 using Domain.Game.Stats;
+using Domain.Game.Abilities;
 
 using GameRuntime.Logic.User.Api;
 
@@ -56,7 +57,6 @@ public static class UserScript
     {
         generatedLine = Math.Max(userLine, 0) + UserCodeStartLine;
         generatedColumn = Math.Max(userColumn, 0);
-        //generatedColumn = Math.Max(userColumn, 0);
     }
 
     public readonly record struct MappedLinePositionSpan(int StartLine, int StartColumn, int EndLine, int EndColumn);

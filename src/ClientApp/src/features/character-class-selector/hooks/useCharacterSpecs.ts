@@ -1,5 +1,6 @@
 import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
+import type { AbilityDto } from "@/shared/types/ability"
 import type { ActionAssetDto } from "@/shared/types/action"
 import type { StatDto } from "@/shared/types/stat"
 import { useQuery } from "@tanstack/react-query"
@@ -25,6 +26,7 @@ export type CharacterSpecResponse = {
   description?: string
   stats: StatDto[]
   actionAssets: ActionAssetDto[]
+  abilities: AbilityDto[]
 }
 
 export function useCharacterSpecsByClassId(classId?: string) {

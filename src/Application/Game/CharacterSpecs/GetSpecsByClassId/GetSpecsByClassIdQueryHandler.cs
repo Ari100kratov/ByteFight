@@ -12,14 +12,22 @@ internal sealed class GetSpecsByClassIdQueryHandler(IGameDbContext dbContext)
     public async Task<Result<IReadOnlyList<SpecResponse>>> Handle(GetSpecsByClassIdQuery query, CancellationToken cancellationToken)
     {
         IReadOnlyList<SpecResponse> characterSpecs = await dbContext.CharacterSpecs
+            .AsNoTracking()
             .Where(x => x.ClassId == query.ClassId)
+            .Include(x => x.Stats)
+            .Include(x => x.ActionAssets)
+            .Include(x => x.Abilities)
+                .ThenInclude(x => x.Stats)
+            .Include(x => x.Abilities)
+                .ThenInclude(x => x.ActionAssets)
             .Select(x => new SpecResponse(
                 x.Id,
                 x.Name,
                 x.Type,
                 x.Description,
                 x.Stats.Select(s => s.ToDto()).ToArray(),
-                x.ActionAssets.Select(a => a.ToDto()).ToArray()
+                x.ActionAssets.Select(a => a.ToDto()).ToArray(),
+                x.Abilities.Select(a => a.ToDto()).ToArray()
             ))
             .ToListAsync(cancellationToken);
 

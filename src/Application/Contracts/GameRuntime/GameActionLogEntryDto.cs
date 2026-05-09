@@ -1,14 +1,14 @@
 ﻿using System.Text.Json.Serialization;
-using Domain.Game.Actions;
+using Domain.Game.Abilities;
 using Domain.GameRuntime.GameActionLogs;
 
 namespace Application.Contracts.GameRuntime;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "actionType")]
-[JsonDerivedType(typeof(AttackLogEntryDto), (int)ActionType.Attack)]
-[JsonDerivedType(typeof(WalkLogEntryDto), (int)ActionType.Walk)]
-[JsonDerivedType(typeof(DeathLogEntryDto), (int)ActionType.Dead)]
-[JsonDerivedType(typeof(IdleLogEntryDto), (int)ActionType.Idle)]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "entryType")]
+[JsonDerivedType(typeof(IdleLogEntryDto), (int)GameActionLogEntryType.Idle)]
+[JsonDerivedType(typeof(WalkLogEntryDto), (int)GameActionLogEntryType.Walk)]
+[JsonDerivedType(typeof(AbilityUsedLogEntryDto), (int)GameActionLogEntryType.AbilityUsed)]
+[JsonDerivedType(typeof(DeathLogEntryDto), (int)GameActionLogEntryType.Death)]
 public abstract record GameActionLogEntryDto
 {
     public required Guid Id { get; init; }
@@ -19,27 +19,29 @@ public abstract record GameActionLogEntryDto
     public required DateTime CreatedAt { get; init; }
 }
 
-public sealed record IdleLogEntryDto : GameActionLogEntryDto
-{
-}
+public sealed record IdleLogEntryDto : GameActionLogEntryDto;
 
 public sealed record WalkLogEntryDto : GameActionLogEntryDto
 {
     public required FacingDirection FacingDirection { get; init; }
-    public required PositionDto To { get; init; } = default!;
+    public required PositionDto To { get; init; }
 }
 
-public sealed record AttackLogEntryDto : GameActionLogEntryDto
+public sealed record AbilityUsedLogEntryDto : GameActionLogEntryDto
 {
+    public required AbilityType AbilityType { get; init; }
+    public required AbilityEffectType EffectType { get; init; }
+    public required string? AbilityName { get; init; }
+
     public required Guid TargetId { get; init; }
     public required string TargetName { get; init; }
-    public required decimal Damage { get; init; }
+
+    public required decimal Value { get; init; }
+
     public required FacingDirection FacingDirection { get; init; }
     public required StatSnapshotDto TargetHp { get; init; }
 }
 
-public sealed record DeathLogEntryDto : GameActionLogEntryDto
-{
-}
+public sealed record DeathLogEntryDto : GameActionLogEntryDto;
 
 public sealed record StatSnapshotDto(decimal Current, decimal Max);

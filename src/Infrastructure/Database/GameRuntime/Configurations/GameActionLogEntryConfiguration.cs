@@ -1,5 +1,4 @@
 ﻿using Domain;
-using Domain.Game.Actions;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
@@ -14,22 +13,25 @@ internal sealed class GameActionLogEntryConfiguration
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(c => c.Info)
+        builder.Property(x => x.EntryType)
+            .HasConversion<int>();
+
+        builder.Property(x => x.Info)
             .HasMaxLength(256);
 
-        builder.Property(e => e.ActorId)
+        builder.Property(x => x.ActorId)
             .HasConversion(v => v.Value, v => new UnitId(v))
             .IsRequired();
 
-        builder.Property(c => c.ActorName)
+        builder.Property(x => x.ActorName)
             .IsRequired()
             .HasMaxLength(32);
 
-        builder.HasDiscriminator(x => x.ActionType)
-            .HasValue<AttackLogEntry>(ActionType.Attack)
-            .HasValue<WalkLogEntry>(ActionType.Walk)
-            .HasValue<DeathLogEntry>(ActionType.Dead)
-            .HasValue<IdleLogEntry>(ActionType.Idle);
+        builder.HasDiscriminator(x => x.EntryType)
+            .HasValue<IdleLogEntry>(GameActionLogEntryType.Idle)
+            .HasValue<WalkLogEntry>(GameActionLogEntryType.Walk)
+            .HasValue<AbilityUsedLogEntry>(GameActionLogEntryType.AbilityUsed)
+            .HasValue<DeathLogEntry>(GameActionLogEntryType.Death);
 
         builder.HasOne<GameSession>()
             .WithMany(s => s.ActionLogs)

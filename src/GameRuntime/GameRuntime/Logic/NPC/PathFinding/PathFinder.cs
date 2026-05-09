@@ -30,13 +30,13 @@ internal sealed class PathFinder : IPathFinder
             }
         }
 
-        var open = new PriorityQueue<Position, int>();
+        var open = new PriorityQueue<Position, PathPriority>();
         var cameFrom = new Dictionary<Position, Position>();
         var gScore = new Dictionary<Position, int>();
         var visited = new HashSet<Position>();
 
         gScore[start] = 0;
-        open.Enqueue(start, Heuristic(start, target));
+        open.Enqueue(start, CreatePriority(start, target, g: 0));
 
         while (open.TryDequeue(out Position current, out _))
         {
@@ -52,11 +52,6 @@ internal sealed class PathFinder : IPathFinder
 
             foreach (Position neigh in GetNeighbors(current, arena))
             {
-                if (!IsWithin(arena, neigh))
-                {
-                    continue;
-                }
-
                 if (visited.Contains(neigh))
                 {
                     continue;
@@ -77,13 +72,26 @@ internal sealed class PathFinder : IPathFinder
                     cameFrom[neigh] = current;
                     gScore[neigh] = tentativeG;
 
-                    int priority = tentativeG + Heuristic(neigh, target);
-                    open.Enqueue(neigh, priority);
+                    open.Enqueue(neigh, CreatePriority(neigh, target, tentativeG));
                 }
             }
         }
 
         return null;
+    }
+
+    private readonly record struct PathPriority(
+        int TotalCost,
+        int DistanceSquared) : IComparable<PathPriority>
+    {
+        public int CompareTo(PathPriority other)
+        {
+            int costComparison = TotalCost.CompareTo(other.TotalCost);
+
+            return costComparison != 0
+                ? costComparison
+                : DistanceSquared.CompareTo(other.DistanceSquared);
+        }
     }
 
     private static List<Position> ReconstructPath(Dictionary<Position, Position> cameFrom, Position current)
@@ -102,6 +110,14 @@ internal sealed class PathFinder : IPathFinder
 
     private static int Heuristic(Position from, Position to) =>
         Math.Abs(from.X - to.X) + Math.Abs(from.Y - to.Y);
+
+    private static int DistanceToTargetSquared(Position from, Position to)
+    {
+        int dx = from.X - to.X;
+        int dy = from.Y - to.Y;
+
+        return dx * dx + dy * dy;
+    }
 
     private static IEnumerable<Position> GetNeighbors(Position p, ArenaDefinition arena)
     {
@@ -128,4 +144,13 @@ internal sealed class PathFinder : IPathFinder
 
     private static bool IsWithin(ArenaDefinition arena, Position position) =>
         position.IsWithinGrid(arena.GridWidth, arena.GridHeight);
+
+    private static PathPriority CreatePriority(Position position, Position target, int g)
+    {
+        int h = Heuristic(position, target);
+
+        return new PathPriority(
+            TotalCost: g + h,
+            DistanceSquared: DistanceToTargetSquared(position, target));
+    }
 }

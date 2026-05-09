@@ -1,5 +1,6 @@
+import { AbilityEffectType } from "@/shared/types/ability"
 import {
-  isAttack,
+  isAbilityUsed,
   isDeath,
   isIdle,
   isWalk,
@@ -14,19 +15,81 @@ function formatPosition(x: number, y: number) {
   return `(${x}, ${y})`
 }
 
+function formatAbilityName(name?: string | null) {
+  return name?.trim() ? ` «${name}»` : ""
+}
+
 export function formatCombatLog({ entry }: Props) {
   const actorClass = "font-medium text-foreground"
   const accentClass = "font-medium text-foreground"
 
-  if (isAttack(entry)) {
+  if (isAbilityUsed(entry)) {
+    const abilityName = formatAbilityName(entry.abilityName)
+
+    if (entry.effectType === AbilityEffectType.Damage) {
+      const hasAbilityName = !!entry.abilityName?.trim()
+
+      if (hasAbilityName) {
+        return (
+          <>
+            <span className={actorClass}>{entry.actorName}</span>
+            {" использует "}
+            <span className={accentClass}>«{entry.abilityName}»</span>
+            {" против "}
+            <span className={actorClass}>{entry.targetName}</span>
+            {" и наносит "}
+            <span className={accentClass}>{entry.value}</span>
+            {" урона"}
+          </>
+        )
+      }
+
+      return (
+        <>
+          <span className={actorClass}>{entry.actorName}</span>
+          {" атакует "}
+          <span className={actorClass}>{entry.targetName}</span>
+          {" и наносит "}
+          <span className={accentClass}>{entry.value}</span>
+          {" урона"}
+        </>
+      )
+    }
+
+    if (entry.effectType === AbilityEffectType.Healing) {
+      const isSelfHeal = entry.actorId === entry.targetId
+
+      if (isSelfHeal) {
+        return (
+          <>
+            <span className={actorClass}>{entry.actorName}</span>
+            {" использует"}
+            {abilityName}
+            {" и восстанавливает себе "}
+            <span className={accentClass}>{entry.value}</span>
+            {" здоровья"}
+          </>
+        )
+      }
+
+      return (
+        <>
+          <span className={actorClass}>{entry.actorName}</span>
+          {" использует"}
+          {abilityName}
+          {" и восстанавливает "}
+          <span className={accentClass}>{entry.value}</span>
+          {" здоровья "}
+          <span className={actorClass}>{entry.targetName}</span>
+        </>
+      )
+    }
+
     return (
       <>
         <span className={actorClass}>{entry.actorName}</span>
-        {" атакует "}
-        <span className={actorClass}>{entry.targetName}</span>
-        {" и наносит "}
-        <span className={accentClass}>{entry.damage}</span>
-        {" урона"}
+        {" применяет"}
+        {abilityName || " способность"}
       </>
     )
   }

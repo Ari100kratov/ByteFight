@@ -9,5 +9,6 @@ public sealed record SpecResponse(
     CharacterSpecType Type,
     string? Description,
     IReadOnlyList<StatDto> Stats,
-    IReadOnlyList<ActionAssetDto> ActionAssets
+    IReadOnlyList<ActionAssetDto> ActionAssets,
+    IReadOnlyList<AbilityDto> Abilities
 );

@@ -1,7 +1,8 @@
-﻿using Domain.Game.Actions;
+﻿namespace Domain.GameRuntime.GameActionLogs;
 
-namespace Domain.GameRuntime.GameActionLogs;
-
+/// <summary>
+/// Запись журнала о пропуске хода.
+/// </summary>
 public sealed class IdleLogEntry : GameActionLogEntry
 {
     private IdleLogEntry() { } // EF
@@ -12,7 +13,13 @@ public sealed class IdleLogEntry : GameActionLogEntry
         string actorName,
         string? info,
         int turnIndex)
-        : base(sessionId, actorId, actorName, ActionType.Idle, info, turnIndex)
+        : base(
+            sessionId,
+            actorId,
+            actorName,
+            GameActionLogEntryType.Idle,
+            info,
+            turnIndex)
     {
     }
 }

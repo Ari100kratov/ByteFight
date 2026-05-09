@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Game.Abilities;
 using Domain.Game.Actions;
 using Domain.Game.CharacterClasses;
+using Domain.Game.CharacterSpecAbilities;
 using Domain.Game.CharacterSpecs;
 using Domain.Game.Stats;
 using Domain.ValueObjects;
@@ -38,9 +40,8 @@ internal static class CharacterClassesSeeder
             "Берсерк",
             "Агрессивный воин, жертвующий защитой ради высокой силы удара.",
             folder: "berserker",
-            health: 150,
-            attack: 40,
-            attackRange: 1,
+            health: 170,
+            meleeDamage: 44,
             moveRange: 2,
             specIdSetter: id => seed.Spec_Warrior_Berserker = id);
 
@@ -50,10 +51,9 @@ internal static class CharacterClassesSeeder
             "Страж",
             "Выносливый защитник, способный долго держать линию фронта.",
             folder: "guardian",
-            health: 220,
-            attack: 24,
-            attackRange: 1,
-            moveRange: 1,
+            health: 260,
+            meleeDamage: 30,
+            moveRange: 2,
             specIdSetter: id => seed.Spec_Warrior_Guardian = id);
 
         CharacterSpec duelist = CreateWarriorSpec(
@@ -62,10 +62,9 @@ internal static class CharacterClassesSeeder
             "Дуэлянт",
             "Подвижный мастер ближнего боя, побеждающий за счёт темпа и точности.",
             folder: "duelist",
-            health: 170,
-            attack: 32,
-            attackRange: 1,
-            moveRange: 2,
+            health: 185,
+            meleeDamage: 36,
+            moveRange: 3,
             specIdSetter: id => seed.Spec_Warrior_Duelist = id);
 
         warrior.Specs = [berserker, guardian, duelist];
@@ -89,9 +88,10 @@ internal static class CharacterClassesSeeder
             "Пиромант",
             "Боевой маг огня, наносящий высокий урон разрушительными заклинаниями.",
             folder: "pyromancer",
-            health: 105,
-            attack: 46,
-            attackRange: 3,
+            health: 120,
+            meleeDamage: 16,
+            rangedDamage: 40,
+            rangedRange: 4,
             moveRange: 1,
             mana: 100,
             specIdSetter: id => seed.Spec_Mage_Pyromancer = id);
@@ -102,10 +102,11 @@ internal static class CharacterClassesSeeder
             "Люминар",
             "Маг света, использующий концентрированную энергию для точечных атак на расстоянии.",
             folder: "luminary",
-            health: 110,
-            attack: 42,
-            attackRange: 3,
-            moveRange: 1,
+            health: 135,
+            meleeDamage: 18,
+            rangedDamage: 36,
+            rangedRange: 3,
+            moveRange: 2,
             mana: 115,
             specIdSetter: id => seed.Spec_Mage_Luminary = id);
 
@@ -113,12 +114,13 @@ internal static class CharacterClassesSeeder
             mage,
             CharacterSpecType.Arcanist,
             "Арканист",
-            "Универсальный маг тайной школы, полагающийся на запас маны и гибкость.",
+            "Универсальный маг тайной школы, способный атаковать одной базовой магической атакой даже вблизи.",
             folder: "arcanist",
-            health: 115,
-            attack: 38,
-            attackRange: 2,
-            moveRange: 1,
+            health: 150,
+            meleeDamage: null,
+            rangedDamage: 32,
+            rangedRange: 3,
+            moveRange: 2,
             mana: 130,
             specIdSetter: id => seed.Spec_Mage_Arcanist = id);
 
@@ -134,29 +136,27 @@ internal static class CharacterClassesSeeder
         string description,
         string folder,
         int health,
-        int attack,
-        int attackRange,
+        int meleeDamage,
         int moveRange,
         Action<Guid> specIdSetter)
     {
+        string specFolder = GetSpecFolder(CharacterClassType.Warrior, folder);
+
         CharacterSpec spec = new()
         {
             Id = Guid.CreateVersion7(),
             ClassId = characterClass.Id,
             Type = type,
             Name = name,
-            PortraitUrl = $"{GetSpecFolder(CharacterClassType.Warrior, folder)}/Portrait.png",
+            PortraitUrl = $"{specFolder}/Portrait.png",
             Description = description,
             Stats =
             [
                 CreateStat(StatType.Health, health),
-                CreateStat(StatType.Attack, attack),
-                CreateStat(StatType.AttackRange, attackRange),
                 CreateStat(StatType.MoveRange, moveRange)
             ],
-            ActionAssets = CreateWarriorActionAssets(
-                type,
-                GetSpecFolder(CharacterClassType.Warrior, folder))
+            ActionAssets = CreateWarriorActionAssets(type, specFolder),
+            Abilities = CreateWarriorAbilities(type, specFolder, meleeDamage)
         };
 
         specIdSetter(spec.Id);
@@ -171,31 +171,31 @@ internal static class CharacterClassesSeeder
         string description,
         string folder,
         int health,
-        int attack,
-        int attackRange,
+        int? meleeDamage,
+        int rangedDamage,
+        int rangedRange,
         int moveRange,
         int mana,
         Action<Guid> specIdSetter)
     {
+        string specFolder = GetSpecFolder(CharacterClassType.Mage, folder);
+
         CharacterSpec spec = new()
         {
             Id = Guid.CreateVersion7(),
             ClassId = characterClass.Id,
             Type = type,
             Name = name,
-            PortraitUrl = $"{GetSpecFolder(CharacterClassType.Mage, folder)}/Portrait.png",
+            PortraitUrl = $"{specFolder}/Portrait.png",
             Description = description,
             Stats =
             [
                 CreateStat(StatType.Health, health),
-                CreateStat(StatType.Attack, attack),
-                CreateStat(StatType.AttackRange, attackRange),
                 CreateStat(StatType.MoveRange, moveRange),
                 CreateStat(StatType.Mana, mana)
             ],
-            ActionAssets = CreateMageActionAssets(
-                type,
-                GetSpecFolder(CharacterClassType.Mage, folder))
+            ActionAssets = CreateMageActionAssets(type, specFolder),
+            Abilities = CreateMageAbilities(type, specFolder, meleeDamage, rangedDamage, rangedRange)
         };
 
         specIdSetter(spec.Id);
@@ -204,6 +204,38 @@ internal static class CharacterClassesSeeder
     }
 
     private static CharacterSpecStat CreateStat(StatType type, int value) =>
+        new()
+        {
+            StatType = type,
+            Value = value
+        };
+
+    private static CharacterSpecAbility CreateBasicAttackAbility(
+        AbilityType type,
+        string name,
+        string description,
+        int damage,
+        int range,
+        int priority,
+        CharacterSpecAbilityActionAsset[] actionAssets) =>
+        new()
+        {
+            Id = Guid.CreateVersion7(),
+            Type = type,
+            EffectType = AbilityEffectType.Damage,
+            TargetType = AbilityTargetType.Enemy,
+            Name = name,
+            Description = description,
+            Priority = priority,
+            Stats =
+            [
+                CreateAbilityStat(AbilityStatType.Damage, damage),
+                CreateAbilityStat(AbilityStatType.Range, range)
+            ],
+            ActionAssets = actionAssets
+        };
+
+    private static CharacterSpecAbilityStat CreateAbilityStat(AbilityStatType type, int value) =>
         new()
         {
             StatType = type,
@@ -240,85 +272,221 @@ internal static class CharacterClassesSeeder
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
+    private static CharacterSpecAbility[] CreateWarriorAbilities(
+        CharacterSpecType type,
+        string folder,
+        int meleeDamage) =>
+        type switch
+        {
+            CharacterSpecType.Berserker =>
+            [
+                CreateBasicAttackAbility(
+                    AbilityType.BasicMeleeAttack,
+                    string.Empty,
+                    string.Empty,
+                    meleeDamage,
+                    range: 1,
+                    priority: 100,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_3.png", 4, 0.1f, variant: 2),
+                        CreateAbilityActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", 4, 0.1f)
+                    ])
+            ],
+
+            CharacterSpecType.Guardian =>
+            [
+                CreateBasicAttackAbility(
+                    AbilityType.BasicMeleeAttack,
+                    string.Empty,
+                    string.Empty,
+                    meleeDamage,
+                    range: 1,
+                    priority: 100,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1),
+                        CreateAbilityActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", 4, 0.1f)
+                    ])
+            ],
+
+            CharacterSpecType.Duelist =>
+            [
+                CreateBasicAttackAbility(
+                    AbilityType.BasicMeleeAttack,
+                    string.Empty,
+                    string.Empty,
+                    meleeDamage,
+                    range: 1,
+                    priority: 100,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 3, 0.1f, variant: 1),
+                        CreateAbilityActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", 4, 0.1f)
+                    ])
+            ],
+
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+
+    private static CharacterSpecAbility[] CreateMageAbilities(
+        CharacterSpecType type,
+        string folder,
+        int? meleeDamage,
+        int rangedDamage,
+        int rangedRange) =>
+        type switch
+        {
+            CharacterSpecType.Pyromancer =>
+            [
+                CreateBasicAttackAbility(
+                    AbilityType.BasicMeleeAttack,
+                    string.Empty,
+                    string.Empty,
+                    meleeDamage ?? throw new ArgumentNullException(nameof(meleeDamage)),
+                    range: 1,
+                    priority: 200,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1)
+                    ]),
+
+                CreateBasicAttackAbility(
+                    AbilityType.BasicRangedAttack,
+                    "Поток пламени",
+                    "Нельзя применить, если цель стоит на соседней клетке.",
+                    rangedDamage,
+                    range: rangedRange,
+                    priority: 100,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Flame_jet.png", 14, 0.2f)
+                    ])
+            ],
+
+            CharacterSpecType.Luminary =>
+            [
+                CreateBasicAttackAbility(
+                    AbilityType.BasicMeleeAttack,
+                    string.Empty,
+                    string.Empty,
+                    meleeDamage ?? throw new ArgumentNullException(nameof(meleeDamage)),
+                    range: 1,
+                    priority: 200,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 10, 0.15f),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1)
+                    ]),
+
+                CreateBasicAttackAbility(
+                    AbilityType.BasicRangedAttack,
+                    "Световой заряд",
+                    "Нельзя применить, если цель стоит на соседней клетке.",
+                    rangedDamage,
+                    range: rangedRange,
+                    priority: 100,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Light_charge.png", 13, 0.2f)
+                    ])
+            ],
+
+            CharacterSpecType.Arcanist =>
+            [
+                CreateBasicAttackAbility(
+                    AbilityType.BasicRangedAttack,
+                    "Арканный импульс",
+                    "Можно применять как на расстоянии, так и вблизи.",
+                    rangedDamage,
+                    range: rangedRange,
+                    priority: 100,
+                    [
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 7, 0.1f),
+                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 9, 0.1f, variant: 1)
+                    ])
+            ],
+
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
+
     private static CharacterSpecActionAsset[] CreateBerserkerActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", frameCount: 4, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", frameCount: 4, animationSpeed: 0.1f, variant: 1),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_3.png", frameCount: 4, animationSpeed: 0.1f, variant: 2),
-        CreateActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", frameCount: 4, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 8, 0.1f),
+        // CreateActionAsset(ActionType.Walk, $"{folder}/Run.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 5, 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 2, 0.1f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
     ];
 
     private static CharacterSpecActionAsset[] CreateGuardianActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", frameCount: 4, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", frameCount: 4, animationSpeed: 0.1f, variant: 1),
-        CreateActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", frameCount: 4, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 3, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 5, 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 7, 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 3, 0.1f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
     ];
 
     private static CharacterSpecActionAsset[] CreateDuelistActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", frameCount: 4, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", frameCount: 3, animationSpeed: 0.1f, variant: 1),
-        CreateActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", frameCount: 4, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 5, 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 8, 0.1f),
+        // CreateActionAsset(ActionType.Walk, $"{folder}/Run.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 2, 0.1f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
     ];
 
     private static CharacterSpecActionAsset[] CreatePyromancerActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Flame_jet.png", frameCount: 14, animationSpeed: 0.2f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", frameCount: 4, animationSpeed: 0.1f, variant: 1),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", frameCount: 4, animationSpeed: 0.1f, variant: 2),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 9, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 3, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 6, animationSpeed: 0.1f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 7, 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 6, 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 9, 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 3, 0.1f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 6, 0.1f)
     ];
 
     private static CharacterSpecActionAsset[] CreateLuminaryActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Light_charge.png", frameCount: 13, animationSpeed: 0.2f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", frameCount: 10, animationSpeed: 0.15f, variant: 1),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", frameCount: 4, animationSpeed: 0.1f, variant: 2),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 3, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 5, animationSpeed: 0.1f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 7, 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 7, 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 3, 0.1f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 5, 0.1f)
     ];
 
     private static CharacterSpecActionAsset[] CreateArcanistActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", frameCount: 9, animationSpeed: 0.1f, variant: 1),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 4, animationSpeed: 0.15f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 7, 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 8, 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 4, 0.15f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
     ];
 
     private static CharacterSpecActionAsset CreateActionAsset(
+        ActionType actionType,
+        string path,
+        int frameCount,
+        float animationSpeed,
+        int? variant = null) =>
+        new()
+        {
+            ActionType = actionType,
+            Variant = variant ?? 0,
+            Animation = new SpriteAnimation(
+                new Uri(path, UriKind.Relative),
+                frameCount,
+                animationSpeed)
+        };
+
+    private static CharacterSpecAbilityActionAsset CreateAbilityActionAsset(
         ActionType actionType,
         string path,
         int frameCount,

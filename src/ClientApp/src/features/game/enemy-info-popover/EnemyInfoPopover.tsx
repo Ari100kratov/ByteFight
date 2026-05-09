@@ -1,9 +1,8 @@
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
 import { useArenaEnemiesStore } from "../state/data/arena-enemies.store"
 import { useEnemiesStore } from "../state/data/enemies.data.store"
-import { SpriteAnimationPlayer } from "@/features/character-class-selector/components/SpriteAnimationPlayer"
-import { CharacterStats } from "@/features/character-class-selector/components/CharacterStats"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
+import { UnitPreview } from "@/features/unit-preview/UnitPreview"
 
 export function EnemyInfoPopover() {
   const selectedArenaEnemyId = useEnemySelectionStore(s => s.selectedArenaEnemyId)
@@ -38,7 +37,7 @@ export function EnemyInfoPopover() {
         side="right"
         align="start"
         sideOffset={12}
-        className="w-[520px]"
+        className="w-[clamp(360px,42vw,560px)] max-w-[calc(100vw-2rem)]"
       >
         {enemy && (
           <div className="flex flex-col gap-4">
@@ -54,13 +53,11 @@ export function EnemyInfoPopover() {
               )}
             </div>
 
-            <div className="flex flex-col gap-6 md:flex-row">
-              <div className="flex items-center justify-center p-4">
-                <SpriteAnimationPlayer actionAssets={enemy.actionAssets} />
-              </div>
-
-              <CharacterStats stats={enemy.stats} />
-            </div>
+            <UnitPreview
+              stats={enemy.stats}
+              actionAssets={enemy.actionAssets}
+              abilities={enemy.abilities}
+            />
           </div>
         )}
       </PopoverContent>

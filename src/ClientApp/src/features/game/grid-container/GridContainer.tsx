@@ -73,7 +73,7 @@ export function GridContainer() {
           return (
             <pixiText
               key={`${cell.gridX}-${cell.gridY}`}
-              text={`(${cell.gridX}, ${cell.gridY})`}
+              text={`${cell.gridX}, ${cell.gridY}`}
               x={localX + 4}
               y={localY + 4}
               style={{

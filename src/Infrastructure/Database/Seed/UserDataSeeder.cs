@@ -2,7 +2,6 @@
 using Application.Abstractions.Messaging;
 using Application.Auth.Users.Register;
 using Domain.Auth.Roles;
-using Domain.Auth.Users;
 using Infrastructure.Database.Auth;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -15,31 +14,26 @@ public class UserDataSeeder(
 {
     public async Task Seed(SeedContext seed, CancellationToken cancellationToken = default)
     {
-        User? existingAdmin = await dbContext.Users
-            .SingleOrDefaultAsync(x => x.Email == "admin@bytefight.ru", cancellationToken);
-
-        if (existingAdmin is null)
+        if (await dbContext.Users.AnyAsync(cancellationToken))
         {
-            Result<Guid> result = await registerHandler.Handle(
-                new RegisterUserCommand(
-                    Email: "admin@bytefight.ru",
-                    FirstName: "System",
-                    LastName: "Admin",
-                    Password: "admin123"
-                ),
-                cancellationToken);
-
-            if (result.IsFailure)
-            {
-                throw new Exception($"Failed to seed admin user: {result.Error}");
-            }
-
-            seed.AdminId = result.Value;
+            return;
         }
-        else
+
+        Result<Guid> result = await registerHandler.Handle(
+            new RegisterUserCommand(
+                Email: "admin@bytefight.ru",
+                FirstName: "System",
+                LastName: "Admin",
+                Password: "admin123"
+            ),
+            cancellationToken);
+
+        if (result.IsFailure)
         {
-            seed.AdminId = existingAdmin.Id;
+            throw new Exception($"Failed to seed admin user: {result.Error}");
         }
+
+        seed.AdminId = result.Value;
 
         Role adminRole = await dbContext.Roles
             .SingleAsync(r => r.Name == Roles.Admin, cancellationToken);

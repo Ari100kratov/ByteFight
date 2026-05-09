@@ -4,10 +4,13 @@ public class SeedContext
 {
     public Guid AdminId { get; set; }
 
-    public Guid TrainingArena { get; set; }
-    public Guid SkeletonCryptArena { get; set; }
+    public Guid Quiet_Clearing_Arena { get; set; }
+    public Guid Skeleton_Crypt_Arena { get; set; }
+    public Guid Orc_Ritual_Arena { get; set; }
 
     public Guid Orc_Warrior { get; set; }
+    public Guid Orc_Berserker { get; set; }
+    public Guid Orc_Shaman { get; set; }
 
     public Guid Skeleton { get; set; }
 

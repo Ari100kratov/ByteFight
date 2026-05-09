@@ -8,14 +8,13 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { LoaderState } from "@/components/common/LoaderState"
 import { CharacterClassType, useCharacterClasses } from "./hooks/useCharacterClasses"
 import type { CharacterClassResponse } from "./hooks/useCharacterClasses"
-import { SpriteAnimationPlayer } from "./components/SpriteAnimationPlayer"
-import { CharacterStats } from "./components/CharacterStats"
 import { Sword, Wand } from "lucide-react"
 import type { JSX } from "react"
 import {
   useCharacterSpecsByClassId,
   type CharacterSpecResponse,
 } from "./hooks/useCharacterSpecs"
+import { UnitPreview } from "../unit-preview/UnitPreview"
 
 interface Props {
   selectedClassId?: string
@@ -72,7 +71,6 @@ export function CharacterClassSelector({
       isLoading={isClassesLoading}
       error={classesError}
       skeletonClassName="flex flex-col flex-[4]"
-      empty={null}
     >
       <Card className="flex flex-col flex-[4]">
         <CardHeader>
@@ -115,7 +113,6 @@ export function CharacterClassSelector({
               isLoading={isSpecsLoading}
               error={specsError}
               skeletonClassName="min-h-32"
-              empty={null}
             >
               <section className="space-y-3">
                 <h3 className="text-sm font-medium">Специализация</h3>
@@ -153,13 +150,11 @@ export function CharacterClassSelector({
                       )}
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-6">
-                      <div className="flex items-center justify-center p-4">
-                        <SpriteAnimationPlayer actionAssets={selectedSpec.actionAssets} />
-                      </div>
-
-                      <CharacterStats stats={selectedSpec.stats} />
-                    </div>
+                    <UnitPreview
+                      stats={selectedSpec.stats}
+                      actionAssets={selectedSpec.actionAssets}
+                      abilities={selectedSpec.abilities}
+                    />
                   </div>
                 ) : (
                   <div className="min-h-40 flex items-center justify-center text-muted-foreground">

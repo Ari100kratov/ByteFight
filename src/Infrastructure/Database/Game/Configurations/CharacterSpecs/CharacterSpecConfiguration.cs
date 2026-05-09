@@ -17,7 +17,11 @@ internal sealed class CharacterSpecConfiguration : IEntityTypeConfiguration<Char
         builder.HasIndex(c => c.Name).IsUnique();
 
         builder.Property(e => e.PortraitUrl)
+            .IsRequired()
             .HasMaxLength(256);
+
+        builder.Property(e => e.Type)
+            .HasConversion<int>();
 
         builder.Property(e => e.Description)
             .HasMaxLength(512);
@@ -28,6 +32,11 @@ internal sealed class CharacterSpecConfiguration : IEntityTypeConfiguration<Char
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(e => e.ActionAssets)
+            .WithOne(a => a.CharacterSpec)
+            .HasForeignKey(a => a.CharacterSpecId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.Abilities)
             .WithOne(a => a.CharacterSpec)
             .HasForeignKey(a => a.CharacterSpecId)
             .OnDelete(DeleteBehavior.Cascade);

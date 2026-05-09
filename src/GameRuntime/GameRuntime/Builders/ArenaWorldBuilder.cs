@@ -2,8 +2,11 @@
 using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Characters;
+using Domain.Game.CharacterSpecAbilities;
+using Domain.Game.Enemies;
 using Domain.GameRuntime.GameActionLogs;
 using GameRuntime.Common.World;
+using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Stats;
 using GameRuntime.Common.World.Units;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +39,9 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
                 .ThenInclude(x => x.Stats)
             .Include(x => x.Spec)
                 .ThenInclude(x => x.Class)
+            .Include(x => x.Spec)
+                .ThenInclude(x => x.Abilities)
+                    .ThenInclude(x => x.Stats)
             .SingleOrDefaultAsync(ct);
 
         if (character is null)
@@ -47,7 +53,10 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
             .AsNoTracking()
             .Where(e => e.ArenaId == arena.Id)
             .Include(e => e.Enemy)
-                .ThenInclude(c => c.Stats)
+                .ThenInclude(e => e.Stats)
+            .Include(e => e.Enemy)
+                .ThenInclude(e => e.Abilities)
+                    .ThenInclude(e => e.Stats)
             .ToListAsync(ct);
 
         var enemyUnits = new List<EnemyUnit>(arenaEnemies.Count);
@@ -59,7 +68,8 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
                 Name = arenaEnemy.Enemy.Name,
                 ArenaEnemyId = arenaEnemy.Id,
                 EnemyId = arenaEnemy.EnemyId,
-                Stats = new RuntimeStats(arenaEnemy.Enemy.Stats.Select(x => (x.StatType, x.Value)))
+                Stats = new RuntimeStats(arenaEnemy.Enemy.Stats.Select(x => (x.StatType, x.Value))),
+                Abilities = CreateEnemyAbilities(arenaEnemy.Enemy.Abilities)
             };
 
             enemyUnits.Add(enemyUnit);
@@ -81,12 +91,47 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
                 Name = character.Name,
                 CharacterId = character.Id,
                 Spec = character.Spec.Type,
-                Stats = new RuntimeStats(character.Spec.Stats.Select(x => (x.StatType, x.Value)))
+                Stats = new RuntimeStats(character.Spec.Stats.Select(x => (x.StatType, x.Value))),
+                Abilities = CreateCharacterAbilities(character.Spec.Abilities)
             },
 
             Enemies = enemyUnits
         };
 
         return arenaWorld;
+    }
+
+    private static RuntimeAbilities CreateCharacterAbilities(
+        IEnumerable<CharacterSpecAbility> abilities)
+    {
+        RuntimeAbility[] runtimeAbilities = [.. abilities
+            .Select(x => new RuntimeAbility
+            {
+                Type = x.Type,
+                EffectType = x.EffectType,
+                TargetType = x.TargetType,
+                Name = x.Name,
+                Priority = x.Priority,
+                Stats = x.Stats.ToDictionary(s => s.StatType, s => s.Value)
+            })];
+
+        return new RuntimeAbilities(runtimeAbilities);
+    }
+
+    private static RuntimeAbilities CreateEnemyAbilities(
+        IEnumerable<EnemyAbility> abilities)
+    {
+        RuntimeAbility[] runtimeAbilities = [.. abilities
+            .Select(x => new RuntimeAbility
+            {
+                Type = x.Type,
+                EffectType = x.EffectType,
+                TargetType = x.TargetType,
+                Name = x.Name,
+                Priority = x.Priority,
+                Stats = x.Stats.ToDictionary(s => s.StatType, s => s.Value)
+            })];
+
+        return new RuntimeAbilities(runtimeAbilities);
     }
 }

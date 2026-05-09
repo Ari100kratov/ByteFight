@@ -9,6 +9,7 @@ export const ActionType = {
   Jump: 6,
   Hurt: 7,
   Dead: 8,
+  Cast: 9,
 } as const;
 
 export type ActionType = (typeof ActionType)[keyof typeof ActionType];

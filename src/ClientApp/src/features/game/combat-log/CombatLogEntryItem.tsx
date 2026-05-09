@@ -9,7 +9,7 @@ interface Props {
 function getInitials(name: string) {
   return name
     .trim()
-    .split(/\s+/)
+    .split(/[\s—-]+/)
     .filter(Boolean)
     .slice(0, 2)
     .map(part => part[0]?.toUpperCase() ?? "")

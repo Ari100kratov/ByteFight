@@ -57,9 +57,16 @@ export function UnitAnimatedSprite({
     sprite.play(); // ???
   };
 
+  const healthPriority =
+    runtime.hp.max > 0
+      ? runtime.hp.current / runtime.hp.max
+      : 0
+
+  const zIndex = spriteY + healthPriority
+
   return (
     <pixiContainer
-      zIndex={spriteY}
+      zIndex={zIndex}
     >
       <UnitBars
         runtime={runtime}

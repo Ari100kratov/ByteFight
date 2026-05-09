@@ -1,8 +1,10 @@
-﻿using Domain.Game.Actions;
-using Domain.ValueObjects;
+﻿using Domain.ValueObjects;
 
 namespace Domain.GameRuntime.GameActionLogs;
 
+/// <summary>
+/// Запись журнала о перемещении юнита.
+/// </summary>
 public sealed class WalkLogEntry : GameActionLogEntry
 {
     public FacingDirection FacingDirection { get; private set; }
@@ -18,7 +20,13 @@ public sealed class WalkLogEntry : GameActionLogEntry
         FacingDirection facingDirection,
         Position to,
         int turnIndex)
-        : base(sessionId, actorId, actorName, ActionType.Walk, info, turnIndex)
+        : base(
+            sessionId,
+            actorId,
+            actorName,
+            GameActionLogEntryType.Walk,
+            info,
+            turnIndex)
     {
         FacingDirection = facingDirection;
         To = to;

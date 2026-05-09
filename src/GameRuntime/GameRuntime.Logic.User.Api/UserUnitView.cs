@@ -21,7 +21,12 @@ public sealed class UserUnitView
     /// <summary>
     /// Характеристики юнита.
     /// </summary>
-    public UserStatsView Stats { get; init; }
+    public required UserStatsView Stats { get; init; }
+
+    /// <summary>
+    /// Способности юнита.
+    /// </summary>
+    public required UserAbilitiesView Abilities { get; init; }
 
     /// <summary>
     /// Признак того, что юнит мёртв.
@@ -49,6 +54,16 @@ public sealed class UserUnitView
     public decimal HealthPercent => MaxHealth > 0 ? Health / MaxHealth : 0;
 
     /// <summary>
+    /// Текущее количество маны.
+    /// </summary>
+    public decimal Mana => Stats.Get(StatType.Mana) ?? 0;
+
+    /// <summary>
+    /// Дальность перемещения.
+    /// </summary>
+    public int MoveRange => decimal.ToInt32(Math.Floor(Stats.Get(StatType.MoveRange) ?? 0));
+
+    /// <summary>
     /// Манхэттенское расстояние до другого юнита.
     /// </summary>
     public int DistanceTo(UserUnitView other) => Position.ManhattanDistance(other.Position);
@@ -59,12 +74,17 @@ public sealed class UserUnitView
     public int DistanceTo(Position position) => Position.ManhattanDistance(position);
 
     /// <summary>
-    /// Проверяет, находится ли указанный юнит в пределах
-    /// текущей дальности атаки.
+    /// Возвращает лучшую базовую атаку, которой можно ударить указанного юнита.
     /// </summary>
-    public bool IsInAttackRange(UserUnitView other)
+    public UserAbilityView? FindBestBasicAttackFor(UserUnitView target)
     {
-        decimal attackRange = Stats.Get(StatType.AttackRange) ?? 0;
-        return DistanceTo(other) <= attackRange;
+        int distance = DistanceTo(target);
+        return Abilities.FindBestBasicAttack(distance);
     }
+
+    /// <summary>
+    /// Проверяет, может ли юнит ударить указанную цель базовой атакой.
+    /// </summary>
+    public bool CanAttack(UserUnitView target) =>
+        FindBestBasicAttackFor(target) is not null;
 }

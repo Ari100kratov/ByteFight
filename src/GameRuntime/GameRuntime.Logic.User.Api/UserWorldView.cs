@@ -1,6 +1,8 @@
-﻿using Domain.Game.Stats;
+﻿using Domain.Game.Abilities;
+using Domain.Game.Stats;
 using Domain.ValueObjects;
 using GameRuntime.Common.World;
+using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Units;
 
 namespace GameRuntime.Logic.User.Api;
@@ -87,6 +89,7 @@ public static partial class Mapper
         return new UserWorldView
         {
             TurnIndex = world.TurnIndex,
+
             Arena = new UserArenaDefinition
             {
                 GridWidth = world.Arena.GridWidth,
@@ -94,28 +97,45 @@ public static partial class Mapper
                 StartPosition = world.Arena.StartPosition,
                 BlockedPositions = world.Arena.BlockedPositions
             },
-            Self = new UserUnitView
+
+            Self = actor.ToUserUnitView(),
+
+            Enemies = [.. world.Enemies.Select(enemy => enemy.ToUserUnitView())]
+        };
+    }
+
+    private static UserUnitView ToUserUnitView(this BaseUnit unit)
+    {
+        return new UserUnitView
+        {
+            Id = unit.Id,
+            Position = unit.Position,
+            IsDead = unit.IsDead,
+
+            Stats = new UserStatsView
             {
-                Id = actor.Id,
-                Position = actor.Position,
-                Stats = new UserStatsView
-                {
-                    Current = new Dictionary<StatType, decimal>(actor.Stats.Current),
-                    Max = new Dictionary<StatType, decimal>(actor.Stats.Max)
-                },
-                IsDead = actor.IsDead
+                Current = new Dictionary<StatType, decimal>(unit.Stats.Current),
+                Max = new Dictionary<StatType, decimal>(unit.Stats.Maximum)
             },
-            Enemies = [.. world.Enemies
-                .Select(enemy => new UserUnitView
+
+            Abilities = unit.Abilities.ToUserAbilitiesView()
+        };
+    }
+
+    private static UserAbilitiesView ToUserAbilitiesView(this RuntimeAbilities abilities)
+    {
+        return new UserAbilitiesView
+        {
+            All = [.. abilities.All
+                .OrderByDescending(x => x.Priority)
+                .Select(x => new UserAbilityView
                 {
-                    Id = enemy.Id,
-                    Position = enemy.Position,
-                    Stats = new UserStatsView
-                    {
-                        Current = new Dictionary<StatType, decimal>(enemy.Stats.Current),
-                        Max = new Dictionary<StatType, decimal>(enemy.Stats.Max)
-                    },
-                    IsDead = enemy.IsDead
+                    Type = x.Type,
+                    EffectType = x.EffectType,
+                    TargetType = x.TargetType,
+                    Name = x.Name,
+                    Priority = x.Priority,
+                    Stats = new Dictionary<AbilityStatType, decimal>(x.Stats)
                 })]
         };
     }

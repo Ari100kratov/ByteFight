@@ -13,8 +13,13 @@ internal sealed class GetEnemyByIdQueryHandler(IGameDbContext dbContext)
     public async Task<Result<EnemyResponse>> Handle(GetEnemyByIdQuery query, CancellationToken cancellationToken)
     {
         Enemy? enemy = await dbContext.Enemies
+            .AsNoTracking()
             .Include(e => e.Stats)
             .Include(e => e.ActionAssets)
+            .Include(e => e.Abilities)
+                .ThenInclude(a => a.Stats)
+            .Include(e => e.Abilities)
+                .ThenInclude(a => a.ActionAssets)
             .SingleOrDefaultAsync(e => e.Id == query.Id, cancellationToken);
 
         if (enemy is null)
@@ -27,7 +32,8 @@ internal sealed class GetEnemyByIdQueryHandler(IGameDbContext dbContext)
             enemy.Name,
             enemy.Description,
             [.. enemy.Stats.Select(s => s.ToDto())],
-            [.. enemy.ActionAssets.Select(a => a.ToDto())]
+            [.. enemy.ActionAssets.Select(a => a.ToDto())],
+            [.. enemy.Abilities.Select(a => a.ToDto())]
         );
 
         return Result.Success(response);

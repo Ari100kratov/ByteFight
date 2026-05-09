@@ -7,5 +7,6 @@ public sealed record EnemyResponse(
     string Name,
     string? Description,
     IReadOnlyList<StatDto> Stats,
-    IReadOnlyList<ActionAssetDto> ActionAssets
+    IReadOnlyList<ActionAssetDto> ActionAssets,
+    IReadOnlyList<AbilityDto> Abilities
 );

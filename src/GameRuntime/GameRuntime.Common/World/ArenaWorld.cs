@@ -2,6 +2,7 @@
 using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.ValueObjects;
+using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Units;
 using SharedKernel;
 
@@ -82,8 +83,26 @@ public sealed class ArenaWorld
     public WalkLogEntry CreateWalkLogEntry(BaseUnit actor)
         => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, actor.FacingDirection, actor.Position, TurnIndex);
 
-    public AttackLogEntry CreateAttackLogEntry(BaseUnit actor, BaseUnit target, decimal damage, StatSnapshot targetHp)
-        => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, new UnitId(target.Id), target.Name, damage, actor.FacingDirection, targetHp, TurnIndex);
+    public AbilityUsedLogEntry CreateAbilityUsedLogEntry(
+        BaseUnit actor,
+        BaseUnit target,
+        RuntimeAbility ability,
+        decimal value,
+        StatSnapshot targetHp)
+        => new(
+            GameSessionId,
+            new UnitId(actor.Id),
+            actor.Name,
+            null,
+            ability.Type,
+            ability.EffectType,
+            ability.Name,
+            new UnitId(target.Id),
+            target.Name,
+            value,
+            actor.FacingDirection,
+            targetHp,
+            TurnIndex);
 
     public DeathLogEntry CreateDeathLogEntry(BaseUnit actor)
         => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, TurnIndex);

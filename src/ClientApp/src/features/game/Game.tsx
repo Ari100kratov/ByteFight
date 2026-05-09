@@ -5,7 +5,7 @@ import { BackgroundSprite } from "./background-sprite/BackgroundSprite"
 import { ArenaEnemies } from "./arena-enemies/ArenaEnemies"
 import { CharacterAnimatedSprite } from "./character-sprite/CharacterAnimatedSprite"
 import { ResizeHandler } from "./ResizeHandler"
-import { DamageTextLayer } from "./damage-text/DamageTextLayer"
+import { FloatingCombatTextLayer } from "./floating-combat-text/FloatingCombatTextLayer"
 import { EnemyInfoPopover } from "./enemy-info-popover/EnemyInfoPopover"
 
 extend({ Container })
@@ -21,7 +21,7 @@ export function Game() {
         <pixiContainer sortableChildren={true}>
           <CharacterAnimatedSprite />
           <ArenaEnemies />
-          <DamageTextLayer />
+          <FloatingCombatTextLayer />
         </pixiContainer>
       </Application>
 

@@ -1,6 +1,6 @@
-﻿using Domain.Game.Stats;
-using Domain.GameRuntime.GameActionLogs;
+﻿using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
+using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Stats;
 
 namespace GameRuntime.Common.World.Units;
@@ -22,17 +22,26 @@ public record BaseUnit
     /// </summary>
     public Guid? KilledByUnitId { get; private set; }
 
+    /// <summary>
+    /// Характеристики юнита во время боя.
+    /// </summary>
     public required RuntimeStats Stats { get; init; }
+
+    /// <summary>
+    /// Способности юнита, доступные во время боя.
+    /// </summary>
+    public required RuntimeAbilities Abilities { get; init; }
 
     public virtual Guid Id { get; }
 
     public required string Name { get; init; }
 
-    public bool IsDead => Stats.Current[StatType.Health] <= 0;
+    public bool IsDead => Stats.IsDead();
 
     public void Move(Position newPosition)
     {
         int dx = newPosition.X - Position.X;
+
         if (dx != 0)
         {
             FacingDirection newFacingDirection = dx > 0

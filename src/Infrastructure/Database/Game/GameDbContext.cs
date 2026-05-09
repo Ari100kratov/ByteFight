@@ -4,6 +4,7 @@ using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
+using Domain.Game.CharacterSpecAbilities;
 using Domain.Game.CharacterSpecs;
 using Domain.Game.Enemies;
 using Infrastructure.DomainEvents;
@@ -26,12 +27,18 @@ public sealed class GameDbContext(
     public DbSet<Enemy> Enemies { get; set; }
     public DbSet<EnemyStat> EnemyStats { get; set; }
     public DbSet<EnemyActionAsset> EnemyActionAssets { get; set; }
+    public DbSet<EnemyAbility> EnemyAbilities { get; set; }
+    public DbSet<EnemyAbilityStat> EnemyAbilityStats { get; set; }
+    public DbSet<EnemyAbilityActionAsset> EnemyAbilityActionAssets { get; set; }
 
     public DbSet<CharacterClass> CharacterClasses { get; set; }
 
     public DbSet<CharacterSpec> CharacterSpecs { get; set; }
     public DbSet<CharacterSpecActionAsset> CharacterSpecActionAssets { get; set; }
     public DbSet<CharacterSpecStat> CharacterSpecStats { get; set; }
+    public DbSet<CharacterSpecAbility> CharacterSpecAbilities { get; set; }
+    public DbSet<CharacterSpecAbilityStat> CharacterSpecAbilityStats { get; set; }
+    public DbSet<CharacterSpecAbilityActionAsset> CharacterSpecAbilityActionAssets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

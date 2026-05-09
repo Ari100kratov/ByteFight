@@ -5,6 +5,7 @@ import type { ActionAssetDto } from "@/shared/types/action";
 import type { CharacterSpecType } from "@/features/character-class-selector/hooks/useCharacterSpecs";
 import { useStoreQuery } from "@/shared/hooks/useStoreQuery";
 import { useCharacterStore } from "@/features/game/state/data/character.data.store";
+import type { AbilityDto } from "@/shared/types/ability";
 
 export type CharacterResponse = {
   id: string
@@ -20,6 +21,7 @@ export type SpecResponse = {
   description?: string
   stats: StatDto[]
   actionAssets: ActionAssetDto[]
+  abilities: AbilityDto[]
 }
 
 export function useCharacterDetails(characterId?: string) {

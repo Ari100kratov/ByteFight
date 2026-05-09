@@ -26,5 +26,10 @@ internal sealed class EnemyConfiguration : IEntityTypeConfiguration<Enemy>
             .WithOne(a => a.Enemy)
             .HasForeignKey(a => a.EnemyId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.Abilities)
+            .WithOne(a => a.Enemy)
+            .HasForeignKey(a => a.EnemyId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

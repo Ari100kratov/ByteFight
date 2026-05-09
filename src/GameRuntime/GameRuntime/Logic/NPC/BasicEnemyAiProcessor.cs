@@ -1,8 +1,8 @@
-﻿using Domain.Game.Stats;
-using Domain.GameRuntime.GameActionLogs;
+﻿using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Common;
 using GameRuntime.Common.World;
+using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Units;
 using GameRuntime.Logic.Actions;
 using GameRuntime.Logic.NPC.PathFinding;
@@ -12,36 +12,100 @@ namespace GameRuntime.Logic.NPC;
 
 internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
 {
-    private readonly IPathFinder _pathFinder;
+    private readonly IPathFinder pathFinder;
 
     public BasicEnemyAiProcessor(IPathFinder pathFinder)
     {
-        _pathFinder = pathFinder;
+        this.pathFinder = pathFinder;
     }
 
     public IEnumerable<GameActionLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
     {
-        int distance = actor.Position.ManhattanDistance(world.Player.Position);
-        int attackRange = (int)Math.Ceiling(actor.Stats.Get(StatType.AttackRange));
+        RuntimeAbility? healingAbility = actor.Abilities.FindBestHealingAbility();
 
-        // Если можем атаковать
-        if (distance <= attackRange)
+        if (healingAbility is not null && !IsLastAliveEnemy(world))
         {
-            decimal damage = actor.Stats.Get(StatType.Attack);
+            IEnumerable<GameActionLogEntry>? healingAction =
+                TryCreateHealingAction(actor, world, healingAbility);
 
-            var attackAction = new AttackAction(actor, world.Player, damage);
-            return attackAction.Execute(world);
+            if (healingAction is not null)
+            {
+                return healingAction;
+            }
         }
 
-        // Иначе пробуем двигаться в сторону персонажа игрока
-        List<Position>? path = _pathFinder.FindPath(world, actor.Position, world.Player.Position);
+        int distanceToPlayer = actor.Position.ManhattanDistance(world.Player.Position);
+
+        RuntimeAbility? attack = actor.Abilities.FindBestBasicAttack(distanceToPlayer);
+
+        if (attack is not null)
+        {
+            return new UseAbilityAction(actor, world.Player, attack).Execute(world);
+        }
+
+        return MoveToTarget(actor, world, world.Player.Position);
+    }
+
+    private static bool IsLastAliveEnemy(ArenaWorld world)
+    {
+        return world.Enemies.Count(x => !x.IsDead) == 1;
+    }
+
+    private IEnumerable<GameActionLogEntry>? TryCreateHealingAction(
+        BaseUnit actor,
+        ArenaWorld world,
+        RuntimeAbility healingAbility)
+    {
+        if (NeedsHealing(actor))
+        {
+            int selfDistance = 0;
+
+            if (healingAbility.CanReach(selfDistance))
+            {
+                return new UseAbilityAction(actor, actor, healingAbility).Execute(world);
+            }
+        }
+
+        EnemyUnit? target = world.Enemies
+            .Where(x => !x.IsDead)
+            .Where(NeedsHealing)
+            .OrderBy(x => x.Stats.GetHealthPercent())
+            .ThenBy(x => actor.Position.ManhattanDistance(x.Position))
+            .FirstOrDefault();
+
+        if (target is null)
+        {
+            return null;
+        }
+
+        int distance = actor.Position.ManhattanDistance(target.Position);
+
+        if (healingAbility.CanReach(distance))
+        {
+            return new UseAbilityAction(actor, target, healingAbility).Execute(world);
+        }
+
+        return MoveToTarget(actor, world, target.Position);
+    }
+
+    private static bool NeedsHealing(BaseUnit unit) => !unit.IsDead && !unit.Stats.IsHealthFull();
+
+    private IEnumerable<GameActionLogEntry> MoveToTarget(
+        BaseUnit actor,
+        ArenaWorld world,
+        Position targetPosition)
+    {
+        List<Position>? path = pathFinder.FindPath(
+            world,
+            actor.Position,
+            targetPosition);
 
         if (path is null || path.Count == 0)
         {
             return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
         }
 
-        int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
+        int moveRange = actor.Stats.GetMoveRange();
 
         Position? target = MovementRules.SelectMoveTarget(
             world,
@@ -54,7 +118,6 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
             return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
         }
 
-        var moveAction = new MoveAction(actor, target);
-        return moveAction.Execute(world);
+        return new MoveAction(actor, target).Execute(world);
     }
 }

@@ -1,5 +1,18 @@
-import { ActionType } from "@/shared/types/action";
+import type { AbilityEffectType, AbilityType } from "../../../shared/types/ability";
 import type { FacingDirection, Position, StatSnapshot } from "./common";
+
+/**
+ * Тип записи журнала боя.
+ */
+export const GameActionLogEntryType = {
+  Idle: 1,
+  Walk: 2,
+  AbilityUsed: 3,
+  Death: 4,
+} as const;
+
+export type GameActionLogEntryType =
+  typeof GameActionLogEntryType[keyof typeof GameActionLogEntryType];
 
 export type TurnLog = {
   turnIndex: number;
@@ -8,7 +21,7 @@ export type TurnLog = {
 
 export type BaseLogEntry = {
   id: string;
-  actionType: ActionType;
+  entryType: GameActionLogEntryType;
   actorId: string;
   actorName: string;
   info?: string | null;
@@ -17,48 +30,65 @@ export type BaseLogEntry = {
 };
 
 export type GameActionLogEntry =
-  | AttackLogEntry
+  | AbilityUsedLogEntry
   | WalkLogEntry
   | DeathLogEntry
   | IdleLogEntry;
 
-// Attack
-export type AttackLogEntry = BaseLogEntry & {
-  actionType: typeof ActionType.Attack;
+/**
+ * Использование способности (универсально для атак, лечения и т.д.)
+ */
+export type AbilityUsedLogEntry = BaseLogEntry & {
+  entryType: typeof GameActionLogEntryType.AbilityUsed;
+
+  abilityType: AbilityType;
+  effectType: AbilityEffectType;
+  abilityName?: string | null;
 
   targetId: string;
   targetName: string;
-  damage: number;
+  value: number;
   facingDirection: FacingDirection;
   targetHp: StatSnapshot;
 };
 
-// Walk
+/**
+ * Перемещение
+ */
 export type WalkLogEntry = BaseLogEntry & {
-  actionType: typeof ActionType.Walk;
+  entryType: typeof GameActionLogEntryType.Walk;
 
   facingDirection: FacingDirection;
   to: Position;
 };
 
-// Death
+/**
+ * Смерть
+ */
 export type DeathLogEntry = BaseLogEntry & {
-  actionType: typeof ActionType.Dead;
+  entryType: typeof GameActionLogEntryType.Death;
 };
 
-// Idle
+/**
+ * Простой пропуск хода
+ */
 export type IdleLogEntry = BaseLogEntry & {
-  actionType: typeof ActionType.Idle;
+  entryType: typeof GameActionLogEntryType.Idle;
 };
 
-export const isAttack = (e: GameActionLogEntry): e is AttackLogEntry =>
-  e.actionType === ActionType.Attack;
+/**
+ * Type guards
+ */
+export const isAbilityUsed = (
+  e: GameActionLogEntry
+): e is AbilityUsedLogEntry =>
+  e.entryType === GameActionLogEntryType.AbilityUsed;
 
 export const isWalk = (e: GameActionLogEntry): e is WalkLogEntry =>
-  e.actionType === ActionType.Walk;
+  e.entryType === GameActionLogEntryType.Walk;
 
 export const isDeath = (e: GameActionLogEntry): e is DeathLogEntry =>
-  e.actionType === ActionType.Dead;
+  e.entryType === GameActionLogEntryType.Death;
 
 export const isIdle = (e: GameActionLogEntry): e is IdleLogEntry =>
-  e.actionType === ActionType.Idle;
+  e.entryType === GameActionLogEntryType.Idle;

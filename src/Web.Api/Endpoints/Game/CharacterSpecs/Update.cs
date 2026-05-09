@@ -35,7 +35,7 @@ internal sealed class Update : IEndpoint
 
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
-        .WithTags(Tags.Enemies)
-        .HasPermission(Permissions.CharacterClasses.Edit);
+        .WithTags(Tags.CharacterSpecs)
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

@@ -1,31 +1,20 @@
 import { Texture, Rectangle, ImageSource } from "pixi.js"
-import type { ActionAssetDto, ActionType } from "@/shared/types/action"
+import type { ActionAssetDto } from "@/shared/types/action"
 
 /**
- * Загружает указанные анимации (в заданном порядке) и возвращает единый массив текстур.
- * 
- * @param actionAssets — все ассеты персонажа
- * @param filter — фильтр действий, например [ActionType.Idle, ActionType.Walk, ActionType.Attack]. Также отвечает и за порядок анимаций
+ * Загружает переданные ассеты в указанном порядке и возвращает единый массив текстур.
+ *
+ * @param actionAssets — ассеты уже в нужном порядке воспроизведения.
  */
-export async function loadActionAssets(
-  actionAssets: ActionAssetDto[],
-  filter: ActionType[]
-) {
+export async function loadActionAssets(actionAssets: ActionAssetDto[]) {
   const allTextures: Texture[] = []
 
-  for (const actionType of filter) {
-    // 1️⃣ Берём все ассеты с нужным actionType
-    const assetsOfType = actionAssets
-      .filter(a => a.actionType === actionType)
-      .sort((a, b) => a.variant - b.variant)
+  for (const asset of actionAssets) {
+    const { url, frameCount } = asset.spriteAnimation
+    if (!url) continue
 
-    for (const asset of assetsOfType) {
-      const { url, frameCount } = asset.spriteAnimation
-      if (!url) continue
-
-      const textures = await loadTexturesFromUrl(url, frameCount);
-      allTextures.push(...textures);
-    }
+    const textures = await loadTexturesFromUrl(url, frameCount)
+    allTextures.push(...textures)
   }
 
   return allTextures

@@ -1,32 +1,35 @@
-import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation";
-import { AnimatedSprite, Ticker } from "pixi.js";
-import { useTexturesStore } from "../../state/data/textures.data.store";
-import type { UnitRuntimeUpdater } from "../../types/UnitRuntime";
-import { ActionType } from "@/shared/types/action";
+import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
+import { AnimatedSprite, Ticker } from "pixi.js"
+import { useTexturesStore } from "../../state/data/textures.data.store"
+import type { UnitRuntimeUpdater } from "../../types/UnitRuntime"
+import { ActionType } from "@/shared/types/action"
 
-const SPEED = 50;
+const SPEED = 50
 
 export class UnitSprite {
-  private updateRuntime: UnitRuntimeUpdater;
+  private updateRuntime: UnitRuntimeUpdater
 
   constructor(updateRuntime: UnitRuntimeUpdater) {
-    this.updateRuntime = updateRuntime;
+    this.updateRuntime = updateRuntime
   }
 
-  private sprite?: AnimatedSprite;
-  private currentAnimation?: string;
+  private sprite?: AnimatedSprite
+  private currentAnimation?: string
+  private playVersion = 0
 
   attach(sprite: AnimatedSprite) {
-    this.sprite = sprite;
+    this.sprite = sprite
   }
 
   async playAnimation(
     animation: SpriteAnimationDto,
     action: ActionType,
     loop: boolean,
-    onFrame?: (frame: number) => void | Promise<void>
+    onFrame?: (frame: number) => void | Promise<void>,
   ): Promise<void> {
     if (!this.sprite) return
+
+    const version = ++this.playVersion
 
     if (this.currentAnimation === animation.url && loop) return
 
@@ -38,6 +41,7 @@ export class UnitSprite {
 
     if (!textures.length) return
     if (this.sprite !== sprite) return
+    if (version !== this.playVersion) return
 
     this.currentAnimation = animation.url
 
@@ -49,11 +53,12 @@ export class UnitSprite {
     sprite.animationSpeed = animation.animationSpeed
     sprite.loop = loop
 
-    // action меняем только когда текстуры уже готовы
-    this.updateRuntime({ action })
+    this.updateRuntime({ action, spriteAnimation: animation })
+
+    sprite.gotoAndStop(0)
 
     if (loop) {
-      sprite.gotoAndPlay(0)
+      sprite.play()
       return
     }
 
@@ -74,6 +79,8 @@ export class UnitSprite {
       }
 
       sprite.onComplete = async () => {
+        if (version !== this.playVersion) return
+
         sprite.stop()
         sprite.onFrameChange = undefined
         sprite.onComplete = undefined
@@ -85,7 +92,7 @@ export class UnitSprite {
         resolve()
       }
 
-      sprite.gotoAndPlay(0)
+      sprite.play()
     })
   }
 
@@ -93,40 +100,40 @@ export class UnitSprite {
     target: { x: number; y: number },
     onUpdate?: (pos: { x: number; y: number }) => void
   ): Promise<void> {
-    if (!this.sprite) return Promise.resolve();
+    if (!this.sprite) return Promise.resolve()
 
-    const sprite = this.sprite;
-    const ticker = Ticker.shared;
+    const sprite = this.sprite
+    const ticker = Ticker.shared
 
-    const startX = sprite.x;
-    const startY = sprite.y;
-    const dx = target.x - startX;
-    const dy = target.y - startY;
-    const dist = Math.hypot(dx, dy);
+    const startX = sprite.x
+    const startY = sprite.y
+    const dx = target.x - startX
+    const dy = target.y - startY
+    const dist = Math.hypot(dx, dy)
 
-    let traveled = 0;
+    let traveled = 0
 
     return new Promise(resolve => {
       const update = (t: Ticker) => {
-        const step = SPEED * (t.deltaMS / 1000);
-        traveled += step;
+        const step = SPEED * (t.deltaMS / 1000)
+        traveled += step
 
-        const k = Math.min(1, traveled / dist);
-        const x = startX + dx * k;
-        const y = startY + dy * k;
+        const k = Math.min(1, traveled / dist)
+        const x = startX + dx * k
+        const y = startY + dy * k
 
-        sprite.x = x;
-        sprite.y = y;
+        sprite.x = x
+        sprite.y = y
 
-        onUpdate?.({ x, y });
+        onUpdate?.({ x, y })
 
         if (k >= 1) {
-          ticker.remove(update);
-          resolve();
+          ticker.remove(update)
+          resolve()
         }
-      };
+      }
 
-      ticker.add(update);
-    });
+      ticker.add(update)
+    })
   }
 }

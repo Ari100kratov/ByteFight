@@ -8,8 +8,8 @@ import { useGameRuntimeStore } from "./game.runtime.store"
 import { useCharacterStateStore } from "./game/character.state.store"
 import { useEnemyStateStore } from "./game/enemy.state.store"
 import { useGridStore } from "./game/grid.state.store"
-import { useDamageTextStore } from "./ui/damage.text.store"
 import { useEnemySelectionStore } from "./ui/enemy.selection.store"
+import { useFloatingCombatTextStore } from "./ui/floating.combat.text.store"
 
 export function resetGameStores() {
   resetGameDataStores()
@@ -34,6 +34,6 @@ function resetGameStateStores() {
 }
 
 function resetGameUiStores() {
-  useDamageTextStore.getState().reset()
+  useFloatingCombatTextStore.getState().reset()
   useEnemySelectionStore.getState().reset()
 }
