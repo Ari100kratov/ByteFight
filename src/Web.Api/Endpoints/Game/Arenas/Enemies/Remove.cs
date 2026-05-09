@@ -24,6 +24,6 @@ internal sealed class Remove : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.ArenaEnemies)
-        .HasPermission(Permissions.Arenas.Edit);
+        .HasPermission(Permissions.ArenaEnemies.Remove);
     }
 }

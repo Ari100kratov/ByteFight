@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Contracts;
-using Domain.Game.CharacterClasses;
 using Domain.Game.CharacterSpecs;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -20,7 +19,7 @@ internal sealed class UpdateSpecCommandHandler(IGameDbContext dbContext)
 
         if (characterSpec is null)
         {
-            return Result.Failure(CharacterClassErrors.NotFound(command.Id));
+            return Result.Failure(CharacterSpecErrors.NotFound(command.Id));
         }
 
         characterSpec.Name = command.Name;

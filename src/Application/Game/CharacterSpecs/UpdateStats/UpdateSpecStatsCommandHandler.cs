@@ -1,0 +1,31 @@
+﻿using Application.Abstractions.Data;
+using Application.Abstractions.Messaging;
+using Application.Contracts;
+using Domain.Game.CharacterSpecs;
+using Microsoft.EntityFrameworkCore;
+using SharedKernel;
+
+namespace Application.Game.CharacterSpecs.UpdateStats;
+
+internal sealed class UpdateSpecStatsCommandHandler(IGameDbContext dbContext)
+    : ICommandHandler<UpdateSpecStatsCommand>
+{
+    public async Task<Result> Handle(UpdateSpecStatsCommand command, CancellationToken cancellationToken)
+    {
+        CharacterSpec? characterSpec = await dbContext.CharacterSpecs
+            .Include(x => x.Stats)
+            .SingleOrDefaultAsync(x => x.Id == command.Id, cancellationToken);
+
+        if (characterSpec is null)
+        {
+            return Result.Failure(CharacterSpecErrors.NotFound(command.Id));
+        }
+
+        dbContext.CharacterSpecStats.RemoveRange(characterSpec.Stats);
+        characterSpec.Stats = [.. command.Stats.Select(x => x.ToCharacterSpecStat(characterSpec.Id))];
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+}
