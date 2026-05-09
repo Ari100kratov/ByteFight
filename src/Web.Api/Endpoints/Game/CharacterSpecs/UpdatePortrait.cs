@@ -9,7 +9,7 @@ namespace Web.Api.Endpoints.Game.CharacterSpecs;
 
 internal sealed class UpdatePortrait : IEndpoint
 {
-    public sealed record Request(string PortraitUrl);
+    public sealed record Request(Uri PortraitUrl);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -26,6 +26,6 @@ internal sealed class UpdatePortrait : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.CharacterSpecs)
-        .HasPermission(Permissions.CharacterSpecs.EditPortrait);
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

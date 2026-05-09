@@ -26,6 +26,6 @@ internal sealed class UpdateDescription : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.CharacterSpecs)
-        .HasPermission(Permissions.CharacterSpecs.EditDescription);
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

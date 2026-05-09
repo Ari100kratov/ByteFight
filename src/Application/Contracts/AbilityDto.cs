@@ -35,7 +35,7 @@ internal static partial class Mapper
 
     public static CharacterSpecAbility ToCharacterSpecAbility(this AbilityDto dto, Guid characterSpecId)
     {
-        Guid abilityId = Guid.CreateVersion7();
+        var abilityId = Guid.CreateVersion7();
 
         return new CharacterSpecAbility
         {
@@ -72,7 +72,7 @@ internal static partial class Mapper
 
     public static EnemyAbility ToEnemyAbility(this AbilityDto dto, Guid enemyId)
     {
-        Guid abilityId = Guid.CreateVersion7();
+        var abilityId = Guid.CreateVersion7();
 
         return new EnemyAbility
         {
@@ -129,7 +129,6 @@ internal static partial class Mapper
     public static ActionAssetDto ToDto(this EnemyAbilityActionAsset asset)
         => new(asset.ActionType, asset.Variant, asset.Animation.ToDto());
 }
-
 
 internal sealed class AbilityDtoValidator : AbstractValidator<AbilityDto>
 {

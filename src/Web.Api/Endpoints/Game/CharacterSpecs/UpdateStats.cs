@@ -27,6 +27,6 @@ internal sealed class UpdateStats : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.CharacterSpecs)
-        .HasPermission(Permissions.CharacterSpecs.EditStats);
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

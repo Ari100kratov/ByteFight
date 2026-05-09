@@ -19,7 +19,7 @@ internal sealed class UpdateSpecPortraitCommandHandler(IGameDbContext dbContext)
             return Result.Failure(CharacterSpecErrors.NotFound(command.Id));
         }
 
-        characterSpec.PortraitUrl = command.PortraitUrl;
+        characterSpec.PortraitUrl = command.PortraitUrl.ToString();
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

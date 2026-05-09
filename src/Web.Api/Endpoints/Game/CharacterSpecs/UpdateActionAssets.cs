@@ -27,6 +27,6 @@ internal sealed class UpdateActionAssets : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.CharacterSpecs)
-        .HasPermission(Permissions.CharacterSpecs.EditActionAssets);
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

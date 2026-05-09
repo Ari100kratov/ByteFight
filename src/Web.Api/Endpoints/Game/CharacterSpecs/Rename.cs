@@ -26,6 +26,6 @@ internal sealed class Rename : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.CharacterSpecs)
-        .HasPermission(Permissions.CharacterSpecs.EditName);
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

@@ -24,11 +24,6 @@ public static class Permissions
     {
         public const string Create = "enemies:create";
         public const string Edit = "enemies:edit";
-        public const string EditName = "enemies:edit:name";
-        public const string EditDescription = "enemies:edit:description";
-        public const string EditStats = "enemies:edit:stats";
-        public const string EditActionAssets = "enemies:edit:action-assets";
-        public const string EditAbilities = "enemies:edit:abilities";
         public const string Delete = "enemies:delete";
     }
 
@@ -43,12 +38,6 @@ public static class Permissions
     {
         public const string Create = "character-specs:create";
         public const string Edit = "character-specs:edit";
-        public const string EditName = "character-specs:edit:name";
-        public const string EditDescription = "character-specs:edit:description";
-        public const string EditPortrait = "character-specs:edit:portrait";
-        public const string EditStats = "character-specs:edit:stats";
-        public const string EditActionAssets = "character-specs:edit:action-assets";
-        public const string EditAbilities = "character-specs:edit:abilities";
         public const string Delete = "character-specs:delete";
     }
 
@@ -65,11 +54,6 @@ public static class Permissions
 
         Enemies.Create,
         Enemies.Edit,
-        Enemies.EditName,
-        Enemies.EditDescription,
-        Enemies.EditStats,
-        Enemies.EditActionAssets,
-        Enemies.EditAbilities,
         Enemies.Delete,
 
         CharacterClasses.Create,
@@ -78,12 +62,6 @@ public static class Permissions
 
         CharacterSpecs.Create,
         CharacterSpecs.Edit,
-        CharacterSpecs.EditName,
-        CharacterSpecs.EditDescription,
-        CharacterSpecs.EditPortrait,
-        CharacterSpecs.EditStats,
-        CharacterSpecs.EditActionAssets,
-        CharacterSpecs.EditAbilities,
         CharacterSpecs.Delete
     ];
 }

@@ -27,6 +27,6 @@ internal sealed class UpdateAbilities : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.CharacterSpecs)
-        .HasPermission(Permissions.CharacterSpecs.EditAbilities);
+        .HasPermission(Permissions.CharacterSpecs.Edit);
     }
 }

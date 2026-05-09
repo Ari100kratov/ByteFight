@@ -2,4 +2,4 @@
 
 namespace Application.Game.CharacterSpecs.UpdatePortrait;
 
-public sealed record UpdateSpecPortraitCommand(Guid Id, string PortraitUrl) : ICommand;
+public sealed record UpdateSpecPortraitCommand(Guid Id, Uri PortraitUrl) : ICommand;
