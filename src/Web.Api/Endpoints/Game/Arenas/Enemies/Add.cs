@@ -26,6 +26,6 @@ internal sealed class Add : IEndpoint
             return result.ToCreated(id => $"/arenas/{arenaId}/enemies/{id}");
         })
         .WithTags(Tags.ArenaEnemies)
-        .HasPermission(Permissions.Arenas.Edit);
+        .HasPermission(Permissions.ArenaEnemies.Add);
     }
 }

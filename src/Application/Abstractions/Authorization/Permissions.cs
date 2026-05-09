@@ -14,6 +14,12 @@ public static class Permissions
         public const string Delete = "arenas:delete";
     }
 
+    public static class ArenaEnemies
+    {
+        public const string Add = "arena-enemies:add";
+        public const string Remove = "arena-enemies:remove";
+    }
+
     public static class Enemies
     {
         public const string Create = "enemies:create";
@@ -42,6 +48,9 @@ public static class Permissions
         Arenas.Create,
         Arenas.Edit,
         Arenas.Delete,
+
+        ArenaEnemies.Add,
+        ArenaEnemies.Remove,
 
         Enemies.Create,
         Enemies.Edit,
