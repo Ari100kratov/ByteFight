@@ -1,4 +1,5 @@
-﻿using Domain.GameRuntime.GameActionLogs;
+﻿using System.Collections.Immutable;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Common;
 using GameRuntime.Common.World;
@@ -10,23 +11,30 @@ using GameRuntime.Logic.Turns;
 
 namespace GameRuntime.Logic.NPC;
 
-internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
+internal sealed class BasicEnemyAiProcessor(IPathFinder pathFinder) : IUnitTurnProcessor
 {
-    private readonly IPathFinder pathFinder;
-
-    public BasicEnemyAiProcessor(IPathFinder pathFinder)
-    {
-        this.pathFinder = pathFinder;
-    }
-
     public IEnumerable<GameActionLogEntry> ProcessTurn(BaseUnit actor, ArenaWorld world)
     {
-        RuntimeAbility? healingAbility = actor.Abilities.FindBestHealingAbility();
+        if (actor is not EnemyUnit enemy)
+        {
+            throw new InvalidOperationException(
+                $"{nameof(BasicEnemyAiProcessor)} can process only enemy units.");
+        }
+
+        RuntimeAbility? healingAbility = enemy.Abilities.FindBestHealingAbility();
 
         if (healingAbility is not null && !IsLastAliveEnemy(world))
         {
+            IEnumerable<GameActionLogEntry>? defensiveAction =
+                TryCreateOneTimeDefensiveHealerAction(enemy, world, healingAbility);
+
+            if (defensiveAction is not null)
+            {
+                return defensiveAction;
+            }
+
             IEnumerable<GameActionLogEntry>? healingAction =
-                TryCreateHealingAction(actor, world, healingAbility);
+                TryCreateHealingAction(enemy, world, healingAbility);
 
             if (healingAction is not null)
             {
@@ -34,16 +42,85 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
             }
         }
 
-        int distanceToPlayer = actor.Position.ManhattanDistance(world.Player.Position);
+        int distanceToPlayer = enemy.Position.ManhattanDistance(world.Player.Position);
 
-        RuntimeAbility? attack = actor.Abilities.FindBestBasicAttack(distanceToPlayer);
+        RuntimeAbility? attack = enemy.Abilities.FindBestBasicAttack(distanceToPlayer);
 
         if (attack is not null)
         {
-            return new UseAbilityAction(actor, world.Player, attack).Execute(world);
+            return new UseAbilityAction(enemy, world.Player, attack).Execute(world);
         }
 
-        return MoveToTarget(actor, world, world.Player.Position);
+        return MoveToTarget(enemy, world, world.Player.Position);
+    }
+
+    private IEnumerable<GameActionLogEntry>? TryCreateOneTimeDefensiveHealerAction(
+        EnemyUnit actor,
+        ArenaWorld world,
+        RuntimeAbility healingAbility)
+    {
+        if (!NeedsHealing(actor))
+        {
+            return null;
+        }
+
+        if (!actor.AiState.HasRetreatedAfterBeingHit)
+        {
+            actor.AiState.MarkRetreatedAfterBeingHit();
+
+            IEnumerable<GameActionLogEntry>? retreatAction =
+                TryMoveAwayFromPlayer(actor, world);
+
+            if (retreatAction is not null)
+            {
+                return retreatAction;
+            }
+
+            return TryCreateOneTimeSelfHeal(actor, world, healingAbility);
+        }
+
+        return TryCreateOneTimeSelfHeal(actor, world, healingAbility);
+    }
+
+    private static IEnumerable<GameActionLogEntry>? TryCreateOneTimeSelfHeal(
+        EnemyUnit actor,
+        ArenaWorld world,
+        RuntimeAbility healingAbility)
+    {
+        if (actor.AiState.HasSelfHealedAfterBeingHit || !healingAbility.CanReach(0))
+        {
+            return null;
+        }
+
+        actor.AiState.MarkSelfHealedAfterBeingHit();
+
+        return new UseAbilityAction(actor, actor, healingAbility).Execute(world);
+    }
+
+    private IEnumerable<GameActionLogEntry>? TryMoveAwayFromPlayer(
+        EnemyUnit actor,
+        ArenaWorld world)
+    {
+        int moveRange = actor.Stats.GetMoveRange();
+
+        ImmutableHashSet<Position> reachable = world.GetReachableCells(
+            actor,
+            actor.Position,
+            moveRange);
+
+        Position? bestPosition = reachable
+            .Where(position => position != actor.Position)
+            .OrderByDescending(position => position.ManhattanDistance(world.Player.Position))
+            .ThenBy(position => position.ManhattanDistance(actor.Position))
+            .Cast<Position?>()
+            .FirstOrDefault();
+
+        if (bestPosition is null)
+        {
+            return null;
+        }
+
+        return new MoveAction(actor, bestPosition).Execute(world);
     }
 
     private static bool IsLastAliveEnemy(ArenaWorld world)
@@ -52,22 +129,20 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
     }
 
     private IEnumerable<GameActionLogEntry>? TryCreateHealingAction(
-        BaseUnit actor,
+        EnemyUnit actor,
         ArenaWorld world,
         RuntimeAbility healingAbility)
     {
-        if (NeedsHealing(actor))
+        if (!actor.AiState.HasSelfHealedAfterBeingHit &&
+            NeedsHealing(actor) &&
+            healingAbility.CanReach(0))
         {
-            int selfDistance = 0;
-
-            if (healingAbility.CanReach(selfDistance))
-            {
-                return new UseAbilityAction(actor, actor, healingAbility).Execute(world);
-            }
+            return new UseAbilityAction(actor, actor, healingAbility).Execute(world);
         }
 
         EnemyUnit? target = world.Enemies
             .Where(x => !x.IsDead)
+            .Where(x => x.Id != actor.Id)
             .Where(NeedsHealing)
             .OrderBy(x => x.Stats.GetHealthPercent())
             .ThenBy(x => actor.Position.ManhattanDistance(x.Position))
@@ -88,7 +163,10 @@ internal sealed class BasicEnemyAiProcessor : IUnitTurnProcessor
         return MoveToTarget(actor, world, target.Position);
     }
 
-    private static bool NeedsHealing(BaseUnit unit) => !unit.IsDead && !unit.Stats.IsHealthFull();
+    private static bool NeedsHealing(BaseUnit unit)
+    {
+        return !unit.IsDead && !unit.Stats.IsHealthFull();
+    }
 
     private IEnumerable<GameActionLogEntry> MoveToTarget(
         BaseUnit actor,

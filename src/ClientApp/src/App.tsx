@@ -14,6 +14,9 @@ import GameArenaPage from "./features/game-arena-page/GameArenaPage"
 import NotFoundPage from "./pages/NotFoundPage"
 import BattleHistoryPage from "./features/battle-history-page/BattleHistoryPage"
 import AccountPage from "./features/account-page/AccountPage"
+import ScriptApiDocsPage from "./features/script-api-docs-page/ScriptApiDocsPage"
+import QuickStartDocsPage from "./features/docs-page/QuickStartDocsPage"
+import RecipesDocsPage from "./features/docs-page/RecipesDocsPage"
 
 export default function App() {
   return (
@@ -56,7 +59,12 @@ export default function App() {
             <Route path="leaderboard" element={<InProgressPage title="Лидеры" />} />
           </Route>
 
-          <Route path="docs" element={<InProgressPage title="Документация" />} />
+          <Route path="docs">
+            <Route index element={<Navigate to="quick-start" replace />} />
+            <Route path="quick-start" element={<QuickStartDocsPage />} />
+            <Route path="recipes" element={<RecipesDocsPage />} />
+            <Route path="script-api" element={<ScriptApiDocsPage />} />
+          </Route>
           <Route path="settings" element={<InProgressPage title="Настройки" />} />
 
           <Route path="account" element={<AccountPage />} />

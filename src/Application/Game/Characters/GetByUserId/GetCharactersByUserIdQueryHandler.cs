@@ -23,6 +23,7 @@ public sealed class GetCharactersByUserIdQueryHandler(IGameDbContext dbContext, 
             .Include(x => x.Spec)
                 .ThenInclude(x => x.Class)
             .Where(c => c.UserId == new UserId(query.UserId))
+            .OrderBy(a => a.CreatedAt)
             .Select(c => new CharacterResponse(c.Id, c.Name, c.Spec.Class.Name, c.Spec.Name))
             .ToListAsync(cancellationToken);
 

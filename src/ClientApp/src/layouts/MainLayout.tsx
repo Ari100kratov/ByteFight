@@ -26,6 +26,10 @@ const routeNames: Record<string, string> = {
   history: "История боев",
 
   docs: "Документация",
+  "quick-start": "Быстрый старт",
+  recipes: "Рецепты",
+  "script-api": "API",
+
   settings: "Настройки",
 
   account: "Аккаунт"

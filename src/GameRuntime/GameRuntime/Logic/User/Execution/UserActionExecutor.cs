@@ -159,7 +159,7 @@ internal sealed class UserActionExecutor
         }
 
         int moveRange = (int)Math.Floor(actor.Stats.Get(StatType.MoveRange));
-        ImmutableHashSet<Position> reachable = GetReachableCells(world, actor, actor.Position, moveRange);
+        ImmutableHashSet<Position> reachable = world.GetReachableCells(actor, actor.Position, moveRange);
 
         Position? bestPosition = reachable
             .Where(p => p != actor.Position)
@@ -176,77 +176,7 @@ internal sealed class UserActionExecutor
         return new MoveAction(actor, bestPosition).Execute(world);
     }
 
-    /// <summary>
-    /// Возвращает все клетки, достижимые из стартовой позиции
-    /// за указанное количество шагов.
-    ///
-    /// Используется для логики отступления и может быть полезен
-    /// как основа для будущих более сложных алгоритмов выбора позиции.
-    /// </summary>
-    private ImmutableHashSet<Position> GetReachableCells(
-        ArenaWorld world,
-        BaseUnit actor,
-        Position start,
-        int maxDistance)
-    {
-        var result = new HashSet<Position> { start };
-        var queue = new Queue<(Position Position, int Distance)>();
 
-        queue.Enqueue((start, 0));
 
-        while (queue.Count > 0)
-        {
-            (Position current, int distance) = queue.Dequeue();
 
-            if (distance >= maxDistance)
-            {
-                continue;
-            }
-
-            foreach (Position neighbor in GetNeighbors(current, world.Arena))
-            {
-                if (result.Contains(neighbor))
-                {
-                    continue;
-                }
-
-                if (!MovementRules.CanStandOn(world, actor, neighbor))
-                {
-                    continue;
-                }
-
-                result.Add(neighbor);
-                queue.Enqueue((neighbor, distance + 1));
-            }
-        }
-
-        return [.. result];
-    }
-
-    /// <summary>
-    /// Возвращает ортогональных соседей для указанной позиции
-    /// в пределах арены.
-    /// </summary>
-    private static IEnumerable<Position> GetNeighbors(Position position, ArenaDefinition arena)
-    {
-        if (position.X + 1 < arena.GridWidth)
-        {
-            yield return new Position(position.X + 1, position.Y);
-        }
-
-        if (position.X - 1 >= 0)
-        {
-            yield return new Position(position.X - 1, position.Y);
-        }
-
-        if (position.Y + 1 < arena.GridHeight)
-        {
-            yield return new Position(position.X, position.Y + 1);
-        }
-
-        if (position.Y - 1 >= 0)
-        {
-            yield return new Position(position.X, position.Y - 1);
-        }
-    }
 }

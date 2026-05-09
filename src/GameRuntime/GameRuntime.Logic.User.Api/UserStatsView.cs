@@ -1,11 +1,13 @@
 ﻿using Domain.Game.Stats;
 using Domain.ValueObjects;
+using SharedKernel;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Представление характеристик юнита.
 /// </summary>
+[UserCodeApi]
 public sealed class UserStatsView
 {
     public required IReadOnlyDictionary<StatType, decimal> Current { get; init; }

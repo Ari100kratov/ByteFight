@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using System.Collections.Immutable;
+using Domain;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameResults;
 using Domain.ValueObjects;
@@ -106,4 +107,77 @@ public sealed class ArenaWorld
 
     public DeathLogEntry CreateDeathLogEntry(BaseUnit actor)
         => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, TurnIndex);
+
+    /// <summary>
+    /// Возвращает все клетки, достижимые из стартовой позиции
+    /// за указанное количество шагов.
+    ///
+    /// Используется для логики отступления и может быть полезен
+    /// как основа для будущих более сложных алгоритмов выбора позиции.
+    /// </summary>
+    public ImmutableHashSet<Position> GetReachableCells(
+        BaseUnit actor,
+        Position start,
+        int maxDistance)
+    {
+        var result = new HashSet<Position> { start };
+        var queue = new Queue<(Position Position, int Distance)>();
+
+        queue.Enqueue((start, 0));
+
+        while (queue.Count > 0)
+        {
+            (Position current, int distance) = queue.Dequeue();
+
+            if (distance >= maxDistance)
+            {
+                continue;
+            }
+
+            foreach (Position neighbor in GetNeighbors(current))
+            {
+                if (result.Contains(neighbor))
+                {
+                    continue;
+                }
+
+                if (!MovementRules.CanStandOn(this, actor, neighbor))
+                {
+                    continue;
+                }
+
+                result.Add(neighbor);
+                queue.Enqueue((neighbor, distance + 1));
+            }
+        }
+
+        return [.. result];
+    }
+
+    /// <summary>
+    /// Возвращает ортогональных соседей для указанной позиции
+    /// в пределах арены.
+    /// </summary>
+    private IEnumerable<Position> GetNeighbors(Position position)
+    {
+        if (position.X + 1 < Arena.GridWidth)
+        {
+            yield return new Position(position.X + 1, position.Y);
+        }
+
+        if (position.X - 1 >= 0)
+        {
+            yield return new Position(position.X - 1, position.Y);
+        }
+
+        if (position.Y + 1 < Arena.GridHeight)
+        {
+            yield return new Position(position.X, position.Y + 1);
+        }
+
+        if (position.Y - 1 >= 0)
+        {
+            yield return new Position(position.X, position.Y - 1);
+        }
+    }
 }

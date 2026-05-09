@@ -4,7 +4,7 @@ import { useTexturesStore } from "../../state/data/textures.data.store"
 import type { UnitRuntimeUpdater } from "../../types/UnitRuntime"
 import { ActionType } from "@/shared/types/action"
 
-const SPEED = 50
+const SPEED = 70
 
 export class UnitSprite {
   private updateRuntime: UnitRuntimeUpdater

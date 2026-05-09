@@ -1,10 +1,13 @@
 ﻿using Application.Abstractions.Data;
 using Infrastructure.Database.Seed.GameDataSeeders;
 using Microsoft.EntityFrameworkCore;
+using SharedKernel;
 
 namespace Infrastructure.Database.Seed;
 
-public class GameDataSeeder(IGameDbContext dbContext)
+public class GameDataSeeder(
+    IGameDbContext dbContext,
+    IDateTimeProvider dateTimeProvider)
 {
     public async Task Seed(SeedContext seed, CancellationToken cancellationToken = default)
     {
@@ -19,6 +22,12 @@ public class GameDataSeeder(IGameDbContext dbContext)
         ArenaEnemiesSeeder.Seed(seed, dbContext);
 
         CharacterClassesSeeder.Seed(seed, dbContext);
+
+        await AdminCharactersSeeder.Seed(
+            seed,
+            dbContext,
+            dateTimeProvider.UtcNow,
+            cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }

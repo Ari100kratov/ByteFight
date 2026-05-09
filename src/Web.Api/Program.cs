@@ -2,8 +2,11 @@ using System.Reflection;
 using Application;
 using Application.Abstractions.GameRuntime;
 using Aspire.ServiceDefaults;
+using Domain.ValueObjects;
 using GameRuntime;
+using GameRuntime.Logic.User.Api;
 using GameRuntime.Realtime;
+using GameRuntime.UserCodeApiDocumentation;
 using HealthChecks.UI.Client;
 using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -32,7 +35,8 @@ builder.Services
     .AddApplication()
     .AddPresentation()
     .AddInfrastructure(builder.Configuration)
-    .AddGameRuntimeInfrastructure();
+    .AddGameRuntimeInfrastructure()
+    .AddUserCodeApiDocumentation([typeof(UserWorldView).Assembly, typeof(Position).Assembly]);
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 

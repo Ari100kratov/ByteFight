@@ -1,10 +1,12 @@
 ﻿using Domain.Game.Abilities;
+using SharedKernel;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Представление способности юнита
 /// </summary>
+[UserCodeApi]
 public sealed class UserAbilityView
 {
     /// <summary>

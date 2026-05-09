@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\GameRuntime\GameRuntime.UserCodeApiDocumentation\GameRuntime.UserCodeApiDocumentation.csproj" />
     <ProjectReference Include="..\GameRuntime\GameRuntime\GameRuntime.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>

@@ -27,14 +27,14 @@ export function formatCombatLog({ entry }: Props) {
     const abilityName = formatAbilityName(entry.abilityName)
 
     if (entry.effectType === AbilityEffectType.Damage) {
-      const hasAbilityName = !!entry.abilityName?.trim()
+      const hasAbilityName = !!abilityName
 
       if (hasAbilityName) {
         return (
           <>
             <span className={actorClass}>{entry.actorName}</span>
             {" использует "}
-            <span className={accentClass}>«{entry.abilityName}»</span>
+            {abilityName}
             {" против "}
             <span className={actorClass}>{entry.targetName}</span>
             {" и наносит "}
@@ -98,7 +98,7 @@ export function formatCombatLog({ entry }: Props) {
     return (
       <>
         <span className={actorClass}>{entry.actorName}</span>
-        {" перемещается в клетку "}
+        {" перемещается на клетку "}
         <span className={accentClass}>
           {formatPosition(entry.to.x, entry.to.y)}
         </span>

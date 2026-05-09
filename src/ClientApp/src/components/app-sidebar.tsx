@@ -77,7 +77,21 @@ const data = {
     {
       title: "Документация",
       url: "/docs",
-      icon: BookOpen
+      icon: BookOpen,
+      items: [
+        {
+          title: "Быстрый старт",
+          url: "/docs/quick-start",
+        },
+        {
+          title: "Рецепты",
+          url: "/docs/recipes",
+        },
+        {
+          title: "API",
+          url: "/docs/script-api",
+        },
+      ],
     },
     {
       title: "Настройки",

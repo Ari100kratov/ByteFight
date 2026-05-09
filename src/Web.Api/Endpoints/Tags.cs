@@ -25,4 +25,6 @@ public static class Tags
     public const string Game = "Game";
 
     public const string GameSessions = "GameSessions";
+
+    public const string Documentation = "Documentation";
 }

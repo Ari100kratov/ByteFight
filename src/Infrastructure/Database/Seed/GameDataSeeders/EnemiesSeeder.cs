@@ -40,7 +40,7 @@ internal static class EnemiesSeeder
             Stats =
             [
                 CreateStat(StatType.Health, 105),
-                CreateStat(StatType.MoveRange, 2),
+                CreateStat(StatType.MoveRange, 1),
             ],
             ActionAssets = CreateOrcWarriorActionAssets(folder),
             Abilities =
@@ -73,7 +73,7 @@ internal static class EnemiesSeeder
                 "После его атаки на поле боя обычно остаются враги, вмятины и очень удивлённые союзники.",
             Stats =
             [
-                CreateStat(StatType.Health, 80),
+                CreateStat(StatType.Health, 75),
                 CreateStat(StatType.MoveRange, 2),
             ],
             ActionAssets = CreateOrcBerserkerActionAssets(folder),
@@ -127,7 +127,7 @@ internal static class EnemiesSeeder
                     name: "Зов предков",
                     description: "Шаман взывает к духам предков, направляя их силу в союзника.\r\n" +
                         "Духовная энергия мгновенно затягивает его раны.",
-                    heal: 24,
+                    heal: 20,
                     range: 4,
                     folder: folder,
                     frameCountByAsset:

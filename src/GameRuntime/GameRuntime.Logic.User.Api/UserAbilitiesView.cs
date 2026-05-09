@@ -1,10 +1,12 @@
 ﻿using Domain.Game.Abilities;
+using SharedKernel;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Представление списка способностей юнита, доступное пользовательскому скрипту.
 /// </summary>
+[UserCodeApi]
 public sealed class UserAbilitiesView
 {
     private static readonly HashSet<AbilityType> BasicAttackTypes =
@@ -47,4 +49,20 @@ public sealed class UserAbilitiesView
     /// </summary>
     public UserAbilityView? FindBestBasicAttack(int distance) =>
         FindAvailableBasicAttacks(distance).FirstOrDefault();
+
+    /// <summary>
+    /// Возвращает доступные базовые дальние атаки на указанной дистанции.
+    /// </summary>
+    public IEnumerable<UserAbilityView> FindAvailableBasicRangedAttacks(int distance) =>
+        All.Where(x =>
+            x.Type == AbilityType.BasicRangedAttack &&
+            x.TargetType == AbilityTargetType.Enemy &&
+            x.EffectType == AbilityEffectType.Damage &&
+            x.CanReach(distance));
+
+    /// <summary>
+    /// Возвращает лучшую базовую дальнюю атаку на указанной дистанции.
+    /// </summary>
+    public UserAbilityView? FindBestBasicRangedAttack(int distance) =>
+        FindAvailableBasicRangedAttacks(distance).FirstOrDefault();
 }

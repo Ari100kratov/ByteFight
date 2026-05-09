@@ -1,10 +1,12 @@
 ﻿using Domain.GameRuntime.GameActionLogs;
+using SharedKernel;
 
 namespace Domain.ValueObjects;
 
 /// <summary>
 /// Координата точки на двумерной сетке арены.
 /// </summary>
+[UserCodeApi]
 public sealed record Position
 {
     /// <summary>

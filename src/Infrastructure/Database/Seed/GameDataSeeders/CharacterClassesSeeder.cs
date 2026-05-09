@@ -41,7 +41,7 @@ internal static class CharacterClassesSeeder
             "Агрессивный воин, жертвующий защитой ради высокой силы удара.",
             folder: "berserker",
             health: 170,
-            meleeDamage: 44,
+            meleeDamage: 42,
             moveRange: 2,
             specIdSetter: id => seed.Spec_Warrior_Berserker = id);
 
@@ -92,7 +92,7 @@ internal static class CharacterClassesSeeder
             meleeDamage: 16,
             rangedDamage: 40,
             rangedRange: 4,
-            moveRange: 1,
+            moveRange: 2,
             mana: 100,
             specIdSetter: id => seed.Spec_Mage_Pyromancer = id);
 
@@ -119,7 +119,7 @@ internal static class CharacterClassesSeeder
             health: 150,
             meleeDamage: null,
             rangedDamage: 32,
-            rangedRange: 3,
+            rangedRange: 2,
             moveRange: 2,
             mana: 130,
             specIdSetter: id => seed.Spec_Mage_Arcanist = id);

@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameRuntime.Common", "src\G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameRuntime.UserCodeWorker", "src\GameRuntime\GameRuntime.UserCodeWorker\GameRuntime.UserCodeWorker.csproj", "{71805AAB-FE67-4338-8DEA-9BEE810A27AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameRuntime.UserCodeApiDocumentation", "src\GameRuntime\GameRuntime.UserCodeApiDocumentation\GameRuntime.UserCodeApiDocumentation.csproj", "{0D120664-1171-424B-97FC-CB589BBFA74E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{71805AAB-FE67-4338-8DEA-9BEE810A27AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71805AAB-FE67-4338-8DEA-9BEE810A27AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71805AAB-FE67-4338-8DEA-9BEE810A27AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D120664-1171-424B-97FC-CB589BBFA74E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D120664-1171-424B-97FC-CB589BBFA74E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D120664-1171-424B-97FC-CB589BBFA74E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D120664-1171-424B-97FC-CB589BBFA74E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +130,7 @@ Global
 		{CAF4AFA2-881C-4307-A586-2A0A1D237166} = {16D68C69-8B2E-481E-A2D4-C39A2E6475EE}
 		{7EE58D63-1C26-4A83-89B2-7CBE251C57DA} = {16D68C69-8B2E-481E-A2D4-C39A2E6475EE}
 		{71805AAB-FE67-4338-8DEA-9BEE810A27AB} = {16D68C69-8B2E-481E-A2D4-C39A2E6475EE}
+		{0D120664-1171-424B-97FC-CB589BBFA74E} = {16D68C69-8B2E-481E-A2D4-C39A2E6475EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B948A3CC-9872-4612-ABD2-BB3D49671542}

@@ -1,10 +1,12 @@
 ﻿using Domain.ValueObjects;
+using SharedKernel;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Описание игровой арены
 /// </summary>
+[UserCodeApi]
 public sealed record UserArenaDefinition
 {
     /// <summary>

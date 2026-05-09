@@ -1,8 +1,11 @@
-﻿namespace Domain.Game.Stats;
+﻿using SharedKernel;
+
+namespace Domain.Game.Stats;
 
 /// <summary>
 /// Типы характеристик.
 /// </summary>
+[UserCodeApi]
 public enum StatType
 {
     /// <summary>

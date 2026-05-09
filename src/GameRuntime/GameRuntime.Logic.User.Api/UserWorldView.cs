@@ -4,12 +4,14 @@ using Domain.ValueObjects;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Abilities;
 using GameRuntime.Common.World.Units;
+using SharedKernel;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Снимок состояния мира, доступный пользовательскому скрипту в методе <c>Decide</c>.
 /// </summary>
+[UserCodeApi]
 public sealed class UserWorldView
 {
     /// <summary>
@@ -109,6 +111,7 @@ public static partial class Mapper
         return new UserUnitView
         {
             Id = unit.Id,
+            Name = unit.Name,
             Position = unit.Position,
             IsDead = unit.IsDead,
 

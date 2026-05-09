@@ -1,17 +1,24 @@
 ﻿using Domain.Game.Stats;
 using Domain.ValueObjects;
+using SharedKernel;
 
 namespace GameRuntime.Logic.User.Api;
 
 /// <summary>
 /// Юнит.
 /// </summary>
+[UserCodeApi]
 public sealed class UserUnitView
 {
     /// <summary>
     /// Уникальный идентификатор.
     /// </summary>
     public Guid Id { get; init; }
+
+    /// <summary>
+    /// Наименование юнита
+    /// </summary>
+    public string Name { get; init; }
 
     /// <summary>
     /// Текущая позиция на арене.
@@ -87,4 +94,21 @@ public sealed class UserUnitView
     /// </summary>
     public bool CanAttack(UserUnitView target) =>
         FindBestBasicAttackFor(target) is not null;
+
+    /// <summary>
+    /// Возвращает лучшую базовую дальнюю атаку,
+    /// которой можно ударить указанного юнита.
+    /// </summary>
+    public UserAbilityView? FindBestBasicRangedAttackFor(UserUnitView target)
+    {
+        int distance = DistanceTo(target);
+        return Abilities.FindBestBasicRangedAttack(distance);
+    }
+
+    /// <summary>
+    /// Проверяет, может ли юнит атаковать цель
+    /// базовой дальней атакой.
+    /// </summary>
+    public bool CanAttackRanged(UserUnitView target) =>
+        FindBestBasicRangedAttackFor(target) is not null;
 }

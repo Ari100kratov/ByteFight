@@ -1,8 +1,11 @@
-﻿namespace Domain.Game.Abilities;
+﻿using SharedKernel;
+
+namespace Domain.Game.Abilities;
 
 /// <summary>
 /// Тип игровой способности юнита.
 /// </summary>
+[UserCodeApi]
 public enum AbilityType
 {
     /// <summary>

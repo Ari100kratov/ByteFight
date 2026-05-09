@@ -5,6 +5,7 @@ namespace Domain.ValueObjects;
 /// <summary>
 /// Снапшот какой-либо характеристики
 /// </summary>
+[UserCodeApi]
 public sealed record StatSnapshot
 {
     /// <summary>

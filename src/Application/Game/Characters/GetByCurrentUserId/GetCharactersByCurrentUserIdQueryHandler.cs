@@ -17,6 +17,7 @@ public sealed class GetCharactersByCurrentUserIdQueryHandler(IGameDbContext dbCo
             .Include(x => x.Spec)
                 .ThenInclude(x => x.Class)
             .Where(c => c.UserId == new UserId(userContext.UserId))
+            .OrderBy(a => a.CreatedAt)
             .Select(c => new CharacterResponse(
                 c.Id,
                 c.Name,

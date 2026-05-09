@@ -35,7 +35,7 @@ internal static class ArenaEnemiesSeeder
 
     private static ArenaEnemy[] CreateOrcRitualArenaEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(3, 6)),
+        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(2, 5)),
         CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(9, 3)),
         CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Shaman, new Position(8, 6))
     ];
