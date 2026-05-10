@@ -1,4 +1,5 @@
 import * as signalR from "@microsoft/signalr";
+import { gameHubUrl } from "@/shared/config/api";
 import { useGameRuntimeStore } from "../state/game.runtime.store";
 
 class GameHubConnection {
@@ -27,7 +28,7 @@ class GameHubConnection {
     }
 
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(`/game-runtime-hub`)
+      .withUrl(gameHubUrl())
       .withAutomaticReconnect()
       .build();
 
