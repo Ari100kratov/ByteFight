@@ -18,13 +18,26 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+string[] allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Vite dev server
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        if (allowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(allowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+        else
+        {
+            policy.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed(_ => builder.Environment.IsDevelopment());
+        }
     });
 });
 
@@ -46,13 +59,16 @@ app.MapDefaultEndpoints();
 
 app.MapEndpoints();
 
-if (app.Environment.IsDevelopment())
+app.MapOpenApi();
+app.MapScalarApiReference();
+
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Database:ApplyMigrations"))
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-
     app.ApplyMigrations();
+}
 
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Database:SeedOnStartup"))
+{
     await app.DatabaseSeed();
 }
 
@@ -71,7 +87,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-// REMARK: If you want to use Controllers, you'll need this.
 app.MapControllers();
 
 app.MapHub<GameRuntimeHub>(GameRuntimeHubConstants.HubUrl);

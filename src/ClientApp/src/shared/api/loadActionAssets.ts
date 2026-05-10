@@ -1,4 +1,5 @@
 import { Texture, Rectangle, ImageSource } from "pixi.js"
+import { apiUrl } from "@/shared/config/api"
 import type { ActionAssetDto } from "@/shared/types/action"
 
 /**
@@ -28,7 +29,7 @@ export async function loadActionAssets(actionAssets: ActionAssetDto[]) {
  */
 export async function loadTexturesFromUrl(url: string, frameCount: number): Promise<Texture[]> {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/assets/${url}`);
+    const res = await fetch(apiUrl(`/assets/${url}`));
     if (!res.ok) throw new Error(`Ошибка при загрузке ${url}`);
 
     const blob = await res.blob();
@@ -55,7 +56,7 @@ export async function loadTexturesFromUrl(url: string, frameCount: number): Prom
  */
 export async function loadTextureFromUrl(url: string): Promise<Texture | null> {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/assets/${url}`)
+    const res = await fetch(apiUrl(`/assets/${url}`))
     if (!res.ok) throw new Error(`Ошибка при загрузке ${url}`)
 
     const blob = await res.blob()
@@ -70,5 +71,5 @@ export async function loadTextureFromUrl(url: string): Promise<Texture | null> {
 
 export function getAssetUrl(assetKey?: string | null) {
   if (!assetKey) return null
-  return `${import.meta.env.VITE_API_URL}/assets/${assetKey}`
+  return apiUrl(`/assets/${assetKey}`)
 }
