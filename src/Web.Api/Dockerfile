@@ -26,7 +26,7 @@ RUN dotnet restore "./src/GameRuntime/GameRuntime.UserCodeWorker/GameRuntime.Use
 
 COPY . .
 WORKDIR "/src/src/Web.Api"
-RUN dotnet build "./Web.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
+RUN dotnet build "./Web.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
