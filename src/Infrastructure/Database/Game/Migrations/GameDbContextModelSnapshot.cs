@@ -23,6 +23,42 @@ namespace Infrastructure.Database.Game.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Game.ArenaItems.ArenaItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("integer")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id")
+                        .HasName("pk_arena_items");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_arena_items_name");
+
+                    b.ToTable("arena_items", "game");
+                });
+
             modelBuilder.Entity("Domain.Game.Arenas.Arena", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,6 +153,33 @@ namespace Infrastructure.Database.Game.Migrations
                         .HasDatabaseName("ix_arena_enemies_enemy_id");
 
                     b.ToTable("arena_enemies", "game");
+                });
+
+            modelBuilder.Entity("Domain.Game.Arenas.ArenaPlacedItems.ArenaPlacedItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ArenaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("arena_id");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_arena_placed_items");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_arena_placed_items_item_id");
+
+                    b.HasIndex("ArenaId", "ItemId")
+                        .HasDatabaseName("ix_arena_placed_items_arena_id_item_id");
+
+                    b.ToTable("arena_placed_items", "game");
                 });
 
             modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClass", b =>
@@ -560,6 +623,67 @@ namespace Infrastructure.Database.Game.Migrations
                     b.ToTable("enemy_stats", "game");
                 });
 
+            modelBuilder.Entity("Domain.Game.ArenaItems.ArenaItem", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.SpriteAnimation", "Sprite", b1 =>
+                        {
+                            b1.Property<Guid>("ArenaItemId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<float>("AnimationSpeed")
+                                .HasColumnType("real")
+                                .HasColumnName("sprite_animation_speed");
+
+                            b1.Property<int>("FrameCount")
+                                .HasColumnType("integer")
+                                .HasColumnName("sprite_frame_count");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)")
+                                .HasColumnName("sprite_url");
+
+                            b1.HasKey("ArenaItemId");
+
+                            b1.ToTable("arena_items", "game");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArenaItemId")
+                                .HasConstraintName("fk_arena_items_arena_items_id");
+
+                            b1.OwnsOne("Domain.ValueObjects.Scale", "Scale", b2 =>
+                                {
+                                    b2.Property<Guid>("SpriteAnimationArenaItemId")
+                                        .HasColumnType("uuid")
+                                        .HasColumnName("id");
+
+                                    b2.Property<float>("X")
+                                        .HasColumnType("real")
+                                        .HasColumnName("sprite_scale_x");
+
+                                    b2.Property<float>("Y")
+                                        .HasColumnType("real")
+                                        .HasColumnName("sprite_scale_y");
+
+                                    b2.HasKey("SpriteAnimationArenaItemId");
+
+                                    b2.ToTable("arena_items", "game");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("SpriteAnimationArenaItemId")
+                                        .HasConstraintName("fk_arena_items_arena_items_id");
+                                });
+
+                            b1.Navigation("Scale")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Sprite")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Game.Arenas.Arena", b =>
                 {
                     b.OwnsMany("Domain.ValueObjects.Position", "BlockedPositions", b1 =>
@@ -664,6 +788,53 @@ namespace Infrastructure.Database.Game.Migrations
                     b.Navigation("Arena");
 
                     b.Navigation("Enemy");
+
+                    b.Navigation("Position")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Game.Arenas.ArenaPlacedItems.ArenaPlacedItem", b =>
+                {
+                    b.HasOne("Domain.Game.Arenas.Arena", "Arena")
+                        .WithMany("Items")
+                        .HasForeignKey("ArenaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_arena_placed_items_arenas_arena_id");
+
+                    b.HasOne("Domain.Game.ArenaItems.ArenaItem", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_arena_placed_items_arena_items_item_id");
+
+                    b.OwnsOne("Domain.ValueObjects.Position", "Position", b1 =>
+                        {
+                            b1.Property<Guid>("ArenaPlacedItemId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("X")
+                                .HasColumnType("integer")
+                                .HasColumnName("position_x");
+
+                            b1.Property<int>("Y")
+                                .HasColumnType("integer")
+                                .HasColumnName("position_y");
+
+                            b1.HasKey("ArenaPlacedItemId");
+
+                            b1.ToTable("arena_placed_items", "game");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArenaPlacedItemId")
+                                .HasConstraintName("fk_arena_placed_items_arena_placed_items_id");
+                        });
+
+                    b.Navigation("Arena");
+
+                    b.Navigation("Item");
 
                     b.Navigation("Position")
                         .IsRequired();
@@ -1122,6 +1293,8 @@ namespace Infrastructure.Database.Game.Migrations
             modelBuilder.Entity("Domain.Game.Arenas.Arena", b =>
                 {
                     b.Navigation("Enemies");
+
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Domain.Game.CharacterClasses.CharacterClass", b =>

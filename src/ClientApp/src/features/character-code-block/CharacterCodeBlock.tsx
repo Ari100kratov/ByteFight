@@ -7,12 +7,13 @@ import { useCodeEditor } from "./hooks/useCodeEditor"
 import { CodeTabs } from "./components/CodeTabs"
 import { ChangeStatus } from "./types"
 import { ConfirmDialog } from "@/components/common/ConfirmDialog"
-import { Plus, RotateCcw } from "lucide-react"
+import { BookOpen, Plus, RotateCcw } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useUpdateCodes } from "./hooks/useUpdateCodes"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/shared/lib/utils"
+import { Link } from "react-router-dom"
 
 type Props = {
   characterId: string
@@ -55,8 +56,18 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
 
   return (
     <Card className={cn("flex flex-col w-full h-full overflow-auto min-w-[400px]", className)}>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <CardTitle>Поведение</CardTitle>
+
+        <Link
+          to="/docs"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <BookOpen size={16} />
+          Документация
+        </Link>
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col">

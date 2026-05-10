@@ -1,4 +1,4 @@
-using SharedKernel;
+п»їusing SharedKernel;
 
 namespace Domain.GameRuntime.GameSessions;
 
@@ -6,5 +6,5 @@ public static class GameSessionErrors
 {
     public static Error NotFound(Guid gameSessionId) => Error.NotFound(
         "GameSessions.NotFound",
-        $"Игровая сессия с Id = '{gameSessionId}' не найдена");
+        $"РРіСЂРѕРІР°СЏ СЃРµСЃСЃРёСЏ СЃ Id = '{gameSessionId}' РЅРµ РЅР°Р№РґРµРЅР°");
 }

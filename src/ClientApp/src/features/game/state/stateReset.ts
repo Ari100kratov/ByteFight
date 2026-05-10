@@ -5,6 +5,7 @@ import { useEnemiesStore } from "./data/enemies.data.store"
 import { useTexturesStore } from "./data/textures.data.store"
 import { useGameBootstrapStore } from "./game.bootstrap.store"
 import { useGameRuntimeStore } from "./game.runtime.store"
+import { useArenaItemsStateStore } from "./game/arena-items.state.store"
 import { useCharacterStateStore } from "./game/character.state.store"
 import { useEnemyStateStore } from "./game/enemy.state.store"
 import { useGridStore } from "./game/grid.state.store"
@@ -30,6 +31,7 @@ function resetGameStateStores() {
   useCharacterStateStore.getState().reset()
   useEnemyStateStore.getState().reset()
   useGameRuntimeStore.getState().reset()
+  useArenaItemsStateStore.getState().reset()
   useGameBootstrapStore.getState().end()
 }
 

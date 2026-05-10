@@ -20,8 +20,8 @@ export default function RecipesDocsPage() {
         </div>
 
         <p className="max-w-3xl text-muted-foreground [&_code]:rounded-md [&_code]:border [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-foreground">
-          Готовые паттерны поведения, которые можно копировать и дорабатывать
-          под своего персонажа.
+          Готовые логические блоки, которые можно копировать и дорабатывать
+          под свою стратегию.
         </p>
       </header>
 

@@ -33,6 +33,18 @@ internal sealed class GetArenasByModeQueryHandler(
                         g.Key.Name,
                         g.Count()
                     ))
+                    .ToList(),
+                a.Items
+                    .GroupBy(i => new
+                    {
+                        i.ItemId,
+                        i.Item.Name
+                    })
+                    .Select(g => new ArenaItemSummaryResponse(
+                        g.Key.ItemId,
+                        g.Key.Name,
+                        g.Count()
+                    ))
                     .ToList()
             ))
             .ToListAsync(cancellationToken);

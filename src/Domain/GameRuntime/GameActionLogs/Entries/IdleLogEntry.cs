@@ -1,4 +1,4 @@
-﻿namespace Domain.GameRuntime.GameActionLogs;
+﻿namespace Domain.GameRuntime.GameActionLogs.Entries;
 
 /// <summary>
 /// Запись журнала о пропуске хода.

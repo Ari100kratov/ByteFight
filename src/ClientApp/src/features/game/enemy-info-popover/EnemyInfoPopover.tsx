@@ -3,6 +3,7 @@ import { useArenaEnemiesStore } from "../state/data/arena-enemies.store"
 import { useEnemiesStore } from "../state/data/enemies.data.store"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 import { UnitPreview } from "@/features/unit-preview/UnitPreview"
+import { Skull } from "lucide-react"
 
 export function EnemyInfoPopover() {
   const selectedArenaEnemyId = useEnemySelectionStore(s => s.selectedArenaEnemyId)
@@ -42,7 +43,8 @@ export function EnemyInfoPopover() {
         {enemy && (
           <div className="flex flex-col gap-4">
             <div>
-              <div className="text-base font-semibold leading-none">
+              <div className="flex items-center gap-2 text-base font-semibold leading-none">
+                <Skull className="text-muted-foreground" />
                 {enemy.name}
               </div>
 

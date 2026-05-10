@@ -77,6 +77,24 @@ export const quickStartFacts: QuickStartFact[] = [
     ),
   },
   {
+    title: "Локальные методы",
+    content: (
+      <>
+        Повторяющуюся логику удобно выносить в методы в конце скрипта:
+        <code>bool IsPathBlocked(Position target) &#123; ... &#125;</code>.
+      </>
+    ),
+  },
+  {
+    title: "Запуск боя и сохранение",
+    content: (
+      <>
+        При запуске боя используется текущий код из редактора. 
+        Его необязательно всегда сохранять перед тестовым запуском.
+      </>
+    ),
+  },
+  {
     title: "Доступные using",
     content: (
       <>
@@ -102,158 +120,92 @@ export const quickStartFacts: QuickStartFact[] = [
 
 export const recipes: CodeExample[] = [
   {
-    title: "Найти ближайшего врага",
-    description: "Возвращает ближайшего живого врага или null.",
+    title: "Выбрать врага с лечением",
+    description:
+      "Полезно, если на арене есть лекарь. Такой враг часто должен быть первой целью.",
     usedApi: [
       "world.AliveEnemies",
-      "world.Self.DistanceTo(enemy)",
-    ],
-    code: `var target = world.AliveEnemies
-    .OrderBy(e => world.Self.DistanceTo(e))
-    .FirstOrDefault();`,
-  },
-  {
-    title: "Найти врага с минимальным здоровьем",
-    description: "Полезно для выбора цели на добивание.",
-    usedApi: [
-      "world.AliveEnemies",
-      "enemy.Health",
-    ],
-    code: `var target = world.AliveEnemies
-    .OrderBy(e => e.Health)
-    .FirstOrDefault();`,
-  },
-  {
-    title: "Найти врага с лечением",
-    description: "Ищет живого врага, у которого есть способность лечения.",
-    usedApi: [
       "enemy.Abilities.Has(AbilityType.Healing)",
     ],
     code: `var healer = world.AliveEnemies
     .FirstOrDefault(e => e.Abilities.Has(AbilityType.Healing));`,
   },
   {
-    title: "Найти врага с дальнобойной атакой",
-    description: "Ищет врага, у которого есть базовая дальняя атака.",
+    title: "Выбрать цель для дальней атаки",
+    description:
+      "Ищет врага, которого можно атаковать базовой дальней атакой. Соседние цели исключаются, чтобы наносить максимальный урон при наличии такой возможности.",
     usedApi: [
-      "enemy.Abilities.Has(AbilityType.BasicRangedAttack)",
+      "world.Self.CanAttackRanged(enemy)",
+      "world.Self.DistanceTo(enemy)",
+      "enemy.Health",
     ],
-    code: `var rangedEnemy = world.AliveEnemies
-    .FirstOrDefault(e => e.Abilities.Has(AbilityType.BasicRangedAttack));`,
-  },
-  {
-    title: "Найти врага по названию способности",
-    description: "Ищет врага, у которого есть способность с указанным фрагментом названия.",
-    usedApi: [
-      "enemy.Abilities.All",
-      "ability.Name",
-      "StringComparison.OrdinalIgnoreCase",
-    ],
-    code: `var enemy = world.AliveEnemies
-    .FirstOrDefault(e => e.Abilities.All.Any(a =>
-        a.Name.Contains("fire", StringComparison.OrdinalIgnoreCase)));`,
-  },
-  {
-    title: "Найти врага с большим запасом здоровья",
-    description: "Ищет самого крепкого врага по максимальному здоровью.",
-    usedApi: [
-      "enemy.MaxHealth",
-    ],
-    code: `var tank = world.AliveEnemies
-    .OrderByDescending(e => e.MaxHealth)
+    code: `var rangedTarget = world.AliveEnemies
+    .Where(e => world.Self.CanAttackRanged(e))
+    .Where(e => world.Self.DistanceTo(e) > 1)
+    .OrderBy(e => e.Health)
     .FirstOrDefault();`,
   },
   {
-    title: "Найти раненого врага",
-    description: "Ищет врага, у которого осталось меньше 30% здоровья.",
+    title: "Проверить, что путь к цели заблокирован",
+    description:
+      "Помогает понять, нужно ли сначала расчистить проход, а не просто идти к точке.",
     usedApi: [
-      "enemy.HealthPercent",
-    ],
-    code: `var wounded = world.AliveEnemies
-    .FirstOrDefault(e => e.HealthPercent < 0.3m);`,
-  },
-  {
-    title: "Найти доступную цель для дальней атаки",
-    description: "Ищет врага, которого можно достать базовой дальней атакой.",
-    usedApi: [
-      "world.Self.Abilities.Get(AbilityType.BasicRangedAttack)",
-      "ability.CanReach(distance)",
-      "world.Self.DistanceTo(enemy)",
-    ],
-    code: `var rangedAttack = world.Self.Abilities.Get(AbilityType.BasicRangedAttack);
-
-var rangedTarget = rangedAttack is null
-    ? null
-    : world.AliveEnemies
-        .Where(e => rangedAttack.CanReach(world.Self.DistanceTo(e)))
-        .OrderBy(e => world.Self.DistanceTo(e))
-        .FirstOrDefault();`,
-  },
-  {
-    title: "Переключиться на дальнюю цель, если враг рядом",
-    description: "Полезно для стрелка: если рядом стоит враг, ищем другую цель для дальней атаки.",
-    usedApi: [
-      "world.Self.DistanceTo(enemy)",
-      "AbilityType.BasicRangedAttack",
-      "ability.CanReach(distance)",
-    ],
-    code: `var hasEnemyNearby = world.AliveEnemies
-    .Any(e => world.Self.DistanceTo(e) <= 1);
-
-var rangedAttack = world.Self.Abilities.Get(AbilityType.BasicRangedAttack);
-
-var rangedTarget = !hasEnemyNearby || rangedAttack is null
-    ? null
-    : world.AliveEnemies
-        .Where(e => world.Self.DistanceTo(e) > 1)
-        .Where(e => rangedAttack.CanReach(world.Self.DistanceTo(e)))
-        .OrderBy(e => world.Self.DistanceTo(e))
-        .ThenBy(e => e.Health)
-        .FirstOrDefault();`,
-  },
-  {
-    title: "Найти безопасную клетку арены",
-    description: "Ищет свободную клетку, которая находится дальше всего от ближайшего врага.",
-    usedApi: [
-      "world.Arena.GridWidth",
-      "world.Arena.GridHeight",
-      "world.IsWalkable(position)",
-      "enemy.Position.ManhattanDistance(position)",
-    ],
-    code: `var safePosition = Enumerable.Range(0, world.Arena.GridWidth)
-    .SelectMany(x => Enumerable.Range(0, world.Arena.GridHeight)
-        .Select(y => new Position(x, y)))
-    .Where(world.IsWalkable)
-    .OrderByDescending(position => world.AliveEnemies
-        .Min(enemy => enemy.Position.ManhattanDistance(position)))
-    .ThenBy(position => world.Self.Position.ManhattanDistance(position))
-    .FirstOrDefault();`,
-  },
-  {
-    title: "Найти все свободные клетки арены",
-    description: "Фильтрует клетки арены, по которым можно ходить.",
-    usedApi: [
-      "new Position(x, y)",
-      "world.IsWalkable(position)",
-    ],
-    code: `var walkablePositions = Enumerable.Range(0, world.Arena.GridWidth)
-    .SelectMany(x => Enumerable.Range(0, world.Arena.GridHeight)
-        .Select(y => new Position(x, y)))
-    .Where(world.IsWalkable);`,
-  },
-  {
-    title: "Найти узкое место на арене",
-    description: "Ищет свободную клетку с минимальным количеством проходимых соседей.",
-    usedApi: [
-      "world.IsWalkable(position)",
       "world.GetWalkableNeighbors4(position)",
+      "Position.ManhattanDistance(position)",
     ],
-    code: `var chokePoint = Enumerable.Range(0, world.Arena.GridWidth)
-    .SelectMany(x => Enumerable.Range(0, world.Arena.GridHeight)
-        .Select(y => new Position(x, y)))
-    .Where(world.IsWalkable)
-    .OrderBy(position => world.GetWalkableNeighbors4(position).Count())
-    .ThenBy(position => world.Self.Position.ManhattanDistance(position))
+    code: `bool IsPathBlocked(Position target)
+{
+    return !world.GetWalkableNeighbors4(world.Self.Position)
+        .Any(p => p.ManhattanDistance(target) <
+                  world.Self.Position.ManhattanDistance(target));
+}`,
+  },
+  {
+    title: "Найти предмет для восполнения здоровья",
+    description:
+      "Ищет лечебное зелье среди предметов арены.",
+    usedApi: [
+      "world.Arena.Items",
+      "ArenaItemType.HealingPotion",
+    ],
+    code: `var healingPotion = world.Arena.Items
+    .FirstOrDefault(i => i.Type == ArenaItemType.HealingPotion);`,
+  },
+  {
+    title: "Выбрать более правую цель",
+    description:
+      "Пример позиционного приоритета. Бывает полезно, чтобы расчистить путь по правой стороне, например.",
+    usedApi: [
+      "enemy.Position.X",
+      "enemy.Health",
+    ],
+    code: `var target = world.AliveEnemies
+    .OrderByDescending(e => e.Position.X)
+    .ThenBy(e => e.Health)
     .FirstOrDefault();`,
+  },
+  {
+    title: "Не выходить из сильной позиции",
+    description:
+      "Если персонаж уже стоит на нужной клетке, он атакует доступные цели или пропускает ход.",
+    usedApi: [
+      "world.Self.Position",
+      "world.Self.CanAttack(enemy)",
+      "Attack",
+      "Idle",
+    ],
+    code: `var strongPosition = new Position(8, 6);
+
+if (world.Self.Position.Equals(strongPosition))
+{
+    var target = world.AliveEnemies
+        .Where(world.Self.CanAttack)
+        .OrderBy(e => e.Health)
+        .FirstOrDefault();
+
+    return target is null
+        ? new Idle()
+        : new Attack(target.Id);
+}`,
   },
 ]

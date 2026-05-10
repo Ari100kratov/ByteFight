@@ -3,6 +3,7 @@ using Domain.Game.Stats;
 using Domain.ValueObjects;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Abilities;
+using GameRuntime.Common.World.ArenaItems;
 using GameRuntime.Common.World.Units;
 using SharedKernel;
 
@@ -97,7 +98,8 @@ public static partial class Mapper
                 GridWidth = world.Arena.GridWidth,
                 GridHeight = world.Arena.GridHeight,
                 StartPosition = world.Arena.StartPosition,
-                BlockedPositions = world.Arena.BlockedPositions
+                BlockedPositions = world.Arena.BlockedPositions,
+                Items = [.. world.Arena.Items.Select(item => item.ToUserArenaItemView())]
             },
 
             Self = actor.ToUserUnitView(),
@@ -140,6 +142,18 @@ public static partial class Mapper
                     Priority = x.Priority,
                     Stats = new Dictionary<AbilityStatType, decimal>(x.Stats)
                 })]
+        };
+    }
+
+    private static UserArenaItemView ToUserArenaItemView(this ArenaItemDefinition item)
+    {
+        return new UserArenaItemView
+        {
+            Id = item.ItemId,
+            Name = item.Name,
+            Type = item.Type,
+            Position = item.Position,
+            Value = item.Value,
         };
     }
 }

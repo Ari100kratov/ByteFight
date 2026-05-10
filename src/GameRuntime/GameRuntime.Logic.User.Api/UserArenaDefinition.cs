@@ -31,6 +31,23 @@ public sealed record UserArenaDefinition
     public required IReadOnlyList<Position> BlockedPositions { get; init; }
 
     /// <summary>
+    /// Список предметов, размещённых на арене.
+    /// </summary>
+    public required IReadOnlyList<UserArenaItemView> Items { get; init; }
+
+    /// <summary>
+    /// Возвращает предметы на указанной клетке.
+    /// </summary>
+    public IEnumerable<UserArenaItemView> GetActiveItemsAt(Position position)
+        => Items.Where(x => x.Position == position);
+
+    /// <summary>
+    /// Проверяет, есть ли предмет на указанной клетке.
+    /// </summary>
+    public bool HasActiveItemAt(Position position)
+        => Items.Any(x => x.Position == position);
+
+    /// <summary>
     /// Проверяет, находится ли позиция внутри границ арены.
     /// </summary>
     public bool IsWithin(Position position)

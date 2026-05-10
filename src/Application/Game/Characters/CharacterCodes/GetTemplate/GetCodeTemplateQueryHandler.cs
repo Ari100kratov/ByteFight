@@ -1,71 +1,69 @@
+using System.Security.Cryptography;
 using Application.Abstractions.Messaging;
 using SharedKernel;
 
 namespace Application.Game.Characters.CharacterCodes.GetTemplate;
 
-internal sealed class GetCodeTemplateQueryHandler : IQueryHandler<GetCodeTemplateQuery, CodeTemplateResponse>
+internal sealed class GetCodeTemplateQueryHandler
+    : IQueryHandler<GetCodeTemplateQuery, CodeTemplateResponse>
 {
-    public Task<Result<CodeTemplateResponse>> Handle(GetCodeTemplateQuery query, CancellationToken cancellationToken)
+    private static readonly string[] TemplateNames =
+    [
+        "works-on-my-machine.cs",
+        "final-final-v2.cs",
+        "definitely-not-bugged.cs",
+        "temporary-solution.cs",
+        "one-last-refactor.cs",
+        "smart-ai.cs",
+        "dont-touch-it.cs",
+        "magic-happens-here.cs",
+        "ship-it.cs",
+        "todo-remove-later.cs",
+        "berserk-mode.cs",
+        "trust-the-algorithm.cs",
+        "just-one-hotfix.cs",
+        "probably-optimal.cs",
+        "ai-core.cs",
+        "this-should-work.cs",
+        "brain.cs",
+        "production-ready.cs",
+    ];
+
+    public Task<Result<CodeTemplateResponse>> Handle(
+        GetCodeTemplateQuery query,
+        CancellationToken cancellationToken)
     {
+        int index = RandomNumberGenerator.GetInt32(TemplateNames.Length);
+
         var codeTemplate = new CodeTemplateResponse
         {
             Id = Guid.CreateVersion7(),
-            Name = "Program.cs",
-            SourceCode = @"// Это шаблон поведения персонажа.
-// Каждый ход игра вызывает этот код и ожидает одно действие:
-// Например: Attack, MoveTowards, MoveAwayFrom, Idle.
+            Name = TemplateNames[index],
 
-// 1. Оцени ситуацию на арене:
-// - где находится персонаж
-// - какие враги живы
-// - кто рядом
-// - кого можно атаковать
-// - куда лучше двигаться
-
-var enemies = world.AliveEnemies;
-
-// Если врагов нет — ничего не делаем
-if (!enemies.Any())
-{
-    return new Idle();
-}
-
-// 2. Выбери цель.
-// Подумай, что важнее в этой стратегии:
-// - атаковать ближайшего?
-// - добивать врага с малым здоровьем?
-// - держаться подальше от опасного врага?
-// - сначала уничтожать особые цели?
-
-var target = enemies
-    // TODO: выбери подходящую сортировку или условие
+            SourceCode = """
+// Берём только живых врагов и выбираем цель.
+// Сначала приоритет у тех, кого уже можно атаковать.
+// Если таких нет — выбираем ближайшего.
+var target = world.AliveEnemies
+    .OrderBy(e => world.Self.CanAttack(e) ? 0 : 1)
+    .ThenBy(e => world.Self.DistanceTo(e))
     .FirstOrDefault();
 
-// Если цель не выбрана — ничего не делаем
+// Если живых врагов нет — пропускаем ход.
 if (target is null)
 {
     return new Idle();
 }
 
-// 3. Реши, что делать с выбранной целью.
-// Подумай:
-// - можно ли атаковать прямо сейчас?
-// - нужно ли приблизиться?
-// - нужно ли отступить?
-// - стоит ли пропустить ход?
+// Если цель уже в радиусе атаки — атакуем её.
+if (world.Self.CanAttack(target))
+{
+    return new Attack(target.Id);
+}
 
-// TODO: добавь проверку возможности атаки
-// Пример идеи:
-// if (...)
-// {
-//     return new Attack(target.Id);
-// }
-
-// TODO: выбери подходящее движение
-// Пример идеи:
-// return new MoveTowards(target.Id);
-
-return new Idle();"
+// Иначе двигаемся в сторону выбранной цели.
+return new MoveTowards(target.Id);
+"""
         };
 
         return Task.FromResult(Result.Success(codeTemplate));

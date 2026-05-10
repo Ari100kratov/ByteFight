@@ -1,6 +1,8 @@
-﻿using Domain.GameRuntime.GameActionLogs;
+﻿using Domain.Game.ArenaItems;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Common.World.Abilities;
+using GameRuntime.Common.World.ArenaItems;
 using GameRuntime.Common.World.Stats;
 
 namespace GameRuntime.Common.World.Units;
@@ -32,14 +34,16 @@ public record BaseUnit
     /// </summary>
     public required RuntimeAbilities Abilities { get; init; }
 
-    public virtual Guid Id { get; }
-
     public required string Name { get; init; }
+
+    public virtual Guid Id { get; }
 
     public bool IsDead => Stats.IsDead();
 
     public void Move(Position newPosition)
     {
+        ThrowIfDead();
+
         int dx = newPosition.X - Position.X;
 
         if (dx != 0)
@@ -56,6 +60,7 @@ public record BaseUnit
 
     public void Turn(FacingDirection facingDirection)
     {
+        ThrowIfDead();
         FacingDirection = facingDirection;
     }
 
@@ -67,5 +72,32 @@ public record BaseUnit
         }
 
         KilledByUnitId = killerId;
+    }
+
+    /// <summary>
+    /// Применяет эффект предмета к юниту.
+    /// </summary>
+    public StatApplyResult ApplyItem(ArenaItemDefinition item)
+    {
+        ThrowIfDead();
+
+        return item.Type switch
+        {
+            ArenaItemType.HealingPotion => Stats.Heal(item.Value),
+
+            _ => throw new NotImplementedException(
+                $"Item type '{item.Type}' is not supported yet.")
+        };
+    }
+
+    private void ThrowIfDead()
+    {
+        if (!IsDead)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"Unit '{Name}' ({Id}) is dead and cannot perform this action.");
     }
 }

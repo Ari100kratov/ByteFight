@@ -1,4 +1,6 @@
-﻿namespace Domain.GameRuntime.GameActionLogs;
+﻿using Domain.GameRuntime.GameActionLogs.Entries;
+
+namespace Domain.GameRuntime.GameActionLogs;
 
 public sealed record TurnLog
 {

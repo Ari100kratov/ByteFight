@@ -1,4 +1,4 @@
-﻿using Domain.GameRuntime.GameActionLogs;
+﻿using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 

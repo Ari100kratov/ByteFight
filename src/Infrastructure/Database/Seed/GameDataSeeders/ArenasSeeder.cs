@@ -49,8 +49,8 @@ internal class ArenasSeeder
         skeletonCryptArena.SetBlockedPositions([
             new(0, 0), new(1, 0), new(2, 0), new(6, 0), new(7, 0), new(8, 0), new(9, 0),
             new(0, 1), new(1, 1), new(2, 1), new(7, 1), new(8, 1), new(9, 1),
-            new(0, 2), new(1, 2), new(2, 2), new(2, 2), new(7, 2), new(8, 2), new(9, 2),
-            new(0, 3), new(2, 3), new(8, 3),
+            new(0, 2), new(1, 2), new(2, 2), new(2, 2), new(9, 2),
+            new(0, 3), new(8, 3),
             new(3, 4),
             new(1, 5),
             new(0, 6), new(7, 6), new(9, 6),

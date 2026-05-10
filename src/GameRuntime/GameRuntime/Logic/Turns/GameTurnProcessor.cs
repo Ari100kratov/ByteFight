@@ -1,4 +1,5 @@
 ﻿using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Units;
 

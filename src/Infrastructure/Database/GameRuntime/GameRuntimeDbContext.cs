@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Data;
-using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameSessionParticipants;
 using Domain.GameRuntime.GameSessions;
 using Infrastructure.Database.Game;

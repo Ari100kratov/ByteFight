@@ -1,11 +1,18 @@
-import { AbilityEffectType } from "@/shared/types/ability"
 import { create } from "zustand"
+
+export const FloatingCombatTextKind = {
+  Damage: "damage",
+  Healing: "healing",
+} as const
+
+export type FloatingCombatTextKind =
+  typeof FloatingCombatTextKind[keyof typeof FloatingCombatTextKind]
 
 export type FloatingCombatText = {
   id: string
   unitId: string
   value: number
-  effectType: AbilityEffectType
+  kind: FloatingCombatTextKind
 }
 
 type FloatingCombatTextStore = {
@@ -13,7 +20,7 @@ type FloatingCombatTextStore = {
   add: (
     unitId: string,
     value: number,
-    effectType: AbilityEffectType
+    kind: FloatingCombatTextKind
   ) => void
   remove: (id: string) => void
   reset: () => void
@@ -23,7 +30,7 @@ export const useFloatingCombatTextStore = create<FloatingCombatTextStore>(
   set => ({
     items: [],
 
-    add: (unitId, value, effectType) =>
+    add: (unitId, value, kind) =>
       set(s => ({
         items: [
           ...s.items,
@@ -31,7 +38,7 @@ export const useFloatingCombatTextStore = create<FloatingCombatTextStore>(
             id: crypto.randomUUID(),
             unitId,
             value,
-            effectType,
+            kind,
           },
         ],
       })),

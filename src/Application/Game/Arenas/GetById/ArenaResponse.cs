@@ -1,4 +1,5 @@
 ﻿using Application.Contracts;
+using Domain.Game.ArenaItems;
 
 namespace Application.Game.Arenas.GetById;
 
@@ -10,5 +11,15 @@ public sealed record ArenaResponse(
     string BackgroundAsset,
     string? Description,
     PositionDto StartPosition,
-    PositionDto[] BlockedPositions
-);
+    PositionDto[] BlockedPositions,
+    ArenaItemResponse[] Items);
+
+public sealed record ArenaItemResponse(
+    Guid PlacedItemId,
+    Guid ItemId,
+    string Name,
+    string? Description,
+    ArenaItemType Type,
+    int Value,
+    PositionDto Position,
+    SpriteAnimationDto Sprite);

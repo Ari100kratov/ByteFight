@@ -17,6 +17,7 @@ public class GameDataSeeder(
         }
 
         ArenasSeeder.Seed(seed, dbContext);
+        ArenaItemsSeeder.Seed(seed, dbContext);
 
         EnemiesSeeder.Seed(seed, dbContext);
         ArenaEnemiesSeeder.Seed(seed, dbContext);

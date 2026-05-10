@@ -1,6 +1,6 @@
 ﻿using SharedKernel;
 
-namespace Domain.GameRuntime.GameActionLogs;
+namespace Domain.GameRuntime.GameActionLogs.Entries;
 
 /// <summary>
 /// Базовая запись журнала боя.

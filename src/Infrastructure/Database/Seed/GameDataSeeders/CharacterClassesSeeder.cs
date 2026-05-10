@@ -89,7 +89,7 @@ internal static class CharacterClassesSeeder
             "Боевой маг огня, наносящий высокий урон разрушительными заклинаниями.",
             folder: "pyromancer",
             health: 120,
-            meleeDamage: 16,
+            meleeDamage: 20,
             rangedDamage: 40,
             rangedRange: 4,
             moveRange: 2,

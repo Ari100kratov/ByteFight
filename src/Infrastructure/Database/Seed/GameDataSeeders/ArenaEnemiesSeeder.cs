@@ -26,11 +26,11 @@ internal static class ArenaEnemiesSeeder
 
     private static ArenaEnemy[] CreateSkeletonCryptArenaEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(6, 5)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(7, 3)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(3, 3)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(2, 5)),
-        //CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(4, 7)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(5, 5)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(9, 4)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(1, 4)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(1, 7)),
+        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(3, 8)),
     ];
 
     private static ArenaEnemy[] CreateOrcRitualArenaEnemies(SeedContext seed) =>
