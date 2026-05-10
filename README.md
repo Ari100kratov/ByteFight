@@ -21,6 +21,15 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://bytefight.xarleyn.me">
+    <img
+      alt="Play Online"
+      src="https://img.shields.io/badge/Play%20Online-ByteFight-4f46e5?style=for-the-badge"
+    />
+  </a>
+</p>
+
 ## 📚 Содержание
 - [О проекте](#-о-проекте)
 - [Суть проекта и ключевые особенности](#-суть-проекта-и-ключевые-особенности)
