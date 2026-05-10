@@ -33,21 +33,11 @@ internal sealed partial class ProcessUserCodeRunner : IUserCodeRunner
             World: world);
 
         string inputJson = JsonSerializer.Serialize(input, JsonOptions);
+        string workerPath = ResolveWorkerPath(_workerExePath);
 
         using var process = new Process
         {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = _workerExePath,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                StandardInputEncoding = new UTF8Encoding(false),
-                StandardOutputEncoding = new UTF8Encoding(false),
-                StandardErrorEncoding = new UTF8Encoding(false)
-            }
+            StartInfo = CreateWorkerStartInfo(workerPath)
         };
 
         try
@@ -101,6 +91,57 @@ internal sealed partial class ProcessUserCodeRunner : IUserCodeRunner
         {
             throw ex.InnerExceptions[0];
         }
+    }
+
+    private static ProcessStartInfo CreateWorkerStartInfo(string workerPath)
+    {
+        bool isDll = string.Equals(
+            Path.GetExtension(workerPath),
+            ".dll",
+            StringComparison.OrdinalIgnoreCase);
+
+        return new ProcessStartInfo
+        {
+            FileName = isDll ? "dotnet" : workerPath,
+            Arguments = isDll ? $"\"{workerPath}\"" : string.Empty,
+            WorkingDirectory = Path.GetDirectoryName(workerPath) ?? AppContext.BaseDirectory,
+
+            UseShellExecute = false,
+            CreateNoWindow = true,
+
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+
+            StandardInputEncoding = new UTF8Encoding(false),
+            StandardOutputEncoding = new UTF8Encoding(false),
+            StandardErrorEncoding = new UTF8Encoding(false)
+        };
+    }
+
+    private static string ResolveWorkerPath(string configuredPath)
+    {
+        if (File.Exists(configuredPath))
+        {
+            return configuredPath;
+        }
+
+        if (string.Equals(
+                Path.GetExtension(configuredPath),
+                ".exe",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            string dllPath = Path.ChangeExtension(configuredPath, ".dll");
+
+            if (File.Exists(dllPath))
+            {
+                return dllPath;
+            }
+        }
+
+        throw new FileNotFoundException(
+            $"Worker-процесс не найден. Configured path: '{configuredPath}'.",
+            configuredPath);
     }
 
     private static string? TryExtractWorkerError(string stdout, string stderr)
