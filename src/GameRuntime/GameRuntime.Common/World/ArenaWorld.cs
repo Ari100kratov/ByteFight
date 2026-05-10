@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
 using Domain;
-using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameResults;
 using Domain.ValueObjects;
 using GameRuntime.Common.World.Abilities;
+using GameRuntime.Common.World.ArenaItems;
 using GameRuntime.Common.World.Units;
 using SharedKernel;
 
@@ -107,6 +108,25 @@ public sealed class ArenaWorld
 
     public DeathLogEntry CreateDeathLogEntry(BaseUnit actor)
         => new(GameSessionId, new UnitId(actor.Id), actor.Name, null, TurnIndex);
+
+    public ItemPickedUpLogEntry CreateItemPickedUpLogEntry(
+        BaseUnit actor,
+        ArenaItemDefinition item,
+        decimal value,
+        StatSnapshot actorHp)
+        => new(
+            GameSessionId,
+            new UnitId(actor.Id),
+            actor.Name,
+            null,
+            item.PlacedItemId,
+            item.ItemId,
+            item.Name,
+            item.Type,
+            item.Position,
+            value,
+            actorHp,
+            TurnIndex);
 
     /// <summary>
     /// Возвращает все клетки, достижимые из стартовой позиции

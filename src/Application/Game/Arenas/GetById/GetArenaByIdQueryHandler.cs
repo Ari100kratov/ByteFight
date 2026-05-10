@@ -16,14 +16,25 @@ internal sealed class GetArenaByIdQueryHandler(IGameDbContext dbContext)
             .AsNoTracking()
             .Where(a => a.Id == query.Id)
             .Select(a => new ArenaResponse(
-                a.Id, a.Name,
+                a.Id,
+                a.Name,
                 a.GridWidth,
                 a.GridHeight,
                 a.BackgroundAsset,
                 a.Description,
                 a.StartPosition.ToDto(),
-                a.BlockedPositions.Select(x => x.ToDto()).ToArray()
-                ))
+                a.BlockedPositions.Select(x => x.ToDto()).ToArray(),
+                a.Items.Select(x => new ArenaItemResponse(
+                    x.Id,
+                    x.ItemId,
+                    x.Item.Name,
+                    x.Item.Description,
+                    x.Item.Type,
+                    x.Item.Value,
+                    x.Position.ToDto(),
+                    x.Item.Sprite.ToDto()
+                )).ToArray()
+            ))
             .SingleOrDefaultAsync(cancellationToken);
 
         if (arena is null)

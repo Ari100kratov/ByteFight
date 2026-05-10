@@ -35,7 +35,7 @@ export function FloatingCombatTextLayer() {
           <FloatingCombatText
             key={item.id}
             value={item.value}
-            effectType={item.effectType}
+            kind={item.kind}
             x={x}
             y={y - 20}
             onComplete={() => remove(item.id)}

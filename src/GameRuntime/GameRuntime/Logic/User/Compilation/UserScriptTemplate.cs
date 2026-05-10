@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Domain.ValueObjects;
 using Domain.Game.Stats;
 using Domain.Game.Abilities;
+using Domain.Game.ArenaItems;
 
 using GameRuntime.Logic.User.Api;
 

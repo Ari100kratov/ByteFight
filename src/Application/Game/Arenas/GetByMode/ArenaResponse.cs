@@ -7,11 +7,18 @@ public sealed record ArenaResponse(
     int GridWidth,
     int GridHeight,
     string? Description,
-    IReadOnlyList<ArenaEnemySummaryResponse> Enemies
+    IReadOnlyList<ArenaEnemySummaryResponse> Enemies,
+    IReadOnlyList<ArenaItemSummaryResponse> Items
 );
 
 public sealed record ArenaEnemySummaryResponse(
     Guid EnemyId,
+    string Name,
+    int Count
+);
+
+public sealed record ArenaItemSummaryResponse(
+    Guid ItemId,
     string Name,
     int Count
 );

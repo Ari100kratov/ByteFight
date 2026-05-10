@@ -1,3 +1,4 @@
+import type { ArenaItemType } from "@/shared/types/arenaItem";
 import type { AbilityEffectType, AbilityType } from "../../../shared/types/ability";
 import type { FacingDirection, Position, StatSnapshot } from "./common";
 
@@ -9,6 +10,7 @@ export const GameActionLogEntryType = {
   Walk: 2,
   AbilityUsed: 3,
   Death: 4,
+  ItemPickedUp: 5,
 } as const;
 
 export type GameActionLogEntryType =
@@ -33,7 +35,8 @@ export type GameActionLogEntry =
   | AbilityUsedLogEntry
   | WalkLogEntry
   | DeathLogEntry
-  | IdleLogEntry;
+  | IdleLogEntry
+  | ItemPickedUpLogEntry;
 
 /**
  * Использование способности (универсально для атак, лечения и т.д.)
@@ -77,6 +80,21 @@ export type IdleLogEntry = BaseLogEntry & {
 };
 
 /**
+ * Подбор предмета.
+ */
+export type ItemPickedUpLogEntry = BaseLogEntry & {
+  entryType: typeof GameActionLogEntryType.ItemPickedUp;
+
+  placedItemId: string;
+  itemId: string;
+  itemName: string;
+  itemType: ArenaItemType;
+  position: Position;
+  value: number;
+  actorHp: StatSnapshot;
+};
+
+/**
  * Type guards
  */
 export const isAbilityUsed = (
@@ -92,3 +110,6 @@ export const isDeath = (e: GameActionLogEntry): e is DeathLogEntry =>
 
 export const isIdle = (e: GameActionLogEntry): e is IdleLogEntry =>
   e.entryType === GameActionLogEntryType.Idle;
+
+export const isItemPickedUp = (e: GameActionLogEntry): e is ItemPickedUpLogEntry =>
+  e.entryType === GameActionLogEntryType.ItemPickedUp;

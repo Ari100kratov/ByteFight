@@ -1,13 +1,13 @@
-import { AbilityEffectType } from "@/shared/types/ability"
 import { extend } from "@pixi/react"
 import { Text, Ticker } from "pixi.js"
 import { useEffect, useRef, useState } from "react"
+import { FloatingCombatTextKind } from "../state/ui/floating.combat.text.store"
 
 extend({ Text })
 
 type Props = {
   value: number
-  effectType: AbilityEffectType
+  kind: FloatingCombatTextKind
   x: number
   y: number
   onComplete: () => void
@@ -24,7 +24,7 @@ const easeOutBack = (t: number) => {
 
 export function FloatingCombatText({
   value,
-  effectType,
+  kind,
   x,
   y,
   onComplete,
@@ -39,7 +39,7 @@ export function FloatingCombatText({
   const elapsedRef = useRef(0)
   const startOffsetXRef = useRef((Math.random() - 0.5) * 18)
 
-  const isHealing = effectType === AbilityEffectType.Healing
+  const isHealing = kind === FloatingCombatTextKind.Healing
 
   useEffect(() => {
     const duration = 1000

@@ -7,7 +7,7 @@ import { useGridStore } from "../../state/game/grid.state.store"
 import { gridToPixel } from "../../grid-container/gridUtils"
 import type { AbilityUsedLogEntry, WalkLogEntry } from "../../types/TurnLog"
 import type { StatSnapshot } from "../../types/common"
-import { useFloatingCombatTextStore } from "../../state/ui/floating.combat.text.store"
+import { FloatingCombatTextKind, useFloatingCombatTextStore } from "../../state/ui/floating.combat.text.store"
 
 export class UnitController {
   sprite: UnitSprite
@@ -29,6 +29,10 @@ export class UnitController {
     this.playIdle()
   }
 
+  updateHp(hp: StatSnapshot) {
+    this.updateRuntime({ hp })
+  }
+
   async playIdle() {
     const animation = this.animations.getAnimation(ActionType.Idle)
     if (!animation) return
@@ -42,7 +46,7 @@ export class UnitController {
     if (!animation) return
 
     await this.sprite.playAnimation(animation, ActionType.Hurt, false)
-    this.updateRuntime({ hp })
+    this.updateHp(hp)
     await this.playIdle()
   }
 
@@ -93,7 +97,7 @@ export class UnitController {
         if (entry.effectType === AbilityEffectType.Damage) {
           useFloatingCombatTextStore
             .getState()
-            .add(entry.targetId, entry.value, entry.effectType)
+            .add(entry.targetId, entry.value, FloatingCombatTextKind.Damage)
 
           return target.playHurt(entry.targetHp)
         }
@@ -101,7 +105,7 @@ export class UnitController {
         if (entry.effectType === AbilityEffectType.Healing) {
           useFloatingCombatTextStore
             .getState()
-            .add(entry.targetId, entry.value, entry.effectType)
+            .add(entry.targetId, entry.value, FloatingCombatTextKind.Healing)
 
           target.updateRuntime({ hp: entry.targetHp })
         }

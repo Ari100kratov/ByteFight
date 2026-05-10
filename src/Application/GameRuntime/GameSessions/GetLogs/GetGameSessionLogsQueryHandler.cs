@@ -2,7 +2,7 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Contracts.GameRuntime;
-using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;

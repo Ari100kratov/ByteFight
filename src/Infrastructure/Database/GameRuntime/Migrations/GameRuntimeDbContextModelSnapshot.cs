@@ -24,7 +24,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.GameActionLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,9 +158,9 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.ToTable("game_sessions", "game_runtime");
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.AbilityUsedLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.AbilityUsedLogEntry", b =>
                 {
-                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.GameActionLogEntry");
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
                     b.Property<string>("AbilityName")
                         .HasMaxLength(128)
@@ -198,27 +198,62 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.HasDiscriminator().HasValue(3);
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.DeathLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.DeathLogEntry", b =>
                 {
-                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.GameActionLogEntry");
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
                     b.ToTable("game_action_log_entries", "game_runtime");
 
                     b.HasDiscriminator().HasValue(4);
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.IdleLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.IdleLogEntry", b =>
                 {
-                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.GameActionLogEntry");
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
                     b.ToTable("game_action_log_entries", "game_runtime");
 
                     b.HasDiscriminator().HasValue(1);
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.WalkLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.ItemPickedUpLogEntry", b =>
                 {
-                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.GameActionLogEntry");
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("item_name");
+
+                    b.Property<int>("ItemType")
+                        .HasColumnType("integer")
+                        .HasColumnName("item_type");
+
+                    b.Property<Guid>("PlacedItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("placed_item_id");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric")
+                        .HasColumnName("value");
+
+                    b.ToTable("game_action_log_entries", "game_runtime", t =>
+                        {
+                            t.Property("Value")
+                                .HasColumnName("item_picked_up_log_entry_value");
+                        });
+
+                    b.HasDiscriminator().HasValue(5);
+                });
+
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.WalkLogEntry", b =>
+                {
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
                     b.Property<int>("FacingDirection")
                         .HasColumnType("integer")
@@ -233,7 +268,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.HasDiscriminator().HasValue(2);
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.GameActionLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry", b =>
                 {
                     b.HasOne("Domain.GameRuntime.GameSessions.GameSession", null)
                         .WithMany("ActionLogs")
@@ -283,7 +318,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Navigation("Result");
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.AbilityUsedLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.AbilityUsedLogEntry", b =>
                 {
                     b.OwnsOne("Domain.ValueObjects.StatSnapshot", "TargetHp", b1 =>
                         {
@@ -312,7 +347,62 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.WalkLogEntry", b =>
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.ItemPickedUpLogEntry", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.StatSnapshot", "ActorHp", b1 =>
+                        {
+                            b1.Property<Guid>("ItemPickedUpLogEntryId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<decimal>("Current")
+                                .HasColumnType("numeric")
+                                .HasColumnName("actor_hp_current");
+
+                            b1.Property<decimal>("Max")
+                                .HasColumnType("numeric")
+                                .HasColumnName("actor_hp_max");
+
+                            b1.HasKey("ItemPickedUpLogEntryId");
+
+                            b1.ToTable("game_action_log_entries", "game_runtime");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemPickedUpLogEntryId")
+                                .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
+                        });
+
+                    b.OwnsOne("Domain.ValueObjects.Position", "Position", b1 =>
+                        {
+                            b1.Property<Guid>("ItemPickedUpLogEntryId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("X")
+                                .HasColumnType("integer")
+                                .HasColumnName("position_x");
+
+                            b1.Property<int>("Y")
+                                .HasColumnType("integer")
+                                .HasColumnName("position_y");
+
+                            b1.HasKey("ItemPickedUpLogEntryId");
+
+                            b1.ToTable("game_action_log_entries", "game_runtime");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemPickedUpLogEntryId")
+                                .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
+                        });
+
+                    b.Navigation("ActorHp")
+                        .IsRequired();
+
+                    b.Navigation("Position")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.WalkLogEntry", b =>
                 {
                     b.OwnsOne("Domain.ValueObjects.Position", "To", b1 =>
                         {

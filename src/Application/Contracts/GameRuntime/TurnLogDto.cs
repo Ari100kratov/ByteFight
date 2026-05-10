@@ -1,4 +1,5 @@
 ﻿using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 
 namespace Application.Contracts.GameRuntime;
 
@@ -24,6 +25,7 @@ public static partial class Mapper
             WalkLogEntry walk => walk.ToDto(),
             DeathLogEntry death => death.ToDto(),
             IdleLogEntry idle => idle.ToDto(),
+            ItemPickedUpLogEntry itemPickedUp => itemPickedUp.ToDto(),
             _ => throw new ArgumentOutOfRangeException(
                 nameof(entity),
                 $"Unknown RuntimeLogEntry type: {entity.GetType().Name}")
@@ -84,5 +86,24 @@ public static partial class Mapper
             Info = e.Info,
             TurnIndex = e.TurnIndex,
             CreatedAt = e.CreatedAt,
+        };
+
+    private static ItemPickedUpLogEntryDto ToDto(this ItemPickedUpLogEntry e)
+        => new()
+        {
+            Id = e.Id,
+            ActorId = e.ActorId.Value,
+            ActorName = e.ActorName,
+            Info = e.Info,
+            TurnIndex = e.TurnIndex,
+            CreatedAt = e.CreatedAt,
+
+            PlacedItemId = e.PlacedItemId,
+            ItemId = e.ItemId,
+            ItemName = e.ItemName,
+            ItemType = e.ItemType,
+            Position = e.Position.ToDto(),
+            Value = e.Value,
+            ActorHp = new StatSnapshotDto(e.ActorHp.Current, e.ActorHp.Max)
         };
 }

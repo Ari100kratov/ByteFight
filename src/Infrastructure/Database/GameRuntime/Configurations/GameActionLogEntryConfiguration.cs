@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -31,7 +32,8 @@ internal sealed class GameActionLogEntryConfiguration
             .HasValue<IdleLogEntry>(GameActionLogEntryType.Idle)
             .HasValue<WalkLogEntry>(GameActionLogEntryType.Walk)
             .HasValue<AbilityUsedLogEntry>(GameActionLogEntryType.AbilityUsed)
-            .HasValue<DeathLogEntry>(GameActionLogEntryType.Death);
+            .HasValue<DeathLogEntry>(GameActionLogEntryType.Death)
+            .HasValue<ItemPickedUpLogEntry>(GameActionLogEntryType.ItemPickedUp);
 
         builder.HasOne<GameSession>()
             .WithMany(s => s.ActionLogs)

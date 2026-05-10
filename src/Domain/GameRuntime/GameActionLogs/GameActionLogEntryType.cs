@@ -23,5 +23,10 @@ public enum GameActionLogEntryType
     /// <summary>
     /// Юнит погиб.
     /// </summary>
-    Death = 4
+    Death = 4,
+
+    /// <summary>
+    /// Юнит подобрал предмет на арене.
+    /// </summary>
+    ItemPickedUp = 5
 }

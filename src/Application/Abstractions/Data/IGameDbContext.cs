@@ -1,5 +1,7 @@
-﻿using Domain.Game.Arenas;
+﻿using Domain.Game.ArenaItems;
+using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
+using Domain.Game.Arenas.ArenaPlacedItems;
 using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
@@ -17,6 +19,8 @@ public interface IGameDbContext
 
     DbSet<Arena> Arenas { get; }
     DbSet<ArenaEnemy> ArenaEnemies { get; }
+    DbSet<ArenaItem> ArenaItems { get; }
+    DbSet<ArenaPlacedItem> ArenaPlacedItems { get; }
 
     DbSet<Enemy> Enemies { get; }
     DbSet<EnemyActionAsset> EnemyActionAssets { get; }

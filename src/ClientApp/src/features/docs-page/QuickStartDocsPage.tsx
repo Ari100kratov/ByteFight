@@ -1,4 +1,4 @@
-import { Code2, Sparkles } from "lucide-react"
+import { AlertTriangle, Code2, Sparkles } from "lucide-react"
 
 import { DocsCodeBlock } from "./components/DocsCodeBlock"
 import { DocsInfoCard } from "./components/DocsInfoCard"
@@ -29,6 +29,30 @@ export default function QuickStartDocsPage() {
             {fact.content}
           </DocsInfoCard>
         ))}
+      </section>
+
+      <section className="rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="mt-0.5 h-5 w-5 text-yellow-500" />
+
+          <div className="space-y-2 text-sm leading-6">
+            <div className="font-semibold text-yellow-600 dark:text-yellow-400">
+              Не забудьте сохранить свой код
+            </div>
+
+            <p className="text-muted-foreground">
+              Сейчас легко потерять изменения после завершения боя.
+              Для перезапуска требуется покинуть завершённую сессию
+              через кнопку "Выйти из боя" или хлебные крошки, а страница при этом
+              полностью перезагружается.
+            </p>
+
+            <p className="text-muted-foreground">
+              Если код не сохранён — изменения могут потеряться.
+              В будущем это поведение планируется исправить.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section className="rounded-xl border bg-background p-4">

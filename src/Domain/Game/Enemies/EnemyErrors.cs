@@ -1,4 +1,4 @@
-using SharedKernel;
+п»їusing SharedKernel;
 
 namespace Domain.Game.Enemies;
 
@@ -6,5 +6,5 @@ public static class EnemyErrors
 {
     public static Error NotFound(Guid enemyId) => Error.NotFound(
         "Enemies.NotFound",
-        $"Враг с Id = '{enemyId}' не найден");
+        $"Р’СЂР°Рі СЃ Id = '{enemyId}' РЅРµ РЅР°Р№РґРµРЅ");
 }

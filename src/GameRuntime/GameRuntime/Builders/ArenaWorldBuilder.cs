@@ -7,6 +7,7 @@ using Domain.Game.Enemies;
 using Domain.GameRuntime.GameActionLogs;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Abilities;
+using GameRuntime.Common.World.ArenaItems;
 using GameRuntime.Common.World.Stats;
 using GameRuntime.Common.World.Units;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,8 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
         Arena? arena = await dbContext.Arenas
             .AsNoTracking()
             .Where(a => a.Id == arenaId)
+            .Include(a => a.Items)
+                .ThenInclude(x => x.Item)
             .SingleOrDefaultAsync(ct);
 
         if (arena is null)
@@ -83,7 +86,16 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
                 GridWidth = arena.GridWidth,
                 GridHeight = arena.GridHeight,
                 StartPosition = arena.StartPosition,
-                BlockedPositions = [.. arena.BlockedPositions]
+                BlockedPositions = [.. arena.BlockedPositions],
+                Items = [.. arena.Items.Select(x => new ArenaItemDefinition
+                {
+                    PlacedItemId = x.Id,
+                    ItemId = x.ItemId,
+                    Name = x.Item.Name,
+                    Type = x.Item.Type,
+                    Position = x.Position,
+                    Value = x.Item.Value,
+                })]
             },
 
             Player = new PlayerUnit(arena.StartPosition, FacingDirection.Right)

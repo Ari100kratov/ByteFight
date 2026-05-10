@@ -1,5 +1,5 @@
 ﻿using Domain.Game.GameModes;
-using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessionParticipants;
 using SharedKernel;

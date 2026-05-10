@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Game.ArenaItems;
 using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
+using Domain.Game.Arenas.ArenaPlacedItems;
 using Domain.Game.CharacterClasses;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
@@ -23,6 +25,8 @@ public sealed class GameDbContext(
 
     public DbSet<Arena> Arenas { get; set; }
     public DbSet<ArenaEnemy> ArenaEnemies { get; set; }
+    public DbSet<ArenaItem> ArenaItems { get; set; }
+    public DbSet<ArenaPlacedItem> ArenaPlacedItems { get; set; }
 
     public DbSet<Enemy> Enemies { get; set; }
     public DbSet<EnemyStat> EnemyStats { get; set; }

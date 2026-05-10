@@ -99,17 +99,24 @@ public sealed class RuntimeStats
     }
 
     /// <summary>
-    /// Восстанавливает здоровье юнита, не превышая максимальное значение.
+    /// Восстанавливает здоровье юнита,
+    /// не превышая максимальное значение.
     /// </summary>
-    public StatSnapshot Heal(decimal value)
+    public StatApplyResult Heal(decimal value)
     {
+        decimal before = GetHealth();
+
         Current[StatType.Health] = Math.Min(
             GetMaxHealth(),
-            GetHealth() + value);
+            before + value);
 
-        return new StatSnapshot(
+        StatSnapshot snapshot = new(
             GetHealth(),
             GetMaxHealth());
+
+        return new StatApplyResult(
+            GetHealth() - before,
+            snapshot);
     }
 
     /// <summary>
@@ -121,3 +128,10 @@ public sealed class RuntimeStats
         Current[stat] = Math.Min(Get(stat), Maximum[stat]);
     }
 }
+
+/// <summary>
+/// Результат применения изменения характеристики.
+/// </summary>
+public sealed record StatApplyResult(
+    decimal AppliedValue,
+    StatSnapshot Snapshot);

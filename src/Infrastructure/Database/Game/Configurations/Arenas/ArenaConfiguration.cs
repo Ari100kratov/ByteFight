@@ -33,6 +33,11 @@ internal sealed class ArenaConfiguration : IEntityTypeConfiguration<Arena>
         builder.OwnsOne(x => x.StartPosition);
         builder.OwnsMany(x => x.BlockedPositions);
 
+        builder.HasMany(x => x.Items)
+            .WithOne(x => x.Arena)
+            .HasForeignKey(x => x.ArenaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         //builder.HasQueryFilter(a => a.IsActive);
     }
 }

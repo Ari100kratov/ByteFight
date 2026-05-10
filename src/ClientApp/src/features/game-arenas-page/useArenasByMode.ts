@@ -8,6 +8,12 @@ export type ArenaEnemySummaryResponse = {
   count: number
 }
 
+export type ArenaItemSummaryResponse = {
+  itemId: string
+  name: string
+  count: number
+}
+
 export type ArenaResponse = {
   id: string
   name: string
@@ -16,6 +22,7 @@ export type ArenaResponse = {
   gridWidth: number
   gridHeight: number
   enemies: ArenaEnemySummaryResponse[]
+  items: ArenaItemSummaryResponse[]
 }
 
 export function useArenasByMode(mode: string | undefined) {

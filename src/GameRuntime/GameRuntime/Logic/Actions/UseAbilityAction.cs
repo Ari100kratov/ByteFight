@@ -1,8 +1,10 @@
 ﻿using Domain.Game.Abilities;
 using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.ValueObjects;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Abilities;
+using GameRuntime.Common.World.Stats;
 using GameRuntime.Common.World.Units;
 
 namespace GameRuntime.Logic.Actions;
@@ -81,7 +83,7 @@ internal sealed class UseAbilityAction
     {
         decimal healing = ability.Get(AbilityStatType.Healing);
 
-        StatSnapshot targetHp = target.Stats.Heal(healing);
+        StatApplyResult result = target.Stats.Heal(healing);
 
         return
         [
@@ -89,8 +91,8 @@ internal sealed class UseAbilityAction
                 actor,
                 target,
                 ability,
-                healing,
-                targetHp)
+                result.AppliedValue,
+                result.Snapshot)
         ];
     }
 

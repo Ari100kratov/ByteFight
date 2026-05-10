@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
-import { Grid3X3, Skull } from "lucide-react"
+import { FlaskConical, Grid3X3, Skull } from "lucide-react"
 import { getAssetUrl } from "@/shared/api/loadActionAssets"
 import type { ArenaResponse } from "../useArenasByMode"
 
@@ -57,6 +57,15 @@ export function GameArenaCard({ arena, onSelect }: Props) {
             >
               <Skull className="shrink-0" />
               {enemy.name} ×{enemy.count}
+            </span>
+          ))}
+          {arena.items.map((item) => (
+            <span
+              key={item.itemId}
+              className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold text-foreground"
+            >
+              <FlaskConical className="shrink-0" />
+              {item.name} ×{item.count}
             </span>
           ))}
         </div>

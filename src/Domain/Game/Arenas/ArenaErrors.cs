@@ -1,13 +1,13 @@
-using SharedKernel;
+п»їusing SharedKernel;
 
 namespace Domain.Game.Arenas;
 
 public static class ArenaErrors
 {
     public static Error NotFound(Guid id) =>
-        Error.NotFound("Arena.NotFound", $"Арена с Id = {id} не найдена.");
+        Error.NotFound("Arena.NotFound", $"РђСЂРµРЅР° СЃ Id = {id} РЅРµ РЅР°Р№РґРµРЅР°.");
 
     public static readonly Error NameNotUnique = Error.Conflict(
         "Arenas.NameNotUnique",
-        "Название арены уже занято");
+        "РќР°Р·РІР°РЅРёРµ Р°СЂРµРЅС‹ СѓР¶Рµ Р·Р°РЅСЏС‚Рѕ");
 }

@@ -3,6 +3,7 @@ import {
   isAbilityUsed,
   isDeath,
   isIdle,
+  isItemPickedUp,
   isWalk,
   type GameActionLogEntry,
 } from "../types/TurnLog"
@@ -34,7 +35,7 @@ export function formatCombatLog({ entry }: Props) {
           <>
             <span className={actorClass}>{entry.actorName}</span>
             {" использует "}
-            {abilityName}
+            <span className={accentClass}>{abilityName}</span>
             {" против "}
             <span className={actorClass}>{entry.targetName}</span>
             {" и наносит "}
@@ -64,7 +65,7 @@ export function formatCombatLog({ entry }: Props) {
           <>
             <span className={actorClass}>{entry.actorName}</span>
             {" использует"}
-            {abilityName}
+            <span className={accentClass}>{abilityName}</span>
             {" и восстанавливает себе "}
             <span className={accentClass}>{entry.value}</span>
             {" здоровья"}
@@ -76,7 +77,7 @@ export function formatCombatLog({ entry }: Props) {
         <>
           <span className={actorClass}>{entry.actorName}</span>
           {" использует"}
-          {abilityName}
+          <span className={accentClass}>{abilityName}</span>
           {" и восстанавливает "}
           <span className={accentClass}>{entry.value}</span>
           {" здоровья "}
@@ -102,6 +103,23 @@ export function formatCombatLog({ entry }: Props) {
         <span className={accentClass}>
           {formatPosition(entry.to.x, entry.to.y)}
         </span>
+      </>
+    )
+  }
+
+  if (isItemPickedUp(entry)) {
+    return (
+      <>
+        <span className={actorClass}>{entry.actorName}</span>
+        {" подбирает "}
+        <span className={accentClass}>«{entry.itemName}»</span>
+        {" на клетке "}
+        <span className={accentClass}>
+          {formatPosition(entry.position.x, entry.position.y)}
+        </span>
+        {" и восстанавливает "}
+        <span className={accentClass}>{entry.value}</span>
+        {" здоровья"}
       </>
     )
   }

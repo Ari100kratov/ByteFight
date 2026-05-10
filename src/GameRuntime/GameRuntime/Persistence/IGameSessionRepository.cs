@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.GameRuntime;
-using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessions;
 

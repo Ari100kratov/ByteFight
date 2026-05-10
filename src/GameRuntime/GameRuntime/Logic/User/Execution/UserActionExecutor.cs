@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Domain.Game.Stats;
-using Domain.GameRuntime.GameActionLogs;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.ValueObjects;
 using GameRuntime.Common;
 using GameRuntime.Common.World;
@@ -175,8 +175,4 @@ internal sealed class UserActionExecutor
 
         return new MoveAction(actor, bestPosition).Execute(world);
     }
-
-
-
-
 }

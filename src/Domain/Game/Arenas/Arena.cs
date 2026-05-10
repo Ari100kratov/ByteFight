@@ -1,4 +1,6 @@
-﻿using Domain.Game.Arenas.ArenaEnemies;
+﻿using Domain.Game.ArenaItems;
+using Domain.Game.Arenas.ArenaEnemies;
+using Domain.Game.Arenas.ArenaPlacedItems;
 using Domain.Game.GameModes;
 using Domain.ValueObjects;
 using SharedKernel;
@@ -37,6 +39,8 @@ public sealed class Arena : Entity
 
     public ICollection<ArenaEnemy> Enemies { get; set; }
 
+    public ICollection<ArenaPlacedItem> Items { get; set; } = [];
+
     public void SetSize(int width, int height)
     {
         if (width <= 0)
@@ -53,6 +57,11 @@ public sealed class Arena : Entity
         foreach (Position pos in BlockedPositions)
         {
             ValidatePosition(pos, "blocked_position_out_of_bounds", width, height);
+        }
+
+        foreach (ArenaPlacedItem item in Items)
+        {
+            ValidatePosition(item.Position, "arena_item_position_out_of_bounds", width, height);
         }
 
         GridWidth = width;
