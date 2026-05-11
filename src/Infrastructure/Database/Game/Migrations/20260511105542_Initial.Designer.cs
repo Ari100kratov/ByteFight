@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Game.Migrations
 {
     [DbContext(typeof(GameDbContext))]
-    [Migration("20260510112248_BungaUnga")]
-    partial class BungaUnga
+    [Migration("20260511105542_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

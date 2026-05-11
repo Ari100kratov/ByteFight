@@ -17,6 +17,8 @@ const HOVER_SPEED = 0.004
 
 export function ArenaItemSprite({ item }: Props) {
   const layout = useGridStore(s => s.layout)
+  const selectItem = useArenaItemSelectionStore(s => s.select)
+
   const [texture, setTexture] = useState<Texture | null>(null)
   const [textures, setTextures] = useState<Texture[]>([])
   const [hoverOffset, setHoverOffset] = useState(0)
@@ -29,6 +31,9 @@ export function ArenaItemSprite({ item }: Props) {
 
   useEffect(() => {
     let cancelled = false
+
+    setTexture(null)
+    setTextures([])
 
     if (item.sprite.frameCount <= 1) {
       useTexturesStore
@@ -68,8 +73,6 @@ export function ArenaItemSprite({ item }: Props) {
     x: item.sprite.scale.x,
     y: item.sprite.scale.y,
   }
-
-  const selectItem = useArenaItemSelectionStore(s => s.select)
 
   const handleClick = () => {
     selectItem(item.placedItemId, {

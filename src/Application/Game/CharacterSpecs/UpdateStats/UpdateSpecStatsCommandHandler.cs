@@ -22,7 +22,12 @@ internal sealed class UpdateSpecStatsCommandHandler(IGameDbContext dbContext)
         }
 
         dbContext.CharacterSpecStats.RemoveRange(characterSpec.Stats);
-        characterSpec.Stats = [.. command.Stats.Select(x => x.ToCharacterSpecStat(characterSpec.Id))];
+
+        var newStats = command.Stats
+            .Select(x => x.ToCharacterSpecStat(characterSpec.Id))
+            .ToList();
+
+        await dbContext.CharacterSpecStats.AddRangeAsync(newStats, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

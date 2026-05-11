@@ -5,40 +5,13 @@
 namespace Infrastructure.Database.Auth.Migrations;
 
 /// <inheritdoc />
-public partial class AddRolesAndPermissions : Migration
+public partial class Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.AlterColumn<string>(
-            name: "last_name",
-            schema: "auth",
-            table: "users",
-            type: "character varying(100)",
-            maxLength: 100,
-            nullable: false,
-            oldClrType: typeof(string),
-            oldType: "text");
-
-        migrationBuilder.AlterColumn<string>(
-            name: "first_name",
-            schema: "auth",
-            table: "users",
-            type: "character varying(100)",
-            maxLength: 100,
-            nullable: false,
-            oldClrType: typeof(string),
-            oldType: "text");
-
-        migrationBuilder.AlterColumn<string>(
-            name: "email",
-            schema: "auth",
-            table: "users",
-            type: "character varying(256)",
-            maxLength: 256,
-            nullable: false,
-            oldClrType: typeof(string),
-            oldType: "text");
+        migrationBuilder.EnsureSchema(
+            name: "auth");
 
         migrationBuilder.CreateTable(
             name: "roles",
@@ -51,6 +24,22 @@ public partial class AddRolesAndPermissions : Migration
             constraints: table =>
             {
                 table.PrimaryKey("pk_roles", x => x.id);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "users",
+            schema: "auth",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                password_hash = table.Column<string>(type: "text", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_users", x => x.id);
             });
 
         migrationBuilder.CreateTable(
@@ -69,6 +58,29 @@ public partial class AddRolesAndPermissions : Migration
                     column: x => x.role_id,
                     principalSchema: "auth",
                     principalTable: "roles",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "refresh_tokens",
+            schema: "auth",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                is_revoked = table.Column<bool>(type: "boolean", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_refresh_tokens", x => x.id);
+                table.ForeignKey(
+                    name: "fk_refresh_tokens_users_user_id",
+                    column: x => x.user_id,
+                    principalSchema: "auth",
+                    principalTable: "users",
                     principalColumn: "id",
                     onDelete: ReferentialAction.Cascade);
             });
@@ -101,6 +113,19 @@ public partial class AddRolesAndPermissions : Migration
             });
 
         migrationBuilder.CreateIndex(
+            name: "ix_refresh_tokens_token",
+            schema: "auth",
+            table: "refresh_tokens",
+            column: "token",
+            unique: true);
+
+        migrationBuilder.CreateIndex(
+            name: "ix_refresh_tokens_user_id",
+            schema: "auth",
+            table: "refresh_tokens",
+            column: "user_id");
+
+        migrationBuilder.CreateIndex(
             name: "ix_roles_name",
             schema: "auth",
             table: "roles",
@@ -112,11 +137,22 @@ public partial class AddRolesAndPermissions : Migration
             schema: "auth",
             table: "user_roles",
             column: "role_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_users_email",
+            schema: "auth",
+            table: "users",
+            column: "email",
+            unique: true);
     }
 
     /// <inheritdoc />
     protected override void Down(MigrationBuilder migrationBuilder)
     {
+        migrationBuilder.DropTable(
+            name: "refresh_tokens",
+            schema: "auth");
+
         migrationBuilder.DropTable(
             name: "role_permissions",
             schema: "auth");
@@ -129,34 +165,8 @@ public partial class AddRolesAndPermissions : Migration
             name: "roles",
             schema: "auth");
 
-        migrationBuilder.AlterColumn<string>(
-            name: "last_name",
-            schema: "auth",
-            table: "users",
-            type: "text",
-            nullable: false,
-            oldClrType: typeof(string),
-            oldType: "character varying(100)",
-            oldMaxLength: 100);
-
-        migrationBuilder.AlterColumn<string>(
-            name: "first_name",
-            schema: "auth",
-            table: "users",
-            type: "text",
-            nullable: false,
-            oldClrType: typeof(string),
-            oldType: "character varying(100)",
-            oldMaxLength: 100);
-
-        migrationBuilder.AlterColumn<string>(
-            name: "email",
-            schema: "auth",
-            table: "users",
-            type: "text",
-            nullable: false,
-            oldClrType: typeof(string),
-            oldType: "character varying(256)",
-            oldMaxLength: 256);
+        migrationBuilder.DropTable(
+            name: "users",
+            schema: "auth");
     }
 }

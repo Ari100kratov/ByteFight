@@ -22,7 +22,12 @@ internal sealed class UpdateEnemyStatsCommandHandler(IGameDbContext dbContext)
         }
 
         dbContext.EnemyStats.RemoveRange(enemy.Stats);
-        enemy.Stats = [.. command.Stats.Select(x => x.ToEnemyStat(enemy.Id))];
+
+        var newStats = command.Stats
+            .Select(x => x.ToEnemyStat(enemy.Id))
+            .ToList();
+
+        await dbContext.EnemyStats.AddRangeAsync(newStats, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

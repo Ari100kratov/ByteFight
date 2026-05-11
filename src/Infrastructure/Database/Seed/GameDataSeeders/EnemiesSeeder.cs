@@ -68,12 +68,13 @@ internal static class EnemiesSeeder
         {
             Id = Guid.CreateVersion7(),
             Name = "Орк-берсерк",
-            Description = "Орк-берсерк не входит в бой — он в него врезается.\r\n" +
-                "Где остальные видят опасность, он видит повод ускориться.\r\n" +
-                "После его атаки на поле боя обычно остаются враги, вмятины и очень удивлённые союзники.",
+            Description =
+                "Орк-берсерк считает тактику формой трусости.\r\n" +
+                "Если враг ещё стоит — значит, удар был недостаточно сильным.\r\n" +
+                "После его рывка поле боя обычно становится тише, а союзники начинают делать вид, что не знакомы с ним.",
             Stats =
             [
-                CreateStat(StatType.Health, 75),
+                CreateStat(StatType.Health, 80),
                 CreateStat(StatType.MoveRange, 2),
             ],
             ActionAssets = CreateOrcBerserkerActionAssets(folder),
@@ -127,7 +128,7 @@ internal static class EnemiesSeeder
                     name: "Зов предков",
                     description: "Шаман взывает к духам предков, направляя их силу в союзника.\r\n" +
                         "Духовная энергия мгновенно затягивает его раны.",
-                    heal: 20,
+                    heal: 22,
                     range: 4,
                     folder: folder,
                     frameCountByAsset:

@@ -25,7 +25,12 @@ internal sealed class UpdateEnemyAbilitiesCommandHandler(IGameDbContext dbContex
         }
 
         dbContext.EnemyAbilities.RemoveRange(enemy.Abilities);
-        enemy.Abilities = [.. command.Abilities.Select(x => x.ToEnemyAbility(enemy.Id))];
+
+        var newAbilities = command.Abilities
+            .Select(x => x.ToEnemyAbility(enemy.Id))
+            .ToList();
+
+        await dbContext.EnemyAbilities.AddRangeAsync(newAbilities, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

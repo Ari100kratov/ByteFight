@@ -1,5 +1,4 @@
-﻿using Domain;
-using Domain.ValueObjects;
+﻿using Domain.ValueObjects;
 using GameRuntime.Common.World.ArenaItems;
 using SharedKernel;
 
@@ -32,7 +31,7 @@ public sealed record ArenaDefinition
 
     public ArenaItemDefinition RemoveItem(Guid placedItemId)
     {
-        ArenaItemDefinition? item = items.FirstOrDefault(x => x.PlacedItemId == placedItemId) 
+        ArenaItemDefinition? item = items.FirstOrDefault(x => x.PlacedItemId == placedItemId)
             ?? throw new DomainException(
                 "ARENA_ITEM_NOT_FOUND",
                 $"Arena item with id {placedItemId} was not found in this arena.");

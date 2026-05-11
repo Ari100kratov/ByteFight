@@ -25,7 +25,12 @@ internal sealed class UpdateSpecAbilitiesCommandHandler(IGameDbContext dbContext
         }
 
         dbContext.CharacterSpecAbilities.RemoveRange(characterSpec.Abilities);
-        characterSpec.Abilities = [.. command.Abilities.Select(x => x.ToCharacterSpecAbility(characterSpec.Id))];
+
+        var newAbilities = command.Abilities
+            .Select(x => x.ToCharacterSpecAbility(characterSpec.Id))
+            .ToList();
+
+        await dbContext.CharacterSpecAbilities.AddRangeAsync(newAbilities, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

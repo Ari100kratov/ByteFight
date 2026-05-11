@@ -52,9 +52,9 @@ internal sealed class GetCharacterDetailsQueryHandler(IGameDbContext dbContext, 
                 character.Spec.Class.Name,
                 character.Spec.Type,
                 character.Spec.Description,
-                character.Spec.Stats.Select(x => x.ToDto()).ToArray(),
-                character.Spec.ActionAssets.Select(x => x.ToDto()).ToArray(),
-                character.Spec.Abilities.Select(x => x.ToDto()).ToArray()
+                [.. character.Spec.Stats.Select(x => x.ToDto())],
+                [.. character.Spec.ActionAssets.Select(x => x.ToDto())],
+                [.. character.Spec.Abilities.Select(x => x.ToDto())]
             )
         );
 

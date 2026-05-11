@@ -1,5 +1,4 @@
-﻿using Domain.Game.Stats;
-using Domain.GameRuntime.GameActionLogs.Entries;
+﻿using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.ValueObjects;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.ArenaItems;

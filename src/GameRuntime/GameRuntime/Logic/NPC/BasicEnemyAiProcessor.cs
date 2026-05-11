@@ -169,33 +169,33 @@ internal sealed class BasicEnemyAiProcessor(IPathFinder pathFinder) : IUnitTurnP
     }
 
     private IEnumerable<GameActionLogEntry> MoveToTarget(
-        BaseUnit actor,
-        ArenaWorld world,
-        Position targetPosition)
+    BaseUnit actor,
+    ArenaWorld world,
+    Position targetPosition)
     {
-        List<Position>? path = pathFinder.FindPath(
+        List<Position>? path = pathFinder.FindPathTowards(
             world,
             actor.Position,
             targetPosition);
 
-        if (path is null || path.Count == 0)
+        if (path is null || path.Count < 2)
         {
             return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
         }
 
         int moveRange = actor.Stats.GetMoveRange();
 
-        Position? target = MovementRules.SelectMoveTarget(
+        Position? moveTarget = MovementRules.SelectMoveTarget(
             world,
             actor,
             path,
             moveRange);
 
-        if (target is null)
+        if (moveTarget is null)
         {
             return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
         }
 
-        return new MoveAction(actor, target).Execute(world);
+        return new MoveAction(actor, moveTarget).Execute(world);
     }
 }

@@ -41,7 +41,7 @@ internal static class CharacterClassesSeeder
             "Агрессивный воин, жертвующий защитой ради высокой силы удара.",
             folder: "berserker",
             health: 170,
-            meleeDamage: 42,
+            meleeDamage: 40,
             moveRange: 2,
             specIdSetter: id => seed.Spec_Warrior_Berserker = id);
 

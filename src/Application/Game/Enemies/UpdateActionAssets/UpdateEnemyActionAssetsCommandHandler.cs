@@ -22,7 +22,12 @@ internal sealed class UpdateEnemyActionAssetsCommandHandler(IGameDbContext dbCon
         }
 
         dbContext.EnemyActionAssets.RemoveRange(enemy.ActionAssets);
-        enemy.ActionAssets = [.. command.ActionAssets.Select(x => x.ToEnemyActionAsset(enemy.Id))];
+
+        var newActionAssets = command.ActionAssets
+            .Select(x => x.ToEnemyActionAsset(enemy.Id))
+            .ToList();
+
+        await dbContext.EnemyActionAssets.AddRangeAsync(newActionAssets, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

@@ -1,5 +1,4 @@
-﻿using Domain.Game.ArenaItems;
-using Domain.Game.Arenas.ArenaEnemies;
+﻿using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Arenas.ArenaPlacedItems;
 using Domain.Game.GameModes;
 using Domain.ValueObjects;

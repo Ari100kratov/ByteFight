@@ -5,7 +5,7 @@
 namespace Infrastructure.Database.GameRuntime.Migrations;
 
 /// <inheritdoc />
-public partial class InitialMigration : Migration
+public partial class Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,16 +44,28 @@ public partial class InitialMigration : Migration
                 session_id = table.Column<Guid>(type: "uuid", nullable: false),
                 actor_id = table.Column<Guid>(type: "uuid", nullable: false),
                 actor_name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                action_type = table.Column<int>(type: "integer", nullable: false),
+                entry_type = table.Column<int>(type: "integer", nullable: false),
                 info = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                 turn_index = table.Column<int>(type: "integer", nullable: false),
                 created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                ability_type = table.Column<int>(type: "integer", nullable: true),
+                effect_type = table.Column<int>(type: "integer", nullable: true),
+                ability_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                 target_id = table.Column<Guid>(type: "uuid", nullable: true),
                 target_name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
-                damage = table.Column<decimal>(type: "numeric", nullable: true),
+                value = table.Column<decimal>(type: "numeric", nullable: true),
                 facing_direction = table.Column<int>(type: "integer", nullable: true),
                 target_hp_current = table.Column<decimal>(type: "numeric", nullable: true),
                 target_hp_max = table.Column<decimal>(type: "numeric", nullable: true),
+                placed_item_id = table.Column<Guid>(type: "uuid", nullable: true),
+                item_id = table.Column<Guid>(type: "uuid", nullable: true),
+                item_name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                item_type = table.Column<int>(type: "integer", nullable: true),
+                position_x = table.Column<int>(type: "integer", nullable: true),
+                position_y = table.Column<int>(type: "integer", nullable: true),
+                item_picked_up_log_entry_value = table.Column<decimal>(type: "numeric", nullable: true),
+                actor_hp_current = table.Column<decimal>(type: "numeric", nullable: true),
+                actor_hp_max = table.Column<decimal>(type: "numeric", nullable: true),
                 walk_log_entry_facing_direction = table.Column<int>(type: "integer", nullable: true),
                 to_x = table.Column<int>(type: "integer", nullable: true),
                 to_y = table.Column<int>(type: "integer", nullable: true)

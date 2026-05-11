@@ -27,26 +27,26 @@ public sealed class IdleLogEntry : GameActionLogEntry
 public static class IdleReasons
 {
     public const string ManualIdle =
-        "Пропускает ход и оценивает ситуацию.";
+        "Пропускает ход. Делает вид, что так и было задумано.";
 
     public static string UserError(string message) =>
-        $"Что-то пошло не так. Очень не так: {message}";
+        $"Сломался об код: {message}";
 
     public static string Timeout(TimeSpan timeout) =>
-        $"Думал слишком долго (>{timeout.TotalSeconds} сек). Решил ничего не делать.";
+        $"Думал {timeout.TotalSeconds} сек. Ничего не придумал.";
 
     public const string InvalidAction =
-        "Попытался сделать что-то странное. В итоге просто стоит.";
+        "Попытался сделать невозможное. Получилось стоять.";
 
     public const string NoPath =
-        "Смотрит в сторону цели, но пути не видит.";
+        "Путь не найден. Энтузиазм тоже.";
 
     public const string MoveImpossible =
-        "Пытается двинуться, но вокруг одни препятствия.";
+        "Уперся во всё сразу.";
 
     public const string TargetDead =
-        "Собирался атаковать… но цель уже повержена.";
+        "Цель уже мертва. Неловко вышло.";
 
     public const string OutOfRange =
-        "Размахнулся, но противник слишком далеко.";
+        "Не дотягивается. Ни оружием, ни надеждами.";
 }

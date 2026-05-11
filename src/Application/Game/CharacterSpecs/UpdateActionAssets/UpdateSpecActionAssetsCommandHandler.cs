@@ -22,7 +22,12 @@ internal sealed class UpdateSpecActionAssetsCommandHandler(IGameDbContext dbCont
         }
 
         dbContext.CharacterSpecActionAssets.RemoveRange(characterSpec.ActionAssets);
-        characterSpec.ActionAssets = [.. command.ActionAssets.Select(x => x.ToCharacterSpecActionAsset(characterSpec.Id))];
+
+        var newActionAssets = command.ActionAssets
+            .Select(x => x.ToCharacterSpecActionAsset(characterSpec.Id))
+            .ToList();
+
+        await dbContext.CharacterSpecActionAssets.AddRangeAsync(newActionAssets, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
