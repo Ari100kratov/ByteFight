@@ -1,3 +1,4 @@
+import { apiUrl } from "@/shared/config/api"
 import { clearAuth, getAccessToken, getRefreshToken, saveAuthTokens } from "./auth"
 
 export type ApiErrorItem = {
@@ -45,11 +46,10 @@ export class ApiException extends Error {
  * Универсальная функция для запросов к API.
  */
 export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const baseUrl = import.meta.env.VITE_API_URL
   let accessToken = getAccessToken()
 
   const makeRequest = async (token: string | null) =>
-    fetch(`${baseUrl}${path}`, {
+    fetch(apiUrl(path), {
       ...options,
       headers: {
         "Content-Type": "application/json",
@@ -105,7 +105,7 @@ async function refreshAccessToken(): Promise<string> {
   if (!refreshToken)
     throw new Error("Нет refresh-токена")
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/users/refresh-token`, {
+  const res = await fetch(apiUrl("/users/refresh-token"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),

@@ -26,6 +26,7 @@
 - [Суть проекта и ключевые особенности](#-суть-проекта-и-ключевые-особенности)
 - [Технологии и архитектура](#-технологии-и-архитектура)
 - [Локальный запуск](#-локальный-запуск-windows)
+- [Подготовка к production и Portainer](#-подготовка-к-production-и-portainer)
 - [Контрибьютинг и обратная связь](#-контрибьютинг-и-обратная-связь)
 - [Планы развития](#-планы-развития)
 - [Лицензия](#-лицензия)
@@ -328,6 +329,96 @@ pnpm build
 - Проверьте установленную версию .NET командой `dotnet --info`
 - При ошибках зависимостей клиента удалите `node_modules` и выполните `pnpm install` повторно
 - При проблемах с запуском Aspire проверьте, что установлены необходимые компоненты Visual Studio и актуальная версия .NET SDK
+
+---
+
+
+## 🚢 Подготовка к production и Portainer
+
+### Что нужно сделать сначала
+
+1. **Определить публичные адреса**: домен клиента, домен/API-путь, способ доступа к MinIO Console и Aspire Dashboard. Для текущего `docker-compose.yml` клиент работает как основной вход, а запросы к API идут через `/api`.
+2. **Подготовить секреты**: скопировать `.env.example` в `.env` и заменить все `change-me-*` значения. Минимально обязательны `POSTGRES_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `JWT_SECRET`.
+3. **Решить вопрос TLS**: в production ставьте обратный прокси перед Portainer stack (Traefik, Nginx Proxy Manager, Caddy или внешний балансировщик) и публикуйте наружу только нужные HTTP(S)-точки.
+4. **Загрузить ассеты в MinIO**: после первого запуска создать/проверить bucket `assets` и загрузить файлы из архива ассетов с сохранением структуры.
+5. **Проверить миграции и seed**: первый запуск можно делать с `APPLY_MIGRATIONS=true` и `SEED_ON_STARTUP=true`; после успешного seed обычно стоит выставить `SEED_ON_STARTUP=false`.
+6. **Ограничить доступ к диагностике**: Aspire Dashboard показывает логи, traces, метрики и потенциально чувствительные данные. Не публикуйте его без авторизации/VPN/IP allowlist.
+
+### Состав production stack
+
+В корне репозитория добавлены файлы для Portainer/Docker Compose:
+
+- `docker-compose.yml` — stack из PostgreSQL, MinIO, Web API, React/Nginx клиента и standalone Aspire Dashboard.
+- `.env.example` — шаблон переменных окружения для Portainer stack.
+- `.dockerignore` — исключает `bin`, `obj`, `node_modules`, `.env` и локальные контейнерные данные из Docker build context.
+- `src/Web.Api/Dockerfile` — production-сборка API на .NET 10 с публикацией `user-code-worker`.
+- `src/ClientApp/Dockerfile` и `src/ClientApp/nginx.conf` — production-сборка SPA и reverse proxy для `/api` и `/game-runtime-hub`.
+
+### Быстрый запуск локально через Docker Compose
+
+```bash
+cp .env.example .env
+# Отредактируйте .env: задайте надежные POSTGRES_PASSWORD, MINIO_ROOT_PASSWORD и JWT_SECRET.
+docker compose up -d --build
+```
+
+Адреса по умолчанию:
+
+- Клиент: `http://localhost`
+- API напрямую: `http://localhost:5000`
+- MinIO API: `http://localhost:9000`
+- MinIO Console: `http://localhost:9001`
+- Aspire Dashboard: `http://localhost:18888`
+
+### Развертывание в Portainer
+
+1. Откройте **Stacks → Add stack**.
+2. Выберите репозиторий Git или вставьте содержимое `docker-compose.yml`.
+3. В секции **Environment variables** перенесите значения из `.env.example` и замените секреты.
+4. Нажмите **Deploy the stack**.
+5. После запуска проверьте health endpoint API: `http://<host>:5000/health`.
+6. Зайдите в MinIO Console и загрузите ассеты в bucket `assets`.
+
+### Aspire Dashboard в production
+
+В stack используется standalone dashboard image `mcr.microsoft.com/dotnet/aspire-dashboard`. Web API отправляет телеметрию через OTLP/gRPC:
+
+```text
+OTEL_SERVICE_NAME=bytefight-web-api
+OTEL_RESOURCE_ATTRIBUTES=service.namespace=bytefight,deployment.environment=production
+OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
+OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+```
+
+Dashboard UI доступен на порту `ASPIRE_DASHBOARD_PORT` (по умолчанию `18888`). По умолчанию `ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=false`, поэтому токен входа нужно взять из логов контейнера `aspire-dashboard` в Portainer. Для локальной разработки можно временно поставить `ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true`, но для публичного production так делать нельзя.
+
+В compose dashboard явно слушает `0.0.0.0:18888`, `0.0.0.0:18889` и `0.0.0.0:18890`, чтобы OTLP был доступен не только внутри самого контейнера dashboard, но и из контейнера `web-api` по DNS-имени `aspire-dashboard`.
+
+Если в dashboard не появляются метрики/логи/traces:
+
+1. Проверьте, что в `web-api` реально есть переменные `OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889` и `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`.
+2. Проверьте логи `web-api`: ошибки вида `Unavailable`, `connection refused`, `Name or service not known` указывают на проблему DNS/порта/доступности dashboard.
+3. Проверьте логи `aspire-dashboard`: должен быть endpoint OTLP/gRPC на `18889`; при включенной авторизации frontend токен входа также будет в этих логах.
+4. Сделайте несколько HTTP-запросов в API и подождите до минуты: метрики экспортируются периодически, а не синхронно с каждым запросом.
+5. В standalone dashboard список Aspire resources может быть пустым без resource service, но telemetry pages должны показывать сервис `bytefight-web-api`.
+
+> Важно: standalone Aspire Dashboard хранит телеметрию в памяти и предназначен для разработки/краткосрочной диагностики. Для долгосрочного production-monitoring дополнительно планируйте постоянное хранилище логов/метрик (например, Grafana stack, Seq, Azure Monitor и т.п.).
+
+### Production-настройки приложения
+
+- `Database:ApplyMigrations` и `Database:SeedOnStartup` теперь можно включать через переменные `Database__ApplyMigrations` и `Database__SeedOnStartup` без перевода приложения в `Development`.
+- CORS настраивается через `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1` и т.д. При размещении клиента и API за одним Nginx (`/api`) CORS почти не используется, но настройка оставлена для отдельных доменов.
+- `src/ClientApp/.env.production` использует `VITE_API_URL=/api` и `VITE_GAME_HUB_URL=/game-runtime-hub`; Nginx в клиентском контейнере проксирует `/api/*` в Web API с удалением префикса `/api`, а SignalR идет через отдельный WebSocket location.
+- Значения `CLIENT_API_URL` и `CLIENT_GAME_HUB_URL` попадают в Vite на этапе сборки клиентского Docker image. Если меняете публичную схему маршрутизации, пересоберите контейнер клиента.
+
+### Что еще нужно перед реальным публичным запуском
+
+- Заменить все дефолтные пароли и `JWT_SECRET` на секреты из password manager/Portainer secrets.
+- Настроить TLS и безопасные cookies/headers на внешнем reverse proxy.
+- Закрыть прямые порты PostgreSQL и MinIO API снаружи, если они не нужны публично.
+- Настроить backup volumes `postgres-data` и `minio-data`.
+- Проверить политику выполнения пользовательского кода и лимиты ресурсов контейнера `web-api`.
+- Прогнать `dotnet test ByteFight.sln` и `pnpm build` перед публикацией образов.
 
 ---
 

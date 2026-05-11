@@ -1,0 +1,90 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bytefight}
+      POSTGRES_USER: ${POSTGRES_USER:-bytefight}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:${ASPIRE_DASHBOARD_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:18888
+      ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL: http://0.0.0.0:18889
+      ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL: http://0.0.0.0:18890
+      ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: ${ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS:-false}
+      DASHBOARD__TELEMETRYLIMITS__MAXLOGCOUNT: ${ASPIRE_DASHBOARD_MAX_LOG_COUNT:-10000}
+      DASHBOARD__TELEMETRYLIMITS__MAXTRACECOUNT: ${ASPIRE_DASHBOARD_MAX_TRACE_COUNT:-10000}
+      DASHBOARD__TELEMETRYLIMITS__MAXMETRICSCOUNT: ${ASPIRE_DASHBOARD_MAX_METRICS_COUNT:-10000}
+    ports:
+      - "${ASPIRE_DASHBOARD_PORT:-18888}:18888"
+      - "${ASPIRE_DASHBOARD_OTLP_GRPC_PORT:-4317}:18889"
+      - "${ASPIRE_DASHBOARD_OTLP_HTTP_PORT:-4318}:18890"
+
+  web-api:
+    build:
+      context: .
+      dockerfile: src/Web.Api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Database: Host=postgres;Port=5432;Database=${POSTGRES_DB:-bytefight};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
+      Database__ApplyMigrations: ${APPLY_MIGRATIONS:-true}
+      Database__SeedOnStartup: ${SEED_ON_STARTUP:-true}
+      Jwt__Secret: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      Jwt__Issuer: ${JWT_ISSUER:-bytefight-api}
+      Jwt__Audience: ${JWT_AUDIENCE:-bytefight-client}
+      Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_IN_MINUTES:-60}
+      Minio__Endpoint: minio:9000
+      Minio__AccessKey: ${MINIO_ROOT_USER}
+      Minio__SecretKey: ${MINIO_ROOT_PASSWORD}
+      Minio__BucketName: ${MINIO_BUCKET_NAME:-assets}
+      Minio__UseSSL: false
+      Cors__AllowedOrigins__0: ${PUBLIC_CLIENT_ORIGIN:-http://localhost}
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-bytefight-web-api}
+      OTEL_RESOURCE_ATTRIBUTES: ${OTEL_RESOURCE_ATTRIBUTES:-service.namespace=bytefight,deployment.environment=production}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    depends_on:
+      - postgres
+      - minio
+      - aspire-dashboard
+    ports:
+      - "${WEB_API_PORT:-5000}:8080"
+
+  client:
+    build:
+      context: src/ClientApp
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${CLIENT_API_URL:-/api}
+        VITE_GAME_HUB_URL: ${CLIENT_GAME_HUB_URL:-/game-runtime-hub}
+    restart: unless-stopped
+    depends_on:
+      - web-api
+    ports:
+      - "${CLIENT_PORT:-80}:80"
+
+volumes:
+  postgres-data:
+  minio-data:
