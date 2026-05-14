@@ -55,6 +55,8 @@ internal sealed class ArenaWorldBuilder(IServiceScopeFactory scopeFactory)
         List<ArenaEnemy> arenaEnemies = await dbContext.ArenaEnemies
             .AsNoTracking()
             .Where(e => e.ArenaId == arena.Id)
+            .OrderByDescending(e => e.Position.Y)
+            .ThenByDescending(e => e.Position.X)
             .Include(e => e.Enemy)
                 .ThenInclude(e => e.Stats)
             .Include(e => e.Enemy)
