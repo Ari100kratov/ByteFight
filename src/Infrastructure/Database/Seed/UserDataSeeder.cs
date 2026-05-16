@@ -1,10 +1,10 @@
 ﻿using Application.Abstractions.Authorization;
-using Application.Abstractions.Messaging;
 using Application.Auth.Users.Register;
 using Domain.Auth.Roles;
 using Infrastructure.Database.Auth;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Infrastructure.Database.Seed;
 

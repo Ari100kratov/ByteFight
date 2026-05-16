@@ -1,6 +1,7 @@
-using Application.Abstractions.Messaging;
+
 using Application.Game.Characters.Create;
 using SharedKernel;
+using SharedKernel.Messaging;
 using Web.Api.Extensions;
 
 namespace Web.Api.Endpoints.Game.Characters;

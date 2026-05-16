@@ -1,29 +1,29 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Application.Contracts.GameRuntime;
 using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.GameRuntime.GameSessions.GetLogs;
 
-internal sealed class GetGameSessionLogsQueryHandler(IGameRuntimeDbContext dbContext, IUserContext userContext)
+internal sealed class GetGameSessionLogsQueryHandler(
+    IGameRuntimeDbContext dbContext,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetGameSessionLogsQuery, IReadOnlyList<TurnLogDto>>
 {
     public async Task<Result<IReadOnlyList<TurnLogDto>>> Handle(
         GetGameSessionLogsQuery query,
         CancellationToken cancellationToken)
     {
-        bool exists = await dbContext.GameSessions
+        GameSession? session = await dbContext.GameSessions
             .AsNoTracking()
-            .AnyAsync(s =>
-                s.Id == query.SessionId &&
-                s.UserIds.Contains(userContext.UserId),
-                cancellationToken);
+            .SingleOrDefaultAsync(s => s.Id == query.SessionId, cancellationToken);
 
-        if (!exists)
+        if (session is null ||
+            !await userAccessService.CanAccessAnyUserOwnedResourceAsync(session.UserIds, cancellationToken))
         {
             return Result.Failure<IReadOnlyList<TurnLogDto>>(
                 GameSessionErrors.NotFound(query.SessionId));

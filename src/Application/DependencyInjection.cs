@@ -1,8 +1,9 @@
 ﻿using Application.Abstractions.Behaviors;
-using Application.Abstractions.Messaging;
+
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application;
 

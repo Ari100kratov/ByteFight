@@ -2,6 +2,8 @@ using System.Reflection;
 using Application;
 using Application.Abstractions.GameRuntime;
 using Aspire.ServiceDefaults;
+using Chronicles.Application;
+using Chronicles.Infrastructure;
 using Domain.ValueObjects;
 using GameRuntime;
 using GameRuntime.Logic.User.Api;
@@ -48,6 +50,8 @@ builder.Services
     .AddApplication()
     .AddPresentation()
     .AddInfrastructure(builder.Configuration)
+    .AddChroniclesApplication()
+    .AddChroniclesPersistence(builder.Configuration)
     .AddGameRuntimeInfrastructure()
     .AddUserCodeApiDocumentation([typeof(UserWorldView).Assembly, typeof(Position).Assembly]);
 
@@ -61,16 +65,6 @@ app.MapEndpoints();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
-
-if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Database:ApplyMigrations"))
-{
-    app.ApplyMigrations();
-}
-
-if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Database:SeedOnStartup"))
-{
-    await app.DatabaseSeed();
-}
 
 app.MapHealthChecks("health", new HealthCheckOptions
 {

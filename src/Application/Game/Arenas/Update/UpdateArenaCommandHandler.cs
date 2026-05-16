@@ -1,18 +1,18 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Application.Contracts;
 using Domain.Auth.Users;
 using Domain.Game.Arenas;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Arenas.Update;
 
 internal sealed class UpdateArenaCommandHandler(
     IGameDbContext dbContext,
-    IUserContext userContext,
+    IUserAccessService userAccessService,
     IDateTimeProvider dateTimeProvider)
     : ICommandHandler<UpdateArenaCommand>
 {
@@ -28,12 +28,13 @@ internal sealed class UpdateArenaCommandHandler(
 
         string name = command.Name.Trim();
         bool exists = await dbContext.Arenas.AnyAsync(a => a.Id != arena.Id && a.Name == name, cancellationToken);
+
         if (exists)
         {
             return Result.Failure(ArenaErrors.NameNotUnique);
         }
 
-        if (arena.CreatedBy.Value != userContext.UserId)
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(arena.CreatedBy.Value, cancellationToken))
         {
             return Result.Failure(UserErrors.Unauthorized());
         }

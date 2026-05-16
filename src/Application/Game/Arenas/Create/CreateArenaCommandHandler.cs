@@ -1,12 +1,13 @@
 ﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
+
 using Application.Contracts;
 using Domain;
 using Domain.Game.Arenas;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Arenas.Create;
 

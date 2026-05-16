@@ -1,18 +1,20 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Auth.Users.GetById;
 
-internal sealed class GetUserByIdQueryHandler(IAuthDbContext context, IUserContext userContext)
+internal sealed class GetUserByIdQueryHandler(
+    IAuthDbContext context,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetUserByIdQuery, UserResponse>
 {
     public async Task<Result<UserResponse>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
     {
-        if (query.UserId != userContext.UserId)
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(query.UserId, cancellationToken))
         {
             return Result.Failure<UserResponse>(UserErrors.Unauthorized());
         }

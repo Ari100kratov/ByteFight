@@ -1,28 +1,31 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
-using Domain;
 using Domain.Game.Characters;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Characters.Rename;
 
 internal sealed class RenameCharacterCommandHandler(
     IGameDbContext dbContext,
-    IUserContext userContext,
+    IUserAccessService userAccessService,
     IDateTimeProvider dateTimeProvider)
     : ICommandHandler<RenameCharacterCommand>
 {
     public async Task<Result> Handle(RenameCharacterCommand command, CancellationToken cancellationToken)
     {
         string name = command.Name.Trim();
-        var userId = new UserId(userContext.UserId);
 
         Character? character = await dbContext.Characters
-            .SingleOrDefaultAsync(c => c.Id == command.Id && c.UserId == userId, cancellationToken);
+            .SingleOrDefaultAsync(c => c.Id == command.Id, cancellationToken);
 
         if (character is null)
+        {
+            return Result.Failure(CharacterErrors.NotFound(command.Id));
+        }
+
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(character.UserId.Value, cancellationToken))
         {
             return Result.Failure(CharacterErrors.NotFound(command.Id));
         }
@@ -30,7 +33,7 @@ internal sealed class RenameCharacterCommandHandler(
         bool nameExists = await dbContext.Characters
             .AnyAsync(c =>
                 c.Id != command.Id &&
-                c.UserId == userId &&
+                c.UserId == character.UserId &&
                 c.Name == name,
                 cancellationToken);
 

@@ -13,6 +13,7 @@ import GameArenasPage from "./features/game-arenas-page/GameArenasPage"
 import GameArenaPage from "./features/game-arena-page/GameArenaPage"
 import NotFoundPage from "./pages/NotFoundPage"
 import BattleHistoryPage from "./features/battle-history-page/BattleHistoryPage"
+import ChronicleNominationsPage from "./features/chronicle-nominations-page/ChronicleNominationsPage"
 import AccountPage from "./features/account-page/AccountPage"
 import ScriptApiDocsPage from "./features/script-api-docs-page/ScriptApiDocsPage"
 import QuickStartDocsPage from "./features/docs-page/QuickStartDocsPage"
@@ -52,11 +53,12 @@ export default function App() {
             <Route path=":id" element={<CharacterPage />} />
           </Route>
 
-          <Route path="analytics">
+          <Route path="battle-archive">
             <Route index element={<Navigate to="history" replace />} />
             <Route path="history" element={<BattleHistoryPage />} />
-            <Route path="stats" element={<InProgressPage title="Статистика" />} />
-            <Route path="leaderboard" element={<InProgressPage title="Лидеры" />} />
+            <Route path="hall-of-fame" element={<ChronicleNominationsPage />} />
+            <Route path="stats" element={<InProgressPage title="Статистика боев" />} />
+            <Route path="leaderboard" element={<InProgressPage title="Рейтинг" />} />
           </Route>
 
           <Route path="docs">

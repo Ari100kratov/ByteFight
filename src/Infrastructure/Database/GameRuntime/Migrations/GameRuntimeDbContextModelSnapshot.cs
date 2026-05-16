@@ -86,6 +86,16 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("joined_at");
 
+                    b.Property<string>("CharacterClassName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("character_class_name");
+
+                    b.Property<string>("CharacterSpecName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("character_spec_name");
+
                     b.Property<Guid>("SessionId")
                         .HasColumnType("uuid")
                         .HasColumnName("session_id");
@@ -94,6 +104,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("unit_id");
 
+                    b.Property<string>("UnitName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("unit_name");
+
                     b.Property<int>("UnitType")
                         .HasColumnType("integer")
                         .HasColumnName("unit_type");
@@ -101,6 +117,16 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
+
+                    b.Property<string>("UserFirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("user_first_name");
+
+                    b.Property<string>("UserLastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("user_last_name");
 
                     b.HasKey("Id")
                         .HasName("pk_game_session_participants");
@@ -156,6 +182,58 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .HasName("pk_game_sessions");
 
                     b.ToTable("game_sessions", "game_runtime");
+                });
+
+            modelBuilder.Entity("Domain.Integration.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AggregateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("aggregate_id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("error");
+
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at_utc");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload");
+
+                    b.Property<DateTime?>("ProcessedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at_utc");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_outbox_messages");
+
+                    b.HasIndex("AggregateId", "Type")
+                        .IsUnique()
+                        .HasDatabaseName("ix_outbox_messages_aggregate_id_type");
+
+                    b.HasIndex("Type", "CreatedAtUtc", "Id")
+                        .HasDatabaseName("ix_outbox_messages_type_created_at_utc_id");
+
+                    b.ToTable("outbox_messages", "integration");
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.AbilityUsedLogEntry", b =>

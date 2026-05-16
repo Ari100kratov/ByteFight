@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿
+using SharedKernel.Messaging;
 
 namespace Application.Game.CharacterSpecs.UpdateDescription;
 

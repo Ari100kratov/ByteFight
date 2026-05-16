@@ -1,7 +1,8 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using FluentValidation;
 using FluentValidation.Results;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Abstractions.Behaviors;
 

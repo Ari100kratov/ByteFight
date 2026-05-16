@@ -4,12 +4,35 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-bytefight}
+      POSTGRES_CHRONICLES_DB: ${POSTGRES_CHRONICLES_DB:-bytefight_chronicles}
       POSTGRES_USER: ${POSTGRES_USER:-bytefight}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  postgres-init:
+    image: postgres:17
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-bytefight}
+      POSTGRES_CHRONICLES_DB: ${POSTGRES_CHRONICLES_DB:-bytefight_chronicles}
+      POSTGRES_USER: ${POSTGRES_USER:-bytefight}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - ./deploy/postgres/ensure-databases.sh:/scripts/ensure-databases.sh:ro
+    entrypoint: ["/bin/bash", "/scripts/ensure-databases.sh"]
 
   minio:
     image: minio/minio:latest
@@ -37,6 +60,37 @@ services:
       - "${ASPIRE_DASHBOARD_OTLP_GRPC_PORT:-4317}:18889"
       - "${ASPIRE_DASHBOARD_OTLP_HTTP_PORT:-4318}:18890"
 
+  migrator:
+    build:
+      context: .
+      dockerfile: src/Migrator/Dockerfile
+    restart: on-failure
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__Database: Host=postgres;Port=5432;Database=${POSTGRES_DB:-bytefight};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
+      ConnectionStrings__ChroniclesDatabase: Host=postgres;Port=5432;Database=${POSTGRES_CHRONICLES_DB:-bytefight_chronicles};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
+      ConnectionStrings__GameRuntimeDatabase: Host=postgres;Port=5432;Database=${POSTGRES_DB:-bytefight};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
+      Migrator__ChroniclesCatchUpBatchSize: ${CHRONICLES_CATCH_UP_BATCH_SIZE:-100}
+      Migrator__RebuildChroniclesProjections: ${REBUILD_CHRONICLES_PROJECTIONS:-false}
+      Jwt__Secret: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      Jwt__Issuer: ${JWT_ISSUER:-bytefight-api}
+      Jwt__Audience: ${JWT_AUDIENCE:-bytefight-client}
+      Jwt__ExpirationInMinutes: ${JWT_EXPIRATION_IN_MINUTES:-60}
+      Minio__Endpoint: minio:9000
+      Minio__AccessKey: ${MINIO_ROOT_USER}
+      Minio__SecretKey: ${MINIO_ROOT_PASSWORD}
+      Minio__BucketName: ${MINIO_BUCKET_NAME:-assets}
+      Minio__UseSSL: false
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    depends_on:
+      postgres-init:
+        condition: service_completed_successfully
+      minio:
+        condition: service_started
+      aspire-dashboard:
+        condition: service_started
+
   web-api:
     build:
       context: .
@@ -46,8 +100,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__Database: Host=postgres;Port=5432;Database=${POSTGRES_DB:-bytefight};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
-      Database__ApplyMigrations: ${APPLY_MIGRATIONS:-true}
-      Database__SeedOnStartup: ${SEED_ON_STARTUP:-true}
+      ConnectionStrings__ChroniclesDatabase: Host=postgres;Port=5432;Database=${POSTGRES_CHRONICLES_DB:-bytefight_chronicles};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
       Jwt__Secret: ${JWT_SECRET:?Set JWT_SECRET in .env}
       Jwt__Issuer: ${JWT_ISSUER:-bytefight-api}
       Jwt__Audience: ${JWT_AUDIENCE:-bytefight-client}
@@ -61,11 +114,33 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     depends_on:
-      - postgres
-      - minio
-      - aspire-dashboard
+      migrator:
+        condition: service_completed_successfully
+      minio:
+        condition: service_started
+      aspire-dashboard:
+        condition: service_started
     ports:
       - "${WEB_API_PORT:-5000}:8080"
+
+  chronicles-worker:
+    build:
+      context: .
+      dockerfile: src/Chronicles/Chronicles.Worker/Dockerfile
+    restart: unless-stopped
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__ChroniclesDatabase: Host=postgres;Port=5432;Database=${POSTGRES_CHRONICLES_DB:-bytefight_chronicles};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
+      ConnectionStrings__GameRuntimeDatabase: Host=postgres;Port=5432;Database=${POSTGRES_DB:-bytefight};Username=${POSTGRES_USER:-bytefight};Password=${POSTGRES_PASSWORD};Include Error Detail=false
+      ChroniclesWorker__BatchSize: ${CHRONICLES_WORKER_BATCH_SIZE:-100}
+      ChroniclesWorker__PollIntervalSeconds: ${CHRONICLES_WORKER_POLL_INTERVAL_SECONDS:-300}
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      aspire-dashboard:
+        condition: service_started
 
   client:
     build:

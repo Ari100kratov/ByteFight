@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
-using Application.Abstractions.Messaging;
+
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Characters.CharacterCodes.GetTemplate;
 

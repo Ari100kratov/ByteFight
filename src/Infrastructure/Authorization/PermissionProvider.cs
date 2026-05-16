@@ -29,10 +29,39 @@ internal sealed class PermissionProvider(
         })!;
     }
 
+    public Task<HashSet<string>> GetRolesForUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        string cacheKey = GetRolesCacheKey(userId);
+
+        return cache.GetOrCreateAsync(cacheKey, async entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = CacheLifetime;
+
+            string[] roles = await dbContext.UserRoles
+                .AsNoTracking()
+                .Where(ur => ur.UserId == userId)
+                .Select(ur => ur.Role.Name)
+                .Distinct()
+                .ToArrayAsync(cancellationToken);
+
+            return roles.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        })!;
+    }
+
+    public async Task<bool> IsInRoleAsync(Guid userId, string roleName, CancellationToken cancellationToken = default)
+    {
+        HashSet<string> roles = await GetRolesForUserIdAsync(userId, cancellationToken);
+
+        return roles.Contains(roleName);
+    }
+
     public void Invalidate(Guid userId)
     {
         cache.Remove(GetCacheKey(userId));
+        cache.Remove(GetRolesCacheKey(userId));
     }
 
     private static string GetCacheKey(Guid userId) => $"auth:permissions:{userId}";
+
+    private static string GetRolesCacheKey(Guid userId) => $"auth:roles:{userId}";
 }

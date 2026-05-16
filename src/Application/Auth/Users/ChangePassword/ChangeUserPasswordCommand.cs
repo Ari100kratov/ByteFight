@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿
+using SharedKernel.Messaging;
 
 namespace Application.Auth.Users.ChangePassword;
 

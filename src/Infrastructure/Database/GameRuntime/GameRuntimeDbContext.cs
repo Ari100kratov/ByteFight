@@ -1,7 +1,8 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameSessionParticipants;
 using Domain.GameRuntime.GameSessions;
+using Domain.Integration;
 using Infrastructure.Database.Game;
 using Infrastructure.DomainEvents;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ public sealed class GameRuntimeDbContext(
 
     public DbSet<GameActionLogEntry> GameActionLogEntries { get; set; }
 
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(
@@ -30,16 +33,6 @@ public sealed class GameRuntimeDbContext(
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // When should you publish domain events?
-        //
-        // 1. BEFORE calling SaveChangesAsync
-        //     - domain events are part of the same transaction
-        //     - immediate consistency
-        // 2. AFTER calling SaveChangesAsync
-        //     - domain events are a separate transaction
-        //     - eventual consistency
-        //     - handlers can fail
-
         int result = await base.SaveChangesAsync(cancellationToken);
 
         await PublishDomainEventsAsync();

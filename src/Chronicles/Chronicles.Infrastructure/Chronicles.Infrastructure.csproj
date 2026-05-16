@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chronicles.Application\Chronicles.Application.csproj" />
+    <ProjectReference Include="..\..\IntegrationContracts\IntegrationContracts.csproj" />
+  </ItemGroup>
+
+</Project>

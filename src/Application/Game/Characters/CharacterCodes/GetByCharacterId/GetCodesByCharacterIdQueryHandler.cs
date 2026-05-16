@@ -1,17 +1,21 @@
-using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Domain.Auth.Users;
 using Domain.Game.Characters;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Characters.CharacterCodes.GetByCharacterId;
 
-internal sealed class GetCodesByCharacterIdQueryHandler(IGameDbContext dbContext, IUserContext userContext)
+internal sealed class GetCodesByCharacterIdQueryHandler(
+    IGameDbContext dbContext,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetCodesByCharacterIdQuery, IReadOnlyList<CharacterCodeResponse>>
 {
-    public async Task<Result<IReadOnlyList<CharacterCodeResponse>>> Handle(GetCodesByCharacterIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CharacterCodeResponse>>> Handle(
+        GetCodesByCharacterIdQuery query,
+        CancellationToken cancellationToken)
     {
         Character? character = await dbContext.Characters
             .AsNoTracking()
@@ -23,7 +27,7 @@ internal sealed class GetCodesByCharacterIdQueryHandler(IGameDbContext dbContext
             return Result.Failure<IReadOnlyList<CharacterCodeResponse>>(CharacterErrors.NotFound(query.CharacterId));
         }
 
-        if (userContext.UserId != character.UserId.Value)
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(character.UserId.Value, cancellationToken))
         {
             return Result.Failure<IReadOnlyList<CharacterCodeResponse>>(UserErrors.Unauthorized());
         }

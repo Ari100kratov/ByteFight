@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Aspire.ServiceDefaults\Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Chronicles\Chronicles.Infrastructure\Chronicles.Infrastructure.csproj" />
+    <ProjectReference Include="..\GameRuntime\GameRuntime\GameRuntime.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

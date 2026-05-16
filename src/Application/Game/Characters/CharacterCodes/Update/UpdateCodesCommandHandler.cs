@@ -1,18 +1,18 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Domain.Auth.Users;
 using Domain.Game.Characters;
 using Domain.Game.Characters.CharacterCodes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Characters.CharacterCodes.Update;
 
 internal class UpdateCodesCommandHandler(
     IGameDbContext dbContext,
-    IUserContext userContext,
+    IUserAccessService userAccessService,
     IDateTimeProvider dateTimeProvider,
     ILogger<UpdateCodesCommandHandler> logger)
     : ICommandHandler<UpdateCodesCommand>
@@ -28,31 +28,37 @@ internal class UpdateCodesCommandHandler(
             return Result.Failure(CharacterErrors.NotFound(command.CharacterId));
         }
 
-        if (character.UserId.Value != userContext.UserId)
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(character.UserId.Value, cancellationToken))
         {
             return Result.Failure(UserErrors.Unauthorized());
         }
 
-        // === Удаление ===
         foreach (Guid id in command.DeletedIds)
         {
             CharacterCode? code = character.Codes.FirstOrDefault(c => c.Id == id);
+
             if (code is null)
             {
-                logger.LogWarning("Attempted to delete non-existent code: {CharacterCodeId} for CharacterId: {CharacterId}", id, command.CharacterId);
+                logger.LogWarning(
+                    "Attempted to delete non-existent code: {CharacterCodeId} for CharacterId: {CharacterId}",
+                    id,
+                    command.CharacterId);
                 continue;
             }
 
             dbContext.CharacterCodes.Remove(code);
         }
 
-        // === Обновление ===
         foreach (CharacterCodeDto dto in command.Updated)
         {
             CharacterCode? code = character.Codes.FirstOrDefault(c => c.Id == dto.Id);
+
             if (code is null)
             {
-                logger.LogWarning("Attempted to update non-existent code: {CharacterCodeId} for CharacterId: {CharacterId}", dto.Id, command.CharacterId);
+                logger.LogWarning(
+                    "Attempted to update non-existent code: {CharacterCodeId} for CharacterId: {CharacterId}",
+                    dto.Id,
+                    command.CharacterId);
                 continue;
             }
 
@@ -61,7 +67,6 @@ internal class UpdateCodesCommandHandler(
             code.UpdatedAt = dateTimeProvider.UtcNow;
         }
 
-        // === Добавление ===
         foreach (CharacterCodeDto dto in command.Created)
         {
             var newCode = new CharacterCode
@@ -71,13 +76,14 @@ internal class UpdateCodesCommandHandler(
                 Language = CodeLanguage.CSharp,
                 SourceCode = dto.SourceCode,
                 CreatedAt = dateTimeProvider.UtcNow,
-                CharacterId = character.Id,
+                CharacterId = character.Id
             };
 
             await dbContext.CharacterCodes.AddAsync(newCode, cancellationToken);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
         return Result.Success();
     }
 }

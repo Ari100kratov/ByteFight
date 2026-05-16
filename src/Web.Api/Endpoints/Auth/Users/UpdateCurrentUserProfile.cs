@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions.Authentication;
-using Application.Abstractions.Messaging;
+
 using Application.Auth.Users.UpdateProfile;
 using SharedKernel;
+using SharedKernel.Messaging;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 

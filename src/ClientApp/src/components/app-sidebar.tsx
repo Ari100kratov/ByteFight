@@ -7,12 +7,12 @@ import {
   // Frame,
   // Map,
   // PieChart,
+  Archive,
   Send,
   Settings2,
   FolderGit2,
   Swords,
   // Gamepad2,
-  BarChart3,
   ClipboardList
 } from "lucide-react"
 
@@ -64,13 +64,25 @@ const data = {
       // items: [ Здесь хочу выводить персонажи пользователя списком ]
     },
     {
-      title: "Бои и статистика",
-      url: "/analytics",
-      icon: BarChart3,
+      title: "Боевой архив",
+      url: "/battle-archive",
+      icon: Archive,
       items: [
         {
           title: "История боев",
-          url: "/analytics/history"
+          url: "/battle-archive/history"
+        },
+        {
+          title: "Зал славы",
+          url: "/battle-archive/hall-of-fame"
+        },
+        {
+          title: "Статистика",
+          url: "/battle-archive/stats"
+        },
+        {
+          title: "Рейтинг",
+          url: "/battle-archive/leaderboard"
         }
       ]
     },

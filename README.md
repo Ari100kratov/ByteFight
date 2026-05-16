@@ -199,6 +199,8 @@ src/
   Application/           # команды/запросы
   Infrastructure/        # EF Core, auth, MinIO, policy provider
   GameRuntime/           # игровой цикл, AI, user code compilation/execution, realtime
+  Chronicles/            # витрина хроник, номинации, inbox/projection worker
+  Migrator/              # миграции, seed и первичная догонка outbox/inbox
   Web.Api/               # HTTP endpoint'ы, DI, middleware
   ClientApp/             # React SPA
   Aspire.AppHost/        # оркестрация локального окружения
@@ -268,9 +270,7 @@ cd ../..
 dotnet run --project src/Aspire.AppHost/Aspire.AppHost.csproj
 ```
 
-Aspire автоматически поднимет необходимые сервисы: базу данных, объектное хранилище и Web API.
-
-Вот более понятный и аккуратно оформленный вариант с пояснениями и `note`:
+Aspire автоматически поднимет PostgreSQL, MinIO, `Migrator`, Web API и `Chronicles.Worker`. Runtime-сервисы стартуют после успешного завершения `Migrator`.
 
 
 ### 6. ⚠️ ВАЖНО! Перед запуском клиента
@@ -350,18 +350,22 @@ pnpm build
 2. **Подготовить секреты**: скопировать `.env.example` в `.env` и заменить все `change-me-*` значения. Минимально обязательны `POSTGRES_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `JWT_SECRET`.
 3. **Решить вопрос TLS**: в production ставьте обратный прокси перед Portainer stack (Traefik, Nginx Proxy Manager, Caddy или внешний балансировщик) и публикуйте наружу только нужные HTTP(S)-точки.
 4. **Загрузить ассеты в MinIO**: после первого запуска создать/проверить bucket `assets` и загрузить файлы из архива ассетов с сохранением структуры.
-5. **Проверить миграции и seed**: первый запуск можно делать с `APPLY_MIGRATIONS=true` и `SEED_ON_STARTUP=true`; после успешного seed обычно стоит выставить `SEED_ON_STARTUP=false`.
+5. **Проверить порядок старта**: `Migrator` должен завершиться успешно до запуска `web-api` и `chronicles-worker`. Он применяет EF migrations, выполняет seed, создает недостающие outbox-события для старых завершенных сессий и догоняет витрину Chronicles.
 6. **Ограничить доступ к диагностике**: Aspire Dashboard показывает логи, traces, метрики и потенциально чувствительные данные. Не публикуйте его без авторизации/VPN/IP allowlist.
 
 ### Состав production stack
 
 В корне репозитория добавлены файлы для Portainer/Docker Compose:
 
-- `docker-compose.yml` — stack из PostgreSQL, MinIO, Web API, React/Nginx клиента и standalone Aspire Dashboard.
+- `docker-compose.yml` — stack из PostgreSQL, MinIO, `migrator`, Web API, `chronicles-worker`, React/Nginx клиента и standalone Aspire Dashboard.
 - `.env.example` — шаблон переменных окружения для Portainer stack.
 - `.dockerignore` — исключает `bin`, `obj`, `node_modules`, `.env` и локальные контейнерные данные из Docker build context.
 - `src/Web.Api/Dockerfile` — production-сборка API на .NET 10 с публикацией `user-code-worker`.
+- `src/Migrator/Dockerfile` — one-shot host для миграций, seed и первичной догонки Chronicles.
+- `src/Chronicles/Chronicles.Worker/Dockerfile` — production-сборка фонового обработчика Chronicles.
 - `src/ClientApp/Dockerfile` и `src/ClientApp/nginx.conf` — production-сборка SPA и reverse proxy для `/api` и `/game-runtime-hub`.
+
+Архитектурное решение по порядку запуска описано в `docs/adr/0001-production-hosting-topology.md`.
 
 ### Быстрый запуск локально через Docker Compose
 
@@ -370,6 +374,8 @@ cp .env.example .env
 # Отредактируйте .env: задайте надежные POSTGRES_PASSWORD, MINIO_ROOT_PASSWORD и JWT_SECRET.
 docker compose up -d --build
 ```
+
+При первом запуске `migrator` может работать дольше обычного: он применяет миграции и догоняет старые завершенные сессии для Chronicles. `web-api` и `chronicles-worker` начнут работу только после успешного завершения этого шага.
 
 Адреса по умолчанию:
 
@@ -385,8 +391,9 @@ docker compose up -d --build
 2. Выберите репозиторий Git или вставьте содержимое `docker-compose.yml`.
 3. В секции **Environment variables** перенесите значения из `.env.example` и замените секреты.
 4. Нажмите **Deploy the stack**.
-5. После запуска проверьте health endpoint API: `http://<host>:5000/health`.
-6. Зайдите в MinIO Console и загрузите ассеты в bucket `assets`.
+5. Проверьте, что контейнер `migrator` завершился с кодом `0`.
+6. После запуска проверьте health endpoint API: `http://<host>:5000/health`.
+7. Зайдите в MinIO Console и загрузите ассеты в bucket `assets`.
 
 ### Aspire Dashboard в production
 
@@ -403,7 +410,9 @@ Dashboard UI доступен на порту `ASPIRE_DASHBOARD_PORT` (по ум
 
 ### Production-настройки приложения
 
-- `Database:ApplyMigrations` и `Database:SeedOnStartup` теперь можно включать через переменные `Database__ApplyMigrations` и `Database__SeedOnStartup` без перевода приложения в `Development`.
+- `web-api` и `chronicles-worker` не применяют миграции на старте. Все DDL-операции, seed и первичная догонка выполняются только через `migrator`.
+- `ConnectionStrings__ChroniclesDatabase` указывает на отдельную БД Chronicles. В Docker Compose она создается служебным контейнером `postgres-init` перед запуском `migrator`.
+- `REBUILD_CHRONICLES_PROJECTIONS=true` включает полный ручной пересбор витрины Chronicles в `migrator`. Для обычного деплоя оставляйте `false`: необработанные сессии догоняются инкрементально.
 - CORS настраивается через `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1` и т.д. При размещении клиента и API за одним Nginx (`/api`) CORS почти не используется, но настройка оставлена для отдельных доменов.
 - `src/ClientApp/.env.production` использует `VITE_API_URL=/api` и `VITE_GAME_HUB_URL=/game-runtime-hub`; Nginx в клиентском контейнере проксирует `/api/*` в Web API с удалением префикса `/api`, а SignalR идет через отдельный WebSocket location.
 - Значения `CLIENT_API_URL` и `CLIENT_GAME_HUB_URL` попадают в Vite на этапе сборки клиентского Docker image. Если меняете публичную схему маршрутизации, пересоберите контейнер клиента.
@@ -414,6 +423,7 @@ Dashboard UI доступен на порту `ASPIRE_DASHBOARD_PORT` (по ум
 - Настроить TLS и безопасные cookies/headers на внешнем reverse proxy.
 - Закрыть прямые порты PostgreSQL и MinIO API снаружи, если они не нужны публично.
 - Настроить backup volumes `postgres-data` и `minio-data`.
+- Настроить мониторинг контейнеров `migrator` и `chronicles-worker`: ошибка migrator блокирует старт runtime-сервисов, а остановка worker замораживает обновление Зала славы.
 - Проверить политику выполнения пользовательского кода и лимиты ресурсов контейнера `web-api`.
 - Прогнать `dotnet test ByteFight.sln` и `pnpm build` перед публикацией образов.
 

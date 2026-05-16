@@ -7,6 +7,7 @@ export type CurrentUserResponse = {
   email: string
   firstName: string
   lastName: string,
+  roles: string[]
   avatar?: string
 }
 

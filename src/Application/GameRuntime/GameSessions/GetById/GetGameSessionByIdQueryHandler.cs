@@ -1,29 +1,35 @@
-using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Application.Contracts.GameRuntime;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.GameRuntime.GameSessions.GetById;
 
-internal sealed class GetGameSessionByIdQueryHandler(IGameRuntimeDbContext dbContext, IUserContext userContext)
+internal sealed class GetGameSessionByIdQueryHandler(
+    IGameRuntimeDbContext dbContext,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetGameSessionByIdQuery, GameSessionDto>
 {
     public async Task<Result<GameSessionDto>> Handle(GetGameSessionByIdQuery query, CancellationToken cancellationToken)
     {
-        GameSessionDto? session = await dbContext.GameSessions
+        GameSession? session = await dbContext.GameSessions
             .AsNoTracking()
-            .Where(c => c.Id == query.Id && c.UserIds.Contains(userContext.UserId))
-            .Select(Mapper.ToDto())
-            .SingleOrDefaultAsync(cancellationToken);
+            .Include(x => x.Participants)
+            .SingleOrDefaultAsync(c => c.Id == query.Id, cancellationToken);
 
         if (session is null)
         {
             return Result.Failure<GameSessionDto>(GameSessionErrors.NotFound(query.Id));
         }
 
-        return Result.Success(session);
+        if (!await userAccessService.CanAccessAnyUserOwnedResourceAsync(session.UserIds, cancellationToken))
+        {
+            return Result.Failure<GameSessionDto>(GameSessionErrors.NotFound(query.Id));
+        }
+
+        return Result.Success(session.ToDto());
     }
 }

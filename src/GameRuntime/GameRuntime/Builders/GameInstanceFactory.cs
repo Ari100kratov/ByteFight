@@ -76,11 +76,14 @@ internal sealed class GameInstanceFactory
 
             var turnProcessor = new GameTurnProcessor(_npcAi, playerAi);
 
-            IEnumerable<Guid> arenaEnemyIds = world.Enemies.Select(x => x.ArenaEnemyId);
+            IEnumerable<GameSessionParticipantInitModel> arenaEnemies = world.Enemies
+                .Select(x => new GameSessionParticipantInitModel(x.ArenaEnemyId, x.Name));
+
             GameSession gameSession = await _sessionRepository.Create(
                 world.GameSessionId,
                 initModel,
-                arenaEnemyIds,
+                world.Player.Name,
+                arenaEnemies,
                 ct);
 
             var gameInstance = new GameInstance(

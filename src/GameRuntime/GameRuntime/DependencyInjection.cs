@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.GameRuntime;
+using Application.Abstractions.GameRuntime;
 using GameRuntime.Builders;
 using GameRuntime.Hosting;
+using GameRuntime.Integration;
 using GameRuntime.Logic.NPC;
 using GameRuntime.Logic.NPC.PathFinding;
 using GameRuntime.Logic.User.Compilation;
@@ -27,7 +28,6 @@ public static class DependencyInjection
         services.AddSingleton<GameInstanceFactory>();
         services.AddSingleton<BasicEnemyAiProcessor>();
 
-        // Compilation
         services.AddSingleton<UserActionExecutor>();
         services.AddSingleton<UserScriptCompiler>();
         services.AddSingleton(new UserCodeExecutionOptions { Timeout = TimeSpan.FromSeconds(3) });
@@ -43,16 +43,15 @@ public static class DependencyInjection
             return new ProcessUserCodeRunner(workerExePath, logger);
         });
 
-
-        // Intellisense
         services.AddSingleton<UserScriptRoslynContextFactory>();
-
         services.AddSingleton<UserScriptCompletionService>();
         services.AddSingleton<UserScriptDiagnosticsService>();
         services.AddSingleton<UserScriptHoverService>();
         services.AddSingleton<UserScriptSignatureHelpService>();
 
         services.AddSingleton<IGameSessionRepository, GameSessionRepository>();
+        services.AddScoped<IGameSessionCompletedIntegrationEventFactory, GameSessionCompletedIntegrationEventFactory>();
+        services.AddScoped<IGameSessionCompletedOutboxWriter, GameSessionCompletedOutboxWriter>();
         services.AddSingleton<IPathFinder, PathFinder>();
 
         services.AddSignalR();

@@ -1,13 +1,15 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Auth.Users.GetByEmail;
 
-internal sealed class GetUserByEmailQueryHandler(IAuthDbContext context, IUserContext userContext)
+internal sealed class GetUserByEmailQueryHandler(
+    IAuthDbContext context,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetUserByEmailQuery, UserResponse>
 {
     public async Task<Result<UserResponse>> Handle(GetUserByEmailQuery query, CancellationToken cancellationToken)
@@ -29,7 +31,7 @@ internal sealed class GetUserByEmailQueryHandler(IAuthDbContext context, IUserCo
             return Result.Failure<UserResponse>(UserErrors.NotFoundByEmail);
         }
 
-        if (user.Id != userContext.UserId)
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(user.Id, cancellationToken))
         {
             return Result.Failure<UserResponse>(UserErrors.Unauthorized());
         }

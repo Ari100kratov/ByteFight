@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using Application.Game.CharacterSpecs.GetSpecsByClassId;
 using SharedKernel;
+using SharedKernel.Messaging;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 

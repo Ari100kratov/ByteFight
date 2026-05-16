@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
+    <ProjectReference Include="..\Chronicles\Chronicles.Worker\Chronicles.Worker.csproj" />
+    <ProjectReference Include="..\Migrator\Migrator.csproj" />
     <ProjectReference Include="..\Web.Api\Web.Api.csproj" />
   </ItemGroup>
 
