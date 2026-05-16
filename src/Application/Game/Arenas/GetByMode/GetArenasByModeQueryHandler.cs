@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
+
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Arenas.GetByMode;
 

@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Database;
+namespace Infrastructure.Database;
 
 internal static class Schemas
 {
@@ -7,4 +7,6 @@ internal static class Schemas
     public const string Game = "game";
 
     public const string GameRuntime = "game_runtime";
+
+    public const string Integration = "integration";
 }

@@ -1,8 +1,9 @@
 ﻿using Application.Abstractions.Authorization;
-using Application.Abstractions.Messaging;
+
 using Application.Auth.Users.GetByEmail;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
+using SharedKernel.Messaging;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 

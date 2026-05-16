@@ -7,7 +7,12 @@ namespace GameRuntime.Persistence;
 
 internal interface IGameSessionRepository
 {
-    Task<GameSession> Create(Guid id, GameInitModel initModel, IEnumerable<Guid> arenaEnemyIds, CancellationToken ct);
+    Task<GameSession> Create(
+        Guid id,
+        GameInitModel initModel,
+        string characterName,
+        IEnumerable<GameSessionParticipantInitModel> arenaEnemies,
+        CancellationToken ct);
 
     Task Save(IEnumerable<GameActionLogEntry> gameActionLogEntries);
 
@@ -19,3 +24,11 @@ internal interface IGameSessionRepository
 
     Task<GameSession> Abort(Guid id, int turns);
 }
+
+internal sealed record GameSessionParticipantInitModel(Guid UnitId, string Name);
+
+internal sealed record PlayerParticipantMetadata(
+    string? UserFirstName,
+    string? UserLastName,
+    string? CharacterClassName,
+    string? CharacterSpecName);

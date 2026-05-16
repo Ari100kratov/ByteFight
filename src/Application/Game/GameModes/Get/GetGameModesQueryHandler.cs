@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using Domain.Game.GameModes;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.GameModes.Get;
 

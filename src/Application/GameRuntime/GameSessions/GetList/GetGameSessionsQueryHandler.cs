@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Application.Contracts;
 using Domain.Game.GameModes;
 using Domain.GameRuntime.GameResults;
@@ -8,13 +8,15 @@ using Domain.GameRuntime.GameSessionParticipants;
 using Domain.GameRuntime.GameSessions;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.GameRuntime.GameSessions.GetList;
 
 internal sealed class GetGameSessionsQueryHandler(
     IGameRuntimeDbContext gameRuntimeDbContext,
     IGameDbContext gameDbContext,
-    IUserContext userContext)
+    IUserContext userContext,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetGameSessionsQuery, PagedResponse<GameSessionListItemDto>>
 {
     public async Task<Result<PagedResponse<GameSessionListItemDto>>> Handle(
@@ -30,8 +32,12 @@ internal sealed class GetGameSessionsQueryHandler(
         };
 
         IQueryable<GameSession> baseQuery = gameRuntimeDbContext.GameSessions
-            .AsNoTracking()
-            .Where(x => x.UserIds.Contains(userContext.UserId));
+            .AsNoTracking();
+
+        if (!await userAccessService.IsCurrentUserAdminAsync(cancellationToken))
+        {
+            baseQuery = baseQuery.Where(x => x.UserIds.Contains(userContext.UserId));
+        }
 
         int totalCount = await baseQuery.CountAsync(cancellationToken);
 

@@ -1,8 +1,9 @@
 ﻿using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
+
 using Domain.Game.CharacterClasses;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.CharacterClasses.Update;
 

@@ -1,5 +1,6 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using Application.Contracts.GameRuntime;
+using SharedKernel.Messaging;
 
 namespace Application.GameRuntime.GameSessions.GetLogs;
 

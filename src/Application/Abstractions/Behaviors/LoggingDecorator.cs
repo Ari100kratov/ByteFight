@@ -1,6 +1,6 @@
-﻿using Application.Abstractions.Messaging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Abstractions.Behaviors;
 

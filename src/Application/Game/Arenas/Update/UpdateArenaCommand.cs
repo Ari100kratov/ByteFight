@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using Application.Contracts;
 using Domain.Game.GameModes;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Arenas.Update;
 

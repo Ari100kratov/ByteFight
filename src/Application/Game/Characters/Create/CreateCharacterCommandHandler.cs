@@ -1,11 +1,12 @@
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
+
 using Domain;
 using Domain.Game.Characters;
 using Domain.Game.CharacterSpecs;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Characters.Create;
 

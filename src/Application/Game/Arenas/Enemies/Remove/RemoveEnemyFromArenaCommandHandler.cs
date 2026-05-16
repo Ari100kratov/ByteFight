@@ -1,9 +1,10 @@
 ﻿using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
+
 using Domain.Game.Arenas;
 using Domain.Game.Arenas.ArenaEnemies;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Arenas.Enemies.Remove;
 

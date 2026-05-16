@@ -1,8 +1,9 @@
 ﻿using Application.Abstractions.Authorization;
-using Application.Abstractions.Messaging;
+
 using Application.Contracts;
 using Application.Game.Enemies.Create;
 using SharedKernel;
+using SharedKernel.Messaging;
 using Web.Api.Extensions;
 
 namespace Web.Api.Endpoints.Game.Enemies;

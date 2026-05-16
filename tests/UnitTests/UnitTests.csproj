@@ -21,4 +21,9 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Chronicles\Chronicles.Domain\Chronicles.Domain.csproj" />
+		<ProjectReference Include="..\..\src\IntegrationContracts\IntegrationContracts.csproj" />
+	</ItemGroup>
+
 </Project>

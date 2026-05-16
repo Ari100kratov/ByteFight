@@ -1,19 +1,23 @@
-using Application.Abstractions.Authentication;
+using Application.Abstractions.Authorization;
 using Application.Abstractions.Data;
-using Application.Abstractions.Messaging;
 using Domain;
 using Domain.Auth.Users;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Game.Characters.GetByUserId;
 
-public sealed class GetCharactersByUserIdQueryHandler(IGameDbContext dbContext, IUserContext userContext)
+public sealed class GetCharactersByUserIdQueryHandler(
+    IGameDbContext dbContext,
+    IUserAccessService userAccessService)
     : IQueryHandler<GetCharactersByUserIdQuery, IReadOnlyList<CharacterResponse>>
 {
-    public async Task<Result<IReadOnlyList<CharacterResponse>>> Handle(GetCharactersByUserIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CharacterResponse>>> Handle(
+        GetCharactersByUserIdQuery query,
+        CancellationToken cancellationToken)
     {
-        if (userContext.UserId != query.UserId)
+        if (!await userAccessService.CanAccessUserOwnedResourceAsync(query.UserId, cancellationToken))
         {
             return Result.Failure<IReadOnlyList<CharacterResponse>>(UserErrors.Unauthorized());
         }

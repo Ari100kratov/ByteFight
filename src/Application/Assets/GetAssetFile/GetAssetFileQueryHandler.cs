@@ -1,7 +1,8 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using Application.Abstractions.Storage;
 using Domain.Assets;
 using SharedKernel;
+using SharedKernel.Messaging;
 
 namespace Application.Assets.GetAssetFile;
 

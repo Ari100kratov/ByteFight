@@ -1,5 +1,6 @@
-﻿using Application.Abstractions.Messaging;
+﻿
 using Application.Contracts;
+using SharedKernel.Messaging;
 
 namespace Application.GameRuntime.GameSessions.GetList;
 

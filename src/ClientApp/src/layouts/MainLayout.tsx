@@ -22,8 +22,11 @@ const routeNames: Record<string, string> = {
   characters: "Мои персонажи",
   create: "Создание персонажа",
 
-  analytics: "Бои и статистика",
+  "battle-archive": "Боевой архив",
   history: "История боев",
+  "hall-of-fame": "Зал славы",
+  stats: "Статистика",
+  leaderboard: "Рейтинг",
 
   docs: "Документация",
   "quick-start": "Быстрый старт",

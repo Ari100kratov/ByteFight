@@ -35,8 +35,13 @@ public class GameSession : Entity
         GameModeType mode,
         Guid arenaId,
         Guid characterId,
+        string characterName,
         Guid userId,
-        IEnumerable<Guid> arenaEnemyIds,
+        string? userFirstName,
+        string? userLastName,
+        string? characterClassName,
+        string? characterSpecName,
+        IEnumerable<(Guid ArenaEnemyId, string Name)> arenaEnemies,
         IDateTimeProvider dateTimeProvider)
     {
         var gameSession = new GameSession
@@ -49,11 +54,19 @@ public class GameSession : Entity
             Status = GameStatus.Pending,
         };
 
-        gameSession.AddPlayer(characterId, userId, dateTimeProvider.UtcNow);
+        gameSession.AddPlayer(
+            characterId,
+            characterName,
+            userId,
+            userFirstName,
+            userLastName,
+            characterClassName,
+            characterSpecName,
+            dateTimeProvider.UtcNow);
 
-        foreach (Guid arenaEnemyId in arenaEnemyIds)
+        foreach ((Guid arenaEnemyId, string name) in arenaEnemies)
         {
-            gameSession.AddNpc(arenaEnemyId, dateTimeProvider.UtcNow);
+            gameSession.AddNpc(arenaEnemyId, name, dateTimeProvider.UtcNow);
         }
 
         return gameSession;
@@ -120,13 +133,39 @@ public class GameSession : Entity
         EndedAt = dateTimeProvider.UtcNow;
     }
 
-    private void AddPlayer(Guid characterId, Guid userId, DateTime joinedAt) =>
-        AddParticipant(ParticipantUnitType.Player, new UnitId(characterId), new UserId(userId), joinedAt);
+    private void AddPlayer(
+        Guid characterId,
+        string characterName,
+        Guid userId,
+        string? userFirstName,
+        string? userLastName,
+        string? characterClassName,
+        string? characterSpecName,
+        DateTime joinedAt) =>
+        AddParticipant(
+            ParticipantUnitType.Player,
+            new UnitId(characterId),
+            characterName,
+            new UserId(userId),
+            userFirstName,
+            userLastName,
+            characterClassName,
+            characterSpecName,
+            joinedAt);
 
-    private void AddNpc(Guid arenaEnemyId, DateTime joinedAt) =>
-        AddParticipant(ParticipantUnitType.Npc, new UnitId(arenaEnemyId), null, joinedAt);
+    private void AddNpc(Guid arenaEnemyId, string name, DateTime joinedAt) =>
+        AddParticipant(ParticipantUnitType.Npc, new UnitId(arenaEnemyId), name, null, null, null, null, null, joinedAt);
 
-    private void AddParticipant(ParticipantUnitType unitType, UnitId unitId, UserId? userId, DateTime joinedAt)
+    private void AddParticipant(
+        ParticipantUnitType unitType,
+        UnitId unitId,
+        string unitName,
+        UserId? userId,
+        string? userFirstName,
+        string? userLastName,
+        string? characterClassName,
+        string? characterSpecName,
+        DateTime joinedAt)
     {
         if (IsOver)
         {
@@ -140,10 +179,29 @@ public class GameSession : Entity
             SessionId = Id,
             UnitType = unitType,
             UnitId = unitId,
+            UnitName = Trim(unitName, 128) ?? string.Empty,
             UserId = userId,
+            UserFirstName = Trim(userFirstName, 100),
+            UserLastName = Trim(userLastName, 100),
+            CharacterClassName = Trim(characterClassName, 128),
+            CharacterSpecName = Trim(characterSpecName, 128),
             JoinedAt = joinedAt
         };
 
         _participants.Add(participant);
+    }
+
+    private static string? Trim(string? value, int maxLength)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        string trimmed = value.Trim();
+
+        return trimmed.Length > maxLength
+            ? trimmed[..maxLength]
+            : trimmed;
     }
 }

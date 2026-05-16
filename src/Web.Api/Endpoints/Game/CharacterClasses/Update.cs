@@ -1,7 +1,8 @@
 ﻿using Application.Abstractions.Authorization;
-using Application.Abstractions.Messaging;
+
 using Application.Game.CharacterClasses.Update;
 using SharedKernel;
+using SharedKernel.Messaging;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 
