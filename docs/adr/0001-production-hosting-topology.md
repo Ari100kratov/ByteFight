@@ -12,6 +12,7 @@
 - `chronicles-worker` для асинхронного обновления Зала славы и хроник;
 - `migrator` для EF migrations, seed, outbox-backfill и первичной догонки Chronicles;
 - PostgreSQL как основное хранилище;
+- pgAdmin как административный UI для PostgreSQL;
 - MinIO как S3-совместимое хранилище ассетов;
 - клиентский Nginx-контейнер для SPA и reverse proxy.
 
@@ -22,19 +23,20 @@
 В production используется явный порядок запуска:
 
 1. Поднять PostgreSQL и MinIO.
-2. Создать дополнительную БД Chronicles, если она вынесена из основной БД.
-3. Запустить `migrator` как one-shot процесс.
-4. Дождаться успешного завершения `migrator`.
-5. Запустить `web-api` и `chronicles-worker`.
-6. Запустить клиентский контейнер.
+2. Запустить `migrator` как one-shot процесс.
+3. Дождаться успешного завершения `migrator`.
+4. Запустить `web-api` и `chronicles-worker`.
+5. Запустить клиентский контейнер.
+6. Поднять pgAdmin для ручного администрирования БД.
 
 `web-api` и `chronicles-worker` не применяют миграции и не seed'ят данные на старте. Это снижает права runtime-сервисов и убирает гонки между несколькими процессами.
+Если БД Chronicles отсутствует, ее создает `migrator` через EF Core migrations. Поэтому учетная запись PostgreSQL, используемая migrator, должна иметь право создавать БД.
 
 В Docker Compose/Portainer этот порядок выражен через:
 
-- служебный контейнер `postgres-init`, который гарантирует наличие БД Chronicles;
 - one-shot контейнер `migrator`;
 - `depends_on` с `service_completed_successfully` для `web-api` и `chronicles-worker`.
+- отдельный volume `pgadmin-data` для пользовательских настроек pgAdmin.
 
 ## Последствия
 

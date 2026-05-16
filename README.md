@@ -347,7 +347,7 @@ pnpm build
 ### Что нужно сделать сначала
 
 1. **Определить публичные адреса**: домен клиента, домен/API-путь, способ доступа к MinIO Console и Aspire Dashboard. Для текущего `docker-compose.yml` клиент работает как основной вход, а запросы к API идут через `/api`.
-2. **Подготовить секреты**: скопировать `.env.example` в `.env` и заменить все `change-me-*` значения. Минимально обязательны `POSTGRES_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `JWT_SECRET`.
+2. **Подготовить секреты**: скопировать `.env.example` в `.env` и заменить все `change-me-*` значения. Минимально обязательны `POSTGRES_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `JWT_SECRET`, `PGADMIN_DEFAULT_PASSWORD`.
 3. **Решить вопрос TLS**: в production ставьте обратный прокси перед Portainer stack (Traefik, Nginx Proxy Manager, Caddy или внешний балансировщик) и публикуйте наружу только нужные HTTP(S)-точки.
 4. **Загрузить ассеты в MinIO**: после первого запуска создать/проверить bucket `assets` и загрузить файлы из архива ассетов с сохранением структуры.
 5. **Проверить порядок старта**: `Migrator` должен завершиться успешно до запуска `web-api` и `chronicles-worker`. Он применяет EF migrations, выполняет seed, создает недостающие outbox-события для старых завершенных сессий и догоняет витрину Chronicles.
@@ -357,7 +357,7 @@ pnpm build
 
 В корне репозитория добавлены файлы для Portainer/Docker Compose:
 
-- `docker-compose.yml` — stack из PostgreSQL, MinIO, `migrator`, Web API, `chronicles-worker`, React/Nginx клиента и standalone Aspire Dashboard.
+- `docker-compose.yml` — stack из PostgreSQL, pgAdmin, MinIO, `migrator`, Web API, `chronicles-worker`, React/Nginx клиента и standalone Aspire Dashboard.
 - `.env.example` — шаблон переменных окружения для Portainer stack.
 - `.dockerignore` — исключает `bin`, `obj`, `node_modules`, `.env` и локальные контейнерные данные из Docker build context.
 - `src/Web.Api/Dockerfile` — production-сборка API на .NET 10 с публикацией `user-code-worker`.
@@ -384,6 +384,7 @@ docker compose up -d --build
 - MinIO API: `http://localhost:9000`
 - MinIO Console: `http://localhost:9001`
 - Aspire Dashboard: `http://localhost:18888`
+- pgAdmin: внешний порт выбирает Docker, если `PGADMIN_PORT` оставлен пустым; фактический порт смотрите в `docker compose ps pgadmin`.
 
 ### Развертывание в Portainer
 
@@ -394,6 +395,7 @@ docker compose up -d --build
 5. Проверьте, что контейнер `migrator` завершился с кодом `0`.
 6. После запуска проверьте health endpoint API: `http://<host>:5000/health`.
 7. Зайдите в MinIO Console и загрузите ассеты в bucket `assets`.
+8. При необходимости откройте опубликованный порт `pgadmin` и подключитесь к PostgreSQL host `postgres`, port `5432`.
 
 ### Aspire Dashboard в production
 
@@ -411,8 +413,9 @@ Dashboard UI доступен на порту `ASPIRE_DASHBOARD_PORT` (по ум
 ### Production-настройки приложения
 
 - `web-api` и `chronicles-worker` не применяют миграции на старте. Все DDL-операции, seed и первичная догонка выполняются только через `migrator`.
-- `ConnectionStrings__ChroniclesDatabase` указывает на отдельную БД Chronicles. В Docker Compose она создается служебным контейнером `postgres-init` перед запуском `migrator`.
+- `ConnectionStrings__ChroniclesDatabase` указывает на отдельную БД Chronicles. Ее создает и мигрирует `migrator` через EF Core; пользователь PostgreSQL должен иметь право создавать БД, если она еще не существует.
 - `REBUILD_CHRONICLES_PROJECTIONS=true` включает полный ручной пересбор витрины Chronicles в `migrator`. Для обычного деплоя оставляйте `false`: необработанные сессии догоняются инкрементально.
+- `pgadmin` хранит пользовательские настройки в volume `pgadmin-data`; внешний порт можно зафиксировать через `PGADMIN_PORT`, а если оставить пустым, Docker назначит случайный.
 - CORS настраивается через `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1` и т.д. При размещении клиента и API за одним Nginx (`/api`) CORS почти не используется, но настройка оставлена для отдельных доменов.
 - `src/ClientApp/.env.production` использует `VITE_API_URL=/api` и `VITE_GAME_HUB_URL=/game-runtime-hub`; Nginx в клиентском контейнере проксирует `/api/*` в Web API с удалением префикса `/api`, а SignalR идет через отдельный WebSocket location.
 - Значения `CLIENT_API_URL` и `CLIENT_GAME_HUB_URL` попадают в Vite на этапе сборки клиентского Docker image. Если меняете публичную схему маршрутизации, пересоберите контейнер клиента.
@@ -422,7 +425,7 @@ Dashboard UI доступен на порту `ASPIRE_DASHBOARD_PORT` (по ум
 - Заменить все дефолтные пароли и `JWT_SECRET` на секреты из password manager/Portainer secrets.
 - Настроить TLS и безопасные cookies/headers на внешнем reverse proxy.
 - Закрыть прямые порты PostgreSQL и MinIO API снаружи, если они не нужны публично.
-- Настроить backup volumes `postgres-data` и `minio-data`.
+- Настроить backup volumes `postgres-data`, `minio-data` и при необходимости `pgadmin-data`.
 - Настроить мониторинг контейнеров `migrator` и `chronicles-worker`: ошибка migrator блокирует старт runtime-сервисов, а остановка worker замораживает обновление Зала славы.
 - Проверить политику выполнения пользовательского кода и лимиты ресурсов контейнера `web-api`.
 - Прогнать `dotnet test ByteFight.sln` и `pnpm build` перед публикацией образов.

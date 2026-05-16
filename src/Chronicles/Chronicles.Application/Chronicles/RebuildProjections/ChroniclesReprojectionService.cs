@@ -27,8 +27,7 @@ internal sealed class ChroniclesReprojectionService(
         {
             CompletedGameSessionData session = payloadParser.Parse(payload);
             await sessionProcessor.ApplyAsync(session, cancellationToken);
+            await chroniclesDbContext.SaveChangesAsync(cancellationToken);
         }
-
-        await chroniclesDbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -4,7 +4,6 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-bytefight}
-      POSTGRES_CHRONICLES_DB: ${POSTGRES_CHRONICLES_DB:-bytefight_chronicles}
       POSTGRES_USER: ${POSTGRES_USER:-bytefight}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     volumes:
@@ -16,23 +15,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-
-  postgres-init:
-    image: postgres:17
-    restart: "no"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: ${POSTGRES_DB:-bytefight}
-      POSTGRES_CHRONICLES_DB: ${POSTGRES_CHRONICLES_DB:-bytefight_chronicles}
-      POSTGRES_USER: ${POSTGRES_USER:-bytefight}
-      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-    volumes:
-      - ./deploy/postgres/ensure-databases.sh:/scripts/ensure-databases.sh:ro
-    entrypoint: ["/bin/bash", "/scripts/ensure-databases.sh"]
 
   minio:
     image: minio/minio:latest
@@ -46,6 +28,21 @@ services:
     ports:
       - "${MINIO_API_PORT:-9000}:9000"
       - "${MINIO_CONSOLE_PORT:-9001}:9001"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?Set PGADMIN_DEFAULT_EMAIL in .env}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?Set PGADMIN_DEFAULT_PASSWORD in .env}
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${PGADMIN_PORT:-}:80"
 
   aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:${ASPIRE_DASHBOARD_TAG:-latest}
@@ -84,8 +81,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://aspire-dashboard:18889
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     depends_on:
-      postgres-init:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
       minio:
         condition: service_started
       aspire-dashboard:
@@ -158,3 +155,4 @@ services:
 volumes:
   postgres-data:
   minio-data:
+  pgadmin-data:
