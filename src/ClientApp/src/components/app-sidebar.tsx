@@ -76,14 +76,14 @@ const data = {
           title: "Зал славы",
           url: "/battle-archive/hall-of-fame"
         },
-        {
-          title: "Статистика",
-          url: "/battle-archive/stats"
-        },
-        {
-          title: "Рейтинг",
-          url: "/battle-archive/leaderboard"
-        }
+        // {
+        //   title: "Статистика",
+        //   url: "/battle-archive/stats"
+        // },
+        // {
+        //   title: "Рейтинг",
+        //   url: "/battle-archive/leaderboard"
+        // }
       ]
     },
     {
