@@ -5,6 +5,13 @@ namespace Chronicles.Application.Abstractions.Data;
 /// </summary>
 public enum CompletedParticipantUnitType
 {
+    /// <summary>
+    /// Персонаж игрока.
+    /// </summary>
     Player = 1,
+
+    /// <summary>
+    /// Неигровой участник.
+    /// </summary>
     Npc = 2
 }

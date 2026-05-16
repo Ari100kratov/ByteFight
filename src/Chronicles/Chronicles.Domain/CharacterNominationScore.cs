@@ -92,7 +92,7 @@ public sealed class CharacterNominationScore
     }
 
     /// <summary>
-    /// Заменяет результат, если новое значение больше текущего.
+    /// Добавляет накопительное значение к результату и обновляет отображаемые данные участника.
     /// </summary>
     public void Add(
         decimal value,
@@ -134,7 +134,7 @@ public sealed class CharacterNominationScore
     }
 
     /// <summary>
-    /// Заменяет результат, если новое значение меньше текущего или результат ещё пустой.
+    /// Заменяет результат, если новое значение больше текущего.
     /// </summary>
     public void ReplaceIfGreater(decimal value, string characterName, Guid? sessionId, DateTime occurredAtUtc, DateTime updatedAtUtc) =>
         ReplaceIfGreater(value, characterName, null, null, null, null, sessionId, occurredAtUtc, updatedAtUtc);

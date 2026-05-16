@@ -1,4 +1,5 @@
 using Chronicles.Application.Abstractions.Data;
+using Chronicles.Application.Chronicles.ProcessCompletedGameSessions.Nominations;
 using Chronicles.Domain;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;

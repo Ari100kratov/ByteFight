@@ -1,14 +1,18 @@
 using Chronicles.Application.Abstractions.Data;
 using Chronicles.Domain;
 
-namespace Chronicles.Application.Chronicles.ProcessCompletedGameSessions;
+namespace Chronicles.Application.Chronicles.ProcessCompletedGameSessions.Nominations;
 
+/// <summary>
+/// Рассчитывает номинации, основанные на действиях из боевого журнала.
+/// </summary>
 internal sealed class CombatLogNominationProjector : IChronicleNominationProjector
 {
     private const string DamageEffectType = "Damage";
     private const string HealingEffectType = "Healing";
     private const string HealingPotionItemType = "HealingPotion";
 
+    /// <inheritdoc />
     public IEnumerable<ChronicleNominationProjection> Project(
         CompletedGameSessionData session,
         IReadOnlyList<CompletedGameSessionParticipantData> playerParticipants)

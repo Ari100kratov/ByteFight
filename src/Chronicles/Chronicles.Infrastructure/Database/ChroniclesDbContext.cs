@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chronicles.Infrastructure.Database;
 
+/// <summary>
+/// EF Core контекст read-model и inbox подсистемы хроник.
+/// </summary>
 public sealed class ChroniclesDbContext(DbContextOptions<ChroniclesDbContext> options)
     : DbContext(options), IChroniclesDbContext
 {
@@ -33,8 +36,12 @@ public sealed class ChroniclesDbContext(DbContextOptions<ChroniclesDbContext> op
     /// </summary>
     public DbSet<InboxMessage> InboxMessages { get; set; }
 
+    /// <summary>
+    /// Курсоры импорта внешних outbox-сообщений.
+    /// </summary>
     internal DbSet<OutboxImportCursor> ImportCursors { get; set; }
 
+    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(

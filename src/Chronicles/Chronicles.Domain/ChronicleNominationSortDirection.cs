@@ -5,6 +5,13 @@ namespace Chronicles.Domain;
 /// </summary>
 public enum ChronicleNominationSortDirection
 {
+    /// <summary>
+    /// Лучшим считается минимальное значение.
+    /// </summary>
     Ascending = 1,
+
+    /// <summary>
+    /// Лучшим считается максимальное значение.
+    /// </summary>
     Descending = 2
 }

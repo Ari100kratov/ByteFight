@@ -1,6 +1,7 @@
 using Chronicles.Application.Chronicles.GetCharacterChronicles;
 using Chronicles.Application.Chronicles.GetTopNominations;
 using Chronicles.Application.Chronicles.ProcessCompletedGameSessions;
+using Chronicles.Application.Chronicles.ProcessCompletedGameSessions.Nominations;
 using Chronicles.Application.Chronicles.RebuildProjections;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

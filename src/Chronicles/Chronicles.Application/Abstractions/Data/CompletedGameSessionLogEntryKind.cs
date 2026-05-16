@@ -5,9 +5,28 @@ namespace Chronicles.Application.Abstractions.Data;
 /// </summary>
 public enum CompletedGameSessionLogEntryKind
 {
+    /// <summary>
+    /// Пропуск хода.
+    /// </summary>
     Idle = 1,
+
+    /// <summary>
+    /// Перемещение.
+    /// </summary>
     Walk = 2,
+
+    /// <summary>
+    /// Смерть юнита.
+    /// </summary>
     Death = 3,
+
+    /// <summary>
+    /// Использование способности.
+    /// </summary>
     AbilityUsed = 4,
+
+    /// <summary>
+    /// Подбор предмета.
+    /// </summary>
     ItemPickedUp = 5
 }

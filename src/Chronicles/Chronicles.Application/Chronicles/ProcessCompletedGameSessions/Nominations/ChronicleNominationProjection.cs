@@ -1,8 +1,11 @@
 using Chronicles.Application.Abstractions.Data;
 using Chronicles.Domain;
 
-namespace Chronicles.Application.Chronicles.ProcessCompletedGameSessions;
+namespace Chronicles.Application.Chronicles.ProcessCompletedGameSessions.Nominations;
 
+/// <summary>
+/// Изменение read-model одной номинации, полученное из завершённой игровой сессии.
+/// </summary>
 internal sealed record ChronicleNominationProjection(
     ChronicleNominationType NominationType,
     Guid CharacterId,
@@ -17,6 +20,9 @@ internal sealed record ChronicleNominationProjection(
     Guid SessionId,
     bool CreateRecord)
 {
+    /// <summary>
+    /// Создаёт накопительное изменение результата номинации.
+    /// </summary>
     public static ChronicleNominationProjection Increment(
         ChronicleNominationType nominationType,
         CompletedGameSessionParticipantData participant,
@@ -38,6 +44,9 @@ internal sealed record ChronicleNominationProjection(
             sessionId,
             createRecord);
 
+    /// <summary>
+    /// Создаёт изменение, которое заменяет результат только при большем значении.
+    /// </summary>
     public static ChronicleNominationProjection ReplaceIfGreater(
         ChronicleNominationType nominationType,
         CompletedGameSessionParticipantData participant,
@@ -59,6 +68,9 @@ internal sealed record ChronicleNominationProjection(
             sessionId,
             createRecord);
 
+    /// <summary>
+    /// Создаёт изменение, которое заменяет результат только при меньшем значении.
+    /// </summary>
     public static ChronicleNominationProjection ReplaceIfLower(
         ChronicleNominationType nominationType,
         CompletedGameSessionParticipantData participant,

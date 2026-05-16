@@ -1,10 +1,14 @@
 using Chronicles.Application.Abstractions.Data;
 using Chronicles.Domain;
 
-namespace Chronicles.Application.Chronicles.ProcessCompletedGameSessions;
+namespace Chronicles.Application.Chronicles.ProcessCompletedGameSessions.Nominations;
 
+/// <summary>
+/// Рассчитывает номинации, основанные на исходе боя.
+/// </summary>
 internal sealed class OutcomeNominationProjector : IChronicleNominationProjector
 {
+    /// <inheritdoc />
     public IEnumerable<ChronicleNominationProjection> Project(
         CompletedGameSessionData session,
         IReadOnlyList<CompletedGameSessionParticipantData> playerParticipants)
