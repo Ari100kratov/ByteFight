@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { ChangeStatus } from "@/features/character-code-block/types"
 
-type UseUnsavedChangesConfirmOptions = {
+interface UseUnsavedChangesConfirmOptions {
   onConfirm: () => void
   title?: string
   description?: string
@@ -27,10 +27,8 @@ export function useUnsavedChangesConfirm({
   confirmText = "Продолжить без сохранения",
   cancelText = "Остаться",
 }: UseUnsavedChangesConfirmOptions) {
-  const codes = useCodeEditorStore(s => s.codes)
-  const hasUnsavedChanges = codes.some(
-    c => c.status !== ChangeStatus.Unchanged
-  )
+  const codes = useCodeEditorStore((s) => s.codes)
+  const hasUnsavedChanges = codes.some((c) => c.status !== ChangeStatus.Unchanged)
 
   const [open, setOpen] = useState(false)
 
@@ -53,9 +51,7 @@ export function useUnsavedChangesConfirm({
 
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>
-            {confirmText}
-          </AlertDialogAction>
+          <AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

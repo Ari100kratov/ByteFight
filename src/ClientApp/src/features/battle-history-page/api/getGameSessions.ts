@@ -2,7 +2,7 @@ import { apiFetch } from "@/shared/lib/apiFetch"
 import type { GameSessionListItem } from "../types"
 import type { PagedResponse } from "../../../shared/types/pagedResponse"
 
-type GetGameSessionsParams = {
+interface GetGameSessionsParams {
   page: number
   pageSize: number
 }
@@ -16,7 +16,5 @@ export async function getGameSessions({
     pageSize: String(pageSize),
   })
 
-  return await apiFetch<PagedResponse<GameSessionListItem>>(
-    `/game/sessions?${search.toString()}`
-  )
+  return await apiFetch<PagedResponse<GameSessionListItem>>(`/game/sessions?${search.toString()}`)
 }

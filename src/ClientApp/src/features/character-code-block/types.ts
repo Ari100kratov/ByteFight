@@ -7,7 +7,7 @@ export const ChangeStatus = {
 
 type ChangeStatus = (typeof ChangeStatus)[keyof typeof ChangeStatus]
 
-export type EditableCode = {
+export interface EditableCode {
   id: string
   name: string
   sourceCode: string

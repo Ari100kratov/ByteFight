@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 
-export type GameModeResponse = {
+export interface GameModeResponse {
   id: number
   slug: string
   name: string

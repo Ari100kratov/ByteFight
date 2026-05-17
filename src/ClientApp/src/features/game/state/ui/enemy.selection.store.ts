@@ -12,12 +12,15 @@ export const useEnemySelectionStore = create<EnemySelectionState>((set) => ({
   selectedArenaEnemyId: undefined,
   position: undefined,
 
-  selectEnemy: (selectedArenaEnemyId, position) =>
-    set({ selectedArenaEnemyId, position }),
+  selectEnemy: (selectedArenaEnemyId, position) => {
+    set({ selectedArenaEnemyId, position })
+  },
 
-  clearSelection: () =>
-    set({ selectedArenaEnemyId: undefined, position: undefined }),
+  clearSelection: () => {
+    set({ selectedArenaEnemyId: undefined, position: undefined })
+  },
 
-  reset: () =>
-    set({ selectedArenaEnemyId: undefined, position: undefined }),
+  reset: () => {
+    set({ selectedArenaEnemyId: undefined, position: undefined })
+  },
 }))

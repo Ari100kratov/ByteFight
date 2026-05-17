@@ -2,6 +2,9 @@
 
 namespace SharedKernel;
 
+/// <summary>
+/// Представляет результат операции без возвращаемого значения.
+/// </summary>
 public class Result
 {
     public Result(bool isSuccess, Error error)
@@ -16,10 +19,19 @@ public class Result
         Error = error;
     }
 
+    /// <summary>
+    /// Возвращает <see langword="true" />, если операция завершилась успешно.
+    /// </summary>
     public bool IsSuccess { get; }
 
+    /// <summary>
+    /// Возвращает <see langword="true" />, если операция завершилась ошибкой.
+    /// </summary>
     public bool IsFailure => !IsSuccess;
 
+    /// <summary>
+    /// Ошибка операции или <see cref="Error.None" /> для успешного результата.
+    /// </summary>
     public Error Error { get; }
 
     public static Result Success() => new(true, Error.None);
@@ -33,6 +45,10 @@ public class Result
         new(default, false, error);
 }
 
+/// <summary>
+/// Представляет результат операции с возвращаемым значением.
+/// </summary>
+/// <typeparam name="TValue">Тип значения успешного результата.</typeparam>
 public class Result<TValue> : Result
 {
     public Result(TValue? value, bool isSuccess, Error error)
@@ -41,6 +57,9 @@ public class Result<TValue> : Result
         Value = value;
     }
 
+    /// <summary>
+    /// Значение успешного результата. Для неуспешного результата выбрасывает исключение.
+    /// </summary>
     [NotNull]
     public TValue Value => IsSuccess
         ? field!

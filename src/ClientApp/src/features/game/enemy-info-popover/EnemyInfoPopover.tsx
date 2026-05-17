@@ -6,22 +6,27 @@ import { UnitPreview } from "@/features/unit-preview/UnitPreview"
 import { Skull } from "lucide-react"
 
 export function EnemyInfoPopover() {
-  const selectedArenaEnemyId = useEnemySelectionStore(s => s.selectedArenaEnemyId)
-  const position = useEnemySelectionStore(s => s.position)
-  const clearSelection = useEnemySelectionStore(s => s.clearSelection)
+  const selectedArenaEnemyId = useEnemySelectionStore((s) => s.selectedArenaEnemyId)
+  const position = useEnemySelectionStore((s) => s.position)
+  const clearSelection = useEnemySelectionStore((s) => s.clearSelection)
 
-  const arenaEnemy = useArenaEnemiesStore(s =>
-    selectedArenaEnemyId ? s.arenaEnemies[selectedArenaEnemyId] : undefined
+  const arenaEnemy = useArenaEnemiesStore((s) =>
+    selectedArenaEnemyId ? s.arenaEnemies[selectedArenaEnemyId] : undefined,
   )
 
-  const enemy = useEnemiesStore(s =>
-    arenaEnemy ? s.enemies[arenaEnemy.enemyId] : undefined
-  )
+  const enemy = useEnemiesStore((s) => (arenaEnemy ? s.enemies[arenaEnemy.enemyId] : undefined))
 
   const open = Boolean(enemy && position)
 
   return (
-    <Popover open={open} onOpenChange={(value) => !value && clearSelection()}>
+    <Popover
+      open={open}
+      onOpenChange={(value) => {
+        if (!value) {
+          clearSelection()
+        }
+      }}
+    >
       {position && (
         <PopoverAnchor asChild>
           <div
@@ -43,15 +48,13 @@ export function EnemyInfoPopover() {
         {enemy && (
           <div className="flex flex-col gap-4">
             <div>
-              <div className="flex items-center gap-2 text-base font-semibold leading-none">
+              <div className="flex items-center gap-2 text-base leading-none font-semibold">
                 <Skull className="text-muted-foreground" />
                 {enemy.name}
               </div>
 
               {enemy.description && (
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {enemy.description}
-                </p>
+                <p className="text-muted-foreground mt-2 text-sm">{enemy.description}</p>
               )}
             </div>
 

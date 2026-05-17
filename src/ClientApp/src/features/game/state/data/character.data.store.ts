@@ -8,8 +8,13 @@ export type Character = CharacterResponse
 type CharacterState = {
   character?: Character
   setCharacter: (character: CharacterResponse) => void
-  getSpriteAnimation: (actionType?: ActionType) => Character["spec"]["actionAssets"][number]["spriteAnimation"] | undefined
-  getAbilitySpriteAnimation: (abilityType?: AbilityType, actionType?: ActionType) => Character["spec"]["abilities"][number]["actionAssets"][number]["spriteAnimation"] | undefined
+  getSpriteAnimation: (
+    actionType?: ActionType,
+  ) => Character["spec"]["actionAssets"][number]["spriteAnimation"] | undefined
+  getAbilitySpriteAnimation: (
+    abilityType?: AbilityType,
+    actionType?: ActionType,
+  ) => Character["spec"]["abilities"][number]["actionAssets"][number]["spriteAnimation"] | undefined
   reset: () => void
 }
 
@@ -26,9 +31,7 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     const character = get().character
     if (!character) return undefined
 
-    const variants = character.spec.actionAssets.filter(
-      a => a.actionType === actionType
-    )
+    const variants = character.spec.actionAssets.filter((a) => a.actionType === actionType)
 
     if (variants.length === 0) return undefined
 
@@ -42,15 +45,11 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     const character = get().character
     if (!character) return undefined
 
-    const ability = character.spec.abilities.find(
-      a => a.type === abilityType
-    )
+    const ability = character.spec.abilities.find((a) => a.type === abilityType)
 
     if (!ability) return undefined
 
-    const variants = ability.actionAssets.filter(
-      a => a.actionType === actionType
-    )
+    const variants = ability.actionAssets.filter((a) => a.actionType === actionType)
 
     if (variants.length === 0) return undefined
 
@@ -58,5 +57,7 @@ export const useCharacterStore = create<CharacterState>((set, get) => ({
     return variants[randomIndex].spriteAnimation
   },
 
-  reset: () => set({ character: undefined }),
+  reset: () => {
+    set({ character: undefined })
+  },
 }))

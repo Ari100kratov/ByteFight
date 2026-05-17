@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from "zustand"
 
 interface GameBootstrapState {
   isLoading: boolean
@@ -8,6 +8,10 @@ interface GameBootstrapState {
 
 export const useGameBootstrapStore = create<GameBootstrapState>((set) => ({
   isLoading: false,
-  start: () => set({ isLoading: true }),
-  end: () => set({ isLoading: false }),
-}));
+  start: () => {
+    set({ isLoading: true })
+  },
+  end: () => {
+    set({ isLoading: false })
+  },
+}))

@@ -10,20 +10,16 @@ type BattleHistoryResultBadgeProps = {
   Icon: LucideIcon
 }
 
-export function BattleHistoryResultBadge({
-  title,
-  tone,
-  Icon,
-}: BattleHistoryResultBadgeProps) {
+export function BattleHistoryResultBadge({ title, tone, Icon }: BattleHistoryResultBadgeProps) {
   return (
     <div className="flex justify-center">
       <Badge
         variant="outline"
         className={cn(
-          "inline-flex items-center gap-1.5 select-none px-3 py-1.5 text-sm font-medium",
+          "inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium select-none",
           "min-w-[140px] justify-center",
           "[&>svg]:size-4",
-          getBattleResultToneClass(tone)
+          getBattleResultToneClass(tone),
         )}
       >
         <Icon className={title === "Идет бой" ? "animate-spin" : undefined} />

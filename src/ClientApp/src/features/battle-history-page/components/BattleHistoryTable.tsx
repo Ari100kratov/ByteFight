@@ -1,9 +1,4 @@
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  type ColumnDef,
-} from "@tanstack/react-table"
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table"
 import {
   Table,
   TableBody,
@@ -31,22 +26,16 @@ export function BattleHistoryTable<TData>({
   })
 
   return (
-    <div className="h-full min-h-0 overflow-auto rounded-xl border bg-background">
+    <div className="bg-background h-full min-h-0 overflow-auto rounded-xl border">
       <Table className="table-fixed">
         <TableHeader className="bg-background">
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="hover:bg-transparent">
-              {headerGroup.headers.map(header => (
-                <TableHead
-                  key={header.id}
-                  className="sticky top-0 z-10 bg-background"
-                >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="bg-background sticky top-0 z-10">
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>
@@ -55,22 +44,23 @@ export function BattleHistoryTable<TData>({
 
         <TableBody>
           {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map(row => (
+            table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-                className={
+                onClick={
                   onRowClick
-                    ? "cursor-pointer transition-colors hover:bg-muted/50"
+                    ? () => {
+                        onRowClick(row.original)
+                      }
                     : undefined
                 }
+                className={
+                  onRowClick ? "hover:bg-muted/50 cursor-pointer transition-colors" : undefined
+                }
               >
-                {row.getVisibleCells().map(cell => (
+                {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
@@ -79,7 +69,7 @@ export function BattleHistoryTable<TData>({
             <TableRow>
               <TableCell
                 colSpan={columns.length}
-                className="h-24 text-center text-muted-foreground"
+                className="text-muted-foreground h-24 text-center"
               >
                 История боев пока пуста
               </TableCell>

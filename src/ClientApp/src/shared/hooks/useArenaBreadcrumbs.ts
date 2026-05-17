@@ -12,10 +12,10 @@ export function useArenaBreadcrumbs(params: {
   useEffect(() => {
     if (!modeType) return
     setName(`/play/${modeType}`, formatModeNameByString(modeType))
-  }, [modeType])
+  }, [modeType, setName])
 
   useEffect(() => {
     if (!arena || !modeType) return
     setName(`/play/${modeType}/${arena.id}`, arena.name)
-  }, [arena, modeType])
+  }, [arena, modeType, setName])
 }

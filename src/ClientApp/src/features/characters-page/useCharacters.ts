@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 
-export type CharacterResponse = {
+export interface CharacterResponse {
   id: string
   name: string
   className: string
@@ -13,6 +13,6 @@ export type CharacterResponse = {
 export function useCharacters() {
   return useQuery<CharacterResponse[], ApiException>({
     queryKey: queryKeys.characters.byCurrentUser,
-    queryFn: () => apiFetch('/characters/by-current-user')
+    queryFn: () => apiFetch("/characters/by-current-user"),
   })
 }

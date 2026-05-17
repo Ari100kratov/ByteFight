@@ -2,7 +2,7 @@
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // TODO: пока очень сомнительно с темной темой - надо подумать 
+  // TODO: пока очень сомнительно с темной темой - надо подумать
   // const { theme = "system" } = useTheme()
 
   return (

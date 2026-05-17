@@ -1,4 +1,4 @@
-import type { SpriteAnimationDto } from "./spriteAnimation";
+import type { SpriteAnimationDto } from "./spriteAnimation"
 
 export const ActionType = {
   Idle: 1,
@@ -10,13 +10,12 @@ export const ActionType = {
   Hurt: 7,
   Dead: 8,
   Cast: 9,
-} as const;
+} as const
 
-export type ActionType = (typeof ActionType)[keyof typeof ActionType];
+export type ActionType = (typeof ActionType)[keyof typeof ActionType]
 
-export type ActionAssetDto = {
-  actionType: ActionType;
-  variant: number;
-  spriteAnimation: SpriteAnimationDto;
+export interface ActionAssetDto {
+  actionType: ActionType
+  variant: number
+  spriteAnimation: SpriteAnimationDto
 }
-

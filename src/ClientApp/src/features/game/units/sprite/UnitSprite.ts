@@ -1,8 +1,8 @@
 import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
-import { AnimatedSprite, Ticker } from "pixi.js"
+import { type AnimatedSprite, Ticker } from "pixi.js"
 import { useTexturesStore } from "../../state/data/textures.data.store"
 import type { UnitRuntimeUpdater } from "../../types/UnitRuntime"
-import { ActionType } from "@/shared/types/action"
+import { type ActionType } from "@/shared/types/action"
 
 const SPEED = 70
 
@@ -65,8 +65,8 @@ export class UnitSprite {
     let framePromise: Promise<void> | null = null
     const handledFrames = new Set<number>()
 
-    return new Promise(resolve => {
-      sprite.onFrameChange = frame => {
+    return new Promise((resolve) => {
+      sprite.onFrameChange = (frame) => {
         if (!onFrame) return
         if (handledFrames.has(frame)) return
 
@@ -78,27 +78,31 @@ export class UnitSprite {
         }
       }
 
-      sprite.onComplete = async () => {
+      sprite.onComplete = () => {
         if (version !== this.playVersion) return
 
         sprite.stop()
         sprite.onFrameChange = undefined
         sprite.onComplete = undefined
 
+        void resolveAfterFrame()
+      }
+
+      sprite.play()
+
+      async function resolveAfterFrame() {
         if (framePromise) {
           await framePromise
         }
 
         resolve()
       }
-
-      sprite.play()
     })
   }
 
   moveToPx(
     target: { x: number; y: number },
-    onUpdate?: (pos: { x: number; y: number }) => void
+    onUpdate?: (pos: { x: number; y: number }) => void,
   ): Promise<void> {
     if (!this.sprite) return Promise.resolve()
 
@@ -113,7 +117,7 @@ export class UnitSprite {
 
     let traveled = 0
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const update = (t: Ticker) => {
         const step = SPEED * (t.deltaMS / 1000)
         traveled += step

@@ -1,19 +1,19 @@
-import { AnimatedSprite, Container, Texture } from "pixi.js";
-import { extend } from "@pixi/react";
-import { useGridStore } from "../../state/game/grid.state.store";
-import type { UnitRuntime } from "../../types/UnitRuntime";
-import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation";
-import { UnitBars } from "./UnitBars";
-import { FacingDirection } from "../../types/common";
-import { useRef } from "react";
-import { UnitController } from "../../units/controller/UnitController";
+import { AnimatedSprite, Container, Texture } from "pixi.js"
+import { extend } from "@pixi/react"
+import { useGridStore } from "../../state/game/grid.state.store"
+import type { UnitRuntime } from "../../types/UnitRuntime"
+import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
+import { UnitBars } from "./UnitBars"
+import { FacingDirection } from "../../types/common"
+import { useRef } from "react"
+import { type UnitController } from "../../units/controller/UnitController"
 
-extend({ AnimatedSprite, Container });
+extend({ AnimatedSprite, Container })
 
 interface Props {
-  runtime: UnitRuntime;
-  spriteAnimation: SpriteAnimationDto;
-  controller: UnitController;
+  runtime: UnitRuntime
+  spriteAnimation: SpriteAnimationDto
+  controller: UnitController
   clickable?: boolean
   onClick?: (position: { x: number; y: number }) => void
 }
@@ -23,51 +23,39 @@ export function UnitAnimatedSprite({
   spriteAnimation,
   controller,
   clickable,
-  onClick
+  onClick,
 }: Props) {
-  const layout = useGridStore(s => s.layout);
-  const spriteRef = useRef<AnimatedSprite | null>(null);
+  const layout = useGridStore((s) => s.layout)
+  const spriteRef = useRef<AnimatedSprite | null>(null)
 
-  if (!layout)
-    return null;
+  if (!layout) return null
 
-  const cell = layout.cells[runtime.position.y][runtime.position.x];
+  const cell = layout.cells[runtime.position.y][runtime.position.x]
 
-  const spriteX =
-    runtime.renderPosition?.x ??
-    (cell.x + cell.width / 2);
+  const spriteX = runtime.renderPosition?.x ?? cell.x + cell.width / 2
 
-  const spriteY =
-    runtime.renderPosition?.y ??
-    (cell.y + cell.height - 10);
+  const spriteY = runtime.renderPosition?.y ?? cell.y + cell.height - 10
 
   const scaleX =
-    runtime.facing === FacingDirection.Left
-      ? -spriteAnimation.scale.x
-      : spriteAnimation.scale.x;
+    runtime.facing === FacingDirection.Left ? -spriteAnimation.scale.x : spriteAnimation.scale.x
 
-  const spriteHeight = (runtime.textureHeight ?? 0) * spriteAnimation.scale.y;
+  const spriteHeight = (runtime.textureHeight ?? 0) * spriteAnimation.scale.y
 
   const handleRef = (sprite: AnimatedSprite | null) => {
-    if (!sprite) return;
+    if (!sprite) return
 
-    spriteRef.current = sprite;
-    controller.sprite.attach(sprite);
-    controller.notifyViewReady();
-    sprite.play(); // ???
-  };
+    spriteRef.current = sprite
+    controller.sprite.attach(sprite)
+    controller.notifyViewReady()
+    sprite.play() // ???
+  }
 
-  const healthPriority =
-    runtime.hp.max > 0
-      ? runtime.hp.current / runtime.hp.max
-      : 0
+  const healthPriority = runtime.hp.max > 0 ? runtime.hp.current / runtime.hp.max : 0
 
   const zIndex = spriteY + healthPriority
 
   return (
-    <pixiContainer
-      zIndex={zIndex}
-    >
+    <pixiContainer zIndex={zIndex}>
       <UnitBars
         runtime={runtime}
         x={spriteX}
@@ -83,11 +71,9 @@ export function UnitAnimatedSprite({
         anchor={{ x: 0.5, y: 1 }}
         scale={{ x: scaleX, y: spriteAnimation.scale.y }}
         autoPlay={false}
-
         eventMode={clickable ? "static" : "none"}
         cursor={clickable ? "pointer" : "default"}
         onPointerTap={() => onClick?.({ x: spriteX, y: spriteY - spriteHeight })}
-
         onPointerOver={() => {
           if (spriteRef.current) {
             spriteRef.current.alpha = 0.85
@@ -100,5 +86,5 @@ export function UnitAnimatedSprite({
         }}
       />
     </pixiContainer>
-  );
+  )
 }

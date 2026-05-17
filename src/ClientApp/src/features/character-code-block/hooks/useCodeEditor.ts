@@ -1,11 +1,14 @@
 import { useEffect, useCallback } from "react"
 import type { UseQueryResult } from "@tanstack/react-query"
+import type { ApiException } from "@/shared/lib/apiFetch"
 import { ChangeStatus } from "../types"
 import { useCodeEditorStore } from "../state/codeEditor.store"
+import type { CharacterCodeResponse } from "./useCharacterCodes"
+import type { CodeTemplateResponse } from "./useCodeTemplate"
 
 export function useCodeEditor(
-  codesQuery: UseQueryResult<any>,
-  templateQuery: UseQueryResult<any>
+  codesQuery: UseQueryResult<CharacterCodeResponse[], ApiException>,
+  templateQuery: UseQueryResult<CodeTemplateResponse, ApiException>,
 ) {
   const {
     codes,
@@ -23,11 +26,11 @@ export function useCodeEditor(
     if (!codesQuery.data) return
 
     replaceFromServer(
-      codesQuery.data.map((c: any) => ({
-        ...c,
-        sourceCode: c.sourceCode ?? "",
+      codesQuery.data.map((code) => ({
+        ...code,
+        sourceCode: code.sourceCode ?? "",
         status: ChangeStatus.Unchanged,
-      }))
+      })),
     )
   }, [codesQuery.data, replaceFromServer])
 
@@ -54,4 +57,3 @@ export function useCodeEditor(
     resetToBaseline,
   }
 }
-

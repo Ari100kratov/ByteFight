@@ -1,7 +1,7 @@
 import type { GameOutcome } from "../game/types/GameResult"
 import type { GameModeType, GameStatus } from "../game/types/GameSession"
 
-export type GameSessionListItem = {
+export interface GameSessionListItem {
   id: string
   mode: GameModeType
 
@@ -18,4 +18,3 @@ export type GameSessionListItem = {
   status: GameStatus
   outcome?: GameOutcome | null
 }
-

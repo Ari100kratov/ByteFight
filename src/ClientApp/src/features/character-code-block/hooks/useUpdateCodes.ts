@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiFetch } from "@/shared/lib/apiFetch"
-import { queryKeys } from "@/shared/lib/queryKeys";
+import { queryKeys } from "@/shared/lib/queryKeys"
 
 export interface UpdateCodesRequest {
   characterId: string
@@ -24,7 +24,9 @@ export function useUpdateCodes() {
       })
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.characterCodes.byCharacterId(variables.characterId) })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.characterCodes.byCharacterId(variables.characterId),
+      })
     },
   })
 }

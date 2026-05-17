@@ -8,7 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar"
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react"
 import { Spinner } from "../../components/ui/spinner"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -22,8 +27,8 @@ export function NavUser() {
   const { data: user } = useCurrentUser()
   const logout = useLogout()
 
-  async function handleLogout() {
-    await logout.mutateAsync()
+  function handleLogout() {
+    void logout.mutateAsync()
   }
 
   const navigate = useNavigate()
@@ -32,7 +37,7 @@ export function NavUser() {
     return (
       <div className="flex items-center gap-3 px-2 py-2">
         <Skeleton className="h-8 w-8 rounded-lg" /> {/* аватар */}
-        <div className="flex flex-col flex-1 gap-1">
+        <div className="flex flex-1 flex-col gap-1">
           <Skeleton className="h-4 w-32 rounded-md" /> {/* имя */}
           <Skeleton className="h-3 w-40 rounded-md" /> {/* email */}
         </div>
@@ -51,9 +56,11 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                {user.avatar
-                  ? <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
-                  : <AvatarFallback>{initials}</AvatarFallback>}
+                {user.avatar ? (
+                  <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
+                ) : (
+                  <AvatarFallback>{initials}</AvatarFallback>
+                )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{`${user.firstName} ${user.lastName}`}</span>
@@ -72,9 +79,11 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  {user.avatar
-                    ? <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
-                    : <AvatarFallback>{initials}</AvatarFallback>}
+                  {user.avatar ? (
+                    <AvatarImage src={user.avatar} alt={`${user.firstName} ${user.lastName}`} />
+                  ) : (
+                    <AvatarFallback>{initials}</AvatarFallback>
+                  )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{`${user.firstName} ${user.lastName}`}</span>
@@ -86,7 +95,11 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => navigate("/account")}>
+              <DropdownMenuItem
+                onClick={() => {
+                  void navigate("/account")
+                }}
+              >
                 <BadgeCheck />
                 Аккаунт
               </DropdownMenuItem>
@@ -101,7 +114,7 @@ export function NavUser() {
             <DropdownMenuItem
               onClick={handleLogout}
               disabled={logout.isPending}
-              className={logout.isPending ? "opacity-50 cursor-not-allowed" : ""}
+              className={logout.isPending ? "cursor-not-allowed opacity-50" : ""}
             >
               {logout.isPending ? (
                 <>

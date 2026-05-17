@@ -1,5 +1,5 @@
 export const ArenaItemType = {
   HealingPotion: 1,
-} as const;
+} as const
 
-export type ArenaItemType = typeof ArenaItemType[keyof typeof ArenaItemType];
+export type ArenaItemType = (typeof ArenaItemType)[keyof typeof ArenaItemType]

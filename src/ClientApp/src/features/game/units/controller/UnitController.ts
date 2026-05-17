@@ -7,7 +7,10 @@ import { useGridStore } from "../../state/game/grid.state.store"
 import { gridToPixel } from "../../grid-container/gridUtils"
 import type { AbilityUsedLogEntry, WalkLogEntry } from "../../types/TurnLog"
 import type { StatSnapshot } from "../../types/common"
-import { FloatingCombatTextKind, useFloatingCombatTextStore } from "../../state/ui/floating.combat.text.store"
+import {
+  FloatingCombatTextKind,
+  useFloatingCombatTextStore,
+} from "../../state/ui/floating.combat.text.store"
 
 export class UnitController {
   sprite: UnitSprite
@@ -26,7 +29,7 @@ export class UnitController {
     if (this.viewReady) return
     this.viewReady = true
 
-    this.playIdle()
+    void this.playIdle()
   }
 
   updateHp(hp: StatSnapshot) {
@@ -63,7 +66,7 @@ export class UnitController {
 
     await Promise.all([
       this.sprite.playAnimation(animation, ActionType.Walk, true),
-      this.sprite.moveToPx(toPx, px => {
+      this.sprite.moveToPx(toPx, (px) => {
         this.updateRuntime({ renderPosition: px })
       }),
     ])
@@ -72,45 +75,34 @@ export class UnitController {
     await this.playIdle()
   }
 
-  async useAbility(
-    target: UnitController,
-    entry: AbilityUsedLogEntry
-  ) {
+  async useAbility(target: UnitController, entry: AbilityUsedLogEntry) {
     const actionType = this.getAbilityActionType(entry)
 
-    const animation = this.animations.getAbilityAnimation(
-      entry.abilityType,
-      actionType
-    )
+    const animation = this.animations.getAbilityAnimation(entry.abilityType, actionType)
 
     if (!animation) throw new Error("Ability animation not found")
 
     this.updateRuntime({ facing: entry.facingDirection })
 
-    await this.sprite.playAnimation(
-      animation,
-      actionType,
-      false,
-      frame => {
-        if (frame !== 1) return
+    await this.sprite.playAnimation(animation, actionType, false, (frame) => {
+      if (frame !== 1) return
 
-        if (entry.effectType === AbilityEffectType.Damage) {
-          useFloatingCombatTextStore
-            .getState()
-            .add(entry.targetId, entry.value, FloatingCombatTextKind.Damage)
+      if (entry.effectType === AbilityEffectType.Damage) {
+        useFloatingCombatTextStore
+          .getState()
+          .add(entry.targetId, entry.value, FloatingCombatTextKind.Damage)
 
-          return target.playHurt(entry.targetHp)
-        }
+        return target.playHurt(entry.targetHp)
+      }
 
-        if (entry.effectType === AbilityEffectType.Healing) {
-          useFloatingCombatTextStore
-            .getState()
-            .add(entry.targetId, entry.value, FloatingCombatTextKind.Healing)
+      if (entry.effectType === AbilityEffectType.Healing) {
+        useFloatingCombatTextStore
+          .getState()
+          .add(entry.targetId, entry.value, FloatingCombatTextKind.Healing)
 
-          target.updateRuntime({ hp: entry.targetHp })
-        }
-      },
-    )
+        target.updateRuntime({ hp: entry.targetHp })
+      }
+    })
 
     await this.playIdle()
   }

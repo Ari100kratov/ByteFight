@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/shared/lib/utils"
 import { Link } from "react-router-dom"
+import { getApiErrorToastMessage } from "@/shared/lib/apiErrors"
 
 type Props = {
   characterId: string
@@ -25,21 +26,31 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
   const templateQuery = useCodeTemplate()
   const { mutate: updateCodes, isPending } = useUpdateCodes()
 
-  const { codes, activeCodeId, setActiveCode, addCode, markCodeDeleted, renameCode, updateCodeSource, resetToBaseline } =
-    useCodeEditor(codesQuery, templateQuery)
+  const {
+    codes,
+    activeCodeId,
+    setActiveCode,
+    addCode,
+    markCodeDeleted,
+    renameCode,
+    updateCodeSource,
+    resetToBaseline,
+  } = useCodeEditor(codesQuery, templateQuery)
 
-  const hasChanges = codes.some(c => c.status !== ChangeStatus.Unchanged)
+  const hasChanges = codes.some((c) => c.status !== ChangeStatus.Unchanged)
+
+  const handleAddCode = () => {
+    void addCode()
+  }
 
   const handleSave = () => {
     const created = codes
-      .filter(c => c.status === ChangeStatus.Created)
+      .filter((c) => c.status === ChangeStatus.Created)
       .map(({ id, name, sourceCode }) => ({ id, name, sourceCode }))
     const updated = codes
-      .filter(c => c.status === ChangeStatus.Updated)
+      .filter((c) => c.status === ChangeStatus.Updated)
       .map(({ id, name, sourceCode }) => ({ id, name, sourceCode }))
-    const deletedIds = codes
-      .filter(c => c.status === ChangeStatus.Deleted)
-      .map(c => c.id)
+    const deletedIds = codes.filter((c) => c.status === ChangeStatus.Deleted).map((c) => c.id)
 
     updateCodes(
       { characterId, created, updated, deletedIds },
@@ -47,15 +58,15 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
         onSuccess: () => {
           toast.success("Изменения успешно сохранены")
         },
-        onError: (error: any) => {
-          toast.error(`Ошибка при сохранении: ${error.message ?? error}`)
+        onError: (error: unknown) => {
+          toast.error(`Ошибка при сохранении: ${getApiErrorToastMessage(error)}`)
         },
-      }
+      },
     )
   }
 
   return (
-    <Card className={cn("flex flex-col w-full h-full overflow-auto min-w-[400px]", className)}>
+    <Card className={cn("flex h-full w-full min-w-[400px] flex-col overflow-auto", className)}>
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <CardTitle>Поведение</CardTitle>
 
@@ -63,31 +74,33 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
           to="/docs"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
         >
           <BookOpen size={16} />
           Документация
         </Link>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col">
+      <CardContent className="flex flex-1 flex-col">
         <LoaderState
           isLoading={codesQuery.isLoading}
           error={codesQuery.error}
           isEmpty={!codes || codes.length === 0}
           empty={
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Button onClick={addCode}><Plus /> Добавить</Button>
+            <div className="text-muted-foreground flex flex-col items-center gap-2">
+              <Button onClick={handleAddCode}>
+                <Plus /> Добавить
+              </Button>
             </div>
           }
           skeletonClassName="w-full h-full rounded-md"
         >
           {codes.length > 0 && (
             <CodeTabs
-              codes={codes.filter(c => c.status !== "deleted")}
+              codes={codes.filter((c) => c.status !== "deleted")}
               activeTab={activeCodeId}
               onTabChange={setActiveCode}
-              onAdd={addCode}
+              onAdd={handleAddCode}
               onRename={renameCode}
               onDelete={markCodeDeleted}
               onChangeSource={updateCodeSource}
@@ -100,7 +113,10 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
         <CardFooter className="justify-end gap-2">
           <ConfirmDialog
             trigger={
-              <button disabled={isPending} className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-muted-foreground">
+              <button
+                disabled={isPending}
+                className="text-muted-foreground rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+              >
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>

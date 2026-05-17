@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react"
-import { Application } from "@pixi/react"
+import { Application, extend } from "@pixi/react"
 import { ActionType, type ActionAssetDto } from "@/shared/types/action"
-import type { Texture } from "pixi.js"
+import { AnimatedSprite, type Texture } from "pixi.js"
 import { loadActionAssets } from "@/shared/api/loadActionAssets"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AbilityType, type AbilityDto } from "@/shared/types/ability"
+
+extend({ AnimatedSprite })
 
 type Props = {
   actionAssets: ActionAssetDto[]
@@ -17,11 +19,12 @@ export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
 
   const previewAssets = useMemo(
     () => createPreviewAssets(actionAssets, abilities),
-    [actionAssets, abilities]
+    [actionAssets, abilities],
   )
 
   useEffect(() => {
     let cancelled = false
+    let loadedTextures: Texture[] = []
 
     if (previewAssets.length === 0) {
       setTextures([])
@@ -31,12 +34,14 @@ export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
 
     setLoading(false)
 
-    loadActionAssets(previewAssets)
+    void loadActionAssets(previewAssets)
       .then((frames) => {
+        loadedTextures = frames
         if (!cancelled) {
           setTextures(frames)
         }
       })
+      .catch(console.error)
       .finally(() => {
         if (!cancelled) {
           setLoading(true)
@@ -45,7 +50,7 @@ export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
 
     return () => {
       cancelled = true
-      for (const texture of textures) {
+      for (const texture of loadedTextures) {
         texture.destroy(false)
       }
       setTextures([])
@@ -78,7 +83,7 @@ export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
       </Application>
 
       {!loading && (
-        <div className="absolute left-0 top-0 h-full w-full">
+        <div className="absolute top-0 left-0 h-full w-full">
           <Skeleton className="h-full w-full" />
         </div>
       )}
@@ -88,7 +93,7 @@ export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
 
 function createPreviewAssets(
   actionAssets: ActionAssetDto[],
-  abilities: AbilityDto[]
+  abilities: AbilityDto[],
 ): ActionAssetDto[] {
   const result: ActionAssetDto[] = []
 
@@ -105,19 +110,17 @@ function createPreviewAssets(
 function pushActionAssets(
   result: ActionAssetDto[],
   assets: ActionAssetDto[],
-  actionType: ActionType
+  actionType: ActionType,
 ) {
   result.push(
-    ...assets
-      .filter((x) => x.actionType === actionType)
-      .sort((a, b) => a.variant - b.variant)
+    ...assets.filter((x) => x.actionType === actionType).sort((a, b) => a.variant - b.variant),
   )
 }
 
 function pushAbilityAssets(
   result: ActionAssetDto[],
   abilities: AbilityDto[],
-  abilityType: AbilityType
+  abilityType: AbilityType,
 ) {
   const ability = abilities.find((x) => x.type === abilityType)
   if (!ability) return
@@ -125,6 +128,6 @@ function pushAbilityAssets(
   result.push(
     ...ability.actionAssets
       .filter((x) => x.actionType === ActionType.Attack)
-      .sort((a, b) => a.variant - b.variant)
+      .sort((a, b) => a.variant - b.variant),
   )
 }

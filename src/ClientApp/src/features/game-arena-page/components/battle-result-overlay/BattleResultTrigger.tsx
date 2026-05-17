@@ -11,29 +11,20 @@ type BattleResultTriggerProps = {
   onClick: () => void
 }
 
-export function BattleResultTrigger({
-  title,
-  tone,
-  Icon,
-  onClick,
-}: BattleResultTriggerProps) {
+export function BattleResultTrigger({ title, tone, Icon, onClick }: BattleResultTriggerProps) {
   return (
     <Badge
       asChild
       variant="outline"
       className={cn(
-        "cursor-pointer select-none px-3 py-1.5 text-sm font-medium",
+        "cursor-pointer px-3 py-1.5 text-sm font-medium select-none",
         "max-w-[240px]",
         "transition-colors",
         "[&>svg]:size-4",
-        getBattleResultToneClass(tone)
+        getBattleResultToneClass(tone),
       )}
     >
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label={`Показать результат боя: ${title}`}
-      >
+      <button type="button" onClick={onClick} aria-label={`Показать результат боя: ${title}`}>
         <Icon />
         <span className="truncate">{title}</span>
       </button>

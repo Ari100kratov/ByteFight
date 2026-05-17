@@ -26,13 +26,17 @@ export function GameStartErrorDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="whitespace-pre-wrap text-sm text-foreground">
+          <DialogDescription className="text-foreground text-sm whitespace-pre-wrap">
             {detail}
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)}>
+          <Button
+            onClick={() => {
+              onOpenChange(false)
+            }}
+          >
             Понятно
           </Button>
         </DialogFooter>

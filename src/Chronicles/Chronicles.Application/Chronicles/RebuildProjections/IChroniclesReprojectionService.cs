@@ -5,5 +5,8 @@ namespace Chronicles.Application.Chronicles.RebuildProjections;
 /// </summary>
 public interface IChroniclesReprojectionService
 {
+    /// <summary>
+    /// Очищает read-model хроник и пересобирает её из уже импортированных inbox-сообщений.
+    /// </summary>
     Task RebuildAsync(CancellationToken cancellationToken = default);
 }

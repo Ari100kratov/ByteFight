@@ -1,5 +1,8 @@
 ﻿namespace SharedKernel;
 
+/// <summary>
+/// Ошибка валидации, агрегирующая несколько ошибок отдельных правил.
+/// </summary>
 public sealed record ValidationError : Error
 {
     public ValidationError(Error[] errors)
@@ -11,6 +14,9 @@ public sealed record ValidationError : Error
         Errors = errors;
     }
 
+    /// <summary>
+    /// Ошибки отдельных правил валидации.
+    /// </summary>
     public Error[] Errors { get; }
 
     public static ValidationError FromResults(IEnumerable<Result> results) =>

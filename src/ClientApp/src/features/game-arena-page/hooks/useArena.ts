@@ -1,4 +1,4 @@
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 import { useStoreQuery } from "@/shared/hooks/useStoreQuery"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
@@ -6,7 +6,7 @@ import type { Position } from "@/features/game/types/common"
 import type { ArenaItemType } from "@/shared/types/arenaItem"
 import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
 
-export type ArenaItemResponse = {
+export interface ArenaItemResponse {
   placedItemId: string
   itemId: string
   name: string
@@ -17,7 +17,7 @@ export type ArenaItemResponse = {
   sprite: SpriteAnimationDto
 }
 
-export type ArenaResponse = {
+export interface ArenaResponse {
   id: string
   name: string
   description?: string | null
@@ -38,6 +38,6 @@ export function useArena(arenaId: string | undefined) {
       queryFn: () => apiFetch(`/arenas/${arenaId}`),
       enabled: !!arenaId,
     },
-    setArena
+    setArena,
   )
 }

@@ -4,7 +4,7 @@ import { useViewportStore } from "./state/viewport/viewport.store"
 
 export function ResizeHandler() {
   const app = useApplication()
-  const { width, height } = useViewportStore(s => s.size)
+  const { width, height } = useViewportStore((s) => s.size)
 
   useEffect(() => {
     const renderer = app?.app?.renderer

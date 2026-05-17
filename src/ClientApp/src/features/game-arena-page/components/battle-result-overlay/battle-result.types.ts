@@ -3,7 +3,7 @@ import type { GameOutcome } from "@/features/game/types/GameResult"
 
 export type BattleResultTone = "success" | "danger" | "warning" | "neutral"
 
-export type BattleResultMeta = {
+export interface BattleResultMeta {
   outcome?: GameOutcome
   title: string
   description: string

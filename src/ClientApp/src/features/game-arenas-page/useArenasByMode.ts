@@ -1,20 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 
-export type ArenaEnemySummaryResponse = {
+export interface ArenaEnemySummaryResponse {
   enemyId: string
   name: string
   count: number
 }
 
-export type ArenaItemSummaryResponse = {
+export interface ArenaItemSummaryResponse {
   itemId: string
   name: string
   count: number
 }
 
-export type ArenaResponse = {
+export interface ArenaResponse {
   id: string
   name: string
   imageUrl: string
@@ -29,6 +29,6 @@ export function useArenasByMode(mode: string | undefined) {
   return useQuery<ArenaResponse[], ApiException>({
     queryKey: queryKeys.arenas.byMode(mode),
     queryFn: () => apiFetch(`/arenas?mode=${mode}`),
-    enabled: !!mode
+    enabled: !!mode,
   })
 }

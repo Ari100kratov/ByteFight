@@ -13,7 +13,7 @@ import {
   FolderGit2,
   Swords,
   // Gamepad2,
-  ClipboardList
+  ClipboardList,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -42,7 +42,8 @@ const data = {
       title: "Играть",
       url: "/play",
       icon: Swords,
-      items: [ // сделать динамическим?
+      items: [
+        // сделать динамическим?
         {
           title: "Тренировка",
           url: "/play/training",
@@ -70,11 +71,11 @@ const data = {
       items: [
         {
           title: "История боев",
-          url: "/battle-archive/history"
+          url: "/battle-archive/history",
         },
         {
           title: "Зал славы",
-          url: "/battle-archive/hall-of-fame"
+          url: "/battle-archive/hall-of-fame",
         },
         // {
         //   title: "Статистика",
@@ -84,7 +85,7 @@ const data = {
         //   title: "Рейтинг",
         //   url: "/battle-archive/leaderboard"
         // }
-      ]
+      ],
     },
     {
       title: "Документация",
@@ -108,7 +109,7 @@ const data = {
     {
       title: "Настройки",
       url: "/settings",
-      icon: Settings2
+      icon: Settings2,
     },
   ],
   navSecondary: [
@@ -148,7 +149,6 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>

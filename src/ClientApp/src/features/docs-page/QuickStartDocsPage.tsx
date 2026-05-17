@@ -14,18 +14,13 @@ export default function QuickStartDocsPage() {
         <div className="flex items-center gap-3">
           <Sparkles />
 
-          <h1 className="text-3xl font-bold tracking-tight">
-            Быстрый старт
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Быстрый старт</h1>
         </div>
       </header>
 
       <section className="grid gap-3 md:grid-cols-2">
-        {quickStartFacts.map(fact => (
-          <DocsInfoCard
-            key={fact.title}
-            title={fact.title}
-          >
+        {quickStartFacts.map((fact) => (
+          <DocsInfoCard key={fact.title} title={fact.title}>
             {fact.content}
           </DocsInfoCard>
         ))}
@@ -41,27 +36,24 @@ export default function QuickStartDocsPage() {
             </div>
 
             <p className="text-muted-foreground">
-              Сейчас легко потерять изменения после завершения боя.
-              Для перезапуска требуется покинуть завершённую сессию
-              через кнопку "Выйти из боя" или хлебные крошки, а страница при этом
-              полностью перезагружается.
+              Сейчас легко потерять изменения после завершения боя. Для перезапуска требуется
+              покинуть завершённую сессию через кнопку "Выйти из боя" или хлебные крошки, а страница
+              при этом полностью перезагружается.
             </p>
 
             <p className="text-muted-foreground">
-              Если код не сохранён — изменения могут потеряться.
-              В будущем это поведение планируется исправить.
+              Если код не сохранён — изменения могут потеряться. В будущем это поведение планируется
+              исправить.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-xl border bg-background p-4">
+      <section className="bg-background rounded-xl border p-4">
         <div className="mb-4 flex items-center gap-2">
           <Code2 className="h-5 w-5" />
 
-          <h2 className="text-xl font-semibold">
-            Базовый скрипт
-          </h2>
+          <h2 className="text-xl font-semibold">Базовый скрипт</h2>
         </div>
 
         <DocsCodeBlock code={defaultScriptExample} />

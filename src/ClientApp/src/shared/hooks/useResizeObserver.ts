@@ -3,7 +3,7 @@ import { useDebouncedCallback } from "@/shared/hooks/useDebouncedCallback"
 
 export function useResizeObserver(
   onResize: (size: { width: number; height: number }) => void,
-  delay = 50
+  delay = 50,
 ) {
   const ref = useRef<HTMLDivElement | null>(null)
 
@@ -21,7 +21,9 @@ export function useResizeObserver(
     })
 
     observer.observe(ref.current)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+    }
   }, [debouncedResize])
 
   return ref

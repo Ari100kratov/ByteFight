@@ -15,8 +15,8 @@ const PAGE_SIZE = 15
 
 function BattleHistoryPageSkeleton() {
   return (
-    <div className="flex flex-col gap-4 w-full h-full p-4 md:p-6">
-      <div className="overflow-hidden rounded-xl border bg-background">
+    <div className="flex h-full w-full flex-col gap-4 p-4 md:p-6">
+      <div className="bg-background overflow-hidden rounded-xl border">
         <div className="grid grid-cols-6 gap-4 border-b px-4 py-3">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-4 w-24" />
@@ -28,10 +28,7 @@ function BattleHistoryPageSkeleton() {
 
         <div className="divide-y">
           {Array.from({ length: 8 }).map((_, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-6 gap-4 px-4 py-4 items-center"
-            >
+            <div key={index} className="grid grid-cols-6 items-center gap-4 px-4 py-4">
               <Skeleton className="h-4 w-28" />
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-4 w-36" />
@@ -61,13 +58,13 @@ export default function BattleHistoryPage() {
   const { data, isLoading, error, isFetching } = useQuery({
     queryKey: ["game-sessions", page, PAGE_SIZE],
     queryFn: () => getGameSessions({ page, pageSize: PAGE_SIZE }),
-    placeholderData: previous => previous,
+    placeholderData: (previous) => previous,
   })
 
   const columns = useMemo(() => createBattleHistoryColumns(), [])
 
   const handleRowClick = (session: GameSessionListItem) => {
-    navigate(`/play/${formatModeSlugByType(session.mode)}/${session.arenaId}/${session.id}`)
+    void navigate(`/play/${formatModeSlugByType(session.mode)}/${session.arenaId}/${session.id}`)
   }
 
   return (

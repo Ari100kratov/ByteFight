@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 
-type UseAutoScrollToBottomParams = {
+interface UseAutoScrollToBottomParams {
   trigger: number
   threshold?: number
   behavior?: ScrollBehavior
@@ -20,8 +20,7 @@ export function useAutoScrollToBottom({
     if (!viewport) return
 
     const updateAutoScrollState = () => {
-      const distanceToBottom =
-        viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight
+      const distanceToBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight
 
       shouldAutoScrollRef.current = distanceToBottom <= threshold
     }

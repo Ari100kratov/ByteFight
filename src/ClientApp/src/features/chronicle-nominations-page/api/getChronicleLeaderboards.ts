@@ -1,7 +1,7 @@
 import { apiFetch } from "@/shared/lib/apiFetch"
 import type { ChronicleNominationLeaderboard } from "../types"
 
-type GetChronicleLeaderboardsParams = {
+interface GetChronicleLeaderboardsParams {
   top: number
 }
 
@@ -13,6 +13,6 @@ export async function getChronicleLeaderboards({
   })
 
   return await apiFetch<ChronicleNominationLeaderboard[]>(
-    `/chronicles/leaderboards?${search.toString()}`
+    `/chronicles/leaderboards?${search.toString()}`,
   )
 }

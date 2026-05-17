@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query"
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
-import { queryKeys } from "@/shared/lib/queryKeys";
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { queryKeys } from "@/shared/lib/queryKeys"
 
 export const CharacterClassType = {
   Warrior: 1,
   Mage: 2,
-} as const;
+} as const
 
-export type CharacterClassType = (typeof CharacterClassType)[keyof typeof CharacterClassType];
+export type CharacterClassType = (typeof CharacterClassType)[keyof typeof CharacterClassType]
 
-export type CharacterClassResponse = {
+export interface CharacterClassResponse {
   id: string
   name: string
-  type: CharacterClassType,
+  type: CharacterClassType
   description?: string
 }
 

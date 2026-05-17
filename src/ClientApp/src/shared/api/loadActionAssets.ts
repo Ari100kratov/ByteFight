@@ -29,23 +29,23 @@ export async function loadActionAssets(actionAssets: ActionAssetDto[]) {
  */
 export async function loadTexturesFromUrl(url: string, frameCount: number): Promise<Texture[]> {
   try {
-    const res = await fetch(apiUrl(`/assets/${url}`));
-    if (!res.ok) throw new Error(`Ошибка при загрузке ${url}`);
+    const res = await fetch(apiUrl(`/assets/${url}`))
+    if (!res.ok) throw new Error(`Ошибка при загрузке ${url}`)
 
-    const blob = await res.blob();
-    const bitmap = await createImageBitmap(blob);
-    const frameWidth = bitmap.width / frameCount;
-    const textures: Texture[] = [];
+    const blob = await res.blob()
+    const bitmap = await createImageBitmap(blob)
+    const frameWidth = bitmap.width / frameCount
+    const textures: Texture[] = []
     for (let i = 0; i < frameCount; i++) {
-      const frame = new Rectangle(i * frameWidth, 0, frameWidth, bitmap.height);
-      const source = new ImageSource({ resource: bitmap });
-      textures.push(new Texture({ source, frame }));
+      const frame = new Rectangle(i * frameWidth, 0, frameWidth, bitmap.height)
+      const source = new ImageSource({ resource: bitmap })
+      textures.push(new Texture({ source, frame }))
     }
 
-    return textures;
+    return textures
   } catch (err) {
-    console.error("Ошибка при загрузке ассета:", url, err);
-    return [];
+    console.error("Ошибка при загрузке ассета:", url, err)
+    return []
   }
 }
 

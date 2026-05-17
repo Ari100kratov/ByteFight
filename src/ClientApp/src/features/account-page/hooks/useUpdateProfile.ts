@@ -19,7 +19,7 @@ export function useUpdateProfile() {
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.current })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.users.current })
     },
   })
 }

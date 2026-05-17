@@ -1,8 +1,18 @@
 ﻿namespace GameRuntime.Logic.User.Compilation;
 
+/// <summary>
+/// Скомпилированная пользовательская сборка, временно сохранённая на диск для worker-процесса.
+/// </summary>
 public sealed class CompiledUserScript : IDisposable
 {
+    /// <summary>
+    /// Имя временной сборки пользовательского скрипта.
+    /// </summary>
     public string AssemblyName { get; }
+
+    /// <summary>
+    /// Байты скомпилированной сборки.
+    /// </summary>
     public byte[] AssemblyBytes { get; }
 
     /// <summary>

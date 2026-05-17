@@ -25,22 +25,13 @@ function CharacterCell({
   className?: string | null
   specName?: string | null
 }) {
-  return (
-    <CharacterIdentity
-      name={name}
-      className={className}
-      specName={specName}
-      size="sm"
-    />
-  )
+  return <CharacterIdentity name={name} className={className} specName={specName} size="sm" />
 }
 
 function ArenaCell({ arenaName }: { arenaName?: string | null }) {
   return (
     <div className="min-w-0">
-      <div className="line-clamp-2">
-        {arenaName ?? "—"}
-      </div>
+      <div className="line-clamp-2">{arenaName ?? "—"}</div>
     </div>
   )
 }
@@ -56,11 +47,7 @@ export function createBattleHistoryColumns(): ColumnDef<GameSessionListItem>[] {
         })
 
         return (
-          <BattleHistoryResultBadge
-            title={result.title}
-            tone={result.tone}
-            Icon={result.Icon}
-          />
+          <BattleHistoryResultBadge title={result.title} tone={result.tone} Icon={result.Icon} />
         )
       },
     },
@@ -88,9 +75,7 @@ export function createBattleHistoryColumns(): ColumnDef<GameSessionListItem>[] {
     {
       accessorKey: "arenaName",
       header: "Арена",
-      cell: ({ row }) => (
-        <ArenaCell arenaName={row.original.arenaName} />
-      ),
+      cell: ({ row }) => <ArenaCell arenaName={row.original.arenaName} />,
     },
     {
       accessorKey: "totalTurns",
@@ -100,8 +85,7 @@ export function createBattleHistoryColumns(): ColumnDef<GameSessionListItem>[] {
     {
       id: "duration",
       header: "Длительность",
-      cell: ({ row }) =>
-        formatBattleDuration(row.original.startedAt, row.original.endedAt),
+      cell: ({ row }) => formatBattleDuration(row.original.startedAt, row.original.endedAt),
     },
   ]
 }

@@ -21,6 +21,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Chronicles\Chronicles.Application\Chronicles.Application.csproj" />
+    <ProjectReference Include="..\..\src\Chronicles\Chronicles.Domain\Chronicles.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Chronicles\Chronicles.Infrastructure\Chronicles.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\GameRuntime\GameRuntime.Common\GameRuntime.Common.csproj" />
+    <ProjectReference Include="..\..\src\GameRuntime\GameRuntime.Logic.User.Api\GameRuntime.Logic.User.Api.csproj" />
+    <ProjectReference Include="..\..\src\GameRuntime\GameRuntime\GameRuntime.csproj" />
+    <ProjectReference Include="..\..\src\IntegrationContracts\IntegrationContracts.csproj" />
+    <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.csproj" />
     <ProjectReference Include="..\..\src\Web.Api\Web.Api.csproj" />
   </ItemGroup>
 

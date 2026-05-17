@@ -32,7 +32,7 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
         hp: { current: maxHp, max: maxHp },
         mp: maxMp ? { current: maxMp, max: maxMp } : undefined,
         facing: FacingDirection.Left,
-        position: position
+        position: position,
       }
     }
 
@@ -52,10 +52,11 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
   },
 
   get: (arenaEnemyId) => {
-    if (!arenaEnemyId)
-      return undefined
+    if (!arenaEnemyId) return undefined
     return get().arenaEnemies[arenaEnemyId]
   },
 
-  reset: () => set({ arenaEnemies: {} }),
+  reset: () => {
+    set({ arenaEnemies: {} })
+  },
 }))

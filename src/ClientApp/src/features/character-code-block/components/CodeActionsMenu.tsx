@@ -37,15 +37,17 @@ export function CodeActionsMenu({ name, onRename, onDelete }: Props) {
   }
 
   return (
-    <Popover onOpenChange={(open) => {
-      if (!open) {
-        setIsEditing(false)
-        setNewName(name)
-        setError(null)
-      }
-    }}>
+    <Popover
+      onOpenChange={(open) => {
+        if (!open) {
+          setIsEditing(false)
+          setNewName(name)
+          setError(null)
+        }
+      }}
+    >
       <PopoverTrigger asChild>
-        <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+        <button className="rounded p-1 hover:bg-gray-200 dark:hover:bg-gray-700">
           <EllipsisVertical size={16} />
         </button>
       </PopoverTrigger>
@@ -54,11 +56,13 @@ export function CodeActionsMenu({ name, onRename, onDelete }: Props) {
           <div className="flex flex-col gap-2">
             <Input
               value={newName}
-              onChange={e => setNewName(e.target.value)}
+              onChange={(e) => {
+                setNewName(e.target.value)
+              }}
               placeholder="Введите имя вкладки"
               autoFocus
             />
-            {error && <span className="text-red-500 text-xs">{error}</span>}
+            {error && <span className="text-xs text-red-500">{error}</span>}
             <div className="flex justify-end gap-1">
               <Button size="sm" variant="ghost" onClick={handleCancel}>
                 <X size={14} />
@@ -71,15 +75,17 @@ export function CodeActionsMenu({ name, onRename, onDelete }: Props) {
         ) : (
           <>
             <button
-              className="flex items-center gap-2 w-full px-2 py-1 text-sm hover:bg-gray-100 rounded"
-              onClick={() => setIsEditing(true)}
+              className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm hover:bg-gray-100"
+              onClick={() => {
+                setIsEditing(true)
+              }}
             >
               <Edit size={14} /> Переименовать
             </button>
 
             <ConfirmDialog
               trigger={
-                <button className="flex items-center gap-2 w-full px-2 py-1 text-sm text-red-500 hover:bg-gray-100 rounded">
+                <button className="flex w-full items-center gap-2 rounded px-2 py-1 text-sm text-red-500 hover:bg-gray-100">
                   <Trash size={14} /> Удалить
                 </button>
               }

@@ -1,5 +1,6 @@
 import { Spinner } from "@/components/ui/spinner"
 import { useDebouncedCallback } from "@/shared/hooks/useDebouncedCallback"
+import "@/monaco-setup"
 import { lazy, Suspense, useEffect, useRef, useState } from "react"
 import type * as monaco from "monaco-editor"
 import { bindUserScriptDiagnostics, setupUserScriptIntellisense } from "./userScriptIntellisense"
@@ -11,11 +12,7 @@ type Props = {
   onChange?: (value: string) => void
 }
 
-export function CodeEditor({
-  value,
-  onChange,
-}: Props) {
-
+export function CodeEditor({ value, onChange }: Props) {
   const [localValue, setLocalValue] = useState(value)
   const disposeDiagnosticsRef = useRef<null | (() => void)>(null)
 
@@ -26,7 +23,6 @@ export function CodeEditor({
   const debouncedChange = useDebouncedCallback((val: string) => {
     onChange?.(val)
   }, 300)
-
 
   useEffect(() => {
     return () => {
@@ -83,7 +79,7 @@ export function CodeEditor({
 
 function EditorLoader() {
   return (
-    <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground bg-muted/40 rounded-md">
+    <div className="text-muted-foreground bg-muted/40 flex flex-1 items-center justify-center rounded-md text-sm">
       <Spinner /> Загрузка редактора...
     </div>
   )

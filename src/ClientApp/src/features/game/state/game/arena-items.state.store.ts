@@ -34,21 +34,23 @@ export const useArenaItemsStateStore = create<ArenaItemsState>((set, get) => ({
     })
   },
 
-  remove: placedItemId =>
-    set(state => {
+  remove: (placedItemId) => {
+    set((state) => {
       const removedPlacedItemIds = new Set(state.removedPlacedItemIds)
       removedPlacedItemIds.add(placedItemId)
 
       return {
         removedPlacedItemIds,
-        items: state.items.filter(x => x.placedItemId !== placedItemId),
+        items: state.items.filter((x) => x.placedItemId !== placedItemId),
       }
-    }),
+    })
+  },
 
-  reset: () =>
+  reset: () => {
     set({
       arenaId: undefined,
       items: [],
       removedPlacedItemIds: new Set(),
-    }),
+    })
+  },
 }))

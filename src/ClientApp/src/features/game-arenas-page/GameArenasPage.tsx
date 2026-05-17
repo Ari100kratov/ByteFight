@@ -14,7 +14,7 @@ export default function GameArenasPage() {
   const { data: arenas, isLoading, error } = useArenasByMode(modeType)
 
   const handleArenaClick = (arena: ArenaResponse) => {
-    navigate(`/play/${modeType}/${arena.id}`)
+    void navigate(`/play/${modeType}/${arena.id}`)
   }
 
   return (
@@ -24,7 +24,7 @@ export default function GameArenasPage() {
         error={error}
         isEmpty={!arenas || arenas.length === 0}
         empty={
-          <div className="mt-8 text-center text-muted-foreground">
+          <div className="text-muted-foreground mt-8 text-center">
             Для этого режима пока нет доступных арен.
           </div>
         }
@@ -46,11 +46,7 @@ export default function GameArenasPage() {
         {!!arenas?.length && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {arenas.map((arena) => (
-              <GameArenaCard
-                key={arena.id}
-                arena={arena}
-                onSelect={handleArenaClick}
-              />
+              <GameArenaCard key={arena.id} arena={arena} onSelect={handleArenaClick} />
             ))}
           </div>
         )}

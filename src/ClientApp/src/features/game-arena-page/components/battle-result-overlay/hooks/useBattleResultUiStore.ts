@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-type BattleResultUiState = {
+interface BattleResultUiState {
   openedForSessionId: string | null
   isOpen: boolean
 
@@ -10,23 +10,30 @@ type BattleResultUiState = {
   reset: () => void
 }
 
-export const useBattleResultUiStore = create<BattleResultUiState>(set => ({
+export const useBattleResultUiStore = create<BattleResultUiState>((set) => ({
   openedForSessionId: null,
   isOpen: false,
 
-  showForSession: (sessionId) =>
-    set(state => {
+  showForSession: (sessionId) => {
+    set((state) => {
       if (state.openedForSessionId === sessionId) {
         return state
       }
 
       return {
         openedForSessionId: sessionId,
-        isOpen: true
+        isOpen: true,
       }
-    }),
+    })
+  },
 
-  open: () => set({ isOpen: true }),
-  close: () => set({ isOpen: false }),
-  reset: () => set({ openedForSessionId: null, isOpen: false })
+  open: () => {
+    set({ isOpen: true })
+  },
+  close: () => {
+    set({ isOpen: false })
+  },
+  reset: () => {
+    set({ openedForSessionId: null, isOpen: false })
+  },
 }))

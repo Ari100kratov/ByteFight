@@ -324,12 +324,26 @@ pnpm dev
 
 ```powershell
 dotnet restore ByteFight.sln
-dotnet build ByteFight.sln
-dotnet test ByteFight.sln
+dotnet build ByteFight.sln --no-restore
+dotnet test tests\SharedKernel.UnitTests\SharedKernel.UnitTests.csproj --no-build
+dotnet test tests\Domain.UnitTests\Domain.UnitTests.csproj --no-build
+dotnet test tests\Application.UnitTests\Application.UnitTests.csproj --no-build
+dotnet test tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj --no-build
+dotnet test tests\Web.Api.UnitTests\Web.Api.UnitTests.csproj --no-build
+dotnet test tests\IntegrationContracts.UnitTests\IntegrationContracts.UnitTests.csproj --no-build
+dotnet test tests\GameRuntime.Common.UnitTests\GameRuntime.Common.UnitTests.csproj --no-build
+dotnet test tests\GameRuntime.UnitTests\GameRuntime.UnitTests.csproj --no-build
+dotnet test tests\Chronicles.Domain.UnitTests\Chronicles.Domain.UnitTests.csproj --no-build
+dotnet test tests\Chronicles.Application.UnitTests\Chronicles.Application.UnitTests.csproj --no-build
+dotnet test tests\Chronicles.Infrastructure.UnitTests\Chronicles.Infrastructure.UnitTests.csproj --no-build
+dotnet test tests\ArchitectureTests\ArchitectureTests.csproj --no-build
 
 cd src/ClientApp
 pnpm build
 ```
+
+Подробная стратегия и PowerShell-цикл для запуска всех test projects описаны в `docs/testing.md`.
+`dotnet test ByteFight.sln` тоже можно использовать, но он оценивает все проекты solution, включая `Aspire.AppHost`, и требует корректно установленный Aspire SDK/workload.
 
 ### Возможные проблемы
 
@@ -428,7 +442,7 @@ Dashboard UI доступен на порту `ASPIRE_DASHBOARD_PORT` (по ум
 - Настроить backup volumes `postgres-data`, `minio-data` и при необходимости `pgadmin-data`.
 - Настроить мониторинг контейнеров `migrator` и `chronicles-worker`: ошибка migrator блокирует старт runtime-сервисов, а остановка worker замораживает обновление Зала славы.
 - Проверить политику выполнения пользовательского кода и лимиты ресурсов контейнера `web-api`.
-- Прогнать `dotnet test ByteFight.sln` и `pnpm build` перед публикацией образов.
+- Прогнать `dotnet build ByteFight.sln --no-restore`, тестовые проекты из `docs/testing.md` и `pnpm build` перед публикацией образов.
 
 ---
 

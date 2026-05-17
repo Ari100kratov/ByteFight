@@ -11,31 +11,45 @@ type Props = {
   onTabChange: (id: string) => void
   onAdd: () => void
   onRename: (id: string, name: string) => void
-  onDelete: (id: string) => void,
+  onDelete: (id: string) => void
   onChangeSource: (id: string, value: string) => void
 }
 
-export function CodeTabs({ codes, activeTab, onTabChange, onAdd, onRename, onDelete, onChangeSource }: Props) {
+export function CodeTabs({
+  codes,
+  activeTab,
+  onTabChange,
+  onAdd,
+  onRename,
+  onDelete,
+  onChangeSource,
+}: Props) {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="flex-1 flex flex-col">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="flex flex-1 flex-col">
       {/* Вкладки */}
       <div
-        className="relative flex items-center overflow-x-auto scrollbar-hide"
-        onWheel={e => {
+        className="scrollbar-hide relative flex items-center overflow-x-auto"
+        onWheel={(e) => {
           e.currentTarget.scrollLeft += e.deltaY
         }}
       >
         <TabsList className="flex flex-nowrap gap-1">
-          {codes.map(c => (
-            <div key={c.id} className="flex items-center bg-muted rounded">
+          {codes.map((c) => (
+            <div key={c.id} className="bg-muted flex items-center rounded">
               <TabsTrigger value={c.id} asChild>
-                <span className="flex-1 cursor-pointer select-none px-2 py-1 whitespace-nowrap">{c.name}</span>
+                <span className="flex-1 cursor-pointer px-2 py-1 whitespace-nowrap select-none">
+                  {c.name}
+                </span>
               </TabsTrigger>
 
               <CodeActionsMenu
                 name={c.name}
-                onRename={(newName) => onRename(c.id, newName)}
-                onDelete={() => onDelete(c.id)}
+                onRename={(newName) => {
+                  onRename(c.id, newName)
+                }}
+                onDelete={() => {
+                  onDelete(c.id)
+                }}
               />
             </div>
           ))}
@@ -46,11 +60,13 @@ export function CodeTabs({ codes, activeTab, onTabChange, onAdd, onRename, onDel
       </div>
 
       {/* Контент вкладок */}
-      {codes.map(c => (
-        <TabsContent key={c.id} value={c.id} className="flex-1 flex flex-col mt-2">
+      {codes.map((c) => (
+        <TabsContent key={c.id} value={c.id} className="mt-2 flex flex-1 flex-col">
           <CodeEditor
             value={c.sourceCode}
-            onChange={(v) => onChangeSource(c.id, v)}
+            onChange={(v) => {
+              onChangeSource(c.id, v)
+            }}
           />
         </TabsContent>
       ))}

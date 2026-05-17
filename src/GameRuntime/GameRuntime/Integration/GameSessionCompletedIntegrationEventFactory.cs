@@ -6,9 +6,13 @@ using SharedKernel;
 
 namespace GameRuntime.Integration;
 
+/// <summary>
+/// Преобразует завершённую игровую сессию в transport-neutral integration contract для outbox.
+/// </summary>
 public sealed class GameSessionCompletedIntegrationEventFactory(IDateTimeProvider dateTimeProvider)
     : IGameSessionCompletedIntegrationEventFactory
 {
+    /// <inheritdoc />
     public GameSessionCompletedIntegrationEvent Create(GameSession session, IReadOnlyList<GameActionLogEntry> logs)
     {
         return new GameSessionCompletedIntegrationEvent

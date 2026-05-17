@@ -12,22 +12,18 @@ type CharacterCardProps = {
   portraitUrl?: string | null
 }
 
-export function CharacterCard({
-  id,
-  name,
-  className,
-  specName,
-  portraitUrl,
-}: CharacterCardProps) {
+export function CharacterCard({ id, name, className, specName, portraitUrl }: CharacterCardProps) {
   const navigate = useNavigate()
   const imageSrc = portraitUrl ? getAssetUrl(portraitUrl) : undefined
 
   return (
     <Card
       className="group min-h-72 cursor-pointer overflow-hidden rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-      onClick={() => navigate(`/characters/${id}`)}
+      onClick={() => {
+        void navigate(`/characters/${id}`)
+      }}
     >
-      <div className="relative aspect-square overflow-hidden bg-muted">
+      <div className="bg-muted relative aspect-square overflow-hidden">
         {imageSrc ? (
           <>
             <img
@@ -35,13 +31,13 @@ export function CharacterCard({
               alt={name}
               loading="lazy"
               draggable={false}
-              className="h-full w-full object-cover object-center will-change-transform transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              className="h-full w-full object-cover object-center transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.04]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/5 to-transparent" />
           </>
         ) : (
           <div className="flex h-full items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full border bg-background/70 text-muted-foreground">
+            <div className="bg-background/70 text-muted-foreground flex h-24 w-24 items-center justify-center rounded-full border">
               <UserRound className="h-12 w-12" />
             </div>
           </div>

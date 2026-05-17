@@ -5,13 +5,7 @@ import { toast } from "sonner"
 import { RotateCcw } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -53,7 +47,11 @@ function CharacterPageSkeleton() {
 export default function CharacterPage() {
   const { id } = useParams<{ id: string }>()
   const { data: character, isLoading, error } = useCharacter(id)
-  const { mutateAsync: renameCharacter, isPending: isRenaming, error: renameError } = useRenameCharacter()
+  const {
+    mutateAsync: renameCharacter,
+    isPending: isRenaming,
+    error: renameError,
+  } = useRenameCharacter()
   const { setName } = useBreadcrumbNames()
 
   const [name, setNameValue] = useState("")
@@ -99,16 +97,12 @@ export default function CharacterPage() {
 
       toast.success("Имя персонажа сохранено")
     } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Не удалось сохранить имя персонажа"
-      )
+      toast.error(error instanceof Error ? error.message : "Не удалось сохранить имя персонажа")
     }
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full">
+    <div className="flex h-full w-full flex-col gap-4">
       <LoaderState
         isLoading={isLoading}
         error={error}
@@ -127,13 +121,7 @@ export default function CharacterPage() {
                 defaultLayout={leftDefaultLayout}
                 onLayoutChanged={onLeftLayoutChanged}
               >
-                <Panel
-                  id="info-panel"
-                  defaultSize="35%"
-                  minSize="30%"
-                  className="p-2"
-                  collapsible
-                >
+                <Panel id="info-panel" defaultSize="35%" minSize="30%" className="p-2" collapsible>
                   <Card className="flex h-full flex-col overflow-auto">
                     <CardHeader>
                       <CardTitle>Основная информация</CardTitle>
@@ -146,14 +134,12 @@ export default function CharacterPage() {
                           id="name"
                           value={name}
                           maxLength={32}
-                          onChange={(e) => setNameValue(e.target.value)}
+                          onChange={(e) => {
+                            setNameValue(e.target.value)
+                          }}
                         />
                       </div>
-                      {renameError && (
-                        <p className="text-sm text-red-500">
-                          {renameError.message}
-                        </p>
-                      )}
+                      {renameError && <p className="text-sm text-red-500">{renameError.message}</p>}
                     </CardContent>
 
                     {isNameChanged && (
@@ -163,7 +149,9 @@ export default function CharacterPage() {
                           variant="ghost"
                           size="icon"
                           disabled={isRenaming}
-                          onClick={() => setNameValue(savedName)}
+                          onClick={() => {
+                            setNameValue(savedName)
+                          }}
                           title="Отменить изменения"
                         >
                           <RotateCcw className="size-4" />
@@ -171,7 +159,9 @@ export default function CharacterPage() {
 
                         <Button
                           type="button"
-                          onClick={handleSaveName}
+                          onClick={() => {
+                            void handleSaveName()
+                          }}
                           disabled={!canSaveName}
                         >
                           {isRenaming ? (
@@ -193,15 +183,15 @@ export default function CharacterPage() {
                   id="class-panel"
                   defaultSize="65%"
                   minSize="40%"
-                  className="p-2 flex-1"
+                  className="flex-1 p-2"
                   collapsible
                 >
-                  <div className="h-full flex flex-col">
+                  <div className="flex h-full flex-col">
                     <CharacterClassSelector
                       selectedClassId={character.classId}
                       selectedSpecId={character.specId}
-                      onSelectClass={() => { }}
-                      onSelectSpec={() => { }}
+                      onSelectClass={() => {}}
+                      onSelectSpec={() => {}}
                     />
                   </div>
                 </Panel>
@@ -210,15 +200,9 @@ export default function CharacterPage() {
 
             <Separator withHandle />
 
-            <Panel
-              id="code-panel"
-              defaultSize="60%"
-              minSize="30%"
-              className="p-2"
-              collapsible
-            >
+            <Panel id="code-panel" defaultSize="60%" minSize="30%" className="p-2" collapsible>
               <div className="h-full overflow-auto">
-                <CharacterCodeBlock characterId={id!} />
+                <CharacterCodeBlock characterId={character.id} />
               </div>
             </Panel>
           </Group>

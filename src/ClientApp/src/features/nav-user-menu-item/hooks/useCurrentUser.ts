@@ -1,12 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
-import { ApiException, apiFetch } from '@/shared/lib/apiFetch'
-import { queryKeys } from '@/shared/lib/queryKeys'
+import { useQuery } from "@tanstack/react-query"
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { queryKeys } from "@/shared/lib/queryKeys"
 
-export type CurrentUserResponse = {
+export interface CurrentUserResponse {
   id: string
   email: string
   firstName: string
-  lastName: string,
+  lastName: string
   roles: string[]
   avatar?: string
 }
@@ -14,6 +14,6 @@ export type CurrentUserResponse = {
 export function useCurrentUser() {
   return useQuery<CurrentUserResponse, ApiException>({
     queryKey: queryKeys.users.current,
-    queryFn: () => apiFetch<CurrentUserResponse>('/users/current'),
+    queryFn: () => apiFetch<CurrentUserResponse>("/users/current"),
   })
 }

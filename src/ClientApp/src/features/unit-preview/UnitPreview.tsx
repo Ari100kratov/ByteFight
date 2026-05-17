@@ -16,13 +16,10 @@ export function UnitPreview({ stats, actionAssets, abilities }: Props) {
   return (
     <div className="flex flex-col gap-2 md:flex-row">
       <div className="flex items-center justify-center p-4">
-        <SpriteAnimationPlayer
-          actionAssets={actionAssets}
-          abilities={abilities}
-        />
+        <SpriteAnimationPlayer actionAssets={actionAssets} abilities={abilities} />
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 justify-start">
+      <div className="flex flex-1 flex-col justify-start gap-2">
         <CharacterStats stats={stats} />
         <CharacterBasicAttacks abilities={abilities} />
         <CharacterAbilities abilities={abilities} />

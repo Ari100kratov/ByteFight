@@ -6,7 +6,7 @@ import type { UnitRuntime } from "../../types/UnitRuntime"
 type InitPayload = {
   characterId: string
   maxHp: number
-  maxMp?: number,
+  maxMp?: number
   startPosition: Position
 }
 
@@ -39,5 +39,7 @@ export const useCharacterStateStore = create<CharacterRuntimeState>((set, get) =
     set({ runtime: { ...prev, ...runtime } })
   },
 
-  reset: () => set({ runtime: undefined }),
+  reset: () => {
+    set({ runtime: undefined })
+  },
 }))

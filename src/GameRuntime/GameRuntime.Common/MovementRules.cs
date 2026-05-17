@@ -4,8 +4,14 @@ using GameRuntime.Common.World.Units;
 
 namespace GameRuntime.Common;
 
+/// <summary>
+/// Общие правила перемещения юнитов по сетке арены.
+/// </summary>
 public static class MovementRules
 {
+    /// <summary>
+    /// Проверяет, может ли юнит находиться на указанной клетке.
+    /// </summary>
     public static bool CanStandOn(ArenaWorld world, BaseUnit actor, Position position)
     {
         if (!position.IsWithinGrid(world.Arena.GridWidth, world.Arena.GridHeight))
@@ -31,6 +37,9 @@ public static class MovementRules
         return true;
     }
 
+    /// <summary>
+    /// Выбирает последнюю достижимую клетку на пути с учётом дальности хода и препятствий.
+    /// </summary>
     public static Position? SelectMoveTarget(
         ArenaWorld world,
         BaseUnit actor,

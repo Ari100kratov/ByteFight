@@ -12,7 +12,7 @@ type ArenaState = {
 
 export const useArenaStore = create<ArenaState>((set) => ({
   arena: undefined,
-  setArena: arenaResponse => {
+  setArena: (arenaResponse) => {
     useArenaItemsStateStore.getState().init({
       arenaId: arenaResponse.id,
       items: arenaResponse.items,
@@ -20,5 +20,7 @@ export const useArenaStore = create<ArenaState>((set) => ({
 
     set({ arena: arenaResponse })
   },
-  reset: () => set({ arena: undefined }),
+  reset: () => {
+    set({ arena: undefined })
+  },
 }))

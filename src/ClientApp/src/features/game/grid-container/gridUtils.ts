@@ -1,15 +1,15 @@
-import type { Position } from "../types/common";
+import type { Position } from "../types/common"
 
 export type GridSize = { width: number; height: number }
 export type CanvasSize = { width: number; height: number }
 
 export type GridCell = {
-  x: number        // абсолютные пиксели (левый верхний угол ячейки)
-  y: number        // абсолютные пиксели (левый верхний угол ячейки)
+  x: number // абсолютные пиксели (левый верхний угол ячейки)
+  y: number // абсолютные пиксели (левый верхний угол ячейки)
   width: number
   height: number
-  gridX: number    // логическая колонка (0..width-1), слева направо
-  gridY: number    // логическая строка (0..height-1), 0 = снизу
+  gridX: number // логическая колонка (0..width-1), слева направо
+  gridY: number // логическая строка (0..height-1), 0 = снизу
 }
 
 export type GridLayout = {
@@ -23,10 +23,7 @@ export type GridLayout = {
 }
 
 export function calculateGridLayout(gridSize: GridSize, canvasSize: CanvasSize): GridLayout {
-  const cellSize = Math.min(
-    canvasSize.width / gridSize.width,
-    canvasSize.height / gridSize.height
-  )
+  const cellSize = Math.min(canvasSize.width / gridSize.width, canvasSize.height / gridSize.height)
 
   const gridPixelWidth = gridSize.width * cellSize
   const gridPixelHeight = gridSize.height * cellSize
@@ -54,16 +51,13 @@ export function calculateGridLayout(gridSize: GridSize, canvasSize: CanvasSize):
   return { gridSize, cellSize, gridPixelWidth, gridPixelHeight, offsetX, offsetY, cells }
 }
 
-const FOOT_OFFSET_Y = 10;
+const FOOT_OFFSET_Y = 10
 
-export function gridToPixel(
-  pos: Position,
-  layout: GridLayout
-) {
-  const cell = layout.cells[pos.y][pos.x];
+export function gridToPixel(pos: Position, layout: GridLayout) {
+  const cell = layout.cells[pos.y][pos.x]
 
   return {
     x: cell.x + cell.width / 2,
     y: cell.y + cell.height - FOOT_OFFSET_Y,
-  };
+  }
 }

@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -28,9 +22,7 @@ import { useCurrentUser } from "../nav-user-menu-item/hooks/useCurrentUser"
 
 type ProfileErrors = Partial<Record<"email" | "firstName" | "lastName", string>>
 
-type PasswordErrors = Partial<
-  Record<"currentPassword" | "newPassword" | "confirmPassword", string>
->
+type PasswordErrors = Partial<Record<"currentPassword" | "newPassword" | "confirmPassword", string>>
 
 export default function AccountPage() {
   const { data: user } = useCurrentUser()
@@ -115,7 +107,7 @@ export default function AccountPage() {
     return errors
   }
 
-  function submitProfile(e: React.FormEvent) {
+  function submitProfile(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     const errors = validateProfile()
@@ -133,7 +125,7 @@ export default function AccountPage() {
     })
   }
 
-  function submitPassword(e: React.FormEvent) {
+  function submitPassword(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     const errors = validatePassword()
@@ -162,7 +154,7 @@ export default function AccountPage() {
         onError: (error) => {
           toast.error(getApiErrorToastMessage(error))
         },
-      }
+      },
     )
   }
 
@@ -171,9 +163,7 @@ export default function AccountPage() {
       <Card>
         <CardHeader>
           <CardTitle>Аккаунт</CardTitle>
-          <CardDescription>
-            Измените основную информацию профиля
-          </CardDescription>
+          <CardDescription>Измените основную информацию профиля</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -197,9 +187,7 @@ export default function AccountPage() {
                 }}
               />
               {profileErrors.firstName && (
-                <p className="text-sm text-destructive">
-                  {profileErrors.firstName}
-                </p>
+                <p className="text-destructive text-sm">{profileErrors.firstName}</p>
               )}
             </div>
 
@@ -222,9 +210,7 @@ export default function AccountPage() {
                 }}
               />
               {profileErrors.lastName && (
-                <p className="text-sm text-destructive">
-                  {profileErrors.lastName}
-                </p>
+                <p className="text-destructive text-sm">{profileErrors.lastName}</p>
               )}
             </div>
 
@@ -247,9 +233,7 @@ export default function AccountPage() {
                 }}
               />
               {profileErrors.email && (
-                <p className="text-sm text-destructive">
-                  {profileErrors.email}
-                </p>
+                <p className="text-destructive text-sm">{profileErrors.email}</p>
               )}
             </div>
 
@@ -271,9 +255,7 @@ export default function AccountPage() {
       <Card>
         <CardHeader>
           <CardTitle>Пароль</CardTitle>
-          <CardDescription>
-            Измените пароль для входа в аккаунт
-          </CardDescription>
+          <CardDescription>Измените пароль для входа в аккаунт</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -297,9 +279,7 @@ export default function AccountPage() {
                 }}
               />
               {passwordErrors.currentPassword && (
-                <p className="text-sm text-destructive">
-                  {passwordErrors.currentPassword}
-                </p>
+                <p className="text-destructive text-sm">{passwordErrors.currentPassword}</p>
               )}
             </div>
 
@@ -329,25 +309,17 @@ export default function AccountPage() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowNewPassword((value) => !value)}
-                  aria-label={
-                    showNewPassword
-                      ? "Скрыть новый пароль"
-                      : "Показать новый пароль"
-                  }
+                  className="absolute top-0 right-0 h-full px-3"
+                  onClick={() => {
+                    setShowNewPassword((value) => !value)
+                  }}
+                  aria-label={showNewPassword ? "Скрыть новый пароль" : "Показать новый пароль"}
                 >
-                  {showNewPassword ? (
-                    <EyeOff className="size-4" />
-                  ) : (
-                    <Eye className="size-4" />
-                  )}
+                  {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </Button>
               </div>
               {passwordErrors.newPassword && (
-                <p className="text-sm text-destructive">
-                  {passwordErrors.newPassword}
-                </p>
+                <p className="text-destructive text-sm">{passwordErrors.newPassword}</p>
               )}
             </div>
 
@@ -377,25 +349,21 @@ export default function AccountPage() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowConfirmPassword((value) => !value)}
+                  className="absolute top-0 right-0 h-full px-3"
+                  onClick={() => {
+                    setShowConfirmPassword((value) => !value)
+                  }}
                   aria-label={
                     showConfirmPassword
                       ? "Скрыть повтор нового пароля"
                       : "Показать повтор нового пароля"
                   }
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff className="size-4" />
-                  ) : (
-                    <Eye className="size-4" />
-                  )}
+                  {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </Button>
               </div>
               {passwordErrors.confirmPassword && (
-                <p className="text-sm text-destructive">
-                  {passwordErrors.confirmPassword}
-                </p>
+                <p className="text-destructive text-sm">{passwordErrors.confirmPassword}</p>
               )}
             </div>
 

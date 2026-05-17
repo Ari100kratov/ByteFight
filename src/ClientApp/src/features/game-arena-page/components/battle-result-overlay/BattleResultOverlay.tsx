@@ -30,32 +30,20 @@ type ResultInfoBlockProps = {
   meta?: string | null
 }
 
-function ResultInfoBlock({
-  label,
-  value,
-  meta,
-}: ResultInfoBlockProps) {
+function ResultInfoBlock({ label, value, meta }: ResultInfoBlockProps) {
   if (!value) {
     return null
   }
 
   return (
-    <div className="flex items-center justify-between rounded-xl border bg-background/70 p-3 gap-3">
+    <div className="bg-background/70 flex items-center justify-between gap-3 rounded-xl border p-3">
       <div className="min-w-0">
-        <div className="text-xs text-muted-foreground">
-          {label}
-        </div>
+        <div className="text-muted-foreground text-xs">{label}</div>
 
-        <div className="mt-1 text-base font-semibold leading-tight truncate">
-          {value}
-        </div>
+        <div className="mt-1 truncate text-base leading-tight font-semibold">{value}</div>
       </div>
 
-      {meta && (
-        <Badge variant="secondary">
-          {meta}
-        </Badge>
-      )}
+      {meta && <Badge variant="secondary">{meta}</Badge>}
     </div>
   )
 }
@@ -77,22 +65,20 @@ export function BattleResultOverlay({
 
   onClose,
 }: BattleResultOverlayProps) {
-  const characterMeta = [characterClassName, characterSpecName]
-    .filter(Boolean)
-    .join(" · ")
+  const characterMeta = [characterClassName, characterSpecName].filter(Boolean).join(" · ")
 
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/65 p-4 backdrop-blur-[3px]">
+    <div className="bg-background/65 absolute inset-0 z-20 flex items-center justify-center p-4 backdrop-blur-[3px]">
       <div
         className={cn(
           "relative w-full max-w-md rounded-2xl border shadow-xl backdrop-blur-md",
-          getBattleResultOverlayToneClass(tone)
+          getBattleResultOverlayToneClass(tone),
         )}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 text-muted-foreground transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-3 right-3 transition-colors"
           aria-label="Закрыть результат боя"
         >
           <X className="h-4 w-4" />
@@ -100,46 +86,32 @@ export function BattleResultOverlay({
 
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-background/80">
+            <div className="bg-background/80 flex h-12 w-12 items-center justify-center rounded-full border">
               <Icon className="h-6 w-6" />
             </div>
 
             <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                Итоги боя
-              </div>
-              <div className="text-2xl font-semibold">
-                {title}
-              </div>
+              <div className="text-muted-foreground text-xs tracking-wide uppercase">Итоги боя</div>
+              <div className="text-2xl font-semibold">{title}</div>
             </div>
           </div>
 
-          <p className="text-sm text-muted-foreground">
-            {description}
-          </p>
+          <p className="text-muted-foreground text-sm">{description}</p>
 
           <div className="flex flex-col gap-3">
-            <ResultInfoBlock
-              label="Персонаж"
-              value={characterName}
-              meta={characterMeta}
-            />
+            <ResultInfoBlock label="Персонаж" value={characterName} meta={characterMeta} />
 
-            <ResultInfoBlock
-              label="Арена"
-              value={arenaName}
-              meta={arenaModeName}
-            />
+            <ResultInfoBlock label="Арена" value={arenaName} meta={arenaModeName} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl border bg-background/70 p-3">
-              <div className="text-xs text-muted-foreground">Ходов сыграно</div>
+            <div className="bg-background/70 rounded-xl border p-3">
+              <div className="text-muted-foreground text-xs">Ходов сыграно</div>
               <div className="text-lg font-semibold">{totalTurns ?? "—"}</div>
             </div>
 
-            <div className="rounded-xl border bg-background/70 p-3">
-              <div className="text-xs text-muted-foreground">Длительность</div>
+            <div className="bg-background/70 rounded-xl border p-3">
+              <div className="text-muted-foreground text-xs">Длительность</div>
               <div className="text-lg font-semibold">
                 {formatBattleDuration(startedAt, endedAt)}
               </div>

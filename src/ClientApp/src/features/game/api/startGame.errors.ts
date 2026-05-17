@@ -1,6 +1,6 @@
 import { ApiException } from "@/shared/lib/apiFetch"
 
-export type StartGameUiError = {
+export interface StartGameUiError {
   title: string
   detail: string
   code?: string
@@ -12,7 +12,9 @@ export function mapStartGameError(error: unknown): StartGameUiError {
       case "GameHost.AlreadyRunningForUser":
         return {
           title: "Бой уже запущен",
-          detail: error.detail || "У вас уже есть активная игровая сессия. Завершите текущий бой перед запуском нового.",
+          detail:
+            error.detail ||
+            "У вас уже есть активная игровая сессия. Завершите текущий бой перед запуском нового.",
           code: error.title,
         }
 

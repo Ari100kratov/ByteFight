@@ -11,12 +11,14 @@ export const useArenaItemSelectionStore = create<ArenaItemSelectionState>((set) 
   selectedPlacedItemId: undefined,
   position: undefined,
 
-  select: (selectedPlacedItemId, position) =>
-    set({ selectedPlacedItemId, position }),
+  select: (selectedPlacedItemId, position) => {
+    set({ selectedPlacedItemId, position })
+  },
 
-  clearSelection: () =>
+  clearSelection: () => {
     set({
       selectedPlacedItemId: undefined,
       position: undefined,
-    }),
+    })
+  },
 }))

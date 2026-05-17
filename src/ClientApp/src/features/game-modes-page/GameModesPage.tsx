@@ -14,7 +14,9 @@ export default function GameModesPage() {
         isLoading={isLoading}
         error={error}
         isEmpty={!modes || modes.length === 0}
-        empty={<div className="text-center text-muted-foreground">Режимы игры пока недоступны.</div>}
+        empty={
+          <div className="text-muted-foreground text-center">Режимы игры пока недоступны.</div>
+        }
         loadingFallback={
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {[...Array(3)].map((_, i) => (
@@ -36,7 +38,9 @@ export default function GameModesPage() {
               <GameModeCard
                 key={mode.id}
                 mode={mode}
-                onSelect={(mode) => navigate(`/play/${mode.slug}`)}
+                onSelect={(mode) => {
+                  void navigate(`/play/${mode.slug}`)
+                }}
               />
             ))}
           </div>

@@ -1,9 +1,9 @@
 onlyBuiltDependencies:
-  - '@swc/core'
-  - '@tailwindcss/oxide'
+  - "@swc/core"
+  - "@tailwindcss/oxide"
   - esbuild
 
 allowBuilds:
-  '@swc/core': true
-  '@tailwindcss/oxide': true
-  'esbuild': true
+  "@swc/core": true
+  "@tailwindcss/oxide": true
+  "esbuild": true

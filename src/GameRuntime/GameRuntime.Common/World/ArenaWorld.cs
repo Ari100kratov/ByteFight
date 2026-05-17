@@ -10,8 +10,14 @@ using SharedKernel;
 
 namespace GameRuntime.Common.World;
 
+/// <summary>
+/// Runtime-состояние арены: участники, предметы, текущий ход и фабрики записей журнала боя.
+/// </summary>
 public sealed class ArenaWorld
 {
+    /// <summary>
+    /// Идентификатор runtime-сессии, которым помечаются создаваемые записи журнала.
+    /// </summary>
     public Guid GameSessionId { get; } = Guid.CreateVersion7();
 
     public required ArenaDefinition Arena { get; init; }
@@ -22,8 +28,14 @@ public sealed class ArenaWorld
 
     public int TurnIndex { get; private set; }
 
+    /// <summary>
+    /// Увеличивает номер текущего хода.
+    /// </summary>
     public void IncrementTurn() => TurnIndex++;
 
+    /// <summary>
+    /// Возвращает игрока или NPC по runtime-идентификатору юнита.
+    /// </summary>
     public BaseUnit GetUnit(Guid unitId)
     {
         if (Player.CharacterId == unitId)
@@ -43,6 +55,9 @@ public sealed class ArenaWorld
         );
     }
 
+    /// <summary>
+    /// Проверяет, завершён ли бой, и возвращает результат, если финальное состояние достигнуто.
+    /// </summary>
     public GameResult? CheckGameOver()
     {
         bool allEnemiesDead = Enemies.All(e => e.IsDead);

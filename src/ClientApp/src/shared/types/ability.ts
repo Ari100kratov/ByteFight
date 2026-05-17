@@ -3,10 +3,10 @@ import type { ActionAssetDto } from "@/shared/types/action"
 export const AbilityType = {
   BasicMeleeAttack: 1,
   BasicRangedAttack: 2,
-  Healing: 3
+  Healing: 3,
 } as const
 
-export type AbilityType = typeof AbilityType[keyof typeof AbilityType]
+export type AbilityType = (typeof AbilityType)[keyof typeof AbilityType]
 
 export const AbilityEffectType = {
   Damage: 1,
@@ -16,8 +16,7 @@ export const AbilityEffectType = {
   Debuff: 5,
 } as const
 
-export type AbilityEffectType =
-  typeof AbilityEffectType[keyof typeof AbilityEffectType]
+export type AbilityEffectType = (typeof AbilityEffectType)[keyof typeof AbilityEffectType]
 
 export const AbilityTargetType = {
   Enemy: 1,
@@ -26,8 +25,7 @@ export const AbilityTargetType = {
   Area: 4,
 } as const
 
-export type AbilityTargetType =
-  typeof AbilityTargetType[keyof typeof AbilityTargetType]
+export type AbilityTargetType = (typeof AbilityTargetType)[keyof typeof AbilityTargetType]
 
 export const AbilityStatType = {
   Range: 1,
@@ -37,15 +35,14 @@ export const AbilityStatType = {
   AreaRadius: 5,
 } as const
 
-export type AbilityStatType =
-  typeof AbilityStatType[keyof typeof AbilityStatType]
+export type AbilityStatType = (typeof AbilityStatType)[keyof typeof AbilityStatType]
 
-export type AbilityStatDto = {
+export interface AbilityStatDto {
   statType: AbilityStatType
   value: number
 }
 
-export type AbilityDto = {
+export interface AbilityDto {
   type: AbilityType
   effectType: AbilityEffectType
   targetType: AbilityTargetType
