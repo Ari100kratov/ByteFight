@@ -8,27 +8,20 @@ import { useViewportStore } from "../state/viewport/viewport.store"
 extend({ Graphics, Text, Container })
 
 export function GridContainer() {
-
   const arena = useArenaStore((s) => s.arena)
-  const viewport = useViewportStore(s => s.size)
+  const viewport = useViewportStore((s) => s.size)
   const { layout, updateLayout, showGrid } = useGridStore()
 
   useEffect(() => {
     if (!arena) return
 
-    updateLayout(
-      { width: arena.gridWidth, height: arena.gridHeight },
-      viewport
-    )
-  }, [arena, viewport.width, viewport.height])
+    updateLayout({ width: arena.gridWidth, height: arena.gridHeight }, viewport)
+  }, [arena, updateLayout, viewport])
 
-  if (!layout)
-    return null
+  if (!layout) return null
 
   const { gridSize, offsetX, offsetY, cells } = layout
-  const blockedSet = new Set(
-    arena?.blockedPositions?.map(p => `${p.x}:${p.y}`)
-  )
+  const blockedSet = new Set(arena?.blockedPositions?.map((p) => `${p.x}:${p.y}`))
 
   // cells сейчас хранит gridY = 0 снизу, и x/y — абсолютные пиксельные позиции (левый верх ячейки)
   // Но для упрощения рендеринга поместим всё в локальный контейнер со сдвигом offsetX/offsetY,
@@ -36,7 +29,6 @@ export function GridContainer() {
 
   return (
     <pixiContainer x={offsetX} y={offsetY}>
-
       {/* Линии сетки */}
       {showGrid && (
         <pixiGraphics
@@ -45,9 +37,7 @@ export function GridContainer() {
             g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.25 })
 
             for (const cell of cells.flat()) {
-
-              if (blockedSet.has(`${cell.gridX}:${cell.gridY}`))
-                continue
+              if (blockedSet.has(`${cell.gridX}:${cell.gridY}`)) continue
 
               const x = cell.gridX * cell.width
               const y = (gridSize.height - 1 - cell.gridY) * cell.height
@@ -63,9 +53,7 @@ export function GridContainer() {
       {/* Координаты клеток */}
       {showGrid &&
         cells.flat().map((cell) => {
-
-          if (blockedSet.has(`${cell.gridX}:${cell.gridY}`))
-            return null
+          if (blockedSet.has(`${cell.gridX}:${cell.gridY}`)) return null
 
           const localX = cell.gridX * cell.width
           const localY = (gridSize.height - 1 - cell.gridY) * cell.height
@@ -79,7 +67,7 @@ export function GridContainer() {
               style={{
                 fontSize: 10,
                 fill: 0xffffff,
-                align: "left"
+                align: "left",
               }}
               alpha={0.45}
             />

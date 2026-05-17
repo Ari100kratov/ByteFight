@@ -1,12 +1,12 @@
 import { extend, useTick } from "@pixi/react"
-import { AnimatedSprite, Container, Sprite, Texture } from "pixi.js"
+import { AnimatedSprite, Sprite, type Texture } from "pixi.js"
 import { useEffect, useRef, useState } from "react"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useTexturesStore } from "../state/data/textures.data.store"
 import type { ArenaItemResponse } from "@/features/game-arena-page/hooks/useArena"
 import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
 
-extend({ Container, Sprite, AnimatedSprite })
+extend({ Sprite, AnimatedSprite })
 
 type Props = {
   item: ArenaItemResponse
@@ -16,15 +16,15 @@ const HOVER_AMPLITUDE = 5
 const HOVER_SPEED = 0.004
 
 export function ArenaItemSprite({ item }: Props) {
-  const layout = useGridStore(s => s.layout)
-  const selectItem = useArenaItemSelectionStore(s => s.select)
+  const layout = useGridStore((s) => s.layout)
+  const selectItem = useArenaItemSelectionStore((s) => s.select)
 
   const [texture, setTexture] = useState<Texture | null>(null)
   const [textures, setTextures] = useState<Texture[]>([])
   const [hoverOffset, setHoverOffset] = useState(0)
   const timeRef = useRef(Math.random() * Math.PI * 2)
 
-  useTick(ticker => {
+  useTick((ticker) => {
     timeRef.current += ticker.deltaMS * HOVER_SPEED
     setHoverOffset(Math.sin(timeRef.current) * HOVER_AMPLITUDE)
   })
@@ -36,24 +36,26 @@ export function ArenaItemSprite({ item }: Props) {
     setTextures([])
 
     if (item.sprite.frameCount <= 1) {
-      useTexturesStore
+      void useTexturesStore
         .getState()
         .getOrLoadTexture(item.sprite.url)
-        .then(texture => {
+        .then((texture) => {
           if (!cancelled) setTexture(texture)
         })
+        .catch(console.error)
 
       return () => {
         cancelled = true
       }
     }
 
-    useTexturesStore
+    void useTexturesStore
       .getState()
       .getOrLoadTextures(item.sprite.url, item.sprite.frameCount)
-      .then(textures => {
+      .then((textures) => {
         if (!cancelled) setTextures(textures)
       })
+      .catch(console.error)
 
     return () => {
       cancelled = true

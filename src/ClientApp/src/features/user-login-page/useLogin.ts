@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query'
-import { apiFetch } from '@/shared/lib/apiFetch'
-import { saveAuthTokens } from '@/shared/lib/auth'
+import { useMutation } from "@tanstack/react-query"
+import { apiFetch } from "@/shared/lib/apiFetch"
+import { saveAuthTokens } from "@/shared/lib/auth"
 
 export interface LoginRequest {
   email: string
@@ -19,8 +19,8 @@ export default function useLogin() {
         throw new Error("Email и пароль обязательны")
       }
 
-      const res = await apiFetch<LoginResponse>('/users/login', {
-        method: 'POST',
+      const res = await apiFetch<LoginResponse>("/users/login", {
+        method: "POST",
         body: JSON.stringify(data),
       })
 

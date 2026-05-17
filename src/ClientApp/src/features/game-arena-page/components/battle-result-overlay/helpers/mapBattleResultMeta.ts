@@ -1,11 +1,4 @@
-import {
-  AlertTriangle,
-  Clock3,
-  Hourglass,
-  ShieldAlert,
-  Swords,
-  Trophy,
-} from "lucide-react"
+import { AlertTriangle, Clock3, Hourglass, ShieldAlert, Swords, Trophy } from "lucide-react"
 import { GameOutcome } from "@/features/game/types/GameResult"
 import { GameStatus } from "@/features/game/types/GameSession"
 import type { BattleResultMeta } from "../battle-result.types"

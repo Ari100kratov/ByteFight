@@ -4,11 +4,11 @@ export const GameOutcome = {
   Draw: 3,
   TimeoutLoss: 4,
   TurnLimitLoss: 5,
-} as const;
+} as const
 
-export type GameOutcome = (typeof GameOutcome)[keyof typeof GameOutcome];
+export type GameOutcome = (typeof GameOutcome)[keyof typeof GameOutcome]
 
-export type GameResult = {
-  outcome: GameOutcome;
-  winnerUnitId?: string | null;
-};
+export interface GameResult {
+  outcome: GameOutcome
+  winnerUnitId?: string | null
+}

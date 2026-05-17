@@ -1,4 +1,4 @@
-export type PositionDto = {
+export interface PositionDto {
   x: number
   y: number
 }

@@ -1,7 +1,7 @@
 import path from "path"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react-swc"
+import react from "@vitejs/plugin-react"
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -31,8 +31,16 @@ export default defineConfig({
         codeSplitting: {
           groups: [
             {
-              test: /node_modules\/monaco-editor/,
+              test: /node_modules\/(?:monaco-editor|@monaco-editor\/react)\//,
               name: "monaco",
+            },
+            {
+              test: /node_modules\/(?:@radix-ui|radix-ui|react-resizable-panels)\//,
+              name: "ui-vendor",
+            },
+            {
+              test: /node_modules\/(?:react|react-dom|react-router-dom|@tanstack\/react-query|@tanstack\/react-table|zustand|sonner|lucide-react|next-themes)\//,
+              name: "react-vendor",
             },
           ],
         },

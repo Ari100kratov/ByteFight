@@ -60,8 +60,9 @@ export function useGameSession(sessionId?: string) {
       return
     }
 
-    gameHub.connect(session.id)
-      .catch(err => {
+    gameHub
+      .connect(session.id)
+      .catch((err) => {
         console.error("Failed to connect to game hub:", err)
       })
       .finally(() => {
@@ -69,7 +70,9 @@ export function useGameSession(sessionId?: string) {
       })
 
     return () => {
-      gameHub.disconnect(session.id).catch(() => { })
+      gameHub.disconnect(session.id).catch((err) => {
+        console.error("Failed to disconnect from game hub:", err)
+      })
     }
-  }, [session?.id, isActive])
+  }, [isActive, session])
 }

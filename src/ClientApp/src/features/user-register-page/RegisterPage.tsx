@@ -86,7 +86,7 @@ export default function RegisterPage() {
     return nextErrors
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     const nextErrors = validate()
@@ -104,18 +104,18 @@ export default function RegisterPage() {
       {
         onSuccess: () => {
           toast.success("Аккаунт создан")
-          navigate("/login")
+          void navigate("/login")
         },
         onError: (error) => {
           toast.error(getApiErrorToastMessage(error))
         },
-      }
+      },
     )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
-      <div className="w-full max-w-5xl overflow-hidden rounded-3xl border bg-card shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="bg-muted/30 flex min-h-screen items-center justify-center px-4 py-8">
+      <div className="bg-card w-full max-w-5xl overflow-hidden rounded-3xl border shadow-sm transition-all duration-300 hover:shadow-lg">
         <div className="grid min-h-[520px] lg:grid-cols-2">
           <div className="flex items-center justify-center p-6 sm:p-8 lg:p-10">
             <div className="w-full max-w-sm">
@@ -125,10 +125,8 @@ export default function RegisterPage() {
                   alt="ByteFight logo"
                   className="mx-auto h-24 w-24 object-contain"
                 />
-                <h1 className="mt-4 text-2xl font-bold tracking-tight">
-                  ByteFight
-                </h1>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <h1 className="mt-4 text-2xl font-bold tracking-tight">ByteFight</h1>
+                <p className="text-muted-foreground mt-2 text-sm">
                   Программируй. Сражайся. Побеждай.
                 </p>
               </div>
@@ -143,10 +141,7 @@ export default function RegisterPage() {
                       </CardDescription>
                     </div>
 
-                    <Link
-                      to="/login"
-                      className="text-sm underline underline-offset-4"
-                    >
+                    <Link to="/login" className="text-sm underline underline-offset-4">
                       Войти
                     </Link>
                   </div>
@@ -168,9 +163,7 @@ export default function RegisterPage() {
                           }}
                         />
                         {errors.firstName && (
-                          <p className="text-sm text-destructive">
-                            {errors.firstName}
-                          </p>
+                          <p className="text-destructive text-sm">{errors.firstName}</p>
                         )}
                       </div>
 
@@ -187,9 +180,7 @@ export default function RegisterPage() {
                           }}
                         />
                         {errors.lastName && (
-                          <p className="text-sm text-destructive">
-                            {errors.lastName}
-                          </p>
+                          <p className="text-destructive text-sm">{errors.lastName}</p>
                         )}
                       </div>
 
@@ -205,11 +196,7 @@ export default function RegisterPage() {
                             setErrors({ ...errors, email: undefined })
                           }}
                         />
-                        {errors.email && (
-                          <p className="text-sm text-destructive">
-                            {errors.email}
-                          </p>
-                        )}
+                        {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
                       </div>
 
                       <div className="grid gap-2">
@@ -232,11 +219,11 @@ export default function RegisterPage() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute right-0 top-0 h-full px-3"
-                            onClick={() => setShowPassword((value) => !value)}
-                            aria-label={
-                              showPassword ? "Скрыть пароль" : "Показать пароль"
-                            }
+                            className="absolute top-0 right-0 h-full px-3"
+                            onClick={() => {
+                              setShowPassword((value) => !value)
+                            }}
+                            aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
                           >
                             {showPassword ? (
                               <EyeOff className="size-4" />
@@ -246,9 +233,7 @@ export default function RegisterPage() {
                           </Button>
                         </div>
                         {errors.password && (
-                          <p className="text-sm text-destructive">
-                            {errors.password}
-                          </p>
+                          <p className="text-destructive text-sm">{errors.password}</p>
                         )}
                       </div>
 
@@ -278,10 +263,10 @@ export default function RegisterPage() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="absolute right-0 top-0 h-full px-3"
-                            onClick={() =>
+                            className="absolute top-0 right-0 h-full px-3"
+                            onClick={() => {
                               setShowConfirmPassword((value) => !value)
-                            }
+                            }}
                             aria-label={
                               showConfirmPassword
                                 ? "Скрыть повтор пароля"
@@ -296,9 +281,7 @@ export default function RegisterPage() {
                           </Button>
                         </div>
                         {errors.confirmPassword && (
-                          <p className="text-sm text-destructive">
-                            {errors.confirmPassword}
-                          </p>
+                          <p className="text-destructive text-sm">{errors.confirmPassword}</p>
                         )}
                       </div>
 
@@ -322,8 +305,8 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="relative hidden items-center justify-center overflow-hidden border-l bg-muted/40 p-10 lg:flex">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+          <div className="bg-muted/40 relative hidden items-center justify-center overflow-hidden border-l p-10 lg:flex">
+            <div className="from-primary/5 absolute inset-0 bg-gradient-to-br via-transparent to-transparent" />
 
             <div className="relative z-10 max-w-sm text-center">
               <img
@@ -331,15 +314,13 @@ export default function RegisterPage() {
                 alt="ByteFight logo"
                 className="mx-auto h-64 w-64 object-contain"
               />
-              <h2 className="mt-6 text-4xl font-bold tracking-tight">
-                ByteFight
-              </h2>
-              <p className="mt-3 text-base text-muted-foreground">
+              <h2 className="mt-6 text-4xl font-bold tracking-tight">ByteFight</h2>
+              <p className="text-muted-foreground mt-3 text-base">
                 Программируй. Сражайся. Побеждай.
               </p>
-              <p className="mt-6 text-sm leading-6 text-muted-foreground">
-                Создавай боевую логику персонажа, тестируй стратегии и наблюдай,
-                как твой код оживает на арене.
+              <p className="text-muted-foreground mt-6 text-sm leading-6">
+                Создавай боевую логику персонажа, тестируй стратегии и наблюдай, как твой код
+                оживает на арене.
               </p>
             </div>
           </div>

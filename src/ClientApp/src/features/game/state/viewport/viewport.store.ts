@@ -12,5 +12,7 @@ type ViewportState = {
 
 export const useViewportStore = create<ViewportState>((set) => ({
   size: { width: 0, height: 0 },
-  setSize: (size) => set({ size }),
+  setSize: (size) => {
+    set({ size })
+  },
 }))

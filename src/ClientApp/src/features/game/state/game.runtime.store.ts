@@ -1,24 +1,26 @@
-import { create } from "zustand";
-import { type TurnLog } from "../types/TurnLog";
-import type { GameSession } from "../types/GameSession";
-import { playRuntimeLog } from "../runtime/playRuntimeLog";
+import { create } from "zustand"
+import { type TurnLog } from "../types/TurnLog"
+import type { GameSession } from "../types/GameSession"
+import { playRuntimeLog } from "../runtime/playRuntimeLog"
 
 interface GameRuntimeState {
-  session?: GameSession;
-  setSession: (session: GameSession) => void;
+  session?: GameSession
+  setSession: (session: GameSession) => void
   turnLogs: TurnLog[]
-  setTurnLogs: (turnLogs: TurnLog[]) => void;
+  setTurnLogs: (turnLogs: TurnLog[]) => void
 
-  queue: TurnLog[];
-  isProcessing: boolean;
-  enqueueTurn: (turnLog: TurnLog) => void;
-  processNext: () => Promise<void>;
-  reset: () => void;
+  queue: TurnLog[]
+  isProcessing: boolean
+  enqueueTurn: (turnLog: TurnLog) => void
+  processNext: () => Promise<void>
+  reset: () => void
 }
 
 export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
   session: undefined,
-  setSession: (session) => set({ session }),
+  setSession: (session) => {
+    set({ session })
+  },
 
   turnLogs: [],
   setTurnLogs: (incomingTurns) => {
@@ -33,8 +35,7 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
       }
 
       for (const incomingTurn of incomingTurns) {
-        let targetTurn = existingTurns.find(
-          t => t.turnIndex === incomingTurn.turnIndex)
+        let targetTurn = existingTurns.find((t) => t.turnIndex === incomingTurn.turnIndex)
 
         if (!targetTurn) {
           targetTurn = { turnIndex: incomingTurn.turnIndex, logs: [] }
@@ -61,31 +62,31 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
   enqueueTurn: (turnLog) => {
     set((state) => ({
       queue: [...state.queue, turnLog],
-    }));
+    }))
 
-    get().processNext();
+    void get().processNext()
   },
 
   processNext: async () => {
-    if (get().isProcessing) return;
+    if (get().isProcessing) return
 
-    const turn = get().queue[0];
-    if (!turn) return;
+    const turn = get().queue[0]
+    if (!turn) return
 
-    set({ isProcessing: true });
+    set({ isProcessing: true })
 
     for (const entry of turn.logs) {
       // добавляем лог в стор по одному
       set((state) => {
         const turns = [...state.turnLogs]
-        let targetTurn = turns.find(t => t.turnIndex === entry.turnIndex)
+        let targetTurn = turns.find((t) => t.turnIndex === entry.turnIndex)
 
         if (!targetTurn) {
           targetTurn = { turnIndex: entry.turnIndex, logs: [] }
           turns.push(targetTurn)
         }
 
-        if (!targetTurn.logs.some(l => l.id === entry.id)) {
+        if (!targetTurn.logs.some((l) => l.id === entry.id)) {
           targetTurn.logs.push(entry)
         }
 
@@ -94,23 +95,26 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
         return { turnLogs: turns }
       })
 
-      await playRuntimeLog(entry);
+      await playRuntimeLog(entry)
     }
 
     set((s) => ({
       queue: s.queue.slice(1),
       isProcessing: false,
-    }));
+    }))
 
     // гарантированная последовательность
-    queueMicrotask(() => get().processNext());
+    queueMicrotask(() => {
+      void get().processNext()
+    })
   },
 
-  reset: () =>
+  reset: () => {
     set({
       session: undefined,
       turnLogs: [],
       queue: [],
       isProcessing: false,
-    }),
-}));
+    })
+  },
+}))

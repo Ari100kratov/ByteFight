@@ -5,20 +5,20 @@ import { useRef, useEffect, useCallback } from "react"
  * @param callback функция, которую нужно вызвать
  * @param delay задержка в мс
  */
-export function useDebouncedCallback<T extends (...args: any[]) => void>(
-  callback: T,
-  delay: number
+export function useDebouncedCallback<TArgs extends unknown[]>(
+  callback: (...args: TArgs) => void,
+  delay: number,
 ) {
   const timeoutRef = useRef<number | null>(null)
 
   const debouncedFn = useCallback(
-    (...args: Parameters<T>) => {
+    (...args: TArgs) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
       timeoutRef.current = window.setTimeout(() => {
         callback(...args)
       }, delay)
     },
-    [callback, delay]
+    [callback, delay],
   )
 
   useEffect(() => {

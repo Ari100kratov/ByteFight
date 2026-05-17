@@ -1,38 +1,39 @@
 export const queryKeys = {
   users: {
-    current: ['users', 'current'] as const,
+    current: ["users", "current"] as const,
   },
 
   characters: {
-    byCurrentUser: ['characters', 'currentUser'] as const,
-    byId: (id: string | undefined) => ['characters', 'byId', id] as const,
-    details: (id: string | undefined) => ['characters', 'details', id] as const,
+    byCurrentUser: ["characters", "currentUser"] as const,
+    byId: (id: string | undefined) => ["characters", "byId", id] as const,
+    details: (id: string | undefined) => ["characters", "details", id] as const,
   },
 
   characterCodes: {
-    byCharacterId: (characterId: string) => ['character-codes', 'byCharacterId', characterId] as const,
-    template: ['character-codes', 'template'] as const,
+    byCharacterId: (characterId: string) =>
+      ["character-codes", "byCharacterId", characterId] as const,
+    template: ["character-codes", "template"] as const,
   },
 
   gameModes: {
-    all: ['game-modes', 'all'] as const,
+    all: ["game-modes", "all"] as const,
   },
 
   arenas: {
-    byMode: (mode: string | undefined) => ['arenas', 'byMode', mode] as const,
-    byId: (id: string | undefined) => ['arenas', 'byId', id] as const,
+    byMode: (mode: string | undefined) => ["arenas", "byMode", mode] as const,
+    byId: (id: string | undefined) => ["arenas", "byId", id] as const,
   },
 
   arenaEnemies: {
-    byArenaId: (arenaId: string | undefined) => ['arenaEnemies', 'byArenaId', arenaId] as const,
+    byArenaId: (arenaId: string | undefined) => ["arenaEnemies", "byArenaId", arenaId] as const,
   },
 
   enemies: {
-    byId: (id: string | undefined) => ['enemies', 'byId', id] as const,
+    byId: (id: string | undefined) => ["enemies", "byId", id] as const,
   },
 
   characterClasses: {
-    all: ['character-classes', 'all'] as const
+    all: ["character-classes", "all"] as const,
   },
 
   characterSpecs: {
@@ -40,12 +41,11 @@ export const queryKeys = {
   },
 
   gameSessions: {
-    byId: (id: string | undefined) => ['game-sessions', 'byId', id] as const,
-    logs: (sessionId: string | undefined) => ['game-sessions', 'logs', sessionId] as const,
+    byId: (id: string | undefined) => ["game-sessions", "byId", id] as const,
+    logs: (sessionId: string | undefined) => ["game-sessions", "logs", sessionId] as const,
   },
 
   chronicles: {
-    leaderboards: (top: number) => ['chronicles', 'leaderboards', top] as const,
-  }
-
+    leaderboards: (top: number) => ["chronicles", "leaderboards", top] as const,
+  },
 } as const

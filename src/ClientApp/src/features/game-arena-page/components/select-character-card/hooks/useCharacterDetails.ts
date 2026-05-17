@@ -1,19 +1,19 @@
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
-import { queryKeys } from "@/shared/lib/queryKeys";
-import type { StatDto } from "@/shared/types/stat";
-import type { ActionAssetDto } from "@/shared/types/action";
-import type { CharacterSpecType } from "@/features/character-class-selector/hooks/useCharacterSpecs";
-import { useStoreQuery } from "@/shared/hooks/useStoreQuery";
-import { useCharacterStore } from "@/features/game/state/data/character.data.store";
-import type { AbilityDto } from "@/shared/types/ability";
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { queryKeys } from "@/shared/lib/queryKeys"
+import type { StatDto } from "@/shared/types/stat"
+import type { ActionAssetDto } from "@/shared/types/action"
+import type { CharacterSpecType } from "@/features/character-class-selector/hooks/useCharacterSpecs"
+import { useStoreQuery } from "@/shared/hooks/useStoreQuery"
+import { useCharacterStore } from "@/features/game/state/data/character.data.store"
+import type { AbilityDto } from "@/shared/types/ability"
 
-export type CharacterResponse = {
+export interface CharacterResponse {
   id: string
   name: string
   spec: SpecResponse
 }
 
-export type SpecResponse = {
+export interface SpecResponse {
   id: string
   name: string
   className: string
@@ -25,13 +25,13 @@ export type SpecResponse = {
 }
 
 export function useCharacterDetails(characterId?: string) {
-  const setCharacter = useCharacterStore(s => s.setCharacter)
+  const setCharacter = useCharacterStore((s) => s.setCharacter)
   return useStoreQuery<CharacterResponse, ApiException>(
     {
       queryKey: queryKeys.characters.details(characterId),
       queryFn: () => apiFetch<CharacterResponse>(`/characters/${characterId}/details`),
-      enabled: !!characterId
+      enabled: !!characterId,
     },
-    setCharacter
+    setCharacter,
   )
 }

@@ -14,9 +14,11 @@ export function GameArenaCard({ arena, onSelect }: Props) {
   return (
     <Card
       className="group cursor-pointer overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-      onClick={() => onSelect(arena)}
+      onClick={() => {
+        onSelect(arena)
+      }}
     >
-      <div className="relative aspect-video overflow-hidden bg-muted">
+      <div className="bg-muted relative aspect-video overflow-hidden">
         {imageSrc ? (
           <>
             <img
@@ -24,28 +26,26 @@ export function GameArenaCard({ arena, onSelect }: Props) {
               alt={arena.name}
               loading="lazy"
               draggable={false}
-              className="h-full w-full object-cover object-center will-change-transform transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              className="h-full w-full object-cover object-center transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.04]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/5 to-transparent" />
           </>
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex h-full items-center justify-center text-xs">
             Изображение недоступно
           </div>
         )}
       </div>
 
       <CardContent className="space-y-2 p-4">
-        <CardTitle className="text-lg font-semibold">
-          {arena.name}
-        </CardTitle>
+        <CardTitle className="text-lg font-semibold">{arena.name}</CardTitle>
 
-        <CardDescription className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+        <CardDescription className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
           {arena.description || "Описание отсутствует."}
         </CardDescription>
 
         <div className="flex flex-wrap gap-2 pt-3">
-          <span className="inline-flex items-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground">
+          <span className="bg-secondary text-secondary-foreground inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold">
             <Grid3X3 className="shrink-0" />
             {arena.gridWidth}×{arena.gridHeight}
           </span>
@@ -53,7 +53,7 @@ export function GameArenaCard({ arena, onSelect }: Props) {
           {arena.enemies.map((enemy) => (
             <span
               key={enemy.enemyId}
-              className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold text-foreground"
+              className="text-foreground inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold"
             >
               <Skull className="shrink-0" />
               {enemy.name} ×{enemy.count}
@@ -62,7 +62,7 @@ export function GameArenaCard({ arena, onSelect }: Props) {
           {arena.items.map((item) => (
             <span
               key={item.itemId}
-              className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold text-foreground"
+              className="text-foreground inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-semibold"
             >
               <FlaskConical className="shrink-0" />
               {item.name} ×{item.count}

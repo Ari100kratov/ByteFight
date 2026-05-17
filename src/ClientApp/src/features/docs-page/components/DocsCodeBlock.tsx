@@ -7,7 +7,7 @@ type Props = {
  */
 export function DocsCodeBlock({ code }: Props) {
   return (
-    <pre className="overflow-x-auto rounded-xl border bg-muted/40 p-4 text-sm leading-6">
+    <pre className="bg-muted/40 overflow-x-auto rounded-xl border p-4 text-sm leading-6">
       <code>{code}</code>
     </pre>
   )

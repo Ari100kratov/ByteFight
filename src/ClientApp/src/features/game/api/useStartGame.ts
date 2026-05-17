@@ -1,14 +1,14 @@
-import { useMutation } from '@tanstack/react-query'
-import { apiFetch } from '@/shared/lib/apiFetch'
+import { useMutation } from "@tanstack/react-query"
+import { apiFetch } from "@/shared/lib/apiFetch"
 
-export type StartGameRequest = {
+export interface StartGameRequest {
   arenaId: string
   mode: string
   characterId: string
   code?: string
 }
 
-export type StartGameResponse = {
+export interface StartGameResponse {
   id: string // gameSessionId
 }
 
@@ -22,7 +22,7 @@ export function useStartGame() {
 
       const response = await apiFetch<StartGameResponse>("/game/start", {
         method: "POST",
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       })
 
       return response.id

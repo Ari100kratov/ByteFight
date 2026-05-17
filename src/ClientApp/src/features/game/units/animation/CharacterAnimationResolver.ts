@@ -17,7 +17,7 @@ export class CharacterAnimationResolver implements UnitAnimationResolver {
 
   getAbilityAnimation(
     abilityType?: AbilityType,
-    actionType: ActionType = ActionType.Attack
+    actionType: ActionType = ActionType.Attack,
   ): SpriteAnimationDto | undefined {
     return this.get().getAbilitySpriteAnimation(abilityType, actionType)
   }

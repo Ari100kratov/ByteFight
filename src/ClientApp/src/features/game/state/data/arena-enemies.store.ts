@@ -13,12 +13,15 @@ type ArenaEnemiesState = {
 
 export const useArenaEnemiesStore = create<ArenaEnemiesState>((set, get) => ({
   arenaEnemies: {},
-  setArenaEnemies: (arenaEnemies) =>
+  setArenaEnemies: (arenaEnemies) => {
     set({
       arenaEnemies: Object.fromEntries(
-        arenaEnemies.map((e) => [e.id, { ...e, currentAction: ActionType.Idle }])
+        arenaEnemies.map((e) => [e.id, { ...e, currentAction: ActionType.Idle }]),
       ),
-    }),
+    })
+  },
   getArenaEnemy: (id) => get().arenaEnemies[id],
-  reset: () => set({ arenaEnemies: {} }),
+  reset: () => {
+    set({ arenaEnemies: {} })
+  },
 }))

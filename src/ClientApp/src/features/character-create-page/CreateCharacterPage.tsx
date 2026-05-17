@@ -3,12 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useDefaultLayout } from "react-resizable-panels"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
@@ -23,13 +18,13 @@ export default function CreateCharacterPage() {
   const [selectedSpecId, setSelectedSpecId] = useState<string>()
 
   const navigate = useNavigate()
-  const { mutateAsync: create, isPending, error } = useCreateCharacter()
+  const { mutate: create, isPending, error } = useCreateCharacter()
 
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
-    id: "create-character-layout"
+    id: "create-character-layout",
   })
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (!selectedSpecId) {
@@ -41,10 +36,10 @@ export default function CreateCharacterPage() {
       { name, specId: selectedSpecId },
       {
         onSuccess: (id) => {
-          navigate(`/characters/${id}`)
+          void navigate(`/characters/${id}`)
           toast.success("Персонаж успешно создан")
         },
-      }
+      },
     )
   }
 
@@ -54,22 +49,14 @@ export default function CreateCharacterPage() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col w-full h-full"
-    >
+    <form onSubmit={handleSubmit} className="flex h-full w-full flex-col">
       <Group
         orientation="horizontal"
         defaultLayout={defaultLayout}
         onLayoutChanged={onLayoutChanged}
       >
         {/* Левая часть */}
-        <Panel
-          id="info-panel"
-          defaultSize="40%"
-          minSize="30%"
-          className="p-2"
-        >
+        <Panel id="info-panel" defaultSize="40%" minSize="30%" className="p-2">
           <Card className="h-full">
             <CardHeader>
               <CardTitle>Основная информация</CardTitle>
@@ -80,14 +67,12 @@ export default function CreateCharacterPage() {
                 <Input
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value)
+                  }}
                 />
               </div>
-              {error && (
-                <p className="text-sm text-red-500">
-                  {error.message}
-                </p>
-              )}
+              {error && <p className="text-sm text-red-500">{error.message}</p>}
             </CardContent>
           </Card>
         </Panel>
@@ -95,12 +80,7 @@ export default function CreateCharacterPage() {
         <Separator withHandle />
 
         {/* Правая часть */}
-        <Panel
-          id="class-panel"
-          defaultSize="60%"
-          minSize="40%"
-          className="p-2 flex flex-col"
-        >
+        <Panel id="class-panel" defaultSize="60%" minSize="40%" className="flex flex-col p-2">
           <CharacterClassSelector
             selectedClassId={selectedClassId}
             selectedSpecId={selectedSpecId}
@@ -108,7 +88,7 @@ export default function CreateCharacterPage() {
             onSelectSpec={setSelectedSpecId}
           />
 
-          <div className="flex justify-end mt-auto pt-4">
+          <div className="mt-auto flex justify-end pt-4">
             <Button type="submit" disabled={isPending}>
               {isPending ? (
                 <>

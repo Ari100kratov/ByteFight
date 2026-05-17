@@ -11,10 +11,7 @@ export function useArenaBattleState() {
       const isPlaybackRunning = state.isProcessing || state.queue.length > 0
       const isSessionActive = isGameSessionActive(session)
 
-      const isFinishingPlayback =
-        hasSession &&
-        !isSessionActive &&
-        isPlaybackRunning
+      const isFinishingPlayback = hasSession && !isSessionActive && isPlaybackRunning
 
       const isBattleBusy = isSessionActive || isFinishingPlayback
 
@@ -22,6 +19,6 @@ export function useArenaBattleState() {
         hasSession,
         isBattleBusy,
       }
-    })
+    }),
   )
 }

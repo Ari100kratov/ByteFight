@@ -12,7 +12,7 @@ function getInitials(name: string) {
     .split(/[\s—-]+/)
     .filter(Boolean)
     .slice(0, 2)
-    .map(part => part[0]?.toUpperCase() ?? "")
+    .map((part) => part[0]?.toUpperCase() ?? "")
     .join("")
 }
 
@@ -27,26 +27,22 @@ export function CombatLogEntryItem({ entry }: Props) {
   const text = formatCombatLog({ entry })
 
   return (
-    <div className="flex gap-3 rounded-xl border bg-card/50 p-3 shadow-sm">
+    <div className="bg-card/50 flex gap-3 rounded-xl border p-3 shadow-sm">
       <Avatar className="h-8 w-8 rounded-lg">
         <AvatarImage src={undefined} alt={entry.actorName} />
-        <AvatarFallback className="rounded-lg text-xs font-medium">
-          {initials}
-        </AvatarFallback>
+        <AvatarFallback className="rounded-lg text-xs font-medium">{initials}</AvatarFallback>
       </Avatar>
 
       <div className="min-w-0 flex-1">
-        <div className="text-sm leading-relaxed break-words">
-          {text}
-        </div>
+        <div className="text-sm leading-relaxed break-words">{text}</div>
 
-        <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground/70">
+        <div className="text-muted-foreground/70 mt-1 flex items-center gap-2 text-[11px]">
           <span>{time}</span>
 
           {entry.info && (
             <>
               <span>•</span>
-              <span className="italic break-words">{entry.info}</span>
+              <span className="break-words italic">{entry.info}</span>
             </>
           )}
         </div>

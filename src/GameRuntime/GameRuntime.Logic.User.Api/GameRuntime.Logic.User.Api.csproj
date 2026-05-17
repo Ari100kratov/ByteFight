@@ -1,11 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Features" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Domain\Domain.csproj" />
     <ProjectReference Include="..\GameRuntime.Common\GameRuntime.Common.csproj" />
   </ItemGroup>

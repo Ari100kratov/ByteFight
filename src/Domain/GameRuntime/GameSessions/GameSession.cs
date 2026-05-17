@@ -1,4 +1,4 @@
-﻿using Domain.Game.GameModes;
+using Domain.Game.GameModes;
 using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.GameRuntime.GameResults;
 using Domain.GameRuntime.GameSessionParticipants;
@@ -6,8 +6,14 @@ using SharedKernel;
 
 namespace Domain.GameRuntime.GameSessions;
 
+/// <summary>
+/// Доменная модель игровой сессии: участники, статус, результат и журнал действий.
+/// </summary>
 public class GameSession : Entity
 {
+    /// <summary>
+    /// Идентификатор игровой сессии.
+    /// </summary>
     public Guid Id { get; set; }
 
     public GameModeType Mode { get; set; }
@@ -28,8 +34,14 @@ public class GameSession : Entity
     public IReadOnlyCollection<GameActionLogEntry> ActionLogs => _actionLogs.AsReadOnly();
 
 
+    /// <summary>
+    /// Возвращает <see langword="true" />, если сессия больше не может изменять статус и участников.
+    /// </summary>
     public bool IsOver => Status is GameStatus.Completed or GameStatus.Failed or GameStatus.Aborted;
 
+    /// <summary>
+    /// Создаёт новую pending-сессию с игроком и NPC-участниками арены.
+    /// </summary>
     public static GameSession New(
         Guid id,
         GameModeType mode,
@@ -72,6 +84,9 @@ public class GameSession : Entity
         return gameSession;
     }
 
+    /// <summary>
+    /// Переводит pending-сессию в active-состояние.
+    /// </summary>
     public void Start(IDateTimeProvider dateTimeProvider)
     {
         if (Status is not GameStatus.Pending)
@@ -83,6 +98,9 @@ public class GameSession : Entity
         Status = GameStatus.Active;
     }
 
+    /// <summary>
+    /// Завершает сессию успешным игровым результатом и фиксирует число ходов.
+    /// </summary>
     public void CompleteSuccess(GameResult gameResult, int turns, IDateTimeProvider dateTimeProvider)
     {
         if (IsOver)
@@ -108,6 +126,9 @@ public class GameSession : Entity
         EndedAt = dateTimeProvider.UtcNow;
     }
 
+    /// <summary>
+    /// Завершает сессию ошибкой выполнения.
+    /// </summary>
     public void Fail(string? reason, int turns, IDateTimeProvider dateTimeProvider)
     {
         if (IsOver)
@@ -121,6 +142,9 @@ public class GameSession : Entity
         EndedAt = dateTimeProvider.UtcNow;
     }
 
+    /// <summary>
+    /// Прерывает сессию без игрового результата.
+    /// </summary>
     public void Abort(int turns, IDateTimeProvider dateTimeProvider)
     {
         if (IsOver)

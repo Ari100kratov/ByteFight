@@ -18,12 +18,10 @@ export function BreadcrumbProvider({ children }: { children: ReactNode }) {
   const [names, setNames] = useState<DynamicNames>({})
 
   function setName(key: string, value: string) {
-    setNames(prev => (prev[key] === value ? prev : { ...prev, [key]: value }))
+    setNames((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }))
   }
 
   return (
-    <BreadcrumbContext.Provider value={{ names, setName }}>
-      {children}
-    </BreadcrumbContext.Provider>
+    <BreadcrumbContext.Provider value={{ names, setName }}>{children}</BreadcrumbContext.Provider>
   )
 }

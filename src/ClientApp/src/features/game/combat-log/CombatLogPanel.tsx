@@ -5,7 +5,7 @@ import { useGameRuntimeStore } from "../state/game.runtime.store"
 import { useAutoScrollToBottom } from "./hooks/useAutoScrollToBottom"
 
 export function CombatLogPanel() {
-  const turnLogs = useGameRuntimeStore(s => s.turnLogs)
+  const turnLogs = useGameRuntimeStore((s) => s.turnLogs)
   const logEntriesCount = turnLogs.reduce((sum, turn) => sum + turn.logs.length, 0)
 
   const { viewportRef, bottomRef } = useAutoScrollToBottom({
@@ -20,11 +20,8 @@ export function CombatLogPanel() {
 
       <CardContent className="flex-1 overflow-hidden">
         <ScrollArea className="h-full pr-4" viewportRef={viewportRef}>
-          {turnLogs.map(turn => (
-            <CombatLogTurnGroup
-              key={turn.turnIndex}
-              turn={turn}
-            />
+          {turnLogs.map((turn) => (
+            <CombatLogTurnGroup key={turn.turnIndex} turn={turn} />
           ))}
 
           <div ref={bottomRef} />

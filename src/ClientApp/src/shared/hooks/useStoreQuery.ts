@@ -9,7 +9,7 @@ import { useQuery, type UseQueryOptions, type UseQueryResult } from "@tanstack/r
  */
 export function useStoreQuery<TData, TError = unknown>(
   options: UseQueryOptions<TData, TError>,
-  setStore: (data: TData) => void
+  setStore: (data: TData) => void,
 ): UseQueryResult<TData, TError> {
   const query = useQuery(options)
 

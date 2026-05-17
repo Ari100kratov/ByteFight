@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 
-type CharacterListItem = {
+interface CharacterListItem {
   id: string
 }
 
 const SELECTED_CHARACTER_STORAGE_KEY = "selected-character-id"
 
-type Params<TCharacter extends CharacterListItem> = {
+interface Params<TCharacter extends CharacterListItem> {
   characters?: TCharacter[]
   sessionCharacterId?: string
 }
@@ -24,9 +24,7 @@ export function useSelectedCharacterId<TCharacter extends CharacterListItem>({
   useEffect(() => {
     if (!sessionCharacterId) return
 
-    setSelectedCharacterId(prev =>
-      prev === sessionCharacterId ? prev : sessionCharacterId
-    )
+    setSelectedCharacterId((prev) => (prev === sessionCharacterId ? prev : sessionCharacterId))
   }, [sessionCharacterId])
 
   // Если список персонажей загружен и текущий выбор отсутствует в нем — очищаем
@@ -34,7 +32,7 @@ export function useSelectedCharacterId<TCharacter extends CharacterListItem>({
     if (!characters) return
     if (!selectedCharacterId) return
 
-    const exists = characters.some(character => character.id === selectedCharacterId)
+    const exists = characters.some((character) => character.id === selectedCharacterId)
     if (!exists) {
       setSelectedCharacterId(undefined)
       localStorage.removeItem(SELECTED_CHARACTER_STORAGE_KEY)

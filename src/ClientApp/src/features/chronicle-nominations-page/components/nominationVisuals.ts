@@ -15,7 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-export type NominationVisual = {
+export interface NominationVisual {
   Icon: LucideIcon
   accent: string
   glow: string

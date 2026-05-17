@@ -21,22 +21,22 @@ export default function LoginPage() {
 
   const { mutate: login, isPending, error } = useLogin()
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     login(
       { email, password },
       {
         onSuccess: () => {
-          navigate("/")
+          void navigate("/")
         },
-      }
+      },
     )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
-      <div className="w-full max-w-5xl overflow-hidden rounded-3xl border bg-card shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="bg-muted/30 flex min-h-screen items-center justify-center px-4 py-8">
+      <div className="bg-card w-full max-w-5xl overflow-hidden rounded-3xl border shadow-sm transition-all duration-300 hover:shadow-lg">
         <div className="grid min-h-[520px] lg:grid-cols-2">
           <div className="flex items-center justify-center p-6 sm:p-8 lg:p-10">
             <div className="w-full max-w-sm">
@@ -47,7 +47,7 @@ export default function LoginPage() {
                   className="mx-auto h-24 w-24 object-contain"
                 />
                 <h1 className="mt-4 text-2xl font-bold tracking-tight">ByteFight</h1>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="text-muted-foreground mt-2 text-sm">
                   Программируй. Сражайся. Побеждай.
                 </p>
               </div>
@@ -57,15 +57,10 @@ export default function LoginPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <CardTitle className="text-2xl">Вход в аккаунт</CardTitle>
-                      <CardDescription className="mt-2">
-                        Введите email и пароль
-                      </CardDescription>
+                      <CardDescription className="mt-2">Введите email и пароль</CardDescription>
                     </div>
 
-                    <Link
-                      to="/register"
-                      className="text-sm underline underline-offset-4"
-                    >
+                    <Link to="/register" className="text-sm underline underline-offset-4">
                       Регистрация
                     </Link>
                   </div>
@@ -80,7 +75,9 @@ export default function LoginPage() {
                           id="email"
                           type="email"
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onChange={(e) => {
+                            setEmail(e.target.value)
+                          }}
                         />
                       </div>
 
@@ -90,7 +87,9 @@ export default function LoginPage() {
                           id="password"
                           type="password"
                           value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          onChange={(e) => {
+                            setPassword(e.target.value)
+                          }}
                         />
                       </div>
 
@@ -103,11 +102,7 @@ export default function LoginPage() {
                   </CardContent>
 
                   <CardFooter className="mt-4 flex-col gap-2 px-0 pb-0">
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={isPending}
-                    >
+                    <Button type="submit" className="w-full" disabled={isPending}>
                       {isPending ? (
                         <>
                           <Spinner /> Вхожу...
@@ -122,8 +117,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="relative hidden border-l bg-muted/40 lg:flex items-center justify-center overflow-hidden p-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+          <div className="bg-muted/40 relative hidden items-center justify-center overflow-hidden border-l p-10 lg:flex">
+            <div className="from-primary/5 absolute inset-0 bg-gradient-to-br via-transparent to-transparent" />
 
             <div className="relative z-10 max-w-sm text-center">
               <img
@@ -132,12 +127,12 @@ export default function LoginPage() {
                 className="mx-auto h-64 w-64 object-contain"
               />
               <h2 className="mt-6 text-4xl font-bold tracking-tight">ByteFight</h2>
-              <p className="mt-3 text-base text-muted-foreground">
+              <p className="text-muted-foreground mt-3 text-base">
                 Программируй. Сражайся. Побеждай.
               </p>
-              <p className="mt-6 text-sm leading-6 text-muted-foreground">
-                Создавай боевую логику персонажа, тестируй стратегии и наблюдай,
-                как твой код оживает на арене.
+              <p className="text-muted-foreground mt-6 text-sm leading-6">
+                Создавай боевую логику персонажа, тестируй стратегии и наблюдай, как твой код
+                оживает на арене.
               </p>
             </div>
           </div>

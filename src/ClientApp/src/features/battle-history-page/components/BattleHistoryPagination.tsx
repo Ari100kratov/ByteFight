@@ -24,28 +24,30 @@ export function BattleHistoryPagination({
 
   return (
     <div className="flex items-center justify-between gap-4">
-      <div className="text-sm text-muted-foreground">
-        {isFetching
-          ? "Обновляем список..."
-          : `Показано ${from}–${to} из ${totalCount}`}
+      <div className="text-muted-foreground text-sm">
+        {isFetching ? "Обновляем список..." : `Показано ${from}–${to} из ${totalCount}`}
       </div>
 
       <div className="flex items-center">
         <Button
           variant="outline"
-          onClick={() => onPageChange(page - 1)}
+          onClick={() => {
+            onPageChange(page - 1)
+          }}
           disabled={!canGoPrev}
         >
           Назад
         </Button>
 
-        <div className="text-sm text-muted-foreground min-w-[90px] text-center">
+        <div className="text-muted-foreground min-w-[90px] text-center text-sm">
           {page} / {totalPages}
         </div>
 
         <Button
           variant="outline"
-          onClick={() => onPageChange(page + 1)}
+          onClick={() => {
+            onPageChange(page + 1)
+          }}
           disabled={!canGoNext}
         >
           Вперед

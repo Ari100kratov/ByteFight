@@ -100,9 +100,7 @@ export function formatCombatLog({ entry }: Props) {
       <>
         <span className={actorClass}>{entry.actorName}</span>
         {" перемещается на клетку "}
-        <span className={accentClass}>
-          {formatPosition(entry.to.x, entry.to.y)}
-        </span>
+        <span className={accentClass}>{formatPosition(entry.to.x, entry.to.y)}</span>
       </>
     )
   }
@@ -114,9 +112,7 @@ export function formatCombatLog({ entry }: Props) {
         {" подбирает "}
         <span className={accentClass}>«{entry.itemName}»</span>
         {" на клетке "}
-        <span className={accentClass}>
-          {formatPosition(entry.position.x, entry.position.y)}
-        </span>
+        <span className={accentClass}>{formatPosition(entry.position.x, entry.position.y)}</span>
         {" и восстанавливает "}
         <span className={accentClass}>{entry.value}</span>
         {" здоровья"}

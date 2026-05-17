@@ -14,29 +14,21 @@ export default function RecipesDocsPage() {
         <div className="flex items-center gap-3">
           <BookOpenCheck />
 
-          <h1 className="text-3xl font-bold tracking-tight">
-            Рецепты
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Рецепты</h1>
         </div>
 
-        <p className="max-w-3xl text-muted-foreground [&_code]:rounded-md [&_code]:border [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-foreground">
-          Готовые логические блоки, которые можно копировать и дорабатывать
-          под свою стратегию.
+        <p className="text-muted-foreground [&_code]:bg-muted [&_code]:text-foreground max-w-3xl [&_code]:rounded-md [&_code]:border [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono">
+          Готовые логические блоки, которые можно копировать и дорабатывать под свою стратегию.
         </p>
       </header>
 
       <div className="space-y-4">
-        {recipes.map(recipe => (
-          <article
-            key={recipe.title}
-            className="rounded-xl border bg-background p-4"
-          >
+        {recipes.map((recipe) => (
+          <article key={recipe.title} className="bg-background rounded-xl border p-4">
             <div className="mb-4 space-y-2">
-              <h2 className="text-xl font-semibold">
-                {recipe.title}
-              </h2>
+              <h2 className="text-xl font-semibold">{recipe.title}</h2>
 
-              <p className="text-sm leading-6 text-muted-foreground [&_code]:rounded-md [&_code]:border [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-foreground">
+              <p className="text-muted-foreground [&_code]:bg-muted [&_code]:text-foreground text-sm leading-6 [&_code]:rounded-md [&_code]:border [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono">
                 {recipe.description}
               </p>
             </div>
@@ -44,9 +36,7 @@ export default function RecipesDocsPage() {
             <DocsCodeBlock code={recipe.code} />
 
             <div className="mt-4 space-y-2">
-              <div className="text-sm font-medium">
-                Используемые API
-              </div>
+              <div className="text-sm font-medium">Используемые API</div>
 
               <UsedApiList items={recipe.usedApi} />
             </div>

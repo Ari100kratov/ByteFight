@@ -22,13 +22,7 @@ const easeOutBack = (t: number) => {
   return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2)
 }
 
-export function FloatingCombatText({
-  value,
-  kind,
-  x,
-  y,
-  onComplete,
-}: Props) {
+export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
   const [state, setState] = useState({
     offsetX: 0,
     offsetY: 0,

@@ -1,26 +1,27 @@
-import { Sprite, Texture } from "pixi.js"
+import { Sprite } from "pixi.js"
 import { extend } from "@pixi/react"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useArenaStore } from "../state/data/arena.data.store"
 import { useSpriteTexture } from "@/shared/hooks/useSpriteTexture"
 
-extend({ Sprite, Texture })
+extend({ Sprite })
 
 export function BackgroundSprite() {
-  const layout = useGridStore(s => s.layout)
-  const arena = useArenaStore(s => s.arena)
+  const layout = useGridStore((s) => s.layout)
+  const arena = useArenaStore((s) => s.arena)
   const texture = useSpriteTexture(arena?.backgroundAsset)
 
-  if (!layout || !texture)
-    return null
+  if (!layout || !texture) return null
 
   const { gridPixelWidth, gridPixelHeight, offsetX, offsetY } = layout
 
-  return <pixiSprite
-    texture={texture}
-    x={offsetX + gridPixelWidth / 2}
-    y={offsetY + gridPixelHeight / 2}
-    anchor={0.5}
-    scale={gridPixelWidth / texture.width}
-  />
+  return (
+    <pixiSprite
+      texture={texture}
+      x={offsetX + gridPixelWidth / 2}
+      y={offsetY + gridPixelHeight / 2}
+      anchor={0.5}
+      scale={gridPixelWidth / texture.width}
+    />
+  )
 }

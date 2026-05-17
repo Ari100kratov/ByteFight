@@ -1,5 +1,8 @@
 import { useArenaItemsStateStore } from "../state/game/arena-items.state.store"
-import { FloatingCombatTextKind, useFloatingCombatTextStore } from "../state/ui/floating.combat.text.store"
+import {
+  FloatingCombatTextKind,
+  useFloatingCombatTextStore,
+} from "../state/ui/floating.combat.text.store"
 import {
   isAbilityUsed,
   isDeath,
@@ -19,9 +22,7 @@ export async function playRuntimeLog(entry: GameActionLogEntry) {
   if (isItemPickedUp(entry)) {
     const actor = unitRegistry.get(entry.actorId)
 
-    useArenaItemsStateStore
-      .getState()
-      .remove(entry.placedItemId)
+    useArenaItemsStateStore.getState().remove(entry.placedItemId)
 
     useFloatingCombatTextStore
       .getState()

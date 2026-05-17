@@ -24,9 +24,21 @@ export function getApiErrorMessages(error: unknown): string[] {
     return [error.message]
   }
 
-  return [String(error)]
+  return [formatUnknownError(error)]
 }
 
 export function getApiErrorToastMessage(error: unknown) {
   return getApiErrorMessages(error)[0] ?? "Не удалось выполнить действие"
+}
+
+function formatUnknownError(error: unknown) {
+  if (typeof error === "string") {
+    return error
+  }
+
+  try {
+    return JSON.stringify(error) || "Неизвестная ошибка"
+  } catch {
+    return "Неизвестная ошибка"
+  }
 }

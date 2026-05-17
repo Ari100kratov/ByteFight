@@ -27,8 +27,7 @@ export function SelectCharacterCard() {
   const arena = useArenaStore((s) => s.arena)
   const { data: characters, isLoading, error } = useCharacters()
 
-  const { sessionCharacterId, isCharacterSelectionDisabled } =
-    useCharacterSelectionState()
+  const { sessionCharacterId, isCharacterSelectionDisabled } = useCharacterSelectionState()
 
   const { selectedCharacterId, setSelectedCharacterId } = useSelectedCharacterId({
     characters,
@@ -41,13 +40,9 @@ export function SelectCharacterCard() {
   useEffect(() => {
     if (!character || !arena) return
 
-    const health = character.spec.stats.find(
-      (s) => s.statType === StatType.Health
-    )?.value
+    const health = character.spec.stats.find((s) => s.statType === StatType.Health)?.value
 
-    const mana = character.spec.stats.find(
-      (s) => s.statType === StatType.Mana
-    )?.value
+    const mana = character.spec.stats.find((s) => s.statType === StatType.Mana)?.value
 
     init({
       characterId: character.id,
@@ -55,20 +50,21 @@ export function SelectCharacterCard() {
       maxMp: mana,
       startPosition: arena.startPosition,
     })
-  }, [character?.id, arena?.startPosition, init])
+  }, [arena, character, init])
 
   const handleCreateClick = () => {
     window.open("/characters/create", "_blank")
   }
 
-  const hasCharacters = Boolean(characters && characters.length > 0)
+  const characterOptions = characters ?? []
+  const hasCharacters = characterOptions.length > 0
 
   return (
     <LoaderState
       isLoading={isLoading}
       error={error}
       skeletonClassName="w-full h-full rounded-2xl"
-      loadingFallback={<Skeleton className="w-full h-full rounded-2xl" />}
+      loadingFallback={<Skeleton className="h-full w-full rounded-2xl" />}
     >
       <Card className="h-full overflow-auto">
         <CardHeader>
@@ -88,12 +84,8 @@ export function SelectCharacterCard() {
                 <SelectGroup>
                   <SelectLabel>Ваши персонажи</SelectLabel>
 
-                  {characters!.map((char) => (
-                    <SelectItem
-                      key={char.id}
-                      value={char.id}
-                      className="py-2"
-                    >
+                  {characterOptions.map((char) => (
+                    <SelectItem key={char.id} value={char.id} className="py-2">
                       <CharacterIdentity
                         name={char.name}
                         className={char.className}
@@ -108,7 +100,7 @@ export function SelectCharacterCard() {
           )}
         </CardHeader>
 
-        <CardContent className="flex flex-col md:flex-row gap-4">
+        <CardContent className="flex flex-col gap-4 md:flex-row">
           {!hasCharacters && (
             <div className="flex flex-1 items-center justify-center py-8">
               <Button
@@ -116,7 +108,7 @@ export function SelectCharacterCard() {
                 className="gap-2"
                 disabled={isCharacterSelectionDisabled}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
                 Создать персонажа
               </Button>
             </div>

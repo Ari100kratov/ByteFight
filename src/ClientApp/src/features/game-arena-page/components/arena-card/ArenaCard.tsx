@@ -29,16 +29,16 @@ export function ArenaCard() {
   const navigate = useNavigate()
   const { modeType, arenaId } = useParams<{ modeType: string; arenaId: string }>()
 
-  const setViewportSize = useViewportStore(s => s.setSize)
+  const setViewportSize = useViewportStore((s) => s.setSize)
   const { showGrid, setShowGrid } = useGridStore()
 
-  const arenaRef = useResizeObserver(size => {
+  const arenaRef = useResizeObserver((size) => {
     setViewportSize(size)
   }, 200)
 
-  const arena = useArenaStore(s => s.arena)
-  const character = useCharacterStore(s => s.character)
-  const getActiveCode = useCodeEditorStore(s => s.getActiveCode)
+  const arena = useArenaStore((s) => s.arena)
+  const character = useCharacterStore((s) => s.character)
+  const getActiveCode = useCodeEditorStore((s) => s.getActiveCode)
   const { start: startLoading, end: endLoading, isLoading } = useGameBootstrapStore()
 
   const { mutateAsync: startGame } = useStartGame()
@@ -62,13 +62,10 @@ export function ArenaCard() {
   })()
 
   function leaveBattle() {
-    navigate(`/play/${modeType}/${arenaId}`)
+    void navigate(`/play/${modeType}/${arenaId}`)
   }
 
-  const {
-    confirm: confirmLeaveBattle,
-    dialog: leaveBattleDialog,
-  } = useUnsavedChangesConfirm({
+  const { confirm: confirmLeaveBattle, dialog: leaveBattleDialog } = useUnsavedChangesConfirm({
     onConfirm: leaveBattle,
   })
 
@@ -113,7 +110,7 @@ export function ArenaCard() {
         code: localCode.sourceCode,
       })
 
-      navigate(`/play/${modeType}/${arenaId}/${sessionId}`)
+      void navigate(`/play/${modeType}/${arenaId}/${sessionId}`)
     } catch (error) {
       const mappedError = mapStartGameError(error)
       setStartError(mappedError)
@@ -122,13 +119,8 @@ export function ArenaCard() {
     }
   }
 
-  const {
-    resultView,
-    canShowResult,
-    isResultOpen,
-    openResult,
-    closeResult,
-  } = useArenaBattleResult()
+  const { resultView, canShowResult, isResultOpen, openResult, closeResult } =
+    useArenaBattleResult()
 
   const handleResultTriggerClick = () => {
     if (isResultOpen) {
@@ -140,7 +132,7 @@ export function ArenaCard() {
   }
 
   if (!arena) {
-    return <Skeleton className="w-full h-full rounded-none md:rounded-r-2xl" />
+    return <Skeleton className="h-full w-full rounded-none md:rounded-r-2xl" />
   }
 
   return (
@@ -169,12 +161,9 @@ export function ArenaCard() {
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 min-h-0 overflow-hidden p-0">
-          <div className="relative h-full w-full min-h-0 overflow-hidden">
-            <div
-              ref={arenaRef}
-              className="h-full w-full min-h-0 overflow-hidden"
-            >
+        <CardContent className="min-h-0 flex-1 overflow-hidden p-0">
+          <div className="relative h-full min-h-0 w-full overflow-hidden">
+            <div ref={arenaRef} className="h-full min-h-0 w-full overflow-hidden">
               <Game />
             </div>
 
@@ -198,16 +187,10 @@ export function ArenaCard() {
           </div>
         </CardContent>
 
-        <CardFooter className="shrink-0 flex justify-between items-center gap-4">
+        <CardFooter className="flex shrink-0 items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Switch
-              checked={showGrid}
-              onCheckedChange={setShowGrid}
-              aria-label="Показать сетку"
-            />
-            <span className="text-sm text-muted-foreground">
-              Показать сетку
-            </span>
+            <Switch checked={showGrid} onCheckedChange={setShowGrid} aria-label="Показать сетку" />
+            <span className="text-muted-foreground text-sm">Показать сетку</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -223,7 +206,9 @@ export function ArenaCard() {
             <Button
               size="lg"
               disabled={isStartDisabled}
-              onClick={handleStart}
+              onClick={() => {
+                void handleStart()
+              }}
               aria-busy={isLoading}
             >
               <>

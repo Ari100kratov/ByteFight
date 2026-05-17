@@ -12,7 +12,7 @@ export function useCharacterSelectionState() {
         sessionCharacterId: session?.characterId,
         hasSession: Boolean(session),
       }
-    })
+    }),
   )
 
   const isBootstrapLoading = useGameBootstrapStore((s) => s.isLoading)
@@ -22,6 +22,6 @@ export function useCharacterSelectionState() {
       sessionCharacterId,
       isCharacterSelectionDisabled: hasSession || isBootstrapLoading,
     }),
-    [sessionCharacterId, hasSession, isBootstrapLoading]
+    [sessionCharacterId, hasSession, isBootstrapLoading],
   )
 }

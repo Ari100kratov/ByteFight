@@ -1,9 +1,6 @@
 import { create } from "zustand"
-import { Texture } from "pixi.js"
-import {
-  loadTextureFromUrl,
-  loadTexturesFromUrl,
-} from "@/shared/api/loadActionAssets"
+import { type Texture } from "pixi.js"
+import { loadTextureFromUrl, loadTexturesFromUrl } from "@/shared/api/loadActionAssets"
 
 type TexturesEntry = {
   url: string
@@ -17,11 +14,11 @@ type SingleTextureEntry = {
 }
 
 type TextureStore = {
-  textures: Record<string, TexturesEntry>
-  singleTextures: Record<string, SingleTextureEntry>
+  textures: Partial<Record<string, TexturesEntry>>
+  singleTextures: Partial<Record<string, SingleTextureEntry>>
 
-  texturesPromises: Record<string, Promise<Texture[]>>
-  singleTexturePromises: Record<string, Promise<Texture | null>>
+  texturesPromises: Partial<Record<string, Promise<Texture[]>>>
+  singleTexturePromises: Partial<Record<string, Promise<Texture | null>>>
 
   getOrLoadTextures: (url: string, frameCount: number) => Promise<Texture[]>
   getOrLoadTexture: (url: string) => Promise<Texture | null>
@@ -30,6 +27,12 @@ type TextureStore = {
 
 function getAnimationCacheKey(url: string, frameCount: number) {
   return `${url}::frames=${frameCount}`
+}
+
+function withoutRecordKey<TValue>(record: Partial<Record<string, TValue>>, key: string) {
+  const next = { ...record }
+  delete next[key]
+  return next
 }
 
 export const useTexturesStore = create<TextureStore>((set, get) => ({
@@ -46,11 +49,11 @@ export const useTexturesStore = create<TextureStore>((set, get) => ({
     if (existing) return existing.textures
 
     const pending = get().texturesPromises[key]
-    if (pending) return pending
+    if (pending !== undefined) return pending
 
     const promise = loadTexturesFromUrl(url, frameCount)
-      .then(textures => {
-        set(state => ({
+      .then((textures) => {
+        set((state) => ({
           textures: {
             ...state.textures,
             [key]: { url, frameCount, textures },
@@ -60,13 +63,12 @@ export const useTexturesStore = create<TextureStore>((set, get) => ({
         return textures
       })
       .finally(() => {
-        set(state => {
-          const { [key]: _, ...rest } = state.texturesPromises
-          return { texturesPromises: rest }
-        })
+        set((state) => ({
+          texturesPromises: withoutRecordKey(state.texturesPromises, key),
+        }))
       })
 
-    set(state => ({
+    set((state) => ({
       texturesPromises: {
         ...state.texturesPromises,
         [key]: promise,
@@ -76,17 +78,17 @@ export const useTexturesStore = create<TextureStore>((set, get) => ({
     return promise
   },
 
-  getOrLoadTexture: async url => {
+  getOrLoadTexture: async (url) => {
     const existing = get().singleTextures[url]
     if (existing) return existing.texture
 
     const pending = get().singleTexturePromises[url]
-    if (pending) return pending
+    if (pending !== undefined) return pending
 
     const promise = loadTextureFromUrl(url)
-      .then(texture => {
+      .then((texture) => {
         if (texture) {
-          set(state => ({
+          set((state) => ({
             singleTextures: {
               ...state.singleTextures,
               [url]: { url, texture },
@@ -97,13 +99,12 @@ export const useTexturesStore = create<TextureStore>((set, get) => ({
         return texture
       })
       .finally(() => {
-        set(state => {
-          const { [url]: _, ...rest } = state.singleTexturePromises
-          return { singleTexturePromises: rest }
-        })
+        set((state) => ({
+          singleTexturePromises: withoutRecordKey(state.singleTexturePromises, url),
+        }))
       })
 
-    set(state => ({
+    set((state) => ({
       singleTexturePromises: {
         ...state.singleTexturePromises,
         [url]: promise,
@@ -116,11 +117,17 @@ export const useTexturesStore = create<TextureStore>((set, get) => ({
   reset: () => {
     const { textures, singleTextures } = get()
 
-    Object.values(textures).forEach(entry => {
-      entry.textures.forEach(t => t.destroy())
+    Object.values(textures).forEach((entry) => {
+      if (!entry) return
+
+      entry.textures.forEach((t) => {
+        t.destroy()
+      })
     })
 
-    Object.values(singleTextures).forEach(entry => {
+    Object.values(singleTextures).forEach((entry) => {
+      if (!entry) return
+
       entry.texture.destroy()
     })
 

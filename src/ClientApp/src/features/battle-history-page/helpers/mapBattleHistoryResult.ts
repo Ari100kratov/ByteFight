@@ -14,21 +14,18 @@ import { GameOutcome } from "@/features/game/types/GameResult"
 import type { BattleResultTone } from "@/features/game-arena-page/components/battle-result-overlay/battle-result.types"
 import { GameStatus } from "@/features/game/types/GameSession"
 
-export type BattleHistoryResultView = {
+export interface BattleHistoryResultView {
   title: string
   tone: BattleResultTone
   Icon: LucideIcon
 }
 
-type Params = {
+interface Params {
   status: GameStatus
   outcome?: GameOutcome | null
 }
 
-export function mapBattleHistoryResult({
-  status,
-  outcome,
-}: Params): BattleHistoryResultView {
+export function mapBattleHistoryResult({ status, outcome }: Params): BattleHistoryResultView {
   switch (status) {
     case GameStatus.Pending:
       return {

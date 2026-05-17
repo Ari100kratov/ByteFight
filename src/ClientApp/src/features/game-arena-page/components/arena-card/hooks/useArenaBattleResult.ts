@@ -6,13 +6,13 @@ import { mapBattleResultMeta } from "../../battle-result-overlay/helpers/mapBatt
 import { useArenaBattleState } from "./useArenaBattleState"
 
 export function useArenaBattleResult() {
-  const session = useGameRuntimeStore(s => s.session)
+  const session = useGameRuntimeStore((s) => s.session)
   const { isBattleBusy } = useArenaBattleState()
 
-  const isOpen = useBattleResultUiStore(s => s.isOpen)
-  const showForSession = useBattleResultUiStore(s => s.showForSession)
-  const open = useBattleResultUiStore(s => s.open)
-  const close = useBattleResultUiStore(s => s.close)
+  const isOpen = useBattleResultUiStore((s) => s.isOpen)
+  const showForSession = useBattleResultUiStore((s) => s.showForSession)
+  const open = useBattleResultUiStore((s) => s.open)
+  const close = useBattleResultUiStore((s) => s.close)
 
   const isSessionFinished = Boolean(session) && !isGameSessionActive(session)
 
@@ -22,10 +22,7 @@ export function useArenaBattleResult() {
     session?.status === GameStatus.Failed
 
   const canShowResult =
-    Boolean(session?.id) &&
-    isSessionFinished &&
-    hasDisplayableResult &&
-    !isBattleBusy
+    Boolean(session?.id) && isSessionFinished && hasDisplayableResult && !isBattleBusy
 
   useEffect(() => {
     if (!session?.id || !canShowResult) {
@@ -46,10 +43,7 @@ export function useArenaBattleResult() {
       sessionId: session.id,
       errorMessage: session.errorMessage,
     })
-  }, [
-    session,
-    hasDisplayableResult,
-  ])
+  }, [session, hasDisplayableResult])
 
   const resultView = useMemo(() => {
     if (!session || !resultMeta) {

@@ -1,4 +1,4 @@
-import { ApiException, apiFetch } from "@/shared/lib/apiFetch"
+import { type ApiException, apiFetch } from "@/shared/lib/apiFetch"
 import { queryKeys } from "@/shared/lib/queryKeys"
 import type { AbilityDto } from "@/shared/types/ability"
 import type { ActionAssetDto } from "@/shared/types/action"
@@ -15,10 +15,9 @@ export const CharacterSpecType = {
   Arcanist: 102,
 } as const
 
-export type CharacterSpecType =
-  (typeof CharacterSpecType)[keyof typeof CharacterSpecType]
+export type CharacterSpecType = (typeof CharacterSpecType)[keyof typeof CharacterSpecType]
 
-export type CharacterSpecResponse = {
+export interface CharacterSpecResponse {
   id: string
   classId: string
   name: string
@@ -32,10 +31,15 @@ export type CharacterSpecResponse = {
 export function useCharacterSpecsByClassId(classId?: string) {
   return useQuery<CharacterSpecResponse[], ApiException>({
     queryKey: queryKeys.characterSpecs.byClassId(classId),
-    queryFn: () =>
-      apiFetch<CharacterSpecResponse[]>(
-        `/character-specs?classId=${encodeURIComponent(classId!)}`
-      ),
+    queryFn: () => {
+      if (!classId) {
+        throw new Error("Не указан идентификатор класса")
+      }
+
+      return apiFetch<CharacterSpecResponse[]>(
+        `/character-specs?classId=${encodeURIComponent(classId)}`,
+      )
+    },
     enabled: Boolean(classId),
   })
 }

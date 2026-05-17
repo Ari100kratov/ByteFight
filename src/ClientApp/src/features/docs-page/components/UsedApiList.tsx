@@ -8,11 +8,8 @@ type Props = {
 export function UsedApiList({ items }: Props) {
   return (
     <div className="flex flex-wrap gap-2">
-      {items.map(item => (
-        <code
-          key={item}
-          className="rounded-md border bg-muted/50 px-2 py-1 text-xs"
-        >
+      {items.map((item) => (
+        <code key={item} className="bg-muted/50 rounded-md border px-2 py-1 text-xs">
           {item}
         </code>
       ))}

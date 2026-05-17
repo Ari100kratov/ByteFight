@@ -25,9 +25,7 @@
 
     /* Tailwind CSS */
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"]

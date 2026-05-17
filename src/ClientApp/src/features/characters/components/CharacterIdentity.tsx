@@ -22,10 +22,10 @@ export function CharacterIdentity({
     <div className="min-w-0">
       <div
         className={cn(
-          "truncate  font-semibold",
+          "truncate font-semibold",
           size === "sm" && "text-sm",
           size === "md" && "text-base",
-          size === "lg" && "text-xl"
+          size === "lg" && "text-xl",
         )}
       >
         {name ?? "—"}
@@ -34,10 +34,10 @@ export function CharacterIdentity({
       {meta && variant === "text" && (
         <div
           className={cn(
-            "truncate text-muted-foreground",
+            "text-muted-foreground truncate",
             size === "sm" && "text-xs",
             size === "md" && "text-sm",
-            size === "lg" && "text-sm"
+            size === "lg" && "text-sm",
           )}
         >
           {meta}
@@ -48,9 +48,9 @@ export function CharacterIdentity({
         <Badge
           variant="secondary"
           className={cn(
-            size === "sm" && "mt-1 text-xs px-2 py-0.5",
-            size === "md" && "mt-1.5 text-sm px-3 py-1",
-            size === "lg" && "mt-1.5 text-sm px-3 py-1"
+            size === "sm" && "mt-1 px-2 py-0.5 text-xs",
+            size === "md" && "mt-1.5 px-3 py-1 text-sm",
+            size === "lg" && "mt-1.5 px-3 py-1 text-sm",
           )}
         >
           {meta}

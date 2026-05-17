@@ -4,20 +4,25 @@ import { useArenaItemsStateStore } from "../state/game/arena-items.state.store"
 import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
 
 export function ArenaItemInfoPopover() {
-  const selectedPlacedItemId = useArenaItemSelectionStore(s => s.selectedPlacedItemId)
-  const position = useArenaItemSelectionStore(s => s.position)
-  const clearSelection = useArenaItemSelectionStore(s => s.clearSelection)
+  const selectedPlacedItemId = useArenaItemSelectionStore((s) => s.selectedPlacedItemId)
+  const position = useArenaItemSelectionStore((s) => s.position)
+  const clearSelection = useArenaItemSelectionStore((s) => s.clearSelection)
 
-  const item = useArenaItemsStateStore(s =>
-    selectedPlacedItemId
-      ? s.items.find(x => x.placedItemId === selectedPlacedItemId)
-      : undefined
+  const item = useArenaItemsStateStore((s) =>
+    selectedPlacedItemId ? s.items.find((x) => x.placedItemId === selectedPlacedItemId) : undefined,
   )
 
   const open = Boolean(item && position)
 
   return (
-    <Popover open={open} onOpenChange={(value) => !value && clearSelection()}>
+    <Popover
+      open={open}
+      onOpenChange={(value) => {
+        if (!value) {
+          clearSelection()
+        }
+      }}
+    >
       {position && (
         <PopoverAnchor asChild>
           <div
@@ -39,20 +44,18 @@ export function ArenaItemInfoPopover() {
         {item && (
           <div className="flex flex-col gap-4">
             <div>
-              <div className="flex items-center gap-2 text-base font-semibold leading-none">
+              <div className="flex items-center gap-2 text-base leading-none font-semibold">
                 <FlaskConical className="text-muted-foreground" />
                 {item.name}
               </div>
 
               {item.description && (
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {item.description}
-                </p>
+                <p className="text-muted-foreground mt-2 text-sm">{item.description}</p>
               )}
             </div>
 
-            <div className="rounded-lg border bg-muted/30 p-3">
-              <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase text-muted-foreground">
+            <div className="bg-muted/30 rounded-lg border p-3">
+              <div className="text-muted-foreground mb-2 flex items-center gap-2 text-xs font-semibold uppercase">
                 <Sparkles className="size-4" />
                 Эффект
               </div>
@@ -63,9 +66,7 @@ export function ArenaItemInfoPopover() {
                   <span>Восстановление здоровья</span>
                 </div>
 
-                <span className="font-semibold">
-                  +{item.value}
-                </span>
+                <span className="font-semibold">+{item.value}</span>
               </div>
             </div>
           </div>

@@ -1,8 +1,8 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import type { ApiError } from "@/shared/lib/apiFetch"
+import { ApiException } from "@/shared/lib/apiFetch"
 import { AlertCircleIcon } from "lucide-react"
 
-type ErrorAlertProps = {
+interface ErrorAlertProps {
   error: unknown
 }
 
@@ -23,29 +23,23 @@ export function ErrorAlert({ error }: ErrorAlertProps) {
     }
   }
 
-  const apiError = (error as ApiError)?.detail
-    ? (error as ApiError)
-    : undefined
+  const apiError = error instanceof ApiException ? error : undefined
 
   return (
     <>
       <Alert variant="destructive">
         <AlertCircleIcon />
-        <AlertTitle>
-          {apiError?.title ?? "Что-то пошло не так..."}
-        </AlertTitle>
+        <AlertTitle>{apiError?.title ?? "Что-то пошло не так..."}</AlertTitle>
         <AlertDescription>
           {apiError?.detail ?? message}
           {apiError?.status && (
-            <div className="mt-1 text-xs text-muted-foreground">
-              Код: {apiError.status}
-            </div>
+            <div className="text-muted-foreground mt-1 text-xs">Код: {apiError.status}</div>
           )}
         </AlertDescription>
       </Alert>
 
       {import.meta.env.DEV && details && (
-        <pre className="w-full max-h-64 overflow-auto rounded bg-muted p-2 text-xs text-muted-foreground whitespace-pre-wrap">
+        <pre className="bg-muted text-muted-foreground max-h-64 w-full overflow-auto rounded p-2 text-xs whitespace-pre-wrap">
           {details}
         </pre>
       )}

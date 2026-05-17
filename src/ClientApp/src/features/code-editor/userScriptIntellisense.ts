@@ -54,10 +54,13 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
   monacoApi.languages.registerCompletionItemProvider("csharp", {
     triggerCharacters: ["."],
     provideCompletionItems: async (model, position) => {
-      const suggestions = await request<IntellisenseCompletion[]>("/intellisense/csharp/completions", {
-        sourceCode: model.getValue(),
-        position: toPosition(position),
-      })
+      const suggestions = await request<IntellisenseCompletion[]>(
+        "/intellisense/csharp/completions",
+        {
+          sourceCode: model.getValue(),
+          position: toPosition(position),
+        },
+      )
 
       const word = model.getWordUntilPosition(position)
       const range: monaco.IRange = {
@@ -68,7 +71,7 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
       }
 
       return {
-        suggestions: (suggestions ?? []).map(item => ({
+        suggestions: (suggestions ?? []).map((item) => ({
           label: item.label,
           kind: mapCompletionKind(monacoApi, item.kind),
           detail: item.detail,
@@ -93,7 +96,12 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
 
       const docs = hover.documentation ? `\n\n${hover.documentation.replace(/\n/g, "  \n")}` : ""
       return {
-        range: new monacoApi.Range(hover.startLine, hover.startColumn, hover.endLine, hover.endColumn),
+        range: new monacoApi.Range(
+          hover.startLine,
+          hover.startColumn,
+          hover.endLine,
+          hover.endColumn,
+        ),
         contents: [{ value: `\`\`\`csharp\n${hover.signature}\n\`\`\`${docs}` }],
       }
     },
@@ -103,10 +111,13 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
     signatureHelpTriggerCharacters: ["(", ","],
     signatureHelpRetriggerCharacters: [","],
     provideSignatureHelp: async (model, position) => {
-      const payload = await request<IntellisenseSignatureHelp>("/intellisense/csharp/signature-help", {
-        sourceCode: model.getValue(),
-        position: toPosition(position),
-      })
+      const payload = await request<IntellisenseSignatureHelp>(
+        "/intellisense/csharp/signature-help",
+        {
+          sourceCode: model.getValue(),
+          position: toPosition(position),
+        },
+      )
 
       if (!payload) {
         return {
@@ -115,36 +126,42 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
             activeSignature: 0,
             activeParameter: 0,
           },
-          dispose: () => { },
+          dispose: () => {},
         }
       }
 
       return {
         value: {
-          signatures: (payload.signatures ?? []).map(s => ({
+          signatures: (payload.signatures ?? []).map((s) => ({
             label: s.signature ?? "",
             documentation: s.documentation ?? "",
-            parameters: (s.parameters ?? []).map(p => ({ label: p })),
+            parameters: (s.parameters ?? []).map((p) => ({ label: p })),
           })),
           activeSignature: payload.activeSignature ?? 0,
           activeParameter: payload.activeParameter ?? 0,
         },
-        dispose: () => { },
+        dispose: () => {},
       }
     },
   })
 }
 
-export function bindUserScriptDiagnostics(editor: monaco.editor.IStandaloneCodeEditor, monacoApi: typeof monaco) {
+export function bindUserScriptDiagnostics(
+  editor: monaco.editor.IStandaloneCodeEditor,
+  monacoApi: typeof monaco,
+) {
   const updateDiagnostics = async () => {
     const model = editor.getModel()
     if (!model) return
 
-    const diagnostics = await request<IntellisenseDiagnostic[]>("/intellisense/csharp/diagnostics", {
-      sourceCode: model.getValue(),
-    })
+    const diagnostics = await request<IntellisenseDiagnostic[]>(
+      "/intellisense/csharp/diagnostics",
+      {
+        sourceCode: model.getValue(),
+      },
+    )
 
-    const markers: monaco.editor.IMarkerData[] = (diagnostics ?? []).map(item => ({
+    const markers: monaco.editor.IMarkerData[] = (diagnostics ?? []).map((item) => ({
       message: `[${item.code}] ${item.message}`,
       severity:
         item.severity.toLowerCase() === "error"
@@ -201,7 +218,8 @@ function mapCompletionKind(monacoApi: typeof monaco, rawKind?: string) {
   if (kind.includes("enum")) return monacoApi.languages.CompletionItemKind.Enum
   if (kind.includes("field")) return monacoApi.languages.CompletionItemKind.Field
   if (kind.includes("keyword")) return monacoApi.languages.CompletionItemKind.Keyword
-  if (kind.includes("variable") || kind.includes("local")) return monacoApi.languages.CompletionItemKind.Variable
+  if (kind.includes("variable") || kind.includes("local"))
+    return monacoApi.languages.CompletionItemKind.Variable
 
   return monacoApi.languages.CompletionItemKind.Text
 }

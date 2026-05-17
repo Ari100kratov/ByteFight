@@ -1,12 +1,8 @@
-export type ChronicleNominationValueKind =
-  | "turns"
-  | "count"
-  | "damage"
-  | "healing"
+export type ChronicleNominationValueKind = "turns" | "count" | "damage" | "healing"
 
 export type ChronicleNominationSortDirection = "ascending" | "descending"
 
-export type ChronicleNominationEntry = {
+export interface ChronicleNominationEntry {
   rank: number
   characterId: string
   characterName: string
@@ -19,7 +15,7 @@ export type ChronicleNominationEntry = {
   occurredAtUtc?: string | null
 }
 
-export type ChronicleNominationLeaderboard = {
+export interface ChronicleNominationLeaderboard {
   code: string
   title: string
   description: string

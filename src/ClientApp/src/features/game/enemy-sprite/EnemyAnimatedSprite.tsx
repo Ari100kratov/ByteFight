@@ -1,42 +1,49 @@
-import { useMemo } from "react";
-import { useArenaEnemiesStore } from "../state/data/arena-enemies.store";
-import { useEnemiesStore } from "../state/data/enemies.data.store";
-import { useEnemyStateStore } from "../state/game/enemy.state.store";
-import { UnitAnimatedSprite } from "../shared/unit-animated-sprite/UnitAnimatedSprite";
-import { UnitController } from "../units/controller/UnitController";
-import { unitRegistry } from "../units/controller/UnitRegistry";
-import { EnemyAnimationResolver } from "../units/animation/EnemyAnimationResolver";
-import { useEnemySelectionStore } from "../state/ui/enemy.selection.store";
+import { useMemo } from "react"
+import { useArenaEnemiesStore } from "../state/data/arena-enemies.store"
+import { useEnemiesStore } from "../state/data/enemies.data.store"
+import { useEnemyStateStore } from "../state/game/enemy.state.store"
+import { UnitAnimatedSprite } from "../shared/unit-animated-sprite/UnitAnimatedSprite"
+import { UnitController } from "../units/controller/UnitController"
+import { unitRegistry } from "../units/controller/UnitRegistry"
+import { EnemyAnimationResolver } from "../units/animation/EnemyAnimationResolver"
+import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 
 type Props = {
-  arenaEnemyId: string;
-};
+  arenaEnemyId: string
+}
 
 export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
-  const arenaEnemy = useArenaEnemiesStore(s => arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined);
-  const runtime = useEnemyStateStore(s => arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined);
-  const selectEnemy = useEnemySelectionStore(s => s.selectEnemy)
+  const arenaEnemy = useArenaEnemiesStore((s) =>
+    arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined,
+  )
+  const runtime = useEnemyStateStore((s) =>
+    arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined,
+  )
+  const selectEnemy = useEnemySelectionStore((s) => s.selectEnemy)
 
-  const fallbackAnimation = useEnemiesStore(s =>
-    s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action)
+  const fallbackAnimation = useEnemiesStore((s) =>
+    s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action),
   )
 
   const spriteAnimation = runtime?.spriteAnimation ?? fallbackAnimation
+  const resolvedArenaEnemyId = arenaEnemy?.id
+  const enemyId = arenaEnemy?.enemyId
 
   const controller = useMemo(() => {
-    if (!arenaEnemy) return null;
+    if (!resolvedArenaEnemyId || !enemyId) return null
 
     const controller = new UnitController(
-      partial => useEnemyStateStore.getState().set(arenaEnemy.id, partial),
-      new EnemyAnimationResolver(arenaEnemy.enemyId, useEnemiesStore.getState)
-    );
+      (partial) => {
+        useEnemyStateStore.getState().set(resolvedArenaEnemyId, partial)
+      },
+      new EnemyAnimationResolver(enemyId, useEnemiesStore.getState),
+    )
 
-    unitRegistry.bind(arenaEnemy.id, controller);
-    return controller;
-  }, [arenaEnemy?.id, arenaEnemy?.enemyId]);
+    unitRegistry.bind(resolvedArenaEnemyId, controller)
+    return controller
+  }, [enemyId, resolvedArenaEnemyId])
 
-  if (!runtime || !spriteAnimation || !controller)
-    return null;
+  if (!runtime || !spriteAnimation || !controller) return null
 
   return (
     <UnitAnimatedSprite
@@ -44,7 +51,9 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
       spriteAnimation={spriteAnimation}
       controller={controller}
       clickable
-      onClick={(position) => selectEnemy(arenaEnemyId, position)}
+      onClick={(position) => {
+        selectEnemy(arenaEnemyId, position)
+      }}
     />
-  );
+  )
 }

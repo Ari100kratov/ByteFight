@@ -1,10 +1,9 @@
 using System.Text.Json;
-using IntegrationContracts;
 using IntegrationContracts.GameSessions;
 using Shouldly;
 using Xunit;
 
-namespace UnitTests.IntegrationContracts;
+namespace IntegrationContracts.UnitTests;
 
 public sealed class IntegrationEventJsonTests
 {

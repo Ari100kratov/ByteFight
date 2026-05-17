@@ -1,9 +1,5 @@
 import { HeartPulse, Target, Zap } from "lucide-react"
-import {
-  AbilityStatType,
-  AbilityType,
-  type AbilityDto,
-} from "@/shared/types/ability"
+import { AbilityStatType, AbilityType, type AbilityDto } from "@/shared/types/ability"
 
 type Props = {
   abilities: AbilityDto[]
@@ -15,9 +11,7 @@ const basicAttackTypes: AbilityType[] = [
 ]
 
 export function CharacterAbilities({ abilities }: Props) {
-  const nonBasicAbilities = abilities.filter(
-    (x) => !basicAttackTypes.includes(x.type)
-  )
+  const nonBasicAbilities = abilities.filter((x) => !basicAttackTypes.includes(x.type))
 
   if (nonBasicAbilities.length === 0) {
     return null
@@ -25,9 +19,7 @@ export function CharacterAbilities({ abilities }: Props) {
 
   return (
     <div className="space-y-2">
-      <div className="text-xs font-medium text-muted-foreground">
-        Способности
-      </div>
+      <div className="text-muted-foreground text-xs font-medium">Способности</div>
 
       <ul className="space-y-2">
         {nonBasicAbilities.map((ability) => (
@@ -45,25 +37,15 @@ function AbilityItem({ ability }: { ability: AbilityDto }) {
 
   return (
     <li className="rounded-lg border p-3 text-sm">
-      {ability.name && (
-        <div className="font-medium">
-          {ability.name}
-        </div>
-      )}
+      {ability.name && <div className="font-medium">{ability.name}</div>}
 
       {ability.description && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          {ability.description}
-        </p>
+        <p className="text-muted-foreground mt-2 text-xs">{ability.description}</p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
         {damage !== undefined && (
-          <AbilityStat
-            icon={<Zap size={16} color="#374151" />}
-            label="Урон"
-            value={damage}
-          />
+          <AbilityStat icon={<Zap size={16} color="#374151" />} label="Урон" value={damage} />
         )}
 
         {healing !== undefined && (

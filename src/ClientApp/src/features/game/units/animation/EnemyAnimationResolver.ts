@@ -19,12 +19,8 @@ export class EnemyAnimationResolver implements UnitAnimationResolver {
 
   getAbilityAnimation(
     abilityType?: AbilityType,
-    actionType: ActionType = ActionType.Attack
+    actionType: ActionType = ActionType.Attack,
   ): SpriteAnimationDto | undefined {
-    return this.get().getAbilitySpriteAnimation(
-      this.enemyId,
-      abilityType,
-      actionType
-    )
+    return this.get().getAbilitySpriteAnimation(this.enemyId, abilityType, actionType)
   }
 }

@@ -8,13 +8,13 @@ import { StatType } from "@/shared/types/stat"
 
 export function ArenaEnemies() {
   const { data: arenaEnemies } = useArenaEnemies()
-  const setEnemies = useEnemiesStore(s => s.setEnemies)
-  const init = useEnemyStateStore(s => s.init)
+  const setEnemies = useEnemiesStore((s) => s.setEnemies)
+  const init = useEnemyStateStore((s) => s.init)
 
   useEffect(() => {
     if (!arenaEnemies) return
 
-    const uniqueEnemyIds = [...new Set(arenaEnemies.map(e => e.enemyId))]
+    const uniqueEnemyIds = [...new Set(arenaEnemies.map((e) => e.enemyId))]
     if (uniqueEnemyIds.length === 0) return
 
     Promise.all(uniqueEnemyIds.map(fetchEnemy))
@@ -22,9 +22,9 @@ export function ArenaEnemies() {
         setEnemies(enemiesData)
 
         const initPayload = arenaEnemies.map((arenaEnemy) => {
-          const enemyData = enemiesData.find(e => e.id === arenaEnemy.enemyId)
-          const health = enemyData?.stats.find(s => s.statType === StatType.Health)?.value
-          const mana = enemyData?.stats.find(s => s.statType === StatType.Mana)?.value
+          const enemyData = enemiesData.find((e) => e.id === arenaEnemy.enemyId)
+          const health = enemyData?.stats.find((s) => s.statType === StatType.Health)?.value
+          const mana = enemyData?.stats.find((s) => s.statType === StatType.Mana)?.value
 
           return {
             arenaEnemyId: arenaEnemy.id,
@@ -37,17 +37,14 @@ export function ArenaEnemies() {
         init(initPayload)
       })
       .catch(console.error)
-  }, [arenaEnemies])
+  }, [arenaEnemies, init, setEnemies])
 
   if (!arenaEnemies) return null
 
   return (
     <>
       {arenaEnemies.map((arenaEnemy) => (
-        <EnemyAnimatedSprite
-          key={arenaEnemy.id}
-          arenaEnemyId={arenaEnemy.id}
-        />
+        <EnemyAnimatedSprite key={arenaEnemy.id} arenaEnemyId={arenaEnemy.id} />
       ))}
     </>
   )

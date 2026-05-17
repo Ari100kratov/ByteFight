@@ -9,11 +9,7 @@ interface Props {
 export function CharacterStats({ stats }: Props) {
   const statsMap = new Map(stats.map((s) => [s.statType, s.value]))
 
-  const allStatTypes: StatType[] = [
-    StatType.Health,
-    StatType.Mana,
-    StatType.MoveRange,
-  ]
+  const allStatTypes: StatType[] = [StatType.Health, StatType.Mana, StatType.MoveRange]
 
   const iconMap: Record<StatType, JSX.Element> = {
     [StatType.Health]: <Heart size={16} color="#ef4444" />,
@@ -23,9 +19,7 @@ export function CharacterStats({ stats }: Props) {
 
   return (
     <div className="space-y-2">
-      <h4 className="text-sm font-semibold uppercase text-muted-foreground">
-        Характеристики
-      </h4>
+      <h4 className="text-muted-foreground text-sm font-semibold uppercase">Характеристики</h4>
 
       <ul className="space-y-1">
         {allStatTypes.map((type) => {

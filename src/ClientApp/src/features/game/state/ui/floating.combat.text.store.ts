@@ -6,7 +6,7 @@ export const FloatingCombatTextKind = {
 } as const
 
 export type FloatingCombatTextKind =
-  typeof FloatingCombatTextKind[keyof typeof FloatingCombatTextKind]
+  (typeof FloatingCombatTextKind)[keyof typeof FloatingCombatTextKind]
 
 export type FloatingCombatText = {
   id: string
@@ -17,37 +17,35 @@ export type FloatingCombatText = {
 
 type FloatingCombatTextStore = {
   items: FloatingCombatText[]
-  add: (
-    unitId: string,
-    value: number,
-    kind: FloatingCombatTextKind
-  ) => void
+  add: (unitId: string, value: number, kind: FloatingCombatTextKind) => void
   remove: (id: string) => void
   reset: () => void
 }
 
-export const useFloatingCombatTextStore = create<FloatingCombatTextStore>(
-  set => ({
-    items: [],
+export const useFloatingCombatTextStore = create<FloatingCombatTextStore>((set) => ({
+  items: [],
 
-    add: (unitId, value, kind) =>
-      set(s => ({
-        items: [
-          ...s.items,
-          {
-            id: crypto.randomUUID(),
-            unitId,
-            value,
-            kind,
-          },
-        ],
-      })),
+  add: (unitId, value, kind) => {
+    set((s) => ({
+      items: [
+        ...s.items,
+        {
+          id: crypto.randomUUID(),
+          unitId,
+          value,
+          kind,
+        },
+      ],
+    }))
+  },
 
-    remove: id =>
-      set(s => ({
-        items: s.items.filter(x => x.id !== id),
-      })),
+  remove: (id) => {
+    set((s) => ({
+      items: s.items.filter((x) => x.id !== id),
+    }))
+  },
 
-    reset: () => set({ items: [] }),
-  })
-)
+  reset: () => {
+    set({ items: [] })
+  },
+}))

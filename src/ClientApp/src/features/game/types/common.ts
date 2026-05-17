@@ -1,16 +1,16 @@
 export const FacingDirection = {
   Left: 1,
   Right: 2,
-} as const;
+} as const
 
-export type FacingDirection = typeof FacingDirection[keyof typeof FacingDirection];
+export type FacingDirection = (typeof FacingDirection)[keyof typeof FacingDirection]
 
-export type Position = {
-  x: number;
-  y: number;
-};
+export interface Position {
+  x: number
+  y: number
+}
 
-export type StatSnapshot = {
-  current: number;
-  max: number;
-};
+export interface StatSnapshot {
+  current: number
+  max: number
+}

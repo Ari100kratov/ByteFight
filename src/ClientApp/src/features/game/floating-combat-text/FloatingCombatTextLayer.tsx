@@ -1,16 +1,20 @@
+import { extend } from "@pixi/react"
+import { Container } from "pixi.js"
 import { useCharacterStateStore } from "../state/game/character.state.store"
 import { useEnemyStateStore } from "../state/game/enemy.state.store"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useFloatingCombatTextStore } from "../state/ui/floating.combat.text.store"
 import { FloatingCombatText } from "./FloatingCombatText"
 
-export function FloatingCombatTextLayer() {
-  const layout = useGridStore(s => s.layout)
-  const items = useFloatingCombatTextStore(s => s.items)
-  const remove = useFloatingCombatTextStore(s => s.remove)
+extend({ Container })
 
-  const characterRuntime = useCharacterStateStore(s => s.runtime)
-  const arenaEnemies = useEnemyStateStore(s => s.arenaEnemies)
+export function FloatingCombatTextLayer() {
+  const layout = useGridStore((s) => s.layout)
+  const items = useFloatingCombatTextStore((s) => s.items)
+  const remove = useFloatingCombatTextStore((s) => s.remove)
+
+  const characterRuntime = useCharacterStateStore((s) => s.runtime)
+  const arenaEnemies = useEnemyStateStore((s) => s.arenaEnemies)
 
   if (!layout) return null
 
@@ -22,7 +26,7 @@ export function FloatingCombatTextLayer() {
 
   return (
     <pixiContainer zIndex={99999}>
-      {items.map(item => {
+      {items.map((item) => {
         const runtime = getRuntime(item.unitId)
         if (!runtime) return null
 
@@ -38,7 +42,9 @@ export function FloatingCombatTextLayer() {
             kind={item.kind}
             x={x}
             y={y - 20}
-            onComplete={() => remove(item.id)}
+            onComplete={() => {
+              remove(item.id)
+            }}
           />
         )
       })}

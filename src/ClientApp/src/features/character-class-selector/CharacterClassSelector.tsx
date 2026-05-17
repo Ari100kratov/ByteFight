@@ -1,19 +1,11 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { LoaderState } from "@/components/common/LoaderState"
 import { CharacterClassType, useCharacterClasses } from "./hooks/useCharacterClasses"
 import type { CharacterClassResponse } from "./hooks/useCharacterClasses"
 import { Sword, Wand } from "lucide-react"
 import type { JSX } from "react"
-import {
-  useCharacterSpecsByClassId,
-  type CharacterSpecResponse,
-} from "./hooks/useCharacterSpecs"
+import { useCharacterSpecsByClassId, type CharacterSpecResponse } from "./hooks/useCharacterSpecs"
 import { UnitPreview } from "../unit-preview/UnitPreview"
 
 interface Props {
@@ -29,11 +21,7 @@ export function CharacterClassSelector({
   onSelectClass,
   onSelectSpec,
 }: Props) {
-  const {
-    data: classes,
-    isLoading: isClassesLoading,
-    error: classesError,
-  } = useCharacterClasses()
+  const { data: classes, isLoading: isClassesLoading, error: classesError } = useCharacterClasses()
 
   const {
     data: specs,
@@ -72,7 +60,7 @@ export function CharacterClassSelector({
       error={classesError}
       skeletonClassName="flex flex-col flex-[4]"
     >
-      <Card className="flex flex-col flex-[4]">
+      <Card className="flex flex-[4] flex-col">
         <CardHeader>
           <CardTitle>Персонаж</CardTitle>
         </CardHeader>
@@ -86,7 +74,7 @@ export function CharacterClassSelector({
                 type="single"
                 value={selectedClassId}
                 onValueChange={handleSelectClass}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                className="grid grid-cols-1 gap-3 sm:grid-cols-2"
               >
                 {classes.map((cls: CharacterClassResponse) => (
                   <ToggleGroupItem
@@ -101,19 +89,13 @@ export function CharacterClassSelector({
               </ToggleGroup>
 
               {selectedClass?.description && (
-                <p className="text-sm text-muted-foreground">
-                  {selectedClass.description}
-                </p>
+                <p className="text-muted-foreground text-sm">{selectedClass.description}</p>
               )}
             </section>
           )}
 
           {selectedClass ? (
-            <LoaderState
-              isLoading={isSpecsLoading}
-              error={specsError}
-              skeletonClassName="min-h-32"
-            >
+            <LoaderState isLoading={isSpecsLoading} error={specsError} skeletonClassName="min-h-32">
               <section className="space-y-3">
                 <h3 className="text-sm font-medium">Специализация</h3>
 
@@ -122,7 +104,7 @@ export function CharacterClassSelector({
                     type="single"
                     value={selectedSpecId}
                     onValueChange={handleSelectSpec}
-                    className="grid grid-cols-1 md:grid-cols-3 gap-3"
+                    className="grid grid-cols-1 gap-3 md:grid-cols-3"
                   >
                     {specs.map((spec: CharacterSpecResponse) => (
                       <ToggleGroupItem
@@ -135,7 +117,7 @@ export function CharacterClassSelector({
                     ))}
                   </ToggleGroup>
                 ) : (
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-muted-foreground text-sm">
                     Для выбранного класса пока нет специализаций
                   </div>
                 )}
@@ -144,7 +126,7 @@ export function CharacterClassSelector({
                   <div className="flex flex-col gap-4">
                     <div>
                       {selectedSpec.description && (
-                        <p className="mt-1 text-sm text-muted-foreground">
+                        <p className="text-muted-foreground mt-1 text-sm">
                           {selectedSpec.description}
                         </p>
                       )}
@@ -157,18 +139,17 @@ export function CharacterClassSelector({
                     />
                   </div>
                 ) : (
-                  <div className="min-h-40 flex items-center justify-center text-muted-foreground">
+                  <div className="text-muted-foreground flex min-h-40 items-center justify-center">
                     Выберите специализацию персонажа
                   </div>
                 )}
               </section>
             </LoaderState>
           ) : (
-            <div className="min-h-40 flex items-center justify-center text-muted-foreground">
+            <div className="text-muted-foreground flex min-h-40 items-center justify-center">
               Выберите класс персонажа
             </div>
           )}
-
         </CardContent>
       </Card>
     </LoaderState>

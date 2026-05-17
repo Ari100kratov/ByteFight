@@ -1,29 +1,33 @@
-import { useEffect, useState } from "react";
-import { Texture } from "pixi.js";
-import { useTexturesStore } from "@/features/game/state/data/textures.data.store";
-import type { SpriteAnimationDto } from "../types/spriteAnimation";
+import { useEffect, useState } from "react"
+import { type Texture } from "pixi.js"
+import { useTexturesStore } from "@/features/game/state/data/textures.data.store"
+import type { SpriteAnimationDto } from "../types/spriteAnimation"
 
 export function useSpriteTextures(spriteAnimation?: SpriteAnimationDto) {
-  const getOrLoadTextures = useTexturesStore(s => s.getOrLoadTextures);
-  const [textures, setTextures] = useState<Texture[]>([]);
+  const getOrLoadTextures = useTexturesStore((s) => s.getOrLoadTextures)
+  const [textures, setTextures] = useState<Texture[]>([])
+  const url = spriteAnimation?.url
+  const frameCount = spriteAnimation?.frameCount
 
   useEffect(() => {
-    if (!spriteAnimation) {
-      setTextures([]);
-      return;
+    if (!url || frameCount === undefined) {
+      setTextures([])
+      return
     }
 
-    let cancelled = false;
+    let cancelled = false
 
-    getOrLoadTextures(spriteAnimation.url, spriteAnimation.frameCount)
-      .then(texs => {
-        if (cancelled) return;
-        setTextures(texs);
+    getOrLoadTextures(url, frameCount)
+      .then((texs) => {
+        if (cancelled) return
+        setTextures(texs)
       })
-      .catch(console.error);
+      .catch(console.error)
 
-    return () => { cancelled = true; };
-  }, [spriteAnimation?.url, spriteAnimation?.frameCount]);
+    return () => {
+      cancelled = true
+    }
+  }, [frameCount, getOrLoadTextures, url])
 
-  return textures;
+  return textures
 }

@@ -17,12 +17,15 @@ const GRID_STORAGE_KEY = "arena_show_grid"
 export const useGridStore = create<GridState>((set) => ({
   layout: undefined,
 
-  updateLayout: (grid, viewport) =>
+  updateLayout: (grid, viewport) => {
     set({
       layout: calculateGridLayout(grid, viewport),
-    }),
+    })
+  },
 
-  reset: () => set({ layout: undefined }),
+  reset: () => {
+    set({ layout: undefined })
+  },
 
   showGrid: localStorage.getItem(GRID_STORAGE_KEY) === "true",
 

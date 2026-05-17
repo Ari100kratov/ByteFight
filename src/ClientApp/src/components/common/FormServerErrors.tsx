@@ -10,7 +10,7 @@ export function FormServerErrors({ error }: Props) {
   if (messages.length === 0) return null
 
   return (
-    <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+    <div className="border-destructive/30 bg-destructive/5 text-destructive rounded-md border px-3 py-2 text-sm">
       {messages.length === 1 ? (
         <p>{messages[0]}</p>
       ) : (

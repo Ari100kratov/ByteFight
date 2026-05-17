@@ -1,9 +1,5 @@
 import { Target, Zap } from "lucide-react"
-import {
-  AbilityStatType,
-  AbilityType,
-  type AbilityDto,
-} from "@/shared/types/ability"
+import { AbilityStatType, AbilityType, type AbilityDto } from "@/shared/types/ability"
 
 interface Props {
   abilities: AbilityDto[]
@@ -19,42 +15,24 @@ export function CharacterBasicAttacks({ abilities }: Props) {
 
   return (
     <ul className="space-y-2">
-      {melee && (
-        <BasicAttackItem ability={melee} label="Ближняя атака" />
-      )}
-      {ranged && (
-        <BasicAttackItem ability={ranged} label="Дальняя атака" />
-      )}
+      {melee && <BasicAttackItem ability={melee} label="Ближняя атака" />}
+      {ranged && <BasicAttackItem ability={ranged} label="Дальняя атака" />}
     </ul>
   )
 }
 
-function BasicAttackItem({
-  ability,
-  label,
-}: {
-  ability: AbilityDto
-  label: string
-}) {
+function BasicAttackItem({ ability, label }: { ability: AbilityDto; label: string }) {
   const damage = getAbilityStat(ability, AbilityStatType.Damage)
   const range = getAbilityStat(ability, AbilityStatType.Range)
 
   return (
     <li className="rounded-lg border p-3 text-sm">
-      <div className="text-xs text-muted-foreground">
-        {label}
-      </div>
+      <div className="text-muted-foreground text-xs">{label}</div>
 
-      {ability.name && (
-        <div className="mt-1 font-medium">
-          {ability.name}
-        </div>
-      )}
+      {ability.name && <div className="mt-1 font-medium">{ability.name}</div>}
 
       {ability.description && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          {ability.description}
-        </p>
+        <p className="text-muted-foreground mt-2 text-xs">{ability.description}</p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">

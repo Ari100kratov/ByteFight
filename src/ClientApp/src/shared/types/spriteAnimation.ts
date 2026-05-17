@@ -1,11 +1,11 @@
-export type SpriteAnimationDto = {
-  url: string;
-  frameCount: number;
-  animationSpeed: number;
+export interface SpriteAnimationDto {
+  url: string
+  frameCount: number
+  animationSpeed: number
   scale: ScaleDto
 }
 
-export type ScaleDto = {
-  x: number;
-  y: number;
+export interface ScaleDto {
+  x: number
+  y: number
 }

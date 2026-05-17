@@ -1,4 +1,4 @@
-export type UserCodeApiDoc = {
+export interface UserCodeApiDoc {
   types: ApiTypeDoc[]
 }
 
@@ -24,7 +24,7 @@ export function formatApiTypeKind(kind: ApiTypeKind): string {
   }
 }
 
-export type ApiTypeDoc = {
+export interface ApiTypeDoc {
   name: string
   fullName: string
   namespace: string
@@ -36,7 +36,7 @@ export type ApiTypeDoc = {
   enumValues: ApiEnumValueDoc[]
 }
 
-export type ApiPropertyDoc = {
+export interface ApiPropertyDoc {
   name: string
   type: string
   typeFullName?: string | null
@@ -47,7 +47,7 @@ export type ApiPropertyDoc = {
   isComputed: boolean
 }
 
-export type ApiMethodDoc = {
+export interface ApiMethodDoc {
   name: string
   returnType: string
   returnTypeFullName?: string | null
@@ -58,7 +58,7 @@ export type ApiMethodDoc = {
   parameters: ApiParameterDoc[]
 }
 
-export type ApiParameterDoc = {
+export interface ApiParameterDoc {
   name: string
   type: string
   typeFullName?: string | null
@@ -70,7 +70,7 @@ export type ApiParameterDoc = {
   defaultValue?: string | null
 }
 
-export type ApiEnumValueDoc = {
+export interface ApiEnumValueDoc {
   name: string
   value: number
   summary?: string | null
