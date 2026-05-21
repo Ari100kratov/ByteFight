@@ -12,10 +12,10 @@ export default function useRegister() {
   return useMutation({
     mutationFn: async (data: RegisterRequest) => {
       if (
-        !data.email?.trim() ||
-        !data.firstName?.trim() ||
-        !data.lastName?.trim() ||
-        !data.password?.trim()
+        !data.email.trim() ||
+        !data.firstName.trim() ||
+        !data.lastName.trim() ||
+        !data.password.trim()
       ) {
         throw new Error("Все поля регистрации обязательны")
       }

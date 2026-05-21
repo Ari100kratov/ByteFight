@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/shared/lib/utils"
 
-type CharacterIdentityProps = {
+interface CharacterIdentityProps {
   name?: string | null
   className?: string | null
   specName?: string | null

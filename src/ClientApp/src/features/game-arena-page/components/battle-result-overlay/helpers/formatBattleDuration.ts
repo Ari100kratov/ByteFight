@@ -16,12 +16,12 @@ export function formatBattleDuration(startedAt?: string, endedAt?: string | null
   const seconds = totalSeconds % 60
 
   if (minutes <= 0) {
-    return `${seconds} сек`
+    return `${String(seconds)} сек`
   }
 
   if (seconds === 0) {
-    return `${minutes} мин`
+    return `${String(minutes)} мин`
   }
 
-  return `${minutes} мин ${seconds} сек`
+  return `${String(minutes)} мин ${String(seconds)} сек`
 }

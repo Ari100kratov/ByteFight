@@ -10,7 +10,7 @@ import { getScriptApiDocs } from "./api/getScriptApiDocs"
 import { ScriptApiTypeCard } from "./components/ScriptApiTypeCard"
 import { formatApiTypeKind, type ApiTypeDoc } from "./types"
 
-type SearchResult = {
+interface SearchResult {
   type: ApiTypeDoc
   matches: string[]
 }
@@ -144,7 +144,8 @@ export default function ScriptApiDocsPage() {
   }, [data, search])
 
   const activeType =
-    searchResults.find((x) => x.type.fullName === selectedType)?.type ?? searchResults[0]?.type
+    searchResults.find((x) => x.type.fullName === selectedType)?.type ??
+    searchResults.at(0)?.type
 
   return (
     <div className="flex h-full min-h-0 overflow-hidden">

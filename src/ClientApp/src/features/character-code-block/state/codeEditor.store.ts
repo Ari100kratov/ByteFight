@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { ChangeStatus, type EditableCode } from "../types"
 
-type CodeEditorState = {
+interface CodeEditorState {
   codes: EditableCode[]
   baselineCodes: EditableCode[]
   activeCodeId?: string

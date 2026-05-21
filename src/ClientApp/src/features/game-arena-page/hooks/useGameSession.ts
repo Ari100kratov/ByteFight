@@ -16,14 +16,26 @@ export function useGameSession(sessionId?: string) {
 
   const { data: session, isLoading } = useQuery<GameSession, ApiException>({
     queryKey: queryKeys.gameSessions.byId(sessionId),
-    queryFn: () => apiFetch(`/game/sessions/${sessionId}`),
+    queryFn: () => {
+      if (!sessionId) {
+        throw new Error("Game session id is required")
+      }
+
+      return apiFetch(`/game/sessions/${sessionId}`)
+    },
     enabled: hasSessionId,
     retry: false,
   })
 
   const { data: logs } = useQuery<TurnLog[], ApiException>({
     queryKey: queryKeys.gameSessions.logs(sessionId),
-    queryFn: () => apiFetch(`/game/sessions/${sessionId}/logs`),
+    queryFn: () => {
+      if (!sessionId) {
+        throw new Error("Game session id is required")
+      }
+
+      return apiFetch(`/game/sessions/${sessionId}/logs`)
+    },
     enabled: hasSessionId,
     retry: false,
     refetchOnWindowFocus: false,
@@ -62,7 +74,7 @@ export function useGameSession(sessionId?: string) {
 
     gameHub
       .connect(session.id)
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("Failed to connect to game hub:", err)
       })
       .finally(() => {
@@ -70,7 +82,7 @@ export function useGameSession(sessionId?: string) {
       })
 
     return () => {
-      gameHub.disconnect(session.id).catch((err) => {
+      gameHub.disconnect(session.id).catch((err: unknown) => {
         console.error("Failed to disconnect from game hub:", err)
       })
     }

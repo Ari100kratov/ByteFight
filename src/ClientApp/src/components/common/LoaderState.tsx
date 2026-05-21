@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { type ReactNode } from "react"
 import { ErrorAlert } from "./ErrorAlert"
 
-type LoaderStateProps = {
+interface LoaderStateProps {
   isLoading: boolean
   error: unknown
   children: ReactNode

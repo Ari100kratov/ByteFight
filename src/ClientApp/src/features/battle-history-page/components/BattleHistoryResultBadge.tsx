@@ -4,7 +4,7 @@ import { cn } from "@/shared/lib/utils"
 import { getBattleResultToneClass } from "@/features/game-arena-page/components/battle-result-overlay/battle-result.styles"
 import type { BattleResultTone } from "@/features/game-arena-page/components/battle-result-overlay/battle-result.types"
 
-type BattleHistoryResultBadgeProps = {
+interface BattleHistoryResultBadgeProps {
   title: string
   tone: BattleResultTone
   Icon: LucideIcon

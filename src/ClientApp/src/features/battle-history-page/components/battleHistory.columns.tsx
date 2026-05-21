@@ -80,7 +80,7 @@ export function createBattleHistoryColumns(): ColumnDef<GameSessionListItem>[] {
     {
       accessorKey: "totalTurns",
       header: "Ходы",
-      cell: ({ row }) => row.original.totalTurns ?? "—",
+      cell: ({ row }) => row.original.totalTurns,
     },
     {
       id: "duration",

@@ -16,7 +16,7 @@ export function useCreateCharacter() {
 
   return useMutation({
     mutationFn: async (data: CreateCharacterRequest): Promise<string> => {
-      if (!data.name?.trim()) throw new Error("Имя персонажа обязательно")
+      if (!data.name.trim()) throw new Error("Имя персонажа обязательно")
 
       if (!data.specId) throw new Error("Не выбран класс и специализация персонажа")
 

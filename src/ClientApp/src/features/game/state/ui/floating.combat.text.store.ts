@@ -8,14 +8,14 @@ export const FloatingCombatTextKind = {
 export type FloatingCombatTextKind =
   (typeof FloatingCombatTextKind)[keyof typeof FloatingCombatTextKind]
 
-export type FloatingCombatText = {
+export interface FloatingCombatText {
   id: string
   unitId: string
   value: number
   kind: FloatingCombatTextKind
 }
 
-type FloatingCombatTextStore = {
+interface FloatingCombatTextStore {
   items: FloatingCombatText[]
   add: (unitId: string, value: number, kind: FloatingCombatTextKind) => void
   remove: (id: string) => void

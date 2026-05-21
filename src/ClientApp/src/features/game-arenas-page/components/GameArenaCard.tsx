@@ -3,7 +3,7 @@ import { FlaskConical, Grid3X3, Skull } from "lucide-react"
 import { getAssetUrl } from "@/shared/api/loadActionAssets"
 import type { ArenaResponse } from "../useArenasByMode"
 
-type Props = {
+interface Props {
   arena: ArenaResponse
   onSelect: (arena: ArenaResponse) => void
 }
@@ -41,7 +41,7 @@ export function GameArenaCard({ arena, onSelect }: Props) {
         <CardTitle className="text-lg font-semibold">{arena.name}</CardTitle>
 
         <CardDescription className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
-          {arena.description || "Описание отсутствует."}
+          {arena.description ?? "Описание отсутствует."}
         </CardDescription>
 
         <div className="flex flex-wrap gap-2 pt-3">

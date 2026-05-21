@@ -29,7 +29,13 @@ export function useCharacterDetails(characterId?: string) {
   return useStoreQuery<CharacterResponse, ApiException>(
     {
       queryKey: queryKeys.characters.details(characterId),
-      queryFn: () => apiFetch<CharacterResponse>(`/characters/${characterId}/details`),
+      queryFn: () => {
+        if (!characterId) {
+          throw new Error("Character id is required")
+        }
+
+        return apiFetch<CharacterResponse>(`/characters/${characterId}/details`)
+      },
       enabled: !!characterId,
     },
     setCharacter,

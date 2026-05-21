@@ -5,7 +5,7 @@ import { CodeActionsMenu } from "./CodeActionsMenu"
 import type { EditableCode } from "../types"
 import { CodeEditor } from "@/features/code-editor/CodeEditor"
 
-type Props = {
+interface Props {
   codes: EditableCode[]
   activeTab: string | undefined
   onTabChange: (id: string) => void

@@ -1,6 +1,8 @@
 import * as signalR from "@microsoft/signalr"
 import { gameHubUrl } from "@/shared/config/api"
 import { useGameRuntimeStore } from "../state/game.runtime.store"
+import type { GameSession } from "../types/GameSession"
+import type { TurnLog } from "../types/TurnLog"
 
 class GameHubConnection {
   private connection: signalR.HubConnection | null = null
@@ -35,11 +37,11 @@ class GameHubConnection {
     this.connection = connection
     this.currentSessionId = sessionId
 
-    connection.on("Tick", (turnLog) => {
+    connection.on("Tick", (turnLog: TurnLog) => {
       useGameRuntimeStore.getState().enqueueTurn(turnLog)
     })
 
-    connection.on("Finished", (session) => {
+    connection.on("Finished", (session: GameSession) => {
       useGameRuntimeStore.getState().setSession(session)
     })
 
@@ -61,7 +63,7 @@ class GameHubConnection {
     if (this.connection.state !== signalR.HubConnectionState.Disconnected) {
       try {
         await this.connection.invoke("LeaveGame", sessionId)
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Failed to leave game hub:", err)
       }
       await this.connection.stop()

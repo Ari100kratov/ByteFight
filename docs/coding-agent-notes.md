@@ -21,7 +21,6 @@ dotnet test tests\ArchitectureTests\ArchitectureTests.csproj --no-build
 
 cd src/ClientApp
 pnpm.cmd lint
-pnpm.cmd lint:strict
 pnpm.cmd format
 pnpm.cmd build
 ```

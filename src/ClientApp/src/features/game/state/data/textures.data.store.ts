@@ -2,18 +2,18 @@ import { create } from "zustand"
 import { type Texture } from "pixi.js"
 import { loadTextureFromUrl, loadTexturesFromUrl } from "@/shared/api/loadActionAssets"
 
-type TexturesEntry = {
+interface TexturesEntry {
   url: string
   frameCount: number
   textures: Texture[]
 }
 
-type SingleTextureEntry = {
+interface SingleTextureEntry {
   url: string
   texture: Texture
 }
 
-type TextureStore = {
+interface TextureStore {
   textures: Partial<Record<string, TexturesEntry>>
   singleTextures: Partial<Record<string, SingleTextureEntry>>
 
@@ -26,13 +26,11 @@ type TextureStore = {
 }
 
 function getAnimationCacheKey(url: string, frameCount: number) {
-  return `${url}::frames=${frameCount}`
+  return `${url}::frames=${String(frameCount)}`
 }
 
 function withoutRecordKey<TValue>(record: Partial<Record<string, TValue>>, key: string) {
-  const next = { ...record }
-  delete next[key]
-  return next
+  return Object.fromEntries(Object.entries(record).filter(([entryKey]) => entryKey !== key))
 }
 
 export const useTexturesStore = create<TextureStore>((set, get) => ({

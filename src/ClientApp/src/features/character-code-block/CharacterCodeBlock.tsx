@@ -16,7 +16,7 @@ import { cn } from "@/shared/lib/utils"
 import { Link } from "react-router-dom"
 import { getApiErrorToastMessage } from "@/shared/lib/apiErrors"
 
-type Props = {
+interface Props {
   characterId: string
   className?: string
 }
@@ -85,7 +85,7 @@ export default function CharacterCodeBlock({ characterId, className }: Props) {
         <LoaderState
           isLoading={codesQuery.isLoading}
           error={codesQuery.error}
-          isEmpty={!codes || codes.length === 0}
+          isEmpty={codes.length === 0}
           empty={
             <div className="text-muted-foreground flex flex-col items-center gap-2">
               <Button onClick={handleAddCode}>

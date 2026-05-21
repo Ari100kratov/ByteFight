@@ -2,7 +2,7 @@ import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/c
 import type { GameModeResponse } from "../useGameModes"
 import { getAssetUrl } from "@/shared/api/loadActionAssets"
 
-type Props = {
+interface Props {
   mode: GameModeResponse
   onSelect: (mode: GameModeResponse) => void
 }

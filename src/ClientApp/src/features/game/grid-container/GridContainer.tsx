@@ -18,10 +18,12 @@ export function GridContainer() {
     updateLayout({ width: arena.gridWidth, height: arena.gridHeight }, viewport)
   }, [arena, updateLayout, viewport])
 
-  if (!layout) return null
+  if (!layout || !arena) return null
 
   const { gridSize, offsetX, offsetY, cells } = layout
-  const blockedSet = new Set(arena?.blockedPositions?.map((p) => `${p.x}:${p.y}`))
+  const blockedSet = new Set(
+    arena.blockedPositions.map((p) => `${String(p.x)}:${String(p.y)}`),
+  )
 
   // cells сейчас хранит gridY = 0 снизу, и x/y — абсолютные пиксельные позиции (левый верх ячейки)
   // Но для упрощения рендеринга поместим всё в локальный контейнер со сдвигом offsetX/offsetY,
@@ -37,7 +39,7 @@ export function GridContainer() {
             g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.25 })
 
             for (const cell of cells.flat()) {
-              if (blockedSet.has(`${cell.gridX}:${cell.gridY}`)) continue
+              if (blockedSet.has(`${String(cell.gridX)}:${String(cell.gridY)}`)) continue
 
               const x = cell.gridX * cell.width
               const y = (gridSize.height - 1 - cell.gridY) * cell.height
@@ -53,15 +55,15 @@ export function GridContainer() {
       {/* Координаты клеток */}
       {showGrid &&
         cells.flat().map((cell) => {
-          if (blockedSet.has(`${cell.gridX}:${cell.gridY}`)) return null
+          if (blockedSet.has(`${String(cell.gridX)}:${String(cell.gridY)}`)) return null
 
           const localX = cell.gridX * cell.width
           const localY = (gridSize.height - 1 - cell.gridY) * cell.height
 
           return (
             <pixiText
-              key={`${cell.gridX}-${cell.gridY}`}
-              text={`${cell.gridX}, ${cell.gridY}`}
+              key={`${String(cell.gridX)}-${String(cell.gridY)}`}
+              text={`${String(cell.gridX)}, ${String(cell.gridY)}`}
               x={localX + 4}
               y={localY + 4}
               style={{

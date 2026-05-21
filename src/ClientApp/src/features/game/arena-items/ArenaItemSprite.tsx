@@ -8,21 +8,38 @@ import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.sto
 
 extend({ Sprite, AnimatedSprite })
 
-type Props = {
+interface Props {
   item: ArenaItemResponse
+}
+
+interface ItemTextureState {
+  spriteKey: string
+  texture: Texture | null
+  textures: Texture[]
 }
 
 const HOVER_AMPLITUDE = 5
 const HOVER_SPEED = 0.004
 
+function hashToPhase(value: string) {
+  let hash = 0
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 31 + value.charCodeAt(i)) | 0
+  }
+
+  return Math.abs(hash) % 360
+}
+
 export function ArenaItemSprite({ item }: Props) {
   const layout = useGridStore((s) => s.layout)
   const selectItem = useArenaItemSelectionStore((s) => s.select)
 
-  const [texture, setTexture] = useState<Texture | null>(null)
-  const [textures, setTextures] = useState<Texture[]>([])
+  const spriteKey = `${item.sprite.url}:${String(item.sprite.frameCount)}`
+  const [textureState, setTextureState] = useState<ItemTextureState | null>(null)
   const [hoverOffset, setHoverOffset] = useState(0)
-  const timeRef = useRef(Math.random() * Math.PI * 2)
+  const timeRef = useRef((hashToPhase(item.placedItemId) / 180) * Math.PI)
+  const texture = textureState?.spriteKey === spriteKey ? textureState.texture : null
+  const textures = textureState?.spriteKey === spriteKey ? textureState.textures : []
 
   useTick((ticker) => {
     timeRef.current += ticker.deltaMS * HOVER_SPEED
@@ -32,15 +49,18 @@ export function ArenaItemSprite({ item }: Props) {
   useEffect(() => {
     let cancelled = false
 
-    setTexture(null)
-    setTextures([])
-
     if (item.sprite.frameCount <= 1) {
       void useTexturesStore
         .getState()
         .getOrLoadTexture(item.sprite.url)
         .then((texture) => {
-          if (!cancelled) setTexture(texture)
+          if (!cancelled) {
+            setTextureState({
+              spriteKey,
+              texture,
+              textures: [],
+            })
+          }
         })
         .catch(console.error)
 
@@ -53,14 +73,20 @@ export function ArenaItemSprite({ item }: Props) {
       .getState()
       .getOrLoadTextures(item.sprite.url, item.sprite.frameCount)
       .then((textures) => {
-        if (!cancelled) setTextures(textures)
+        if (!cancelled) {
+          setTextureState({
+            spriteKey,
+            texture: null,
+            textures,
+          })
+        }
       })
       .catch(console.error)
 
     return () => {
       cancelled = true
     }
-  }, [item.sprite.url, item.sprite.frameCount])
+  }, [item.sprite.url, item.sprite.frameCount, spriteKey])
 
   if (!layout) return null
 

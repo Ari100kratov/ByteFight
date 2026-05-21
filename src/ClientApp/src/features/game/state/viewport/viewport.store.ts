@@ -1,11 +1,11 @@
 import { create } from "zustand"
 
-export type ViewportSize = {
+export interface ViewportSize {
   width: number
   height: number
 }
 
-type ViewportState = {
+interface ViewportState {
   size: ViewportSize
   setSize: (size: ViewportSize) => void
 }

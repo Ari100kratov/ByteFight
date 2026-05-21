@@ -6,7 +6,7 @@ import type { ChronicleNominationLeaderboard } from "../types"
 import { NominationEntry } from "./NominationEntry"
 import { getNominationVisual } from "./nominationVisuals"
 
-type NominationCardProps = {
+interface NominationCardProps {
   nomination: ChronicleNominationLeaderboard
   canOpenCharacters: boolean
 }

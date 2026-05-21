@@ -52,19 +52,19 @@ export default function RegisterPage() {
     if (!form.firstName.trim()) {
       nextErrors.firstName = "Введите имя"
     } else if (form.firstName.length > MAX_FIRST_NAME_LENGTH) {
-      nextErrors.firstName = `Имя должно быть не длиннее ${MAX_FIRST_NAME_LENGTH} символов`
+      nextErrors.firstName = `Имя должно быть не длиннее ${String(MAX_FIRST_NAME_LENGTH)} символов`
     }
 
     if (!form.lastName.trim()) {
       nextErrors.lastName = "Введите фамилию"
     } else if (form.lastName.length > MAX_LAST_NAME_LENGTH) {
-      nextErrors.lastName = `Фамилия должна быть не длиннее ${MAX_LAST_NAME_LENGTH} символов`
+      nextErrors.lastName = `Фамилия должна быть не длиннее ${String(MAX_LAST_NAME_LENGTH)} символов`
     }
 
     if (!form.email.trim()) {
       nextErrors.email = "Введите email"
     } else if (form.email.length > MAX_EMAIL_LENGTH) {
-      nextErrors.email = `Email должен быть не длиннее ${MAX_EMAIL_LENGTH} символов`
+      nextErrors.email = `Email должен быть не длиннее ${String(MAX_EMAIL_LENGTH)} символов`
     } else if (!EMAIL_REGEX.test(form.email)) {
       nextErrors.email = "Введите корректный email"
     }
@@ -72,9 +72,9 @@ export default function RegisterPage() {
     if (!form.password) {
       nextErrors.password = "Введите пароль"
     } else if (form.password.length < MIN_PASSWORD_LENGTH) {
-      nextErrors.password = `Пароль должен быть не короче ${MIN_PASSWORD_LENGTH} символов`
+      nextErrors.password = `Пароль должен быть не короче ${String(MIN_PASSWORD_LENGTH)} символов`
     } else if (form.password.length > MAX_PASSWORD_LENGTH) {
-      nextErrors.password = `Пароль должен быть не длиннее ${MAX_PASSWORD_LENGTH} символов`
+      nextErrors.password = `Пароль должен быть не длиннее ${String(MAX_PASSWORD_LENGTH)} символов`
     }
 
     if (!form.confirmPassword) {

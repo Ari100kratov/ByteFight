@@ -5,7 +5,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-type Props = {
+interface Props {
   name: string
   onRename: (newName: string) => void
   onDelete: () => void

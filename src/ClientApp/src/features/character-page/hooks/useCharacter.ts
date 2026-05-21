@@ -12,7 +12,13 @@ export interface CharacterResponse {
 export function useCharacter(id: string | undefined) {
   return useQuery<CharacterResponse, ApiException>({
     queryKey: queryKeys.characters.byId(id),
-    queryFn: () => apiFetch(`/characters/${id}`),
+    queryFn: () => {
+      if (!id) {
+        throw new Error("Character id is required")
+      }
+
+      return apiFetch(`/characters/${id}`)
+    },
     enabled: !!id,
   })
 }

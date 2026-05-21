@@ -8,63 +8,60 @@ import { AbilityType, type AbilityDto } from "@/shared/types/ability"
 
 extend({ AnimatedSprite })
 
-type Props = {
+interface Props {
   actionAssets: ActionAssetDto[]
   abilities: AbilityDto[]
 }
 
-export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
-  const [textures, setTextures] = useState<Texture[]>([])
-  const [loading, setLoading] = useState(false)
+interface PreviewTextureState {
+  key: string
+  textures: Texture[]
+}
+
+export function SpriteAnimationPlayer({ actionAssets, abilities }: Props) {
+  const [textureState, setTextureState] = useState<PreviewTextureState | null>(null)
 
   const previewAssets = useMemo(
     () => createPreviewAssets(actionAssets, abilities),
     [actionAssets, abilities],
   )
+  const previewKey = useMemo(() => createPreviewKey(previewAssets), [previewAssets])
+  const textures = textureState?.key === previewKey ? textureState.textures : []
+  const isLoaded = textures.length > 0
 
   useEffect(() => {
     let cancelled = false
     let loadedTextures: Texture[] = []
 
     if (previewAssets.length === 0) {
-      setTextures([])
-      setLoading(false)
       return
     }
-
-    setLoading(false)
 
     void loadActionAssets(previewAssets)
       .then((frames) => {
         loadedTextures = frames
         if (!cancelled) {
-          setTextures(frames)
+          setTextureState({ key: previewKey, textures: frames })
         }
       })
       .catch(console.error)
-      .finally(() => {
-        if (!cancelled) {
-          setLoading(true)
-        }
-      })
 
     return () => {
       cancelled = true
       for (const texture of loadedTextures) {
         texture.destroy(false)
       }
-      setTextures([])
     }
-  }, [previewAssets])
+  }, [previewAssets, previewKey])
 
   const width = 210
   const height = 150
-  const first = previewAssets[0]?.spriteAnimation
+  const first = previewAssets.at(0)?.spriteAnimation
 
   return (
     <div className="relative h-[155px] w-[215px]">
       <Application width={width} height={height} background="#f9fafb">
-        {loading && first && textures.length > 0 && (
+        {isLoaded && first && (
           <pixiAnimatedSprite
             ref={(ref) => ref?.play()}
             textures={textures}
@@ -82,13 +79,19 @@ export function SpriteAnimationPlayer({ actionAssets, abilities = [] }: Props) {
         )}
       </Application>
 
-      {!loading && (
+      {!isLoaded && (
         <div className="absolute top-0 left-0 h-full w-full">
           <Skeleton className="h-full w-full" />
         </div>
       )}
     </div>
   )
+}
+
+function createPreviewKey(assets: ActionAssetDto[]) {
+  return assets
+    .map((asset) => `${asset.spriteAnimation.url}:${String(asset.spriteAnimation.frameCount)}`)
+    .join("|")
 }
 
 function createPreviewAssets(

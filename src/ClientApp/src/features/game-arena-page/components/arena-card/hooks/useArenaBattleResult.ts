@@ -55,7 +55,7 @@ export function useArenaBattleResult() {
       description: resultMeta.description,
       tone: resultMeta.tone,
       Icon: resultMeta.icon,
-      totalTurns: session.totalTurns ?? 0,
+      totalTurns: session.totalTurns,
       startedAt: session.startedAt,
       endedAt: session.endedAt,
       outcome: session.result?.outcome,

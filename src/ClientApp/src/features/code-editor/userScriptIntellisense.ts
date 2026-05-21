@@ -1,12 +1,12 @@
 import type * as monaco from "monaco-editor"
 import { apiFetch } from "@/shared/lib/apiFetch"
 
-type PositionPayload = {
+interface PositionPayload {
   line: number
   column: number
 }
 
-type IntellisenseDiagnostic = {
+interface IntellisenseDiagnostic {
   code: string
   message: string
   severity: string
@@ -16,14 +16,14 @@ type IntellisenseDiagnostic = {
   endColumn: number
 }
 
-type IntellisenseCompletion = {
+interface IntellisenseCompletion {
   label: string
   detail?: string
   kind?: string
   documentation?: string
 }
 
-type IntellisenseHover = {
+interface IntellisenseHover {
   signature: string
   documentation?: string
   startLine: number
@@ -32,7 +32,7 @@ type IntellisenseHover = {
   endColumn: number
 }
 
-type IntellisenseSignatureHelp = {
+interface IntellisenseSignatureHelp {
   signatures: {
     signature: string
     documentation?: string
@@ -43,6 +43,10 @@ type IntellisenseSignatureHelp = {
 }
 
 let initialized = false
+
+function disposeEmptyResult() {
+  return undefined
+}
 
 export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
   if (initialized) {
@@ -126,21 +130,21 @@ export function setupUserScriptIntellisense(monacoApi: typeof monaco) {
             activeSignature: 0,
             activeParameter: 0,
           },
-          dispose: () => {},
+          dispose: disposeEmptyResult,
         }
       }
 
       return {
         value: {
-          signatures: (payload.signatures ?? []).map((s) => ({
-            label: s.signature ?? "",
+          signatures: payload.signatures.map((s) => ({
+            label: s.signature,
             documentation: s.documentation ?? "",
-            parameters: (s.parameters ?? []).map((p) => ({ label: p })),
+            parameters: s.parameters.map((p) => ({ label: p })),
           })),
-          activeSignature: payload.activeSignature ?? 0,
-          activeParameter: payload.activeParameter ?? 0,
+          activeSignature: payload.activeSignature,
+          activeParameter: payload.activeParameter,
         },
-        dispose: () => {},
+        dispose: disposeEmptyResult,
       }
     },
   })

@@ -14,6 +14,10 @@ export default function GameArenasPage() {
   const { data: arenas, isLoading, error } = useArenasByMode(modeType)
 
   const handleArenaClick = (arena: ArenaResponse) => {
+    if (!modeType) {
+      return
+    }
+
     void navigate(`/play/${modeType}/${arena.id}`)
   }
 
@@ -30,7 +34,7 @@ export default function GameArenasPage() {
         }
         loadingFallback={
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
+            {Array.from({ length: 3 }, (_, i) => (
               <div key={i} className="overflow-hidden rounded-2xl border shadow-sm">
                 <Skeleton className="aspect-video w-full" />
                 <div className="space-y-2 p-4">
@@ -43,7 +47,7 @@ export default function GameArenasPage() {
           </div>
         }
       >
-        {!!arenas?.length && (
+        {arenas && arenas.length > 0 && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {arenas.map((arena) => (
               <GameArenaCard key={arena.id} arena={arena} onSelect={handleArenaClick} />

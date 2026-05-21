@@ -4,7 +4,7 @@ import { CharacterIdentity } from "@/features/characters/components/CharacterIde
 import { UserRound } from "lucide-react"
 import { getAssetUrl } from "@/shared/api/loadActionAssets"
 
-type CharacterCardProps = {
+interface CharacterCardProps {
   id: string
   name: string
   className: string

@@ -15,7 +15,7 @@ export interface LoginResponse {
 export default function useLogin() {
   return useMutation({
     mutationFn: async (data: LoginRequest): Promise<string> => {
-      if (!data.email?.trim() || !data.password?.trim()) {
+      if (!data.email.trim() || !data.password.trim()) {
         throw new Error("Email и пароль обязательны")
       }
 

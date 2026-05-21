@@ -1,13 +1,13 @@
 import type { ReactNode } from "react"
 
-export type CodeExample = {
+export interface CodeExample {
   title: string
   description: string
   code: string
   usedApi: string[]
 }
 
-export type QuickStartFact = {
+export interface QuickStartFact {
   title: string
   content: ReactNode
 }

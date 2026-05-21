@@ -10,7 +10,7 @@ interface RenameCharacterRequest {
 export function useRenameCharacter() {
   const queryClient = useQueryClient()
 
-  return useMutation<void, ApiException, RenameCharacterRequest>({
+  return useMutation<unknown, ApiException, RenameCharacterRequest>({
     mutationFn: async ({ id, name }) => {
       const trimmedName = name.trim()
 
@@ -18,7 +18,7 @@ export function useRenameCharacter() {
         throw new Error("Имя персонажа обязательно") as ApiException
       }
 
-      await apiFetch<void>(`/characters/${id}/name`, {
+      return apiFetch<unknown>(`/characters/${id}/name`, {
         method: "PATCH",
         body: JSON.stringify({ name: trimmedName }),
       })

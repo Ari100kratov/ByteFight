@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 
-type BattleHistoryPaginationProps = {
+interface BattleHistoryPaginationProps {
   page: number
   pageSize: number
   totalCount: number
@@ -25,7 +25,9 @@ export function BattleHistoryPagination({
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="text-muted-foreground text-sm">
-        {isFetching ? "Обновляем список..." : `Показано ${from}–${to} из ${totalCount}`}
+        {isFetching
+          ? "Обновляем список..."
+          : `Показано ${String(from)}–${String(to)} из ${String(totalCount)}`}
       </div>
 
       <div className="flex items-center">

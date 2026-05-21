@@ -29,7 +29,7 @@ export default function CharactersPage() {
         empty={<div className="text-muted-foreground text-center">У вас пока нет персонажей.</div>}
         loadingFallback={
           <div className="grid gap-4 md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
+            {Array.from({ length: 3 }, (_, i) => (
               <Skeleton key={i} className="h-48 rounded-2xl" />
             ))}
           </div>

@@ -1,6 +1,6 @@
 import { getApiErrorMessages } from "@/shared/lib/apiErrors"
 
-type Props = {
+interface Props {
   error: unknown
 }
 

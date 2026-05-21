@@ -15,7 +15,7 @@ export const ModeNamesBySlug = {
 export type GameModeSlug = keyof typeof ModeNamesBySlug
 
 export function formatModeSlugByType(mode: GameModeType): GameModeSlug {
-  return ModeSlugs[mode] ?? "training"
+  return ModeSlugs[mode]
 }
 
 export function formatModeNameByType(mode: GameModeType): string {
@@ -23,5 +23,13 @@ export function formatModeNameByType(mode: GameModeType): string {
 }
 
 export function formatModeNameByString(mode: string | undefined): string {
-  return ModeNamesBySlug[mode as GameModeSlug] ?? mode
+  if (!mode) {
+    return ModeNamesBySlug.training
+  }
+
+  return isGameModeSlug(mode) ? ModeNamesBySlug[mode] : mode
+}
+
+function isGameModeSlug(mode: string): mode is GameModeSlug {
+  return Object.hasOwn(ModeNamesBySlug, mode)
 }

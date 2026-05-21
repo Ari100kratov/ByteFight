@@ -7,18 +7,20 @@ import { bindUserScriptDiagnostics, setupUserScriptIntellisense } from "./userSc
 
 const MonacoEditor = lazy(() => import("@monaco-editor/react"))
 
-type Props = {
+interface Props {
   value: string
   onChange?: (value: string) => void
 }
 
-export function CodeEditor({ value, onChange }: Props) {
-  const [localValue, setLocalValue] = useState(value)
-  const disposeDiagnosticsRef = useRef<null | (() => void)>(null)
+interface EditorDraft {
+  sourceValue: string
+  value: string
+}
 
-  useEffect(() => {
-    setLocalValue(value)
-  }, [value])
+export function CodeEditor({ value, onChange }: Props) {
+  const [draft, setDraft] = useState<EditorDraft | null>(null)
+  const disposeDiagnosticsRef = useRef<null | (() => void)>(null)
+  const localValue = draft?.sourceValue === value ? draft.value : value
 
   const debouncedChange = useDebouncedCallback((val: string) => {
     onChange?.(val)
@@ -37,7 +39,10 @@ export function CodeEditor({ value, onChange }: Props) {
   }
   const handleChange = (val: string | undefined) => {
     const newValue = val ?? ""
-    setLocalValue(newValue)
+    setDraft({
+      sourceValue: value,
+      value: newValue,
+    })
     debouncedChange(newValue)
   }
 

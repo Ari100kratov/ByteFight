@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-type BattleHistoryTableProps<TData> = {
+interface BattleHistoryTableProps<TData> {
   columns: ColumnDef<TData>[]
   data: TData[]
   onRowClick?: (row: TData) => void
@@ -19,6 +19,7 @@ export function BattleHistoryTable<TData>({
   data,
   onRowClick,
 }: BattleHistoryTableProps<TData>) {
+  // TanStack Table returns local render helpers that are not passed outside this component.
   const table = useReactTable({
     data,
     columns,

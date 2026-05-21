@@ -62,6 +62,10 @@ export function ArenaCard() {
   })()
 
   function leaveBattle() {
+    if (!modeType || !arenaId) {
+      return
+    }
+
     void navigate(`/play/${modeType}/${arenaId}`)
   }
 
@@ -95,7 +99,7 @@ export function ArenaCard() {
     }
 
     const localCode = getActiveCode()
-    if (!localCode?.sourceCode?.trim()) {
+    if (!localCode?.sourceCode.trim()) {
       toast.error("Пользовательский код не задан")
       return
     }
@@ -180,7 +184,7 @@ export function ArenaCard() {
                 characterClassName={character?.spec.className}
                 characterSpecName={character?.spec.name}
                 arenaName={arena.name}
-                arenaModeName={formatModeNameByString(modeType)}
+                arenaModeName={modeType ? formatModeNameByString(modeType) : null}
                 onClose={closeResult}
               />
             )}

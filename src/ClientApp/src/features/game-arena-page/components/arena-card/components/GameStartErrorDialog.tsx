@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
-type GameStartErrorDialogProps = {
+interface GameStartErrorDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string

@@ -4,7 +4,7 @@ import { useArenaItemsStateStore } from "../game/arena-items.state.store"
 
 export type Arena = ArenaResponse
 
-type ArenaState = {
+interface ArenaState {
   arena?: Arena
   setArena: (arena: ArenaResponse) => void
   reset: () => void

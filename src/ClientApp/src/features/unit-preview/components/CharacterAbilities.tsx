@@ -1,7 +1,7 @@
 import { HeartPulse, Target, Zap } from "lucide-react"
 import { AbilityStatType, AbilityType, type AbilityDto } from "@/shared/types/ability"
 
-type Props = {
+interface Props {
   abilities: AbilityDto[]
 }
 

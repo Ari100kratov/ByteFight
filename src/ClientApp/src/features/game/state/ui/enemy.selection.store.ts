@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-type EnemySelectionState = {
+interface EnemySelectionState {
   selectedArenaEnemyId?: string
   position?: { x: number; y: number }
   selectEnemy: (arenaEnemyId: string, position: { x: number; y: number }) => void

@@ -19,7 +19,13 @@ export function useArenaEnemies() {
   return useStoreQuery<ArenaEnemyResponse[], ApiException>(
     {
       queryKey: queryKeys.arenaEnemies.byArenaId(arena?.id),
-      queryFn: () => apiFetch(`/arenas/${arena?.id}/enemies`),
+      queryFn: () => {
+        if (!arena?.id) {
+          throw new Error("Arena id is required")
+        }
+
+        return apiFetch(`/arenas/${arena.id}/enemies`)
+      },
       enabled: !!arena?.id,
     },
     setArenaEnemies,

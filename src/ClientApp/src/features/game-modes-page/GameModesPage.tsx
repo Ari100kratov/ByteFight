@@ -19,7 +19,7 @@ export default function GameModesPage() {
         }
         loadingFallback={
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
+            {Array.from({ length: 3 }, (_, i) => (
               <div key={i} className="overflow-hidden rounded-2xl border shadow-sm">
                 <Skeleton className="aspect-video w-full" />
                 <div className="space-y-3 p-5">

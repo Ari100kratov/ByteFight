@@ -5,7 +5,7 @@ import type { CharacterResponse } from "@/features/game-arena-page/components/se
 
 export type Character = CharacterResponse
 
-type CharacterState = {
+interface CharacterState {
   character?: Character
   setCharacter: (character: CharacterResponse) => void
   getSpriteAnimation: (

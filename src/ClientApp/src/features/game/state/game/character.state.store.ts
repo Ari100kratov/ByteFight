@@ -3,14 +3,14 @@ import { ActionType } from "@/shared/types/action"
 import { FacingDirection, type Position } from "../../types/common"
 import type { UnitRuntime } from "../../types/UnitRuntime"
 
-type InitPayload = {
+interface InitPayload {
   characterId: string
   maxHp: number
   maxMp?: number
   startPosition: Position
 }
 
-type CharacterRuntimeState = {
+interface CharacterRuntimeState {
   runtime?: UnitRuntime
   set: (runtime: Partial<UnitRuntime>) => void
   init: (payload: InitPayload) => void

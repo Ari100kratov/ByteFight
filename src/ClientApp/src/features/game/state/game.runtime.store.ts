@@ -70,7 +70,7 @@ export const useGameRuntimeStore = create<GameRuntimeState>((set, get) => ({
   processNext: async () => {
     if (get().isProcessing) return
 
-    const turn = get().queue[0]
+    const turn = get().queue.at(0)
     if (!turn) return
 
     set({ isProcessing: true })

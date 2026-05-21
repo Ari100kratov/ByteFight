@@ -3,15 +3,21 @@ import { type Texture } from "pixi.js"
 import { useTexturesStore } from "@/features/game/state/data/textures.data.store"
 import type { SpriteAnimationDto } from "../types/spriteAnimation"
 
+interface SpriteTexturesState {
+  key: string
+  textures: Texture[]
+}
+
 export function useSpriteTextures(spriteAnimation?: SpriteAnimationDto) {
   const getOrLoadTextures = useTexturesStore((s) => s.getOrLoadTextures)
-  const [textures, setTextures] = useState<Texture[]>([])
+  const [state, setState] = useState<SpriteTexturesState | null>(null)
   const url = spriteAnimation?.url
   const frameCount = spriteAnimation?.frameCount
+  const key = url && frameCount !== undefined ? `${url}:${String(frameCount)}` : undefined
+  const textures = state && state.key === key ? state.textures : []
 
   useEffect(() => {
     if (!url || frameCount === undefined) {
-      setTextures([])
       return
     }
 
@@ -20,7 +26,7 @@ export function useSpriteTextures(spriteAnimation?: SpriteAnimationDto) {
     getOrLoadTextures(url, frameCount)
       .then((texs) => {
         if (cancelled) return
-        setTextures(texs)
+        setState({ key: `${url}:${String(frameCount)}`, textures: texs })
       })
       .catch(console.error)
 

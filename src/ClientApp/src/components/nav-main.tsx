@@ -13,7 +13,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 
-type NavItem = {
+interface NavItem {
   title: string
   url: string
   icon: LucideIcon

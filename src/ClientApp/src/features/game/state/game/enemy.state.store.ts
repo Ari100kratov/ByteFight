@@ -4,15 +4,15 @@ import type { PositionDto } from "../../shared/types"
 import type { UnitRuntime } from "../../types/UnitRuntime"
 import { FacingDirection } from "../../types/common"
 
-type InitPayload = {
+interface InitPayload {
   arenaEnemyId: string
   position: PositionDto
   maxHp: number
   maxMp?: number
 }
 
-type EnemyRuntimeStore = {
-  arenaEnemies: Record<string, UnitRuntime>
+interface EnemyRuntimeStore {
+  arenaEnemies: Partial<Record<string, UnitRuntime>>
   init: (arenaEnemies: InitPayload[]) => void
   set: (arenaEnemyId: string, partial: Partial<UnitRuntime>) => void
   get: (arenaEnemyId?: string) => UnitRuntime | undefined
@@ -23,7 +23,7 @@ export const useEnemyStateStore = create<EnemyRuntimeStore>((set, get) => ({
   arenaEnemies: {},
 
   init: (arenaEnemies) => {
-    const next: Record<string, UnitRuntime> = {}
+    const next: Partial<Record<string, UnitRuntime>> = {}
 
     for (const { arenaEnemyId, position, maxHp, maxMp } of arenaEnemies) {
       next[arenaEnemyId] = {

@@ -1,9 +1,9 @@
 import type { Position } from "../types/common"
 
-export type GridSize = { width: number; height: number }
-export type CanvasSize = { width: number; height: number }
+export interface GridSize { width: number; height: number }
+export interface CanvasSize { width: number; height: number }
 
-export type GridCell = {
+export interface GridCell {
   x: number // абсолютные пиксели (левый верхний угол ячейки)
   y: number // абсолютные пиксели (левый верхний угол ячейки)
   width: number
@@ -12,7 +12,7 @@ export type GridCell = {
   gridY: number // логическая строка (0..height-1), 0 = снизу
 }
 
-export type GridLayout = {
+export interface GridLayout {
   gridSize: GridSize
   cellSize: number
   gridPixelWidth: number

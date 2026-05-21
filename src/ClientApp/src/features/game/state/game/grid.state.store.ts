@@ -3,7 +3,7 @@ import { calculateGridLayout } from "../../grid-container/gridUtils"
 import type { GridLayout, GridSize } from "../../grid-container/gridUtils"
 import type { ViewportSize } from "../viewport/viewport.store"
 
-type GridState = {
+interface GridState {
   layout?: GridLayout
   updateLayout: (grid: GridSize, viewport: ViewportSize) => void
   reset: () => void

@@ -8,7 +8,7 @@ import { unitRegistry } from "../units/controller/UnitRegistry"
 import { EnemyAnimationResolver } from "../units/animation/EnemyAnimationResolver"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 
-type Props = {
+interface Props {
   arenaEnemyId: string
 }
 

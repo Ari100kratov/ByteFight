@@ -35,7 +35,13 @@ export function useArena(arenaId: string | undefined) {
   return useStoreQuery<ArenaResponse, ApiException>(
     {
       queryKey: queryKeys.arenas.byId(arenaId),
-      queryFn: () => apiFetch(`/arenas/${arenaId}`),
+      queryFn: () => {
+        if (!arenaId) {
+          throw new Error("Arena id is required")
+        }
+
+        return apiFetch(`/arenas/${arenaId}`)
+      },
       enabled: !!arenaId,
     },
     setArena,

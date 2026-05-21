@@ -103,7 +103,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientApp", "ClientApp", "{
 	ProjectSection(SolutionItems) = preProject
 		src\ClientApp\.prettierignore = src\ClientApp\.prettierignore
 		src\ClientApp\eslint.config.js = src\ClientApp\eslint.config.js
-		src\ClientApp\eslint.strict.config.js = src\ClientApp\eslint.strict.config.js
 		src\ClientApp\package.json = src\ClientApp\package.json
 		src\ClientApp\pnpm-lock.yaml = src\ClientApp\pnpm-lock.yaml
 		src\ClientApp\prettier.config.js = src\ClientApp\prettier.config.js

@@ -5,7 +5,7 @@ import { FloatingCombatTextKind } from "../state/ui/floating.combat.text.store"
 
 extend({ Text })
 
-type Props = {
+interface Props {
   value: number
   kind: FloatingCombatTextKind
   x: number
@@ -22,6 +22,16 @@ const easeOutBack = (t: number) => {
   return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2)
 }
 
+function getStableOffset(value: number, kind: FloatingCombatTextKind, x: number, y: number) {
+  const seed = `${String(value)}:${kind}:${String(x)}:${String(y)}`
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0
+  }
+
+  return ((Math.abs(hash) % 1000) / 1000 - 0.5) * 18
+}
+
 export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
   const [state, setState] = useState({
     offsetX: 0,
@@ -31,7 +41,7 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
   })
 
   const elapsedRef = useRef(0)
-  const startOffsetXRef = useRef((Math.random() - 0.5) * 18)
+  const startOffsetX = getStableOffset(value, kind, x, y)
 
   const isHealing = kind === FloatingCombatTextKind.Healing
 
@@ -49,7 +59,7 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
       const fadeT = Math.max(0, (t - 0.45) / 0.55)
 
       setState({
-        offsetX: startOffsetXRef.current * moveT,
+        offsetX: startOffsetX * moveT,
         offsetY: -48 * moveT,
         alpha: 1 - easeOutCubic(fadeT),
         scale: 0.65 + easeOutBack(popT) * 0.55,
@@ -66,11 +76,11 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
     return () => {
       ticker.remove(update)
     }
-  }, [onComplete])
+  }, [onComplete, startOffsetX])
 
   return (
     <pixiText
-      text={`${isHealing ? "+" : "-"}${value}`}
+      text={`${isHealing ? "+" : "-"}${String(value)}`}
       x={x + state.offsetX}
       y={y + state.offsetY}
       anchor={{ x: 0.5, y: 0.5 }}

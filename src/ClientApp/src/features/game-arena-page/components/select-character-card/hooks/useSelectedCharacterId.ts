@@ -15,40 +15,34 @@ export function useSelectedCharacterId<TCharacter extends CharacterListItem>({
   characters,
   sessionCharacterId,
 }: Params<TCharacter>) {
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | undefined>(() => {
+  const [manualSelectedCharacterId, setSelectedCharacterId] = useState<string | undefined>(() => {
     const savedCharacterId = localStorage.getItem(SELECTED_CHARACTER_STORAGE_KEY)
     return savedCharacterId ?? undefined
   })
 
-  // Персонаж из активной/завершенной сессии приоритетнее локального выбора
-  useEffect(() => {
-    if (!sessionCharacterId) return
-
-    setSelectedCharacterId((prev) => (prev === sessionCharacterId ? prev : sessionCharacterId))
-  }, [sessionCharacterId])
-
-  // Если список персонажей загружен и текущий выбор отсутствует в нем — очищаем
-  useEffect(() => {
-    if (!characters) return
-    if (!selectedCharacterId) return
-
-    const exists = characters.some((character) => character.id === selectedCharacterId)
-    if (!exists) {
-      setSelectedCharacterId(undefined)
-      localStorage.removeItem(SELECTED_CHARACTER_STORAGE_KEY)
+  const selectedCharacterId = (() => {
+    if (sessionCharacterId) {
+      return sessionCharacterId
     }
-  }, [characters, selectedCharacterId])
 
-  // Если персонаж не выбран вообще — автоматически берем первого из списка
-  useEffect(() => {
-    if (!characters?.length) return
-    if (selectedCharacterId) return
-    if (sessionCharacterId) return
+    if (!characters) {
+      return manualSelectedCharacterId
+    }
 
-    setSelectedCharacterId(characters[0].id)
-  }, [characters, selectedCharacterId, sessionCharacterId])
+    if (
+      manualSelectedCharacterId &&
+      characters.some((character) => character.id === manualSelectedCharacterId)
+    ) {
+      return manualSelectedCharacterId
+    }
 
-  // Сохраняем актуальный выбор
+    if (characters.length === 0) {
+      return undefined
+    }
+
+    return characters[0].id
+  })()
+
   useEffect(() => {
     if (!selectedCharacterId) {
       localStorage.removeItem(SELECTED_CHARACTER_STORAGE_KEY)

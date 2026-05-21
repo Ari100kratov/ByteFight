@@ -4,7 +4,7 @@ import { ActionType } from "@/shared/types/action"
 
 export type ArenaEnemy = ArenaEnemyResponse
 
-type ArenaEnemiesState = {
+interface ArenaEnemiesState {
   arenaEnemies: Record<string, ArenaEnemy>
   setArenaEnemies: (enemies: ArenaEnemyResponse[]) => void
   getArenaEnemy: (id: string) => ArenaEnemy | undefined

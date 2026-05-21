@@ -1,12 +1,12 @@
 import { create } from "zustand"
 import type { ArenaItemResponse } from "@/features/game-arena-page/hooks/useArena"
 
-type InitPayload = {
+interface InitPayload {
   arenaId: string
   items: ArenaItemResponse[]
 }
 
-type ArenaItemsState = {
+interface ArenaItemsState {
   arenaId?: string
   items: ArenaItemResponse[]
   removedPlacedItemIds: Set<string>

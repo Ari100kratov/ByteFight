@@ -18,6 +18,15 @@ import { useRenameCharacter } from "./hooks/useRenameCharacter"
 import { CharacterClassSelector } from "../character-class-selector/CharacterClassSelector"
 import { Group, Panel, Separator } from "@/components/ui/resizable"
 
+interface CharacterNameDraft {
+  characterId: string
+  value: string
+}
+
+function ignoreCharacterClassSelection() {
+  return undefined
+}
+
 function CharacterPageSkeleton() {
   return (
     <Group orientation="horizontal">
@@ -54,9 +63,8 @@ export default function CharacterPage() {
   } = useRenameCharacter()
   const { setName } = useBreadcrumbNames()
 
-  const [name, setNameValue] = useState("")
-  const [savedName, setSavedName] = useState("")
-  const [initializedCharacterId, setInitializedCharacterId] = useState<string>()
+  const [nameDraft, setNameDraft] = useState<CharacterNameDraft | null>(null)
+  const [savedNameDraft, setSavedNameDraft] = useState<CharacterNameDraft | null>(null)
 
   const { defaultLayout: rootDefaultLayout, onLayoutChanged: onRootLayoutChanged } =
     useDefaultLayout({ id: "character-layout" })
@@ -68,19 +76,26 @@ export default function CharacterPage() {
     if (!character) return
 
     setName(`/characters/${character.id}`, character.name)
+  }, [character, setName])
 
-    if (initializedCharacterId === character.id) {
-      return
-    }
-
-    setNameValue(character.name)
-    setSavedName(character.name)
-    setInitializedCharacterId(character.id)
-  }, [character, initializedCharacterId, setName])
-
+  const savedName = character
+    ? savedNameDraft?.characterId === character.id
+      ? savedNameDraft.value
+      : character.name
+    : ""
+  const name = character && nameDraft?.characterId === character.id ? nameDraft.value : savedName
   const trimmedName = name.trim()
-  const isNameChanged = trimmedName !== savedName
+  const isNameChanged = !!character && trimmedName !== savedName
   const canSaveName = isNameChanged && trimmedName.length > 0 && !isRenaming
+
+  function updateNameDraft(value: string) {
+    if (!character) return
+
+    setNameDraft({
+      characterId: character.id,
+      value,
+    })
+  }
 
   async function handleSaveName() {
     if (!character || !canSaveName) return
@@ -91,8 +106,13 @@ export default function CharacterPage() {
         name: trimmedName,
       })
 
-      setSavedName(trimmedName)
-      setNameValue(trimmedName)
+      const nextNameDraft = {
+        characterId: character.id,
+        value: trimmedName,
+      }
+
+      setSavedNameDraft(nextNameDraft)
+      setNameDraft(nextNameDraft)
       setName(`/characters/${character.id}`, trimmedName)
 
       toast.success("Имя персонажа сохранено")
@@ -135,7 +155,7 @@ export default function CharacterPage() {
                           value={name}
                           maxLength={32}
                           onChange={(e) => {
-                            setNameValue(e.target.value)
+                            updateNameDraft(e.target.value)
                           }}
                         />
                       </div>
@@ -150,7 +170,7 @@ export default function CharacterPage() {
                           size="icon"
                           disabled={isRenaming}
                           onClick={() => {
-                            setNameValue(savedName)
+                            updateNameDraft(savedName)
                           }}
                           title="Отменить изменения"
                         >
@@ -190,8 +210,8 @@ export default function CharacterPage() {
                     <CharacterClassSelector
                       selectedClassId={character.classId}
                       selectedSpecId={character.specId}
-                      onSelectClass={() => {}}
-                      onSelectSpec={() => {}}
+                      onSelectClass={ignoreCharacterClassSelection}
+                      onSelectSpec={ignoreCharacterClassSelection}
                     />
                   </div>
                 </Panel>

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-type ArenaItemSelectionState = {
+interface ArenaItemSelectionState {
   selectedPlacedItemId?: string
   position?: { x: number; y: number }
   select: (placedItemId: string, position: { x: number; y: number }) => void

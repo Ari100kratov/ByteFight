@@ -6,7 +6,7 @@ import { getBattleResultOverlayToneClass } from "./battle-result.styles"
 import type { BattleResultTone } from "./battle-result.types"
 import { Badge } from "@/components/ui/badge"
 
-type BattleResultOverlayProps = {
+interface BattleResultOverlayProps {
   title: string
   description: string
   tone: BattleResultTone
@@ -24,7 +24,7 @@ type BattleResultOverlayProps = {
   onClose: () => void
 }
 
-type ResultInfoBlockProps = {
+interface ResultInfoBlockProps {
   label: string
   value?: string | null
   meta?: string | null
@@ -107,7 +107,7 @@ export function BattleResultOverlay({
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-background/70 rounded-xl border p-3">
               <div className="text-muted-foreground text-xs">Ходов сыграно</div>
-              <div className="text-lg font-semibold">{totalTurns ?? "—"}</div>
+              <div className="text-lg font-semibold">{totalTurns}</div>
             </div>
 
             <div className="bg-background/70 rounded-xl border p-3">

@@ -47,7 +47,7 @@ export function UnitAnimatedSprite({
     spriteRef.current = sprite
     controller.sprite.attach(sprite)
     controller.notifyViewReady()
-    sprite.play() // ???
+    sprite.play()
   }
 
   const healthPriority = runtime.hp.max > 0 ? runtime.hp.current / runtime.hp.max : 0
@@ -65,6 +65,7 @@ export function UnitAnimatedSprite({
       />
       <pixiAnimatedSprite
         ref={handleRef}
+        // eslint-disable-next-line react-hooks/refs -- Pixi animation controller owns textures; replacing them from React causes visible flicker on animation changes.
         textures={spriteRef.current?.textures ?? [Texture.WHITE]}
         x={spriteX}
         y={spriteY}

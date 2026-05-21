@@ -4,7 +4,7 @@ import { cn } from "@/shared/lib/utils"
 import { getBattleResultToneClass } from "./battle-result.styles"
 import type { BattleResultTone } from "./battle-result.types"
 
-type BattleResultTriggerProps = {
+interface BattleResultTriggerProps {
   title: string
   tone: BattleResultTone
   Icon: LucideIcon

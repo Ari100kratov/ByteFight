@@ -5,8 +5,8 @@ import type { AbilityType } from "@/shared/types/ability"
 
 export type Enemy = EnemyResponse
 
-type EnemiesState = {
-  enemies: Record<string, Enemy>
+interface EnemiesState {
+  enemies: Partial<Record<string, Enemy>>
   setEnemies: (enemies: Enemy[]) => void
   getEnemy: (id?: string) => Enemy | undefined
   getSpriteAnimation: (
@@ -46,7 +46,7 @@ export const useEnemiesStore = create<EnemiesState>((set, get) => ({
     if (variants.length === 0) return undefined
 
     const randomIndex = Math.floor(Math.random() * variants.length)
-    return variants[randomIndex].spriteAnimation
+    return variants.at(randomIndex)?.spriteAnimation
   },
 
   getAbilitySpriteAnimation: (enemyId, abilityType, actionType) => {
@@ -64,7 +64,7 @@ export const useEnemiesStore = create<EnemiesState>((set, get) => ({
     if (variants.length === 0) return undefined
 
     const randomIndex = Math.floor(Math.random() * variants.length)
-    return variants[randomIndex].spriteAnimation
+    return variants.at(randomIndex)?.spriteAnimation
   },
 
   reset: () => {

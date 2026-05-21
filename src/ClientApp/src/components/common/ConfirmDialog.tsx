@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-type ConfirmDialogProps = {
+interface ConfirmDialogProps {
   trigger: React.ReactNode
   title: string
   description: string

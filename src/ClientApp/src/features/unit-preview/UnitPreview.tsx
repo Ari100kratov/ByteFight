@@ -6,7 +6,7 @@ import { CharacterStats } from "./components/CharacterStats"
 import { CharacterBasicAttacks } from "./components/CharacterBasicAttacks"
 import { CharacterAbilities } from "./components/CharacterAbilities"
 
-type Props = {
+interface Props {
   stats: StatDto[]
   actionAssets: ActionAssetDto[]
   abilities: AbilityDto[]

@@ -2,12 +2,16 @@ import { createContext, useState, useContext, type ReactNode } from "react"
 
 type DynamicNames = Record<string, string>
 
+function ignoreBreadcrumbName() {
+  return undefined
+}
+
 const BreadcrumbContext = createContext<{
   names: DynamicNames
   setName: (key: string, value: string) => void
 }>({
   names: {},
-  setName: () => {},
+  setName: ignoreBreadcrumbName,
 })
 
 export function useBreadcrumbNames() {

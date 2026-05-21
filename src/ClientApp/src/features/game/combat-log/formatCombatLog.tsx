@@ -13,7 +13,7 @@ interface Props {
 }
 
 function formatPosition(x: number, y: number) {
-  return `(${x}, ${y})`
+  return `(${String(x)}, ${String(y)})`
 }
 
 function formatAbilityName(name?: string | null) {
@@ -90,7 +90,7 @@ export function formatCombatLog({ entry }: Props) {
       <>
         <span className={actorClass}>{entry.actorName}</span>
         {" применяет"}
-        {abilityName || " способность"}
+        {abilityName !== "" ? abilityName : " способность"}
       </>
     )
   }

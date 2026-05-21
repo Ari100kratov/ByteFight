@@ -31,7 +31,7 @@ function formatCharacterBuild(entry: ChronicleNominationEntry) {
   return [entry.characterClassName, entry.characterSpecName].filter(Boolean).join(" · ")
 }
 
-type NominationEntryProps = {
+interface NominationEntryProps {
   entry: ChronicleNominationEntry
   metricUnit: string
   canOpenCharacter: boolean

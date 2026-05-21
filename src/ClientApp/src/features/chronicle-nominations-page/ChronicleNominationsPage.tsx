@@ -17,8 +17,7 @@ export default function ChronicleNominationsPage() {
     queryFn: () => getChronicleLeaderboards({ top: TOP_LIMIT }),
   })
   const { data: currentUser } = useCurrentUser()
-  const canOpenCharacters =
-    currentUser?.roles?.some((role) => role.toLowerCase() === "admin") ?? false
+  const canOpenCharacters = currentUser?.roles.some((role) => role.toLowerCase() === "admin") ?? false
   const visibleNominations = (data ?? []).filter((nomination) => nomination.entries.length > 0)
 
   return (

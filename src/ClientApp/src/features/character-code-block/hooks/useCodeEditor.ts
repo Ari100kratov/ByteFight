@@ -41,7 +41,7 @@ export function useCodeEditor(
     createCode({
       id: data.id,
       name: data.name,
-      sourceCode: data.sourceCode ?? "",
+      sourceCode: data.sourceCode,
       status: ChangeStatus.Created,
     })
   }, [templateQuery, createCode])

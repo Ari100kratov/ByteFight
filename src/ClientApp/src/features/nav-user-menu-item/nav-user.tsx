@@ -44,7 +44,7 @@ export function NavUser() {
       </div>
     )
 
-  const initials = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`.toUpperCase()
+  const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
 
   return (
     <SidebarMenu>

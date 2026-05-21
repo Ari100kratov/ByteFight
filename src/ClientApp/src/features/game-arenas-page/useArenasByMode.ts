@@ -28,7 +28,13 @@ export interface ArenaResponse {
 export function useArenasByMode(mode: string | undefined) {
   return useQuery<ArenaResponse[], ApiException>({
     queryKey: queryKeys.arenas.byMode(mode),
-    queryFn: () => apiFetch(`/arenas?mode=${mode}`),
+    queryFn: () => {
+      if (!mode) {
+        throw new Error("Game mode is required")
+      }
+
+      return apiFetch(`/arenas?mode=${mode}`)
+    },
     enabled: !!mode,
   })
 }

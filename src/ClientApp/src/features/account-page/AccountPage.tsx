@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,6 +24,23 @@ type ProfileErrors = Partial<Record<"email" | "firstName" | "lastName", string>>
 
 type PasswordErrors = Partial<Record<"currentPassword" | "newPassword" | "confirmPassword", string>>
 
+interface ProfileForm {
+  email: string
+  firstName: string
+  lastName: string
+}
+
+interface ProfileDraft {
+  userId: string
+  form: ProfileForm
+}
+
+const EMPTY_PROFILE_FORM: ProfileForm = {
+  email: "",
+  firstName: "",
+  lastName: "",
+}
+
 export default function AccountPage() {
   const { data: user } = useCurrentUser()
   const updateProfile = useUpdateProfile()
@@ -32,11 +49,7 @@ export default function AccountPage() {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const [profileForm, setProfileForm] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-  })
+  const [profileDraft, setProfileDraft] = useState<ProfileDraft | null>(null)
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -47,15 +60,25 @@ export default function AccountPage() {
   const [profileErrors, setProfileErrors] = useState<ProfileErrors>({})
   const [passwordErrors, setPasswordErrors] = useState<PasswordErrors>({})
 
-  useEffect(() => {
-    if (!user) return
-
-    setProfileForm({
+  const loadedProfileForm: ProfileForm = user
+    ? {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+    }
+    : EMPTY_PROFILE_FORM
+
+  const profileForm =
+    user && profileDraft?.userId === user.id ? profileDraft.form : loadedProfileForm
+
+  function updateProfileForm(form: ProfileForm) {
+    if (!user) return
+
+    setProfileDraft({
+      userId: user.id,
+      form,
     })
-  }, [user])
+  }
 
   function validateProfile(): ProfileErrors {
     const errors: ProfileErrors = {}
@@ -63,19 +86,19 @@ export default function AccountPage() {
     if (!profileForm.firstName.trim()) {
       errors.firstName = "Введите имя"
     } else if (profileForm.firstName.length > MAX_FIRST_NAME_LENGTH) {
-      errors.firstName = `Имя должно быть не длиннее ${MAX_FIRST_NAME_LENGTH} символов`
+      errors.firstName = `Имя должно быть не длиннее ${String(MAX_FIRST_NAME_LENGTH)} символов`
     }
 
     if (!profileForm.lastName.trim()) {
       errors.lastName = "Введите фамилию"
     } else if (profileForm.lastName.length > MAX_LAST_NAME_LENGTH) {
-      errors.lastName = `Фамилия должна быть не длиннее ${MAX_LAST_NAME_LENGTH} символов`
+      errors.lastName = `Фамилия должна быть не длиннее ${String(MAX_LAST_NAME_LENGTH)} символов`
     }
 
     if (!profileForm.email.trim()) {
       errors.email = "Введите email"
     } else if (profileForm.email.length > MAX_EMAIL_LENGTH) {
-      errors.email = `Email должен быть не длиннее ${MAX_EMAIL_LENGTH} символов`
+      errors.email = `Email должен быть не длиннее ${String(MAX_EMAIL_LENGTH)} символов`
     } else if (!EMAIL_REGEX.test(profileForm.email)) {
       errors.email = "Введите корректный email"
     }
@@ -93,9 +116,9 @@ export default function AccountPage() {
     if (!passwordForm.newPassword) {
       errors.newPassword = "Введите новый пароль"
     } else if (passwordForm.newPassword.length < MIN_PASSWORD_LENGTH) {
-      errors.newPassword = `Пароль должен быть не короче ${MIN_PASSWORD_LENGTH} символов`
+      errors.newPassword = `Пароль должен быть не короче ${String(MIN_PASSWORD_LENGTH)} символов`
     } else if (passwordForm.newPassword.length > MAX_PASSWORD_LENGTH) {
-      errors.newPassword = `Пароль должен быть не длиннее ${MAX_PASSWORD_LENGTH} символов`
+      errors.newPassword = `Пароль должен быть не длиннее ${String(MAX_PASSWORD_LENGTH)} символов`
     }
 
     if (!passwordForm.confirmPassword) {
@@ -176,7 +199,7 @@ export default function AccountPage() {
                 maxLength={MAX_FIRST_NAME_LENGTH + 1}
                 aria-invalid={!!profileErrors.firstName}
                 onChange={(e) => {
-                  setProfileForm({
+                  updateProfileForm({
                     ...profileForm,
                     firstName: e.target.value,
                   })
@@ -199,7 +222,7 @@ export default function AccountPage() {
                 maxLength={MAX_LAST_NAME_LENGTH + 1}
                 aria-invalid={!!profileErrors.lastName}
                 onChange={(e) => {
-                  setProfileForm({
+                  updateProfileForm({
                     ...profileForm,
                     lastName: e.target.value,
                   })
@@ -222,7 +245,7 @@ export default function AccountPage() {
                 maxLength={MAX_EMAIL_LENGTH + 1}
                 aria-invalid={!!profileErrors.email}
                 onChange={(e) => {
-                  setProfileForm({
+                  updateProfileForm({
                     ...profileForm,
                     email: e.target.value,
                   })

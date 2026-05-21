@@ -58,7 +58,7 @@ function pickRandom<T>(arr: T[], seed?: string): T {
   return arr[index]
 }
 
-type MapBattleResultMetaParams = {
+interface MapBattleResultMetaParams {
   status?: GameStatus
   outcome?: GameOutcome | null
   sessionId?: string
@@ -71,12 +71,17 @@ export function mapBattleResultMeta({
   sessionId,
   errorMessage,
 }: MapBattleResultMetaParams): BattleResultMeta {
+  const trimmedErrorMessage = errorMessage?.trim()
+
   switch (status) {
     case GameStatus.Failed:
       return {
         outcome: undefined,
         title: "Бой завершился с ошибкой",
-        description: errorMessage?.trim() || "Во время выполнения боя произошла ошибка.",
+        description:
+          trimmedErrorMessage && trimmedErrorMessage.length > 0
+            ? trimmedErrorMessage
+            : "Во время выполнения боя произошла ошибка.",
         tone: "danger",
         icon: AlertTriangle,
       }
@@ -92,7 +97,7 @@ export function mapBattleResultMeta({
 
     case GameStatus.Completed: {
       const description =
-        outcome && DESCRIPTIONS[outcome]
+        outcome
           ? pickRandom(DESCRIPTIONS[outcome], sessionId)
           : "Бой завершен, но итоговый результат не был определен."
 
