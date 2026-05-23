@@ -17,7 +17,7 @@ export function BattleResultTrigger({ title, tone, Icon, onClick }: BattleResult
       asChild
       variant="outline"
       className={cn(
-        "cursor-pointer px-3 py-1.5 text-sm font-medium select-none",
+        "battle-result-trigger cursor-pointer px-3 py-1.5 text-sm font-medium select-none",
         "max-w-[240px]",
         "transition-colors",
         "[&>svg]:size-4",

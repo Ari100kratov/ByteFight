@@ -6,6 +6,8 @@ import { UnitAnimatedSprite } from "../shared/unit-animated-sprite/UnitAnimatedS
 import { UnitController } from "../units/controller/UnitController"
 import { unitRegistry } from "../units/controller/UnitRegistry"
 import { EnemyAnimationResolver } from "../units/animation/EnemyAnimationResolver"
+import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
+import { useCharacterSelectionStore } from "../state/ui/character.selection.store"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 
 interface Props {
@@ -20,6 +22,8 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
     arenaEnemyId ? s.arenaEnemies[arenaEnemyId] : undefined,
   )
   const selectEnemy = useEnemySelectionStore((s) => s.selectEnemy)
+  const clearSelection = useEnemySelectionStore((s) => s.clearSelection)
+  const selectedArenaEnemyId = useEnemySelectionStore((s) => s.selectedArenaEnemyId)
 
   const fallbackAnimation = useEnemiesStore((s) =>
     s.getSpriteAnimation(arenaEnemy?.enemyId, runtime?.action),
@@ -51,7 +55,15 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
       spriteAnimation={spriteAnimation}
       controller={controller}
       clickable
+      selected={selectedArenaEnemyId === arenaEnemyId}
       onClick={(position) => {
+        if (useEnemySelectionStore.getState().selectedArenaEnemyId === arenaEnemyId) {
+          clearSelection()
+          return
+        }
+
+        useCharacterSelectionStore.getState().clearSelection()
+        useArenaItemSelectionStore.getState().clearSelection()
         selectEnemy(arenaEnemyId, position)
       }}
     />

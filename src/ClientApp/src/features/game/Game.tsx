@@ -9,6 +9,9 @@ import { FloatingCombatTextLayer } from "./floating-combat-text/FloatingCombatTe
 import { EnemyInfoPopover } from "./enemy-info-popover/EnemyInfoPopover"
 import { ArenaItems } from "./arena-items/ArenaItems"
 import { ArenaItemInfoPopover } from "./arena-items/ArenaItemInfoPopover"
+import { CharacterInfoPopover } from "./character-info-popover/CharacterInfoPopover"
+import { CombatEffectsLayer } from "./combat-effects/CombatEffectsLayer"
+import { UnitInteractionHighlightsLayer } from "./unit-interaction-highlights/UnitInteractionHighlightsLayer"
 
 extend({ Container })
 
@@ -22,13 +25,16 @@ export function Game() {
 
         <pixiContainer sortableChildren={true}>
           <ArenaItems />
+          <UnitInteractionHighlightsLayer />
           <CharacterAnimatedSprite />
           <ArenaEnemies />
+          <CombatEffectsLayer />
           <FloatingCombatTextLayer />
         </pixiContainer>
       </Application>
 
       <EnemyInfoPopover />
+      <CharacterInfoPopover />
       <ArenaItemInfoPopover />
     </div>
   )

@@ -1,13 +1,14 @@
-import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
 import { useArenaEnemiesStore } from "../state/data/arena-enemies.store"
 import { useEnemiesStore } from "../state/data/enemies.data.store"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 import { UnitPreview } from "@/features/unit-preview/UnitPreview"
 import { Skull } from "lucide-react"
+import { ArenaInfoPopover } from "../shared/info-popover/ArenaInfoPopover"
 
 export function EnemyInfoPopover() {
   const selectedArenaEnemyId = useEnemySelectionStore((s) => s.selectedArenaEnemyId)
   const position = useEnemySelectionStore((s) => s.position)
+  const lastPosition = useEnemySelectionStore((s) => s.lastPosition)
   const clearSelection = useEnemySelectionStore((s) => s.clearSelection)
 
   const arenaEnemy = useArenaEnemiesStore((s) =>
@@ -19,53 +20,33 @@ export function EnemyInfoPopover() {
   const open = Boolean(enemy && position)
 
   return (
-    <Popover
+    <ArenaInfoPopover
       open={open}
-      onOpenChange={(value) => {
-        if (!value) {
-          clearSelection()
-        }
-      }}
+      position={position}
+      lastPosition={lastPosition}
+      contentClassName="w-[clamp(360px,42vw,560px)] max-w-[calc(100vw-2rem)]"
+      onClose={clearSelection}
     >
-      {position && (
-        <PopoverAnchor asChild>
-          <div
-            className="pointer-events-none absolute size-1"
-            style={{
-              left: position.x,
-              top: position.y,
-            }}
-          />
-        </PopoverAnchor>
-      )}
-
-      <PopoverContent
-        side="right"
-        align="start"
-        sideOffset={12}
-        className="w-[clamp(360px,42vw,560px)] max-w-[calc(100vw-2rem)]"
-      >
-        {enemy && (
-          <div className="flex flex-col gap-4">
-            <div>
-              <div className="flex items-center gap-2 text-base leading-none font-semibold">
-                <Skull className="text-muted-foreground" />
-                {enemy.name}
-              </div>
-
-              {enemy.description && (
-                <p className="text-muted-foreground mt-2 text-sm">{enemy.description}</p>
-              )}
+      {enemy && (
+        <div className="flex flex-col gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-base leading-none font-semibold">
+              <Skull className="text-muted-foreground" />
+              {enemy.name}
             </div>
 
-            <UnitPreview
-              stats={enemy.stats}
-              actionAssets={enemy.actionAssets}
-              abilities={enemy.abilities}
-            />
+            {enemy.description && (
+              <p className="text-muted-foreground mt-2 text-sm">{enemy.description}</p>
+            )}
           </div>
-        )}
-      </PopoverContent>
-    </Popover>
+
+          <UnitPreview
+            stats={enemy.stats}
+            actionAssets={enemy.actionAssets}
+            abilities={enemy.abilities}
+          />
+        </div>
+      )}
+    </ArenaInfoPopover>
   )
 }

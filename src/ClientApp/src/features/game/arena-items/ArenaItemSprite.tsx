@@ -1,12 +1,14 @@
 import { extend, useTick } from "@pixi/react"
-import { AnimatedSprite, Sprite, type Texture } from "pixi.js"
+import { AnimatedSprite, Container, Graphics, Sprite, type Texture } from "pixi.js"
 import { useEffect, useRef, useState } from "react"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useTexturesStore } from "../state/data/textures.data.store"
 import type { ArenaItemResponse } from "@/features/game-arena-page/hooks/useArena"
 import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
+import { useCharacterSelectionStore } from "../state/ui/character.selection.store"
+import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 
-extend({ Sprite, AnimatedSprite })
+extend({ Sprite, AnimatedSprite, Container, Graphics })
 
 interface Props {
   item: ArenaItemResponse
@@ -30,20 +32,90 @@ function hashToPhase(value: string) {
   return Math.abs(hash) % 360
 }
 
+interface ItemInteractionHighlightProps {
+  x: number
+  y: number
+  cellWidth: number
+  intensity: number
+  isSelected: boolean
+}
+
+function ItemInteractionHighlight({
+  x,
+  y,
+  cellWidth,
+  intensity,
+  isSelected,
+}: ItemInteractionHighlightProps) {
+  const [pulse, setPulse] = useState(0)
+
+  useTick((ticker) => {
+    setPulse((value) => (value + ticker.deltaMS * 0.005) % (Math.PI * 2))
+  })
+
+  if (intensity <= 0.02 && !isSelected) return null
+
+  const pulseAlpha = (Math.sin(pulse) + 1) / 2
+  const tone = isSelected ? 0xfacc15 : 0x7dd3fc
+  const fillTone = isSelected ? 0xfbbf24 : 0x38bdf8
+  const alpha = Math.max(intensity, isSelected ? 0.8 : 0)
+
+  return (
+    <pixiGraphics
+      draw={(g) => {
+        g.clear()
+        g.ellipse(x, y - 4, cellWidth * 0.28, cellWidth * 0.09).fill({
+          color: fillTone,
+          alpha: 0.1 * alpha,
+        })
+        g.setStrokeStyle({
+          width: isSelected ? 2 : 1.5,
+          color: tone,
+          alpha: (0.34 + pulseAlpha * 0.24) * alpha,
+        })
+        g.ellipse(x, y - 4, cellWidth * 0.34, cellWidth * 0.12)
+        g.stroke()
+
+        for (let i = 0; i < 4; i++) {
+          const angle = pulse + i * (Math.PI / 2)
+          const particleX = x + Math.cos(angle) * cellWidth * 0.23
+          const particleY = y - 24 + Math.sin(angle) * cellWidth * 0.08
+
+          g.circle(particleX, particleY, 1.6).fill({
+            color: 0xfef3c7,
+            alpha: (0.22 + pulseAlpha * 0.42) * alpha,
+          })
+        }
+      }}
+    />
+  )
+}
+
 export function ArenaItemSprite({ item }: Props) {
   const layout = useGridStore((s) => s.layout)
   const selectItem = useArenaItemSelectionStore((s) => s.select)
+  const clearSelection = useArenaItemSelectionStore((s) => s.clearSelection)
+  const selectedPlacedItemId = useArenaItemSelectionStore((s) => s.selectedPlacedItemId)
 
   const spriteKey = `${item.sprite.url}:${String(item.sprite.frameCount)}`
   const [textureState, setTextureState] = useState<ItemTextureState | null>(null)
   const [hoverOffset, setHoverOffset] = useState(0)
+  const [hoverIntensity, setHoverIntensity] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
   const timeRef = useRef((hashToPhase(item.placedItemId) / 180) * Math.PI)
   const texture = textureState?.spriteKey === spriteKey ? textureState.texture : null
   const textures = textureState?.spriteKey === spriteKey ? textureState.textures : []
+  const isSelected = selectedPlacedItemId === item.placedItemId
 
   useTick((ticker) => {
     timeRef.current += ticker.deltaMS * HOVER_SPEED
     setHoverOffset(Math.sin(timeRef.current) * HOVER_AMPLITUDE)
+    setHoverIntensity((value) => {
+      const target = isHovered || isSelected ? 1 : 0
+      const next = value + (target - value) * Math.min(1, ticker.deltaMS / 120)
+
+      return Math.abs(next - value) < 0.01 ? target : next
+    })
   })
 
   useEffect(() => {
@@ -98,51 +170,86 @@ export function ArenaItemSprite({ item }: Props) {
   const zIndex = cell.y + cell.height - 50
 
   const scale = {
-    x: item.sprite.scale.x,
-    y: item.sprite.scale.y,
+    x: item.sprite.scale.x * (1 + hoverIntensity * 0.08),
+    y: item.sprite.scale.y * (1 + hoverIntensity * 0.08),
   }
 
   const handleClick = () => {
+    if (useArenaItemSelectionStore.getState().selectedPlacedItemId === item.placedItemId) {
+      clearSelection()
+      return
+    }
+
+    useCharacterSelectionStore.getState().clearSelection()
+    useEnemySelectionStore.getState().clearSelection()
     selectItem(item.placedItemId, {
       x,
       y: y - 24,
     })
   }
 
+  const handlePointerOver = () => {
+    setIsHovered(true)
+  }
+
+  const handlePointerOut = () => {
+    setIsHovered(false)
+  }
+
   if (item.sprite.frameCount <= 1) {
     if (!texture) return null
 
     return (
-      <pixiSprite
-        texture={texture}
-        x={x}
-        y={y}
-        zIndex={zIndex}
-        anchor={{ x: 0.5, y: 1 }}
-        scale={scale}
-        eventMode="static"
-        cursor="pointer"
-        onPointerTap={handleClick}
-      />
+      <pixiContainer zIndex={zIndex + hoverIntensity * 12}>
+        <ItemInteractionHighlight
+          x={x}
+          y={baseY}
+          cellWidth={cell.width}
+          intensity={hoverIntensity}
+          isSelected={isSelected}
+        />
+        <pixiSprite
+          texture={texture}
+          x={x}
+          y={y}
+          anchor={{ x: 0.5, y: 1 }}
+          scale={scale}
+          eventMode="static"
+          cursor="pointer"
+          onPointerTap={handleClick}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+        />
+      </pixiContainer>
     )
   }
 
   if (!textures.length) return null
 
   return (
-    <pixiAnimatedSprite
-      textures={textures}
-      x={x}
-      y={y}
-      zIndex={zIndex}
-      anchor={{ x: 0.5, y: 1 }}
-      scale={scale}
-      animationSpeed={item.sprite.animationSpeed}
-      autoPlay
-      loop
-      eventMode="static"
-      cursor="pointer"
-      onPointerTap={handleClick}
-    />
+    <pixiContainer zIndex={zIndex + hoverIntensity * 12}>
+      <ItemInteractionHighlight
+        x={x}
+        y={baseY}
+        cellWidth={cell.width}
+        intensity={hoverIntensity}
+        isSelected={isSelected}
+      />
+      <pixiAnimatedSprite
+        textures={textures}
+        x={x}
+        y={y}
+        anchor={{ x: 0.5, y: 1 }}
+        scale={scale}
+        animationSpeed={item.sprite.animationSpeed}
+        autoPlay
+        loop
+        eventMode="static"
+        cursor="pointer"
+        onPointerTap={handleClick}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      />
+    </pixiContainer>
   )
 }

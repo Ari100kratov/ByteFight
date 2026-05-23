@@ -11,6 +11,10 @@ import {
   FloatingCombatTextKind,
   useFloatingCombatTextStore,
 } from "../../state/ui/floating.combat.text.store"
+import {
+  CombatVisualEffectKind,
+  useCombatEffectsStore,
+} from "../../state/ui/combat.effects.store"
 
 export class UnitController {
   sprite: UnitSprite
@@ -91,6 +95,9 @@ export class UnitController {
         useFloatingCombatTextStore
           .getState()
           .add(entry.targetId, entry.value, FloatingCombatTextKind.Damage)
+        useCombatEffectsStore
+          .getState()
+          .addUnitEffect(entry.targetId, CombatVisualEffectKind.DamageImpact, entry.id)
 
         return target.playHurt(entry.targetHp)
       }
@@ -99,6 +106,9 @@ export class UnitController {
         useFloatingCombatTextStore
           .getState()
           .add(entry.targetId, entry.value, FloatingCombatTextKind.Healing)
+        useCombatEffectsStore
+          .getState()
+          .addUnitEffect(entry.targetId, CombatVisualEffectKind.HealingPulse, entry.id)
 
         target.updateRuntime({ hp: entry.targetHp })
       }

@@ -53,7 +53,7 @@ export class UnitSprite {
     sprite.animationSpeed = animation.animationSpeed
     sprite.loop = loop
 
-    this.updateRuntime({ action, spriteAnimation: animation })
+    this.updateRuntime({ action, spriteAnimation: animation, textureHeight: textures[0]?.height })
 
     sprite.gotoAndStop(0)
 

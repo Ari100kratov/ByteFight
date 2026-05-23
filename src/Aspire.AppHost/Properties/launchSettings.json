@@ -9,6 +9,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",
+        "DCP_IP_VERSION_PREFERENCE": "IPv4",
         "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21034",
         "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22017"
       }
@@ -21,6 +22,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",
+        "DCP_IP_VERSION_PREFERENCE": "IPv4",
         "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19291",
         "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20183"
       }

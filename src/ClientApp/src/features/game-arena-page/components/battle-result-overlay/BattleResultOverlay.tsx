@@ -1,10 +1,11 @@
 import type { LucideIcon } from "lucide-react"
 import { X } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { cn } from "@/shared/lib/utils"
+import { BattleResultCanvasEffects } from "./BattleResultCanvasEffects"
 import { formatBattleDuration } from "./helpers/formatBattleDuration"
 import { getBattleResultOverlayToneClass } from "./battle-result.styles"
 import type { BattleResultTone } from "./battle-result.types"
-import { Badge } from "@/components/ui/badge"
 
 interface BattleResultOverlayProps {
   title: string
@@ -29,6 +30,14 @@ interface ResultInfoBlockProps {
   value?: string | null
   meta?: string | null
 }
+
+const RESULT_SPARKLES = [
+  { left: "13%", top: "22%", delay: "120ms" },
+  { left: "86%", top: "24%", delay: "280ms" },
+  { left: "79%", top: "74%", delay: "40ms" },
+  { left: "18%", top: "72%", delay: "420ms" },
+  { left: "50%", top: "12%", delay: "520ms" },
+] as const
 
 function ResultInfoBlock({ label, value, meta }: ResultInfoBlockProps) {
   if (!value) {
@@ -68,31 +77,55 @@ export function BattleResultOverlay({
   const characterMeta = [characterClassName, characterSpecName].filter(Boolean).join(" · ")
 
   return (
-    <div className="bg-background/65 absolute inset-0 z-20 flex items-center justify-center p-4 backdrop-blur-[3px]">
+    <div
+      className="battle-result-backdrop bg-background/65 absolute inset-0 z-20 flex items-center justify-center p-4 backdrop-blur-[3px]"
+      data-tone={tone}
+    >
+      <BattleResultCanvasEffects tone={tone} />
+
       <div
+        data-tone={tone}
         className={cn(
-          "relative w-full max-w-md rounded-2xl border shadow-xl backdrop-blur-md",
+          "battle-result-card text-foreground relative w-full max-w-md overflow-hidden rounded-2xl border shadow-xl backdrop-blur-md",
           getBattleResultOverlayToneClass(tone),
         )}
       >
+        <div className="battle-result-light" aria-hidden="true" />
+        <div className="battle-result-sweep" aria-hidden="true" />
+        <div className="battle-result-sparkles" aria-hidden="true">
+          {RESULT_SPARKLES.map((sparkle) => (
+            <span
+              key={`${sparkle.left}-${sparkle.top}`}
+              className="battle-result-sparkle"
+              style={{
+                left: sparkle.left,
+                top: sparkle.top,
+                animationDelay: sparkle.delay,
+              }}
+            />
+          ))}
+        </div>
+
         <button
           type="button"
           onClick={onClose}
-          className="text-muted-foreground hover:text-foreground absolute top-3 right-3 transition-colors"
+          className="text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 transition-colors"
           aria-label="Закрыть результат боя"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="flex flex-col gap-4 p-6">
+        <div className="relative z-10 flex flex-col gap-4 p-6">
           <div className="flex items-center gap-3">
-            <div className="bg-background/80 flex h-12 w-12 items-center justify-center rounded-full border">
+            <div className="battle-result-icon bg-background/80 flex h-12 w-12 items-center justify-center rounded-full border">
               <Icon className="h-6 w-6" />
             </div>
 
             <div>
-              <div className="text-muted-foreground text-xs tracking-wide uppercase">Итоги боя</div>
-              <div className="text-2xl font-semibold">{title}</div>
+              <div className="text-muted-foreground text-xs tracking-wide uppercase">
+                Итоги боя
+              </div>
+              <div className="battle-result-title text-2xl font-semibold">{title}</div>
             </div>
           </div>
 

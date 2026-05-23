@@ -118,3 +118,199 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes battle-result-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes battle-result-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes battle-result-sweep {
+  from {
+    transform: translateX(-120%) rotate(12deg);
+  }
+  to {
+    transform: translateX(160%) rotate(12deg);
+  }
+}
+
+@keyframes battle-result-icon-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 9px color-mix(in oklch, currentColor 0%, transparent);
+  }
+}
+
+@keyframes battle-result-sparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.5);
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(1);
+  }
+}
+
+@keyframes battle-result-trigger-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 18%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklch, currentColor 0%, transparent);
+  }
+}
+
+.battle-result-backdrop {
+  animation: battle-result-backdrop-enter 180ms ease-out both;
+}
+
+.battle-result-canvas-effects {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.battle-result-card {
+  --battle-result-tone: var(--foreground);
+  --battle-result-title: var(--foreground);
+  --battle-result-soft: rgb(255 255 255 / 24%);
+
+  z-index: 3;
+  animation: battle-result-card-enter 240ms cubic-bezier(0.2, 0.9, 0.2, 1.08) both;
+}
+
+.battle-result-card[data-tone="success"] {
+  --battle-result-tone: oklch(0.55 0.16 154);
+  --battle-result-title: oklch(0.44 0.16 154);
+  --battle-result-soft: oklch(0.7 0.15 154 / 24%);
+}
+
+.battle-result-card[data-tone="danger"] {
+  --battle-result-tone: oklch(0.58 0.21 22);
+  --battle-result-title: oklch(0.51 0.22 22);
+  --battle-result-soft: oklch(0.66 0.2 22 / 22%);
+}
+
+.battle-result-card[data-tone="warning"] {
+  --battle-result-tone: oklch(0.62 0.16 76);
+  --battle-result-title: oklch(0.5 0.15 76);
+  --battle-result-soft: oklch(0.72 0.16 76 / 24%);
+}
+
+.dark .battle-result-card[data-tone="success"] {
+  --battle-result-title: oklch(0.78 0.16 154);
+}
+
+.dark .battle-result-card[data-tone="danger"] {
+  --battle-result-title: oklch(0.74 0.19 22);
+}
+
+.dark .battle-result-card[data-tone="warning"] {
+  --battle-result-title: oklch(0.8 0.16 76);
+}
+
+.battle-result-card::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 26%);
+}
+
+.battle-result-light {
+  position: absolute;
+  inset: -35%;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 22%, rgb(255 255 255 / 28%), transparent 42%);
+  opacity: 0.55;
+}
+
+.battle-result-sweep {
+  position: absolute;
+  top: -35%;
+  bottom: -35%;
+  left: 0;
+  width: 36%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 26%), transparent);
+  opacity: 0.5;
+  animation: battle-result-sweep 1100ms ease-out 160ms both;
+}
+
+.battle-result-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.battle-result-sparkle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--battle-result-tone);
+  opacity: 0;
+  box-shadow: 0 0 12px var(--battle-result-soft);
+  animation: battle-result-sparkle 1150ms ease-out both;
+}
+
+.battle-result-title {
+  display: inline-block;
+  color: var(--battle-result-title);
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 58%),
+    0 0 14px color-mix(in oklch, var(--battle-result-title) 22%, transparent);
+}
+
+.dark .battle-result-title {
+  text-shadow:
+    0 1px 0 rgb(0 0 0 / 55%),
+    0 0 14px color-mix(in oklch, var(--battle-result-title) 28%, transparent);
+}
+
+.battle-result-icon {
+  color: var(--battle-result-tone);
+  border-color: color-mix(in oklch, var(--battle-result-tone) 34%, transparent);
+  animation: battle-result-icon-pulse 1400ms ease-out 260ms 2;
+}
+
+.battle-result-trigger {
+  animation: battle-result-trigger-glow 1600ms ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-result-backdrop,
+  .battle-result-card,
+  .battle-result-sweep,
+  .battle-result-sparkle,
+  .battle-result-icon,
+  .battle-result-trigger {
+    animation: none;
+  }
+}

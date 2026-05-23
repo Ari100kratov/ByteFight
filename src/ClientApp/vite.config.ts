@@ -3,17 +3,23 @@ import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 
+const localBackendTarget = "http://127.0.0.1:5000"
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    hmr: {
+      host: "127.0.0.1",
+      protocol: "ws",
+    },
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: localBackendTarget,
         changeOrigin: true,
         secure: false,
       },
       "/game-runtime-hub": {
-        target: "http://localhost:5000",
+        target: localBackendTarget,
         ws: true,
         changeOrigin: true,
         secure: false,

@@ -4,6 +4,10 @@ import {
   useFloatingCombatTextStore,
 } from "../state/ui/floating.combat.text.store"
 import {
+  CombatVisualEffectKind,
+  useCombatEffectsStore,
+} from "../state/ui/combat.effects.store"
+import {
   isAbilityUsed,
   isDeath,
   isItemPickedUp,
@@ -23,6 +27,12 @@ export async function playRuntimeLog(entry: GameActionLogEntry) {
     const actor = unitRegistry.get(entry.actorId)
 
     useArenaItemsStateStore.getState().remove(entry.placedItemId)
+    useCombatEffectsStore
+      .getState()
+      .addCellEffect(entry.position, CombatVisualEffectKind.ItemPickup, entry.id)
+    useCombatEffectsStore
+      .getState()
+      .addUnitEffect(entry.actorId, CombatVisualEffectKind.HealingPulse, entry.id)
 
     useFloatingCombatTextStore
       .getState()

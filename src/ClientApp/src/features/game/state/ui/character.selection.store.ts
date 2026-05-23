@@ -1,47 +1,47 @@
 import { create } from "zustand"
 import type { InfoPopoverPosition } from "../../types/InfoPopoverPosition"
 
-interface ArenaItemSelectionState {
-  selectedPlacedItemId?: string
+interface CharacterSelectionState {
+  selectedCharacterId?: string
   position?: InfoPopoverPosition
   lastPosition?: InfoPopoverPosition
-  lastDismissedPlacedItemId?: string
+  lastDismissedCharacterId?: string
   lastDismissedAt?: number
-  select: (placedItemId: string, position: InfoPopoverPosition) => void
+  selectCharacter: (characterId: string, position: InfoPopoverPosition) => void
   clearSelection: () => void
   reset: () => void
 }
 
 const DISMISS_REOPEN_SUPPRESSION_MS = 300
 
-export const useArenaItemSelectionStore = create<ArenaItemSelectionState>((set) => ({
-  selectedPlacedItemId: undefined,
+export const useCharacterSelectionStore = create<CharacterSelectionState>((set) => ({
+  selectedCharacterId: undefined,
   position: undefined,
   lastPosition: undefined,
-  lastDismissedPlacedItemId: undefined,
+  lastDismissedCharacterId: undefined,
   lastDismissedAt: undefined,
 
-  select: (selectedPlacedItemId, position) => {
+  selectCharacter: (selectedCharacterId, position) => {
     set((state) => {
       const dismissedAt = state.lastDismissedAt ?? 0
-      const isRecentlyDismissedSameItem =
-        state.lastDismissedPlacedItemId === selectedPlacedItemId &&
+      const isRecentlyDismissedSameCharacter =
+        state.lastDismissedCharacterId === selectedCharacterId &&
         Date.now() - dismissedAt < DISMISS_REOPEN_SUPPRESSION_MS
 
-      if (isRecentlyDismissedSameItem) {
+      if (isRecentlyDismissedSameCharacter) {
         return {
-          selectedPlacedItemId: undefined,
+          selectedCharacterId: undefined,
           position: undefined,
-          lastDismissedPlacedItemId: undefined,
+          lastDismissedCharacterId: undefined,
           lastDismissedAt: undefined,
         }
       }
 
       return {
-        selectedPlacedItemId,
+        selectedCharacterId,
         position,
         lastPosition: position,
-        lastDismissedPlacedItemId: undefined,
+        lastDismissedCharacterId: undefined,
         lastDismissedAt: undefined,
       }
     })
@@ -49,20 +49,20 @@ export const useArenaItemSelectionStore = create<ArenaItemSelectionState>((set) 
 
   clearSelection: () => {
     set((state) => ({
-      selectedPlacedItemId: undefined,
+      selectedCharacterId: undefined,
       position: undefined,
       lastPosition: state.position ?? state.lastPosition,
-      lastDismissedPlacedItemId: state.selectedPlacedItemId,
-      lastDismissedAt: state.selectedPlacedItemId ? Date.now() : undefined,
+      lastDismissedCharacterId: state.selectedCharacterId,
+      lastDismissedAt: state.selectedCharacterId ? Date.now() : undefined,
     }))
   },
 
   reset: () => {
     set({
-      selectedPlacedItemId: undefined,
+      selectedCharacterId: undefined,
       position: undefined,
       lastPosition: undefined,
-      lastDismissedPlacedItemId: undefined,
+      lastDismissedCharacterId: undefined,
       lastDismissedAt: undefined,
     })
   },

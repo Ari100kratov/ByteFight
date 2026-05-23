@@ -3,10 +3,11 @@ import { extend } from "@pixi/react"
 import { useGridStore } from "../../state/game/grid.state.store"
 import type { UnitRuntime } from "../../types/UnitRuntime"
 import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
-import { UnitBars } from "./UnitBars"
+import { UnitBars, UnitResourceDetails } from "./UnitBars"
 import { FacingDirection } from "../../types/common"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { type UnitController } from "../../units/controller/UnitController"
+import { useUnitHoverStore } from "../../state/ui/unit.hover.store"
 
 extend({ AnimatedSprite, Container })
 
@@ -15,7 +16,8 @@ interface Props {
   spriteAnimation: SpriteAnimationDto
   controller: UnitController
   clickable?: boolean
-  onClick?: (position: { x: number; y: number }) => void
+  selected?: boolean
+  onClick?: (position: { x: number; y: number; side?: "left" | "right" }) => void
 }
 
 export function UnitAnimatedSprite({
@@ -23,10 +25,14 @@ export function UnitAnimatedSprite({
   spriteAnimation,
   controller,
   clickable,
+  selected = false,
   onClick,
 }: Props) {
   const layout = useGridStore((s) => s.layout)
   const spriteRef = useRef<AnimatedSprite | null>(null)
+  const [isHovered, setIsHovered] = useState(false)
+  const setHoveredUnit = useUnitHoverStore((s) => s.setHoveredUnit)
+  const clearHoveredUnit = useUnitHoverStore((s) => s.clearHoveredUnit)
 
   if (!layout) return null
 
@@ -40,6 +46,8 @@ export function UnitAnimatedSprite({
     runtime.facing === FacingDirection.Left ? -spriteAnimation.scale.x : spriteAnimation.scale.x
 
   const spriteHeight = (runtime.textureHeight ?? 0) * spriteAnimation.scale.y
+  const isDead = runtime.hp.current <= 0
+  const hoverScale = isHovered || selected ? 1.035 : 1
 
   const handleRef = (sprite: AnimatedSprite | null) => {
     if (!sprite) return
@@ -52,16 +60,17 @@ export function UnitAnimatedSprite({
 
   const healthPriority = runtime.hp.max > 0 ? runtime.hp.current / runtime.hp.max : 0
 
-  const zIndex = spriteY + healthPriority
+  const zIndex = spriteY + healthPriority + (isHovered ? 10 : selected ? 8 : 0)
 
   return (
-    <pixiContainer zIndex={zIndex}>
+    <pixiContainer zIndex={zIndex} sortableChildren={true}>
       <UnitBars
         runtime={runtime}
         x={spriteX}
         y={spriteY}
         spriteHeight={spriteHeight}
         cellWidth={cell.width}
+        cellHeight={cell.height}
       />
       <pixiAnimatedSprite
         ref={handleRef}
@@ -70,22 +79,36 @@ export function UnitAnimatedSprite({
         x={spriteX}
         y={spriteY}
         anchor={{ x: 0.5, y: 1 }}
-        scale={{ x: scaleX, y: spriteAnimation.scale.y }}
+        scale={{ x: scaleX * hoverScale, y: spriteAnimation.scale.y * hoverScale }}
         autoPlay={false}
-        eventMode={clickable ? "static" : "none"}
+        eventMode="static"
         cursor={clickable ? "pointer" : "default"}
-        onPointerTap={() => onClick?.({ x: spriteX, y: spriteY - spriteHeight })}
+        zIndex={1}
+        onPointerTap={() =>
+          onClick?.({
+            x: spriteX,
+            y: spriteY - spriteHeight,
+          })
+        }
         onPointerOver={() => {
-          if (spriteRef.current) {
-            spriteRef.current.alpha = 0.85
-          }
+          setIsHovered(true)
+          setHoveredUnit(runtime.id)
         }}
         onPointerOut={() => {
-          if (spriteRef.current) {
-            spriteRef.current.alpha = 1
-          }
+          setIsHovered(false)
+          clearHoveredUnit(runtime.id)
         }}
       />
+      {!isDead && (isHovered || selected) && (
+        <UnitResourceDetails
+          runtime={runtime}
+          x={spriteX}
+          y={spriteY}
+          spriteHeight={spriteHeight}
+          cellWidth={cell.width}
+          cellHeight={cell.height}
+        />
+      )}
     </pixiContainer>
   )
 }

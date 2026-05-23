@@ -9,8 +9,12 @@ import { useArenaItemsStateStore } from "./game/arena-items.state.store"
 import { useCharacterStateStore } from "./game/character.state.store"
 import { useEnemyStateStore } from "./game/enemy.state.store"
 import { useGridStore } from "./game/grid.state.store"
+import { useArenaItemSelectionStore } from "./ui/arena-item.selection.store"
+import { useCharacterSelectionStore } from "./ui/character.selection.store"
+import { useCombatEffectsStore } from "./ui/combat.effects.store"
 import { useEnemySelectionStore } from "./ui/enemy.selection.store"
 import { useFloatingCombatTextStore } from "./ui/floating.combat.text.store"
+import { useUnitHoverStore } from "./ui/unit.hover.store"
 
 export function resetGameStores() {
   resetGameDataStores()
@@ -37,5 +41,9 @@ function resetGameStateStores() {
 
 function resetGameUiStores() {
   useFloatingCombatTextStore.getState().reset()
+  useCombatEffectsStore.getState().reset()
+  useCharacterSelectionStore.getState().reset()
   useEnemySelectionStore.getState().reset()
+  useArenaItemSelectionStore.getState().reset()
+  useUnitHoverStore.getState().reset()
 }

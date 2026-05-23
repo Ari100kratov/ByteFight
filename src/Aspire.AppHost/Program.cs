@@ -1,3 +1,6 @@
+// Some VPN clients block Aspire DCP's default IPv6 loopback endpoint.
+Environment.SetEnvironmentVariable("DCP_IP_VERSION_PREFERENCE", "IPv4");
+
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 IResourceBuilder<PostgresServerResource> postgres = builder

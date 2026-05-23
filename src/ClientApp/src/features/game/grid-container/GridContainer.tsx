@@ -1,8 +1,8 @@
 import { extend } from "@pixi/react"
-import { Graphics, Text, Container } from "pixi.js"
-import { useGridStore } from "../state/game/grid.state.store"
+import { Container, Graphics, Text } from "pixi.js"
 import { useEffect } from "react"
 import { useArenaStore } from "../state/data/arena.data.store"
+import { useGridStore } from "../state/game/grid.state.store"
 import { useViewportStore } from "../state/viewport/viewport.store"
 
 extend({ Graphics, Text, Container })
@@ -21,60 +21,103 @@ export function GridContainer() {
   if (!layout || !arena) return null
 
   const { gridSize, offsetX, offsetY, cells } = layout
+  const cellWidth = cells[0]?.[0]?.width ?? 0
+  const coordinateFontSize = Math.max(8, Math.min(11, Math.floor(cellWidth * 0.16)))
   const blockedSet = new Set(
     arena.blockedPositions.map((p) => `${String(p.x)}:${String(p.y)}`),
   )
+  const visibleCells = cells
+    .flat()
+    .filter((cell) => !blockedSet.has(`${String(cell.gridX)}:${String(cell.gridY)}`))
+  const snap = (value: number) => Math.round(value) + 0.5
 
-  // cells сейчас хранит gridY = 0 снизу, и x/y — абсолютные пиксельные позиции (левый верх ячейки)
-  // Но для упрощения рендеринга поместим всё в локальный контейнер со сдвигом offsetX/offsetY,
-  // и будем рисовать в локальных координатах (0..gridPixelWidth, 0..gridPixelHeight).
+  if (!showGrid) return <pixiContainer x={offsetX} y={offsetY} />
 
   return (
     <pixiContainer x={offsetX} y={offsetY}>
-      {/* Линии сетки */}
-      {showGrid && (
-        <pixiGraphics
-          draw={(g) => {
-            g.clear()
-            g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.25 })
+      <pixiGraphics
+        draw={(g) => {
+          g.clear()
 
-            for (const cell of cells.flat()) {
-              if (blockedSet.has(`${String(cell.gridX)}:${String(cell.gridY)}`)) continue
+          const drawnEdges = new Set<string>()
+          const edgesToDraw: {
+            key: string
+            from: { x: number; y: number }
+            to: { x: number; y: number }
+          }[] = []
 
-              const x = cell.gridX * cell.width
-              const y = (gridSize.height - 1 - cell.gridY) * cell.height
+          for (const cell of visibleCells) {
+            const x = cell.gridX * cell.width
+            const y = (gridSize.height - 1 - cell.gridY) * cell.height
+            const edges = [
+              {
+                key: `v:${String(cell.gridX)}:${String(cell.gridY)}`,
+                from: { x, y },
+                to: { x, y: y + cell.height },
+              },
+              {
+                key: `v:${String(cell.gridX + 1)}:${String(cell.gridY)}`,
+                from: { x: x + cell.width, y },
+                to: { x: x + cell.width, y: y + cell.height },
+              },
+              {
+                key: `h:${String(cell.gridY)}:${String(cell.gridX)}`,
+                from: { x, y: y + cell.height },
+                to: { x: x + cell.width, y: y + cell.height },
+              },
+              {
+                key: `h:${String(cell.gridY + 1)}:${String(cell.gridX)}`,
+                from: { x, y },
+                to: { x: x + cell.width, y },
+              },
+            ]
 
-              g.rect(x, y, cell.width, cell.height)
+            for (const edge of edges) {
+              if (drawnEdges.has(edge.key)) continue
+              drawnEdges.add(edge.key)
+              edgesToDraw.push(edge)
             }
+          }
 
-            g.stroke()
-          }}
-        />
-      )}
+          g.setStrokeStyle({
+            width: 1,
+            color: 0xcbd5e1,
+            alpha: 0.16,
+          })
 
-      {/* Координаты клеток */}
-      {showGrid &&
-        cells.flat().map((cell) => {
-          if (blockedSet.has(`${String(cell.gridX)}:${String(cell.gridY)}`)) return null
+          for (const edge of edgesToDraw) {
+            g.moveTo(snap(edge.from.x), snap(edge.from.y))
+            g.lineTo(snap(edge.to.x), snap(edge.to.y))
+          }
 
-          const localX = cell.gridX * cell.width
-          const localY = (gridSize.height - 1 - cell.gridY) * cell.height
+          g.stroke()
+        }}
+      />
 
-          return (
-            <pixiText
-              key={`${String(cell.gridX)}-${String(cell.gridY)}`}
-              text={`${String(cell.gridX)}, ${String(cell.gridY)}`}
-              x={localX + 4}
-              y={localY + 4}
-              style={{
-                fontSize: 10,
-                fill: 0xffffff,
-                align: "left",
-              }}
-              alpha={0.45}
-            />
-          )
-        })}
+      {visibleCells.map((cell) => {
+        const localX = cell.gridX * cell.width
+        const localY = (gridSize.height - 1 - cell.gridY) * cell.height
+
+        return (
+          <pixiText
+            key={`${String(cell.gridX)}-${String(cell.gridY)}`}
+            text={`${String(cell.gridX)},${String(cell.gridY)}`}
+            x={Math.round(localX + 4)}
+            y={Math.round(localY + 3)}
+            style={{
+              fontSize: coordinateFontSize,
+              fontWeight: "700",
+              fill: 0xe2e8f0,
+              align: "left",
+              stroke: {
+                color: 0x020617,
+                width: 2,
+              },
+            }}
+            alpha={0.56}
+          />
+        )
+      })}
     </pixiContainer>
   )
 }

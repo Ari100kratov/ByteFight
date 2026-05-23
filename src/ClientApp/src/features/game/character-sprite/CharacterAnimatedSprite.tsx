@@ -5,10 +5,17 @@ import { UnitAnimatedSprite } from "../shared/unit-animated-sprite/UnitAnimatedS
 import { UnitController } from "../units/controller/UnitController"
 import { unitRegistry } from "../units/controller/UnitRegistry"
 import { CharacterAnimationResolver } from "../units/animation/CharacterAnimationResolver"
+import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
+import { useCharacterSelectionStore } from "../state/ui/character.selection.store"
+import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 
 export function CharacterAnimatedSprite() {
+  const character = useCharacterStore((s) => s.character)
   const runtime = useCharacterStateStore((s) => s.runtime)
   const fallbackAnimation = useCharacterStore((s) => s.getSpriteAnimation(runtime?.action))
+  const selectedCharacterId = useCharacterSelectionStore((s) => s.selectedCharacterId)
+  const selectCharacter = useCharacterSelectionStore((s) => s.selectCharacter)
+  const clearCharacterSelection = useCharacterSelectionStore((s) => s.clearSelection)
 
   const spriteAnimation = runtime?.spriteAnimation ?? fallbackAnimation
   const runtimeId = runtime?.id
@@ -31,6 +38,20 @@ export function CharacterAnimatedSprite() {
       runtime={runtime}
       spriteAnimation={spriteAnimation}
       controller={controller}
+      clickable
+      selected={selectedCharacterId === character?.id}
+      onClick={(position) => {
+        if (!character) return
+
+        if (useCharacterSelectionStore.getState().selectedCharacterId === character.id) {
+          clearCharacterSelection()
+          return
+        }
+
+        useEnemySelectionStore.getState().clearSelection()
+        useArenaItemSelectionStore.getState().clearSelection()
+        selectCharacter(character.id, position)
+      }}
     />
   )
 }

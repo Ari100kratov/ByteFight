@@ -46,7 +46,7 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
   const isHealing = kind === FloatingCombatTextKind.Healing
 
   useEffect(() => {
-    const duration = 1000
+    const duration = isHealing ? 1150 : 980
     const ticker = Ticker.shared
 
     const update = (ticker: Ticker) => {
@@ -60,9 +60,9 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
 
       setState({
         offsetX: startOffsetX * moveT,
-        offsetY: -48 * moveT,
+        offsetY: (isHealing ? -42 : -36) * moveT,
         alpha: 1 - easeOutCubic(fadeT),
-        scale: 0.65 + easeOutBack(popT) * 0.55,
+        scale: (isHealing ? 0.62 : 0.72) + easeOutBack(popT) * (isHealing ? 0.52 : 0.6),
       })
 
       if (t >= 1) {
@@ -76,7 +76,7 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
     return () => {
       ticker.remove(update)
     }
-  }, [onComplete, startOffsetX])
+  }, [isHealing, onComplete, startOffsetX])
 
   return (
     <pixiText
@@ -87,18 +87,18 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
       alpha={state.alpha}
       scale={state.scale}
       style={{
-        fill: isHealing ? "#2ecc71" : "#ff4d4f",
-        fontSize: 22,
+        fill: isHealing ? "#6ee7b7" : "#fb7185",
+        fontSize: isHealing ? 20 : 22,
         fontWeight: "800",
         stroke: {
-          color: isHealing ? "#003d1f" : "#2b0000",
+          color: isHealing ? "#064e3b" : "#3f0713",
           width: 5,
         },
         dropShadow: {
           color: "#000000",
-          blur: 5,
+          blur: 6,
           distance: 2,
-          alpha: 0.7,
+          alpha: 0.76,
         },
       }}
     />
