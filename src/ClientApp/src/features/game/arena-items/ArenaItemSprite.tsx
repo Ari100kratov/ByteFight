@@ -7,6 +7,13 @@ import type { ArenaItemResponse } from "@/features/game-arena-page/hooks/useAren
 import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
 import { useCharacterSelectionStore } from "../state/ui/character.selection.store"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
+import {
+  PIXEL_ART_SCALE_MODE,
+  RENDER_LAYERS,
+  setTextureScaleMode,
+  setTexturesScaleMode,
+  snapPixel,
+} from "../rendering/pixiQuality"
 
 extend({ Sprite, AnimatedSprite, Container, Graphics })
 
@@ -22,6 +29,7 @@ interface ItemTextureState {
 
 const HOVER_AMPLITUDE = 5
 const HOVER_SPEED = 0.004
+const FLOAT_BASE_LIFT = 5
 
 function hashToPhase(value: string) {
   let hash = 0
@@ -38,6 +46,44 @@ interface ItemInteractionHighlightProps {
   cellWidth: number
   intensity: number
   isSelected: boolean
+}
+
+interface ItemGroundShadowProps {
+  x: number
+  y: number
+  cellWidth: number
+  intensity: number
+  hoverOffset: number
+}
+
+function ItemGroundShadow({ x, y, cellWidth, intensity, hoverOffset }: ItemGroundShadowProps) {
+  const liftRatio = Math.max(
+    0,
+    Math.min(1, (-hoverOffset + HOVER_AMPLITUDE) / (HOVER_AMPLITUDE * 2)),
+  )
+  const contactRatio = 1 - liftRatio
+  const shadowScale = 0.74 + contactRatio * 0.18
+  const shadowHeightScale = 0.78 + contactRatio * 0.14
+  const shadowAlpha = 0.78 - liftRatio * 0.24
+
+  return (
+    <pixiGraphics
+      zIndex={-1}
+      draw={(g) => {
+        g.clear()
+
+        g.ellipse(
+          x,
+          y - 2,
+          cellWidth * 0.25 * shadowScale,
+          cellWidth * 0.064 * shadowHeightScale,
+        ).fill({
+          color: 0x020617,
+          alpha: (0.29 + intensity * 0.05) * shadowAlpha,
+        })
+      }}
+    />
+  )
 }
 
 function ItemInteractionHighlight({
@@ -127,6 +173,8 @@ export function ArenaItemSprite({ item }: Props) {
         .getOrLoadTexture(item.sprite.url)
         .then((texture) => {
           if (!cancelled) {
+            setTextureScaleMode(texture, PIXEL_ART_SCALE_MODE)
+
             setTextureState({
               spriteKey,
               texture,
@@ -146,6 +194,8 @@ export function ArenaItemSprite({ item }: Props) {
       .getOrLoadTextures(item.sprite.url, item.sprite.frameCount)
       .then((textures) => {
         if (!cancelled) {
+          setTexturesScaleMode(textures, PIXEL_ART_SCALE_MODE)
+
           setTextureState({
             spriteKey,
             texture: null,
@@ -164,14 +214,14 @@ export function ArenaItemSprite({ item }: Props) {
 
   const cell = layout.cells[item.position.y][item.position.x]
 
-  const x = cell.x + cell.width / 2
-  const baseY = cell.y + cell.height / 2 + cell.height * 0.22
-  const y = baseY + hoverOffset
-  const zIndex = cell.y + cell.height - 50
+  const x = snapPixel(cell.x + cell.width / 2)
+  const baseY = snapPixel(cell.y + cell.height / 2 + cell.height * 0.22)
+  const y = snapPixel(baseY - FLOAT_BASE_LIFT + hoverOffset)
+  const zIndex = RENDER_LAYERS.items + cell.y + cell.height - 50
 
   const scale = {
-    x: item.sprite.scale.x * (1 + hoverIntensity * 0.08),
-    y: item.sprite.scale.y * (1 + hoverIntensity * 0.08),
+    x: item.sprite.scale.x,
+    y: item.sprite.scale.y,
   }
 
   const handleClick = () => {
@@ -200,7 +250,14 @@ export function ArenaItemSprite({ item }: Props) {
     if (!texture) return null
 
     return (
-      <pixiContainer zIndex={zIndex + hoverIntensity * 12}>
+      <pixiContainer zIndex={zIndex + hoverIntensity * 12} sortableChildren={true}>
+        <ItemGroundShadow
+          x={x}
+          y={baseY}
+          cellWidth={cell.width}
+          intensity={hoverIntensity}
+          hoverOffset={hoverOffset}
+        />
         <ItemInteractionHighlight
           x={x}
           y={baseY}
@@ -227,7 +284,14 @@ export function ArenaItemSprite({ item }: Props) {
   if (!textures.length) return null
 
   return (
-    <pixiContainer zIndex={zIndex + hoverIntensity * 12}>
+    <pixiContainer zIndex={zIndex + hoverIntensity * 12} sortableChildren={true}>
+      <ItemGroundShadow
+        x={x}
+        y={baseY}
+        cellWidth={cell.width}
+        intensity={hoverIntensity}
+        hoverOffset={hoverOffset}
+      />
       <ItemInteractionHighlight
         x={x}
         y={baseY}

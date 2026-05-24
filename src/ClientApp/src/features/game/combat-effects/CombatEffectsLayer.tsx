@@ -6,6 +6,7 @@ import { useGridStore } from "../state/game/grid.state.store"
 import { useCombatEffectsStore, type CombatVisualEffect } from "../state/ui/combat.effects.store"
 import type { UnitRuntime } from "../types/UnitRuntime"
 import { CombatEffect } from "./CombatEffect"
+import { RENDER_LAYERS, snapPixel } from "../rendering/pixiQuality"
 
 extend({ Container })
 
@@ -23,9 +24,9 @@ function getUnitPoint(runtime: UnitRuntime, fallbackCellHeight: number): EffectP
   const groundY = runtime.renderPosition?.y ?? 0
 
   return {
-    x: runtime.renderPosition?.x ?? 0,
-    bodyY: groundY - spriteHeight * 0.45,
-    groundY,
+    x: snapPixel(runtime.renderPosition?.x ?? 0),
+    bodyY: snapPixel(groundY - spriteHeight * 0.45),
+    groundY: snapPixel(groundY),
   }
 }
 
@@ -49,9 +50,9 @@ export function CombatEffectsLayer() {
       const cell = layout.cells[effect.anchor.position.y][effect.anchor.position.x]
 
       return {
-        x: cell.x + cell.width / 2,
-        bodyY: cell.y + cell.height * 0.42,
-        groundY: cell.y + cell.height * 0.74,
+        x: snapPixel(cell.x + cell.width / 2),
+        bodyY: snapPixel(cell.y + cell.height * 0.42),
+        groundY: snapPixel(cell.y + cell.height * 0.74),
       }
     }
 
@@ -61,15 +62,15 @@ export function CombatEffectsLayer() {
     const cell = layout.cells[runtime.position.y][runtime.position.x]
 
     const renderPosition = runtime.renderPosition ?? {
-      x: cell.x + cell.width / 2,
-      y: cell.y + cell.height - 10,
+      x: snapPixel(cell.x + cell.width / 2),
+      y: snapPixel(cell.y + cell.height - 10),
     }
 
     return getUnitPoint({ ...runtime, renderPosition }, cell.height)
   }
 
   return (
-    <pixiContainer zIndex={99998}>
+    <pixiContainer zIndex={RENDER_LAYERS.effects}>
       {effects.map((effect) => {
         const point = getEffectPoint(effect)
         if (!point) return null

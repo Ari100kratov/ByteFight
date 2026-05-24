@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain;
 using Domain.Game.Arenas;
 using Domain.Game.GameModes;
@@ -79,12 +79,12 @@ internal class ArenasSeeder
         orcRitualArena.SetStartPosition(new Position(5, 1));
         orcRitualArena.SetBlockedPositions([
             new(0, 9), new(0, 8), new(0, 7), new(0, 6), new(0, 5), new(0, 4), new(0, 3), new(0, 2), new(0, 1), new(0, 0),
-            new(1, 9), new(1, 8), new(1, 1), new(1, 9),
+            new(1, 9), new(1, 0), new(1, 8), new(1, 1), new(1, 9),
             new(2, 9), new(2, 0),
             new(3, 9), new(3, 5), new(3, 4), new(3, 0),
             new(4, 9), new(4, 5), new(4, 4), new(4, 1), new(4, 0),
             new(5, 9), new(5, 7), new(5, 0),
-            new(6, 9), new(6, 8), new(6, 7), new(6, 0),
+            new(6, 9), new(6, 7), new(6, 0),
             new(7, 9), new(7, 7), new(7, 4), new(7, 1), new(7, 0),
             new(8, 9), new(8, 4), new(8, 3), new(8, 0),
             new(9, 9), new(9, 8), new(9, 1), new(9, 0),

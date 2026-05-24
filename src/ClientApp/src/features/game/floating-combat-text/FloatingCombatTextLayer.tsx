@@ -8,6 +8,7 @@ import {
   useFloatingCombatTextStore,
 } from "../state/ui/floating.combat.text.store"
 import { FloatingCombatText } from "./FloatingCombatText"
+import { RENDER_LAYERS, snapPixel } from "../rendering/pixiQuality"
 
 extend({ Container })
 
@@ -28,15 +29,15 @@ export function FloatingCombatTextLayer() {
   }
 
   return (
-    <pixiContainer zIndex={99999}>
+    <pixiContainer zIndex={RENDER_LAYERS.floatingText}>
       {items.map((item) => {
         const runtime = getRuntime(item.unitId)
         if (!runtime) return null
 
         const cell = layout.cells[runtime.position.y][runtime.position.x]
 
-        const footX = runtime.renderPosition?.x ?? cell.x + cell.width / 2
-        const footY = runtime.renderPosition?.y ?? cell.y + cell.height - 10
+        const footX = snapPixel(runtime.renderPosition?.x ?? cell.x + cell.width / 2)
+        const footY = snapPixel(runtime.renderPosition?.y ?? cell.y + cell.height - 10)
         const rawSpriteHeight =
           runtime.textureHeight && runtime.spriteAnimation
             ? runtime.textureHeight * runtime.spriteAnimation.scale.y
@@ -53,8 +54,8 @@ export function FloatingCombatTextLayer() {
             key={item.id}
             value={item.value}
             kind={item.kind}
-            x={footX + sideOffset}
-            y={footY - visualSpriteHeight * 0.42}
+            x={snapPixel(footX + sideOffset)}
+            y={snapPixel(footY - visualSpriteHeight * 0.42)}
             onComplete={() => {
               remove(item.id)
             }}

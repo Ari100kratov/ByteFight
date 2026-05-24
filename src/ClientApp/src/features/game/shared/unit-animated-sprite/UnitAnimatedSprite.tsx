@@ -1,18 +1,20 @@
-import { AnimatedSprite, Container, Texture } from "pixi.js"
+import { AnimatedSprite, Container, Graphics, Texture } from "pixi.js"
 import { extend } from "@pixi/react"
 import { useGridStore } from "../../state/game/grid.state.store"
 import type { UnitRuntime } from "../../types/UnitRuntime"
 import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
-import { UnitBars, UnitResourceDetails } from "./UnitBars"
+import { UnitBars, UnitResourceDetails, type UnitSide } from "./UnitBars"
 import { FacingDirection } from "../../types/common"
 import { useRef, useState } from "react"
 import { type UnitController } from "../../units/controller/UnitController"
 import { useUnitHoverStore } from "../../state/ui/unit.hover.store"
+import { RENDER_LAYERS, snapPixel } from "../../rendering/pixiQuality"
 
-extend({ AnimatedSprite, Container })
+extend({ AnimatedSprite, Container, Graphics })
 
 interface Props {
   runtime: UnitRuntime
+  side: UnitSide
   spriteAnimation: SpriteAnimationDto
   controller: UnitController
   clickable?: boolean
@@ -20,8 +22,32 @@ interface Props {
   onClick?: (position: { x: number; y: number; side?: "left" | "right" }) => void
 }
 
+interface UnitGroundShadowProps {
+  x: number
+  y: number
+  cellWidth: number
+  cellHeight: number
+  alpha: number
+}
+
+function UnitGroundShadow({ x, y, cellWidth, cellHeight, alpha }: UnitGroundShadowProps) {
+  return (
+    <pixiGraphics
+      zIndex={-2}
+      draw={(g) => {
+        g.clear()
+        g.ellipse(x, y - 3, cellWidth * 0.28, Math.max(4, cellHeight * 0.055)).fill({
+          color: 0x020617,
+          alpha,
+        })
+      }}
+    />
+  )
+}
+
 export function UnitAnimatedSprite({
   runtime,
+  side,
   spriteAnimation,
   controller,
   clickable,
@@ -38,16 +64,15 @@ export function UnitAnimatedSprite({
 
   const cell = layout.cells[runtime.position.y][runtime.position.x]
 
-  const spriteX = runtime.renderPosition?.x ?? cell.x + cell.width / 2
+  const spriteX = snapPixel(runtime.renderPosition?.x ?? cell.x + cell.width / 2)
 
-  const spriteY = runtime.renderPosition?.y ?? cell.y + cell.height - 10
+  const spriteY = snapPixel(runtime.renderPosition?.y ?? cell.y + cell.height - 10)
 
   const scaleX =
     runtime.facing === FacingDirection.Left ? -spriteAnimation.scale.x : spriteAnimation.scale.x
 
   const spriteHeight = (runtime.textureHeight ?? 0) * spriteAnimation.scale.y
   const isDead = runtime.hp.current <= 0
-  const hoverScale = isHovered || selected ? 1.035 : 1
 
   const handleRef = (sprite: AnimatedSprite | null) => {
     if (!sprite) return
@@ -60,12 +85,20 @@ export function UnitAnimatedSprite({
 
   const healthPriority = runtime.hp.max > 0 ? runtime.hp.current / runtime.hp.max : 0
 
-  const zIndex = spriteY + healthPriority + (isHovered ? 10 : selected ? 8 : 0)
+  const zIndex = RENDER_LAYERS.units + spriteY + healthPriority + (isHovered ? 10 : selected ? 8 : 0)
 
   return (
     <pixiContainer zIndex={zIndex} sortableChildren={true}>
+      <UnitGroundShadow
+        x={spriteX}
+        y={spriteY}
+        cellWidth={cell.width}
+        cellHeight={cell.height}
+        alpha={isDead ? 0.1 : 0.24}
+      />
       <UnitBars
         runtime={runtime}
+        side={side}
         x={spriteX}
         y={spriteY}
         spriteHeight={spriteHeight}
@@ -79,7 +112,7 @@ export function UnitAnimatedSprite({
         x={spriteX}
         y={spriteY}
         anchor={{ x: 0.5, y: 1 }}
-        scale={{ x: scaleX * hoverScale, y: spriteAnimation.scale.y * hoverScale }}
+        scale={{ x: scaleX, y: spriteAnimation.scale.y }}
         autoPlay={false}
         eventMode="static"
         cursor={clickable ? "pointer" : "default"}
@@ -102,6 +135,7 @@ export function UnitAnimatedSprite({
       {!isDead && (isHovered || selected) && (
         <UnitResourceDetails
           runtime={runtime}
+          side={side}
           x={spriteX}
           y={spriteY}
           spriteHeight={spriteHeight}

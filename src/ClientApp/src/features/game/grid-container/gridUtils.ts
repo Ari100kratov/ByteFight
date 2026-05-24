@@ -22,14 +22,20 @@ export interface GridLayout {
   cells: GridCell[][]
 }
 
+const MIN_CELL_SIZE = 1
+
 export function calculateGridLayout(gridSize: GridSize, canvasSize: CanvasSize): GridLayout {
-  const cellSize = Math.min(canvasSize.width / gridSize.width, canvasSize.height / gridSize.height)
+  const rawCellSize = Math.min(
+    canvasSize.width / gridSize.width,
+    canvasSize.height / gridSize.height,
+  )
+  const cellSize = Math.max(MIN_CELL_SIZE, Math.floor(rawCellSize))
 
   const gridPixelWidth = gridSize.width * cellSize
   const gridPixelHeight = gridSize.height * cellSize
 
-  const offsetX = (canvasSize.width - gridPixelWidth) / 2
-  const offsetY = (canvasSize.height - gridPixelHeight) / 2
+  const offsetX = Math.floor((canvasSize.width - gridPixelWidth) / 2)
+  const offsetY = Math.floor((canvasSize.height - gridPixelHeight) / 2)
 
   const cells: GridCell[][] = Array.from({ length: gridSize.height }, (_, rowIndex) => {
     const gridY = rowIndex

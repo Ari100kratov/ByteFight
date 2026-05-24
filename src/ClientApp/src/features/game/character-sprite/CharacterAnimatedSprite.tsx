@@ -36,6 +36,7 @@ export function CharacterAnimatedSprite() {
   return (
     <UnitAnimatedSprite
       runtime={runtime}
+      side="ally"
       spriteAnimation={spriteAnimation}
       controller={controller}
       clickable

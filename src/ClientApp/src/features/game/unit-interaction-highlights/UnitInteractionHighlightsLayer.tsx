@@ -9,16 +9,73 @@ import { useCharacterSelectionStore } from "../state/ui/character.selection.stor
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 import { useUnitHoverStore } from "../state/ui/unit.hover.store"
 import type { UnitRuntime } from "../types/UnitRuntime"
+import { RENDER_LAYERS, snapPixel } from "../rendering/pixiQuality"
 
 extend({ Container, Graphics })
+
+type HighlightSide = "ally" | "enemy"
 
 interface HighlightTarget {
   unitId: string
   runtime: UnitRuntime
   isSelected: boolean
+  side: HighlightSide
 }
 
-function UnitGroundHighlight({ runtime, isSelected }: Omit<HighlightTarget, "unitId">) {
+function getHighlightTone(side: HighlightSide, isSelected: boolean) {
+  if (isSelected) {
+    return {
+      tone: 0xfacc15,
+      fillTone: 0xfbbf24,
+    }
+  }
+
+  return side === "ally"
+    ? {
+        tone: 0x7dd3fc,
+        fillTone: 0x38bdf8,
+      }
+    : {
+        tone: 0xfb7185,
+        fillTone: 0xf43f5e,
+      }
+}
+
+function getHighlightStyle(side: HighlightSide, isSelected: boolean) {
+  if (isSelected) {
+    return {
+      intensity: 0.95,
+      widthScale: 1,
+      heightScale: 1,
+      fillAlpha: 0.055,
+      strokeAlphaBase: 0.28,
+      strokeAlphaPulse: 0.16,
+      strokeWidth: 2,
+    }
+  }
+
+  return side === "enemy"
+    ? {
+        intensity: 0.7,
+        widthScale: 1.28,
+        heightScale: 1.3,
+        fillAlpha: 0.085,
+        strokeAlphaBase: 0.56,
+        strokeAlphaPulse: 0.24,
+        strokeWidth: 2,
+      }
+    : {
+        intensity: 0.62,
+        widthScale: 1,
+        heightScale: 1,
+        fillAlpha: 0.055,
+        strokeAlphaBase: 0.28,
+        strokeAlphaPulse: 0.16,
+        strokeWidth: 1.4,
+      }
+}
+
+function UnitGroundHighlight({ runtime, isSelected, side }: Omit<HighlightTarget, "unitId">) {
   const layout = useGridStore((s) => s.layout)
   const [pulse, setPulse] = useState(0)
 
@@ -29,14 +86,13 @@ function UnitGroundHighlight({ runtime, isSelected }: Omit<HighlightTarget, "uni
   if (!layout) return null
 
   const cell = layout.cells[runtime.position.y][runtime.position.x]
-  const x = runtime.renderPosition?.x ?? cell.x + cell.width / 2
-  const y = runtime.renderPosition?.y ?? cell.y + cell.height - 10
+  const x = snapPixel(runtime.renderPosition?.x ?? cell.x + cell.width / 2)
+  const y = snapPixel(runtime.renderPosition?.y ?? cell.y + cell.height - 10)
   const pulseAlpha = (Math.sin(pulse) + 1) / 2
-  const tone = isSelected ? 0xfacc15 : 0x7dd3fc
-  const fillTone = isSelected ? 0xfbbf24 : 0x38bdf8
-  const intensity = isSelected ? 0.95 : 0.62
-  const width = cell.width * 0.34
-  const height = cell.width * 0.09
+  const { tone, fillTone } = getHighlightTone(side, isSelected)
+  const style = getHighlightStyle(side, isSelected)
+  const width = cell.width * 0.34 * style.widthScale
+  const height = cell.width * 0.09 * style.heightScale
   const centerY = y - 3
 
   return (
@@ -46,12 +102,12 @@ function UnitGroundHighlight({ runtime, isSelected }: Omit<HighlightTarget, "uni
         g.clear()
         g.ellipse(x, centerY, width * 0.82, height * 0.78).fill({
           color: fillTone,
-          alpha: 0.055 * intensity,
+          alpha: style.fillAlpha * style.intensity,
         })
         g.setStrokeStyle({
-          width: isSelected ? 2 : 1.4,
+          width: style.strokeWidth,
           color: tone,
-          alpha: (0.28 + pulseAlpha * 0.16) * intensity,
+          alpha: (style.strokeAlphaBase + pulseAlpha * style.strokeAlphaPulse) * style.intensity,
         })
         g.ellipse(x, centerY, width, height)
         g.stroke()
@@ -78,6 +134,7 @@ export function UnitInteractionHighlightsLayer() {
       unitId: characterRuntime.id,
       runtime: characterRuntime,
       isSelected: selectedCharacterId === character?.id,
+      side: "ally",
     })
   }
 
@@ -92,16 +149,18 @@ export function UnitInteractionHighlightsLayer() {
       unitId: runtime.id,
       runtime,
       isSelected,
+      side: "enemy",
     })
   }
 
   return (
-    <pixiContainer sortableChildren={true} zIndex={-1000}>
+    <pixiContainer sortableChildren={true} zIndex={RENDER_LAYERS.unitHighlights}>
       {[...targets.values()].map((target) => (
         <UnitGroundHighlight
           key={target.unitId}
           runtime={target.runtime}
           isSelected={target.isSelected}
+          side={target.side}
         />
       ))}
     </pixiContainer>

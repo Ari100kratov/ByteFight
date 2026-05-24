@@ -1,8 +1,10 @@
 import { Sprite } from "pixi.js"
 import { extend } from "@pixi/react"
+import { useEffect } from "react"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useArenaStore } from "../state/data/arena.data.store"
 import { useSpriteTexture } from "@/shared/hooks/useSpriteTexture"
+import { RENDER_LAYERS, setTextureScaleMode, SMOOTH_SCALE_MODE } from "../rendering/pixiQuality"
 
 extend({ Sprite })
 
@@ -11,12 +13,17 @@ export function BackgroundSprite() {
   const arena = useArenaStore((s) => s.arena)
   const texture = useSpriteTexture(arena?.backgroundAsset)
 
+  useEffect(() => {
+    setTextureScaleMode(texture, SMOOTH_SCALE_MODE)
+  }, [texture])
+
   if (!layout || !texture) return null
 
   const { gridPixelWidth, gridPixelHeight, offsetX, offsetY } = layout
 
   return (
     <pixiSprite
+      zIndex={RENDER_LAYERS.background}
       texture={texture}
       x={offsetX + gridPixelWidth / 2}
       y={offsetY + gridPixelHeight / 2}

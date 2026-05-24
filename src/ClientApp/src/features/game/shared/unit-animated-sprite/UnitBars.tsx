@@ -8,12 +8,15 @@ extend({ Graphics, Container, Text })
 
 interface ResourceLayerProps {
   runtime: UnitRuntime
+  side: UnitSide
   x: number
   y: number
   spriteHeight: number
   cellWidth: number
   cellHeight: number
 }
+
+export type UnitSide = "ally" | "enemy"
 
 type ResourceChangeKind = "gain" | "loss" | null
 
@@ -39,6 +42,20 @@ function getHpColor(ratio: number) {
   if (ratio <= 0.6) return 0xfbbf24
 
   return 0x34d399
+}
+
+function getBarTone(side: UnitSide) {
+  return side === "ally"
+    ? {
+        accentColor: 0x38bdf8,
+        borderColor: 0x7dd3fc,
+        trackColor: 0x06111d,
+      }
+    : {
+        accentColor: 0xf43f5e,
+        borderColor: 0xfb7185,
+        trackColor: 0x17070c,
+      }
 }
 
 function isDead(runtime: UnitRuntime) {
@@ -189,6 +206,9 @@ function drawResourceBar({
   fillColor,
   lagColor,
   flashColor,
+  accentColor,
+  borderColor,
+  trackColor,
   flash,
   changeKind,
   criticalPulse,
@@ -203,6 +223,9 @@ function drawResourceBar({
   fillColor: number
   lagColor: number
   flashColor: number
+  accentColor: number
+  borderColor: number
+  trackColor: number
   flash: number
   changeKind: ResourceChangeKind
   criticalPulse?: number
@@ -211,7 +234,18 @@ function drawResourceBar({
   const visibleValueRatio = valueRatio > 0 ? Math.max(valueRatio, 0.035) : 0
   const visibleLagRatio = lagRatio > 0 ? Math.max(lagRatio, 0.035) : 0
 
-  g.roundRect(x, y, width, height, radius).fill({ color: 0x05070c, alpha: 0.56 })
+  if (height > 4) {
+    g.roundRect(x - 1, y - 1, width + 2, height + 2, radius + 1).fill({
+      color: accentColor,
+      alpha: 0.12,
+    })
+  }
+
+  g.roundRect(x - 1, y - 1, width + 2, height + 2, radius + 1).fill({
+    color: 0x020617,
+    alpha: height > 4 ? 0.68 : 0.58,
+  })
+  g.roundRect(x, y, width, height, radius).fill({ color: trackColor, alpha: 0.82 })
 
   if (changeKind === "loss" && visibleLagRatio > visibleValueRatio) {
     g.roundRect(x, y, width * visibleLagRatio, height, radius).fill({
@@ -246,7 +280,7 @@ function drawResourceBar({
     })
   }
 
-  g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.22 })
+  g.setStrokeStyle({ width: 1, color: borderColor, alpha: height > 4 ? 0.56 : 0.42 })
   g.roundRect(x, y, width, height, radius)
   g.stroke()
 }
@@ -256,6 +290,7 @@ export function UnitBars(props: ResourceLayerProps) {
   const [pulse, setPulse] = useState(0)
   const [deathElapsedMs, setDeathElapsedMs] = useState(0)
   const layout = getResourceBarLayout(props)
+  const tone = getBarTone(props.side)
   const dead = isDead(runtime)
 
   const hpRatio = getRatio(runtime.hp)
@@ -298,6 +333,9 @@ export function UnitBars(props: ResourceLayerProps) {
             fillColor: getHpColor(hp.valueRatio),
             lagColor: 0xfca5a5,
             flashColor: 0xbbf7d0,
+            accentColor: tone.accentColor,
+            borderColor: tone.borderColor,
+            trackColor: tone.trackColor,
             flash: hp.flash,
             changeKind: hp.changeKind,
             criticalPulse,
@@ -315,6 +353,9 @@ export function UnitBars(props: ResourceLayerProps) {
               fillColor: 0x38bdf8,
               lagColor: 0x93c5fd,
               flashColor: 0xbae6fd,
+              accentColor: tone.accentColor,
+              borderColor: tone.borderColor,
+              trackColor: tone.trackColor,
               flash: mp.flash,
               changeKind: mp.changeKind,
             })
@@ -328,6 +369,7 @@ export function UnitBars(props: ResourceLayerProps) {
 export function UnitResourceDetails(props: ResourceLayerProps) {
   const { runtime } = props
   const layout = getResourceBarLayout(props)
+  const tone = getBarTone(props.side)
 
   if (isDead(runtime)) return null
 
@@ -346,7 +388,7 @@ export function UnitResourceDetails(props: ResourceLayerProps) {
             color: 0x020617,
             alpha: 0.76,
           })
-          g.setStrokeStyle({ width: 1, color: 0xffffff, alpha: 0.2 })
+          g.setStrokeStyle({ width: 1, color: tone.borderColor, alpha: 0.48 })
           g.roundRect(
             layout.detailsX - layout.detailsWidth / 2,
             layout.detailsY - 7,

@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useArenaStore } from "../state/data/arena.data.store"
 import { useGridStore } from "../state/game/grid.state.store"
 import { useViewportStore } from "../state/viewport/viewport.store"
+import { RENDER_LAYERS } from "../rendering/pixiQuality"
 
 extend({ Graphics, Text, Container })
 
@@ -14,6 +15,7 @@ export function GridContainer() {
 
   useEffect(() => {
     if (!arena) return
+    if (viewport.width <= 0 || viewport.height <= 0) return
 
     updateLayout({ width: arena.gridWidth, height: arena.gridHeight }, viewport)
   }, [arena, updateLayout, viewport])
@@ -31,10 +33,10 @@ export function GridContainer() {
     .filter((cell) => !blockedSet.has(`${String(cell.gridX)}:${String(cell.gridY)}`))
   const snap = (value: number) => Math.round(value) + 0.5
 
-  if (!showGrid) return <pixiContainer x={offsetX} y={offsetY} />
+  if (!showGrid) return <pixiContainer x={offsetX} y={offsetY} zIndex={RENDER_LAYERS.grid} />
 
   return (
-    <pixiContainer x={offsetX} y={offsetY}>
+    <pixiContainer x={offsetX} y={offsetY} zIndex={RENDER_LAYERS.grid}>
       <pixiGraphics
         draw={(g) => {
           g.clear()

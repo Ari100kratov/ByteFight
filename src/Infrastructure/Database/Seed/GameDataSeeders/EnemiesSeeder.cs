@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain.Game.Abilities;
 using Domain.Game.Actions;
 using Domain.Game.Enemies;
@@ -163,13 +163,11 @@ internal static class EnemiesSeeder
                     description: string.Empty,
                     damage: 16,
                     folder: folder,
-                    scaleX: 0.8f,
-                    scaleY: 0.8f,
                     frameCountByAsset:
                     [
-                        ("Attack_1.png", 7, 0),
-                        ("Attack_2.png", 4, 1),
-                        ("Special_attack.png", 5, 2),
+                        ("Attack_1.png", 5, 0),
+                        ("Attack_2.png", 6, 1),
+                        ("Attack_3.png", 4, 2),
                     ])
             ]
         };
@@ -294,12 +292,11 @@ internal static class EnemiesSeeder
 
     private static EnemyActionAsset[] CreateSkeletonActionAssets(string folder) =>
     [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 7, animationSpeed: 0.1f, scaleX: 0.8f, scaleY: 0.8f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 8, animationSpeed: 0.1f, scaleX: 0.8f, scaleY: 0.8f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 7, animationSpeed: 0.1f, scaleX: 0.8f, scaleY: 0.8f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 10, animationSpeed: 0.1f, scaleX: 0.8f, scaleY: 0.8f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 3, animationSpeed: 0.1f, scaleX: 0.8f, scaleY: 0.8f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 3, animationSpeed: 0.1f, scaleX: 0.8f, scaleY: 0.8f)
+        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 7, animationSpeed: 0.1f),
+        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
+        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 8, animationSpeed: 0.1f),
+        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
+        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
     ];
 
     private static EnemyActionAsset CreateActionAsset(

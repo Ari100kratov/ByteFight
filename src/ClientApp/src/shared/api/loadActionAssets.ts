@@ -35,10 +35,16 @@ export async function loadTexturesFromUrl(url: string, frameCount: number): Prom
     const blob = await res.blob()
     const bitmap = await createImageBitmap(blob)
     const frameWidth = bitmap.width / frameCount
+    if (!Number.isInteger(frameWidth)) {
+      console.warn(
+        `Sprite sheet "${url}" width ${String(bitmap.width)} is not divisible by frame count ${String(frameCount)}. Fractional frame bounds can blur pixel-art sprites.`,
+      )
+    }
+
+    const source = new ImageSource({ resource: bitmap })
     const textures: Texture[] = []
     for (let i = 0; i < frameCount; i++) {
       const frame = new Rectangle(i * frameWidth, 0, frameWidth, bitmap.height)
-      const source = new ImageSource({ resource: bitmap })
       textures.push(new Texture({ source, frame }))
     }
 

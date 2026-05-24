@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host 0.0.0.0 --port 5173 --strictPort",
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",

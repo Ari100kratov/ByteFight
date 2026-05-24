@@ -3,6 +3,11 @@ import { type AnimatedSprite, Ticker } from "pixi.js"
 import { useTexturesStore } from "../../state/data/textures.data.store"
 import type { UnitRuntimeUpdater } from "../../types/UnitRuntime"
 import { type ActionType } from "@/shared/types/action"
+import {
+  PIXEL_ART_SCALE_MODE,
+  setTexturesScaleMode,
+  snapPixel,
+} from "../../rendering/pixiQuality"
 
 const SPEED = 70
 
@@ -42,6 +47,8 @@ export class UnitSprite {
     if (!textures.length) return
     if (this.sprite !== sprite) return
     if (version !== this.playVersion) return
+
+    setTexturesScaleMode(textures, PIXEL_ART_SCALE_MODE)
 
     this.currentAnimation = animation.url
 
@@ -123,8 +130,8 @@ export class UnitSprite {
         traveled += step
 
         const k = Math.min(1, traveled / dist)
-        const x = startX + dx * k
-        const y = startY + dy * k
+        const x = snapPixel(startX + dx * k)
+        const y = snapPixel(startY + dy * k)
 
         sprite.x = x
         sprite.y = y

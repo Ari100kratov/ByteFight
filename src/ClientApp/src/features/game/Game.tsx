@@ -12,13 +12,20 @@ import { ArenaItemInfoPopover } from "./arena-items/ArenaItemInfoPopover"
 import { CharacterInfoPopover } from "./character-info-popover/CharacterInfoPopover"
 import { CombatEffectsLayer } from "./combat-effects/CombatEffectsLayer"
 import { UnitInteractionHighlightsLayer } from "./unit-interaction-highlights/UnitInteractionHighlightsLayer"
+import { getCanvasResolution } from "./rendering/pixiQuality"
 
 extend({ Container })
 
 export function Game() {
   return (
     <div className="relative h-full w-full">
-      <Application backgroundColor={0xf0f0f0}>
+      <Application
+        backgroundColor={0xf0f0f0}
+        antialias={false}
+        autoDensity
+        resolution={getCanvasResolution()}
+        roundPixels
+      >
         <ResizeHandler />
         <BackgroundSprite />
         <GridContainer />

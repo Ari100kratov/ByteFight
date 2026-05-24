@@ -52,6 +52,7 @@ export function EnemyAnimatedSprite({ arenaEnemyId }: Props) {
   return (
     <UnitAnimatedSprite
       runtime={runtime}
+      side="enemy"
       spriteAnimation={spriteAnimation}
       controller={controller}
       clickable
