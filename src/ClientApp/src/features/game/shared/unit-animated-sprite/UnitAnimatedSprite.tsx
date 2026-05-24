@@ -9,6 +9,7 @@ import { useRef, useState } from "react"
 import { type UnitController } from "../../units/controller/UnitController"
 import { useUnitHoverStore } from "../../state/ui/unit.hover.store"
 import { RENDER_LAYERS, snapPixel } from "../../rendering/pixiQuality"
+import { useCameraStore } from "../../camera/camera.store"
 
 extend({ AnimatedSprite, Container, Graphics })
 
@@ -30,6 +31,17 @@ interface UnitGroundShadowProps {
   alpha: number
 }
 
+interface UnitCellHitAreaProps {
+  x: number
+  y: number
+  width: number
+  height: number
+  clickable?: boolean
+  onTap: () => void
+  onPointerOver: () => void
+  onPointerOut: () => void
+}
+
 function UnitGroundShadow({ x, y, cellWidth, cellHeight, alpha }: UnitGroundShadowProps) {
   return (
     <pixiGraphics
@@ -39,6 +51,35 @@ function UnitGroundShadow({ x, y, cellWidth, cellHeight, alpha }: UnitGroundShad
         g.ellipse(x, y - 3, cellWidth * 0.28, Math.max(4, cellHeight * 0.055)).fill({
           color: 0x020617,
           alpha,
+        })
+      }}
+    />
+  )
+}
+
+function UnitCellHitArea({
+  x,
+  y,
+  width,
+  height,
+  clickable,
+  onTap,
+  onPointerOver,
+  onPointerOut,
+}: UnitCellHitAreaProps) {
+  return (
+    <pixiGraphics
+      eventMode="static"
+      cursor={clickable ? "pointer" : "default"}
+      zIndex={2}
+      onPointerTap={onTap}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+      draw={(g) => {
+        g.clear()
+        g.rect(x, y, width, height).fill({
+          color: 0xffffff,
+          alpha: 0.001,
         })
       }}
     />
@@ -87,6 +128,28 @@ export function UnitAnimatedSprite({
 
   const zIndex = RENDER_LAYERS.units + spriteY + healthPriority + (isHovered ? 10 : selected ? 8 : 0)
 
+  const handleTap = () => {
+    const camera = useCameraStore.getState()
+    if (camera.isClickSuppressed()) return
+
+    onClick?.(
+      camera.worldToScreen({
+        x: spriteX,
+        y: spriteY - spriteHeight,
+      }),
+    )
+  }
+
+  const handlePointerOver = () => {
+    setIsHovered(true)
+    setHoveredUnit(runtime.id)
+  }
+
+  const handlePointerOut = () => {
+    setIsHovered(false)
+    clearHoveredUnit(runtime.id)
+  }
+
   return (
     <pixiContainer zIndex={zIndex} sortableChildren={true}>
       <UnitGroundShadow
@@ -114,23 +177,18 @@ export function UnitAnimatedSprite({
         anchor={{ x: 0.5, y: 1 }}
         scale={{ x: scaleX, y: spriteAnimation.scale.y }}
         autoPlay={false}
-        eventMode="static"
-        cursor={clickable ? "pointer" : "default"}
+        eventMode="none"
         zIndex={1}
-        onPointerTap={() =>
-          onClick?.({
-            x: spriteX,
-            y: spriteY - spriteHeight,
-          })
-        }
-        onPointerOver={() => {
-          setIsHovered(true)
-          setHoveredUnit(runtime.id)
-        }}
-        onPointerOut={() => {
-          setIsHovered(false)
-          clearHoveredUnit(runtime.id)
-        }}
+      />
+      <UnitCellHitArea
+        x={cell.x}
+        y={cell.y}
+        width={cell.width}
+        height={cell.height}
+        clickable={clickable}
+        onTap={handleTap}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
       />
       {!isDead && (isHovered || selected) && (
         <UnitResourceDetails

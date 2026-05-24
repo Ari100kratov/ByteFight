@@ -15,6 +15,9 @@ extend({ Container, Graphics })
 
 type HighlightSide = "ally" | "enemy"
 
+const HIGHLIGHT_WIDTH_RATIO = 0.38
+const HIGHLIGHT_HEIGHT_RATIO = 0.1
+
 interface HighlightTarget {
   unitId: string
   runtime: UnitRuntime
@@ -45,8 +48,6 @@ function getHighlightStyle(side: HighlightSide, isSelected: boolean) {
   if (isSelected) {
     return {
       intensity: 0.95,
-      widthScale: 1,
-      heightScale: 1,
       fillAlpha: 0.055,
       strokeAlphaBase: 0.28,
       strokeAlphaPulse: 0.16,
@@ -57,8 +58,6 @@ function getHighlightStyle(side: HighlightSide, isSelected: boolean) {
   return side === "enemy"
     ? {
         intensity: 0.7,
-        widthScale: 1.28,
-        heightScale: 1.3,
         fillAlpha: 0.085,
         strokeAlphaBase: 0.56,
         strokeAlphaPulse: 0.24,
@@ -66,8 +65,6 @@ function getHighlightStyle(side: HighlightSide, isSelected: boolean) {
       }
     : {
         intensity: 0.62,
-        widthScale: 1,
-        heightScale: 1,
         fillAlpha: 0.055,
         strokeAlphaBase: 0.28,
         strokeAlphaPulse: 0.16,
@@ -91,8 +88,8 @@ function UnitGroundHighlight({ runtime, isSelected, side }: Omit<HighlightTarget
   const pulseAlpha = (Math.sin(pulse) + 1) / 2
   const { tone, fillTone } = getHighlightTone(side, isSelected)
   const style = getHighlightStyle(side, isSelected)
-  const width = cell.width * 0.34 * style.widthScale
-  const height = cell.width * 0.09 * style.heightScale
+  const width = cell.width * HIGHLIGHT_WIDTH_RATIO
+  const height = cell.width * HIGHLIGHT_HEIGHT_RATIO
   const centerY = y - 3
 
   return (

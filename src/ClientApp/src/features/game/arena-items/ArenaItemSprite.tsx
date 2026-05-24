@@ -14,6 +14,7 @@ import {
   setTexturesScaleMode,
   snapPixel,
 } from "../rendering/pixiQuality"
+import { useCameraStore } from "../camera/camera.store"
 
 extend({ Sprite, AnimatedSprite, Container, Graphics })
 
@@ -30,6 +31,12 @@ interface ItemTextureState {
 const HOVER_AMPLITUDE = 5
 const HOVER_SPEED = 0.004
 const FLOAT_BASE_LIFT = 5
+const ITEM_HIGHLIGHT_FILL_WIDTH_RATIO = 0.31
+const ITEM_HIGHLIGHT_FILL_HEIGHT_RATIO = 0.1
+const ITEM_HIGHLIGHT_WIDTH_RATIO = 0.38
+const ITEM_HIGHLIGHT_HEIGHT_RATIO = 0.135
+const ITEM_HIGHLIGHT_PARTICLE_X_RATIO = 0.26
+const ITEM_HIGHLIGHT_PARTICLE_Y_RATIO = 0.09
 
 function hashToPhase(value: string) {
   let hash = 0
@@ -110,7 +117,12 @@ function ItemInteractionHighlight({
     <pixiGraphics
       draw={(g) => {
         g.clear()
-        g.ellipse(x, y - 4, cellWidth * 0.28, cellWidth * 0.09).fill({
+        g.ellipse(
+          x,
+          y - 4,
+          cellWidth * ITEM_HIGHLIGHT_FILL_WIDTH_RATIO,
+          cellWidth * ITEM_HIGHLIGHT_FILL_HEIGHT_RATIO,
+        ).fill({
           color: fillTone,
           alpha: 0.1 * alpha,
         })
@@ -119,13 +131,18 @@ function ItemInteractionHighlight({
           color: tone,
           alpha: (0.34 + pulseAlpha * 0.24) * alpha,
         })
-        g.ellipse(x, y - 4, cellWidth * 0.34, cellWidth * 0.12)
+        g.ellipse(
+          x,
+          y - 4,
+          cellWidth * ITEM_HIGHLIGHT_WIDTH_RATIO,
+          cellWidth * ITEM_HIGHLIGHT_HEIGHT_RATIO,
+        )
         g.stroke()
 
         for (let i = 0; i < 4; i++) {
           const angle = pulse + i * (Math.PI / 2)
-          const particleX = x + Math.cos(angle) * cellWidth * 0.23
-          const particleY = y - 24 + Math.sin(angle) * cellWidth * 0.08
+          const particleX = x + Math.cos(angle) * cellWidth * ITEM_HIGHLIGHT_PARTICLE_X_RATIO
+          const particleY = y - 24 + Math.sin(angle) * cellWidth * ITEM_HIGHLIGHT_PARTICLE_Y_RATIO
 
           g.circle(particleX, particleY, 1.6).fill({
             color: 0xfef3c7,
@@ -225,6 +242,9 @@ export function ArenaItemSprite({ item }: Props) {
   }
 
   const handleClick = () => {
+    const camera = useCameraStore.getState()
+    if (camera.isClickSuppressed()) return
+
     if (useArenaItemSelectionStore.getState().selectedPlacedItemId === item.placedItemId) {
       clearSelection()
       return
@@ -232,10 +252,10 @@ export function ArenaItemSprite({ item }: Props) {
 
     useCharacterSelectionStore.getState().clearSelection()
     useEnemySelectionStore.getState().clearSelection()
-    selectItem(item.placedItemId, {
+    selectItem(item.placedItemId, camera.worldToScreen({
       x,
       y: y - 24,
-    })
+    }))
   }
 
   const handlePointerOver = () => {

@@ -13,32 +13,44 @@ import { CharacterInfoPopover } from "./character-info-popover/CharacterInfoPopo
 import { CombatEffectsLayer } from "./combat-effects/CombatEffectsLayer"
 import { UnitInteractionHighlightsLayer } from "./unit-interaction-highlights/UnitInteractionHighlightsLayer"
 import { getCanvasResolution } from "./rendering/pixiQuality"
+import { CameraBoundsSync, CameraInput, CameraStage } from "./camera/ArenaCamera"
+import { CameraToolbar } from "./camera/CameraToolbar"
+import { useCameraStore } from "./camera/camera.store"
 
 extend({ Container })
 
 export function Game() {
+  const isDragging = useCameraStore((s) => s.isDragging)
+
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full" style={{ cursor: isDragging ? "grabbing" : "grab" }}>
       <Application
         backgroundColor={0xf0f0f0}
-        antialias={false}
+        antialias
         autoDensity
         resolution={getCanvasResolution()}
         roundPixels
       >
         <ResizeHandler />
-        <BackgroundSprite />
-        <GridContainer />
+        <CameraBoundsSync />
+        <CameraInput />
 
-        <pixiContainer sortableChildren={true}>
-          <ArenaItems />
-          <UnitInteractionHighlightsLayer />
-          <CharacterAnimatedSprite />
-          <ArenaEnemies />
-          <CombatEffectsLayer />
-          <FloatingCombatTextLayer />
-        </pixiContainer>
+        <CameraStage>
+          <BackgroundSprite />
+          <GridContainer />
+
+          <pixiContainer sortableChildren={true}>
+            <ArenaItems />
+            <UnitInteractionHighlightsLayer />
+            <CharacterAnimatedSprite />
+            <ArenaEnemies />
+            <CombatEffectsLayer />
+            <FloatingCombatTextLayer />
+          </pixiContainer>
+        </CameraStage>
       </Application>
+
+      <CameraToolbar />
 
       <EnemyInfoPopover />
       <CharacterInfoPopover />
