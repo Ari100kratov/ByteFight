@@ -4,7 +4,7 @@ import { useTexturesStore } from "../../state/data/textures.data.store"
 import type { UnitRuntimeUpdater } from "../../types/UnitRuntime"
 import { type ActionType } from "@/shared/types/action"
 import {
-  PIXEL_ART_SCALE_MODE,
+  getPixelArtScaleMode,
   setTexturesScaleMode,
   snapPixel,
 } from "../../rendering/pixiQuality"
@@ -48,7 +48,10 @@ export class UnitSprite {
     if (this.sprite !== sprite) return
     if (version !== this.playVersion) return
 
-    setTexturesScaleMode(textures, PIXEL_ART_SCALE_MODE)
+    setTexturesScaleMode(
+      textures,
+      getPixelArtScaleMode(animation.scale.x, animation.scale.y),
+    )
 
     this.currentAnimation = animation.url
 

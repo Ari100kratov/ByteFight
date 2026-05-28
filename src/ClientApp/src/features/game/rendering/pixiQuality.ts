@@ -5,6 +5,8 @@ export type TextureScaleMode = "nearest" | "linear"
 export const PIXEL_ART_SCALE_MODE: TextureScaleMode = "nearest"
 export const SMOOTH_SCALE_MODE: TextureScaleMode = "linear"
 
+const PIXEL_SCALE_EPSILON = 0.01
+
 export const RENDER_LAYERS = {
   background: -10000,
   grid: -9000,
@@ -55,4 +57,23 @@ export function getCanvasResolution() {
   if (typeof window === "undefined") return 1
 
   return Math.max(1, window.devicePixelRatio || 1)
+}
+
+function isNearlyInteger(value: number) {
+  return Math.abs(value - Math.round(value)) < PIXEL_SCALE_EPSILON
+}
+
+export function getPixelArtScaleMode(scaleX = 1, scaleY = scaleX): TextureScaleMode {
+  const resolution = getCanvasResolution()
+
+  if (isNearlyInteger(resolution)) {
+    return PIXEL_ART_SCALE_MODE
+  }
+
+  const physicalScaleX = Math.abs(scaleX) * resolution
+  const physicalScaleY = Math.abs(scaleY) * resolution
+
+  return isNearlyInteger(physicalScaleX) && isNearlyInteger(physicalScaleY)
+    ? PIXEL_ART_SCALE_MODE
+    : SMOOTH_SCALE_MODE
 }

@@ -5,9 +5,10 @@ import { getAssetUrl } from "@/shared/api/loadActionAssets"
 interface Props {
   mode: GameModeResponse
   onSelect: (mode: GameModeResponse) => void
+  priority?: boolean
 }
 
-export function GameModeCard({ mode, onSelect }: Props) {
+export function GameModeCard({ mode, onSelect, priority = false }: Props) {
   const imageSrc = getAssetUrl(mode.imageUrl)
 
   return (
@@ -23,7 +24,9 @@ export function GameModeCard({ mode, onSelect }: Props) {
             <img
               src={imageSrc}
               alt={mode.name}
-              loading="lazy"
+              loading={priority ? "eager" : "lazy"}
+              decoding="async"
+              fetchPriority={priority ? "high" : "auto"}
               draggable={false}
               className="h-full w-full object-cover object-center transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.05]"
             />

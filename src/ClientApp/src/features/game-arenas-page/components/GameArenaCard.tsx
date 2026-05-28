@@ -6,9 +6,10 @@ import type { ArenaResponse } from "../useArenasByMode"
 interface Props {
   arena: ArenaResponse
   onSelect: (arena: ArenaResponse) => void
+  priority?: boolean
 }
 
-export function GameArenaCard({ arena, onSelect }: Props) {
+export function GameArenaCard({ arena, onSelect, priority = false }: Props) {
   const imageSrc = getAssetUrl(arena.imageUrl)
 
   return (
@@ -24,7 +25,9 @@ export function GameArenaCard({ arena, onSelect }: Props) {
             <img
               src={imageSrc}
               alt={arena.name}
-              loading="lazy"
+              loading={priority ? "eager" : "lazy"}
+              decoding="async"
+              fetchPriority={priority ? "high" : "auto"}
               draggable={false}
               className="h-full w-full object-cover object-center transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.04]"
             />

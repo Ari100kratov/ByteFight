@@ -8,7 +8,7 @@ import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.sto
 import { useCharacterSelectionStore } from "../state/ui/character.selection.store"
 import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 import {
-  PIXEL_ART_SCALE_MODE,
+  getPixelArtScaleMode,
   RENDER_LAYERS,
   setTextureScaleMode,
   setTexturesScaleMode,
@@ -190,7 +190,10 @@ export function ArenaItemSprite({ item }: Props) {
         .getOrLoadTexture(item.sprite.url)
         .then((texture) => {
           if (!cancelled) {
-            setTextureScaleMode(texture, PIXEL_ART_SCALE_MODE)
+            setTextureScaleMode(
+              texture,
+              getPixelArtScaleMode(item.sprite.scale.x, item.sprite.scale.y),
+            )
 
             setTextureState({
               spriteKey,
@@ -211,7 +214,10 @@ export function ArenaItemSprite({ item }: Props) {
       .getOrLoadTextures(item.sprite.url, item.sprite.frameCount)
       .then((textures) => {
         if (!cancelled) {
-          setTexturesScaleMode(textures, PIXEL_ART_SCALE_MODE)
+          setTexturesScaleMode(
+            textures,
+            getPixelArtScaleMode(item.sprite.scale.x, item.sprite.scale.y),
+          )
 
           setTextureState({
             spriteKey,
@@ -225,7 +231,7 @@ export function ArenaItemSprite({ item }: Props) {
     return () => {
       cancelled = true
     }
-  }, [item.sprite.url, item.sprite.frameCount, spriteKey])
+  }, [item.sprite.frameCount, item.sprite.scale.x, item.sprite.scale.y, item.sprite.url, spriteKey])
 
   if (!layout) return null
 

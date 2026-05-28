@@ -34,10 +34,11 @@ export default function GameModesPage() {
       >
         {modes && (
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {modes.map((mode) => (
+            {modes.map((mode, index) => (
               <GameModeCard
                 key={mode.id}
                 mode={mode}
+                priority={index < 3}
                 onSelect={(mode) => {
                   void navigate(`/play/${mode.slug}`)
                 }}

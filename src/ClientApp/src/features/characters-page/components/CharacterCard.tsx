@@ -10,9 +10,17 @@ interface CharacterCardProps {
   className: string
   specName: string
   portraitUrl?: string | null
+  priority?: boolean
 }
 
-export function CharacterCard({ id, name, className, specName, portraitUrl }: CharacterCardProps) {
+export function CharacterCard({
+  id,
+  name,
+  className,
+  specName,
+  portraitUrl,
+  priority = false,
+}: CharacterCardProps) {
   const navigate = useNavigate()
   const imageSrc = portraitUrl ? getAssetUrl(portraitUrl) : undefined
 
@@ -29,7 +37,9 @@ export function CharacterCard({ id, name, className, specName, portraitUrl }: Ch
             <img
               src={imageSrc}
               alt={name}
-              loading="lazy"
+              loading={priority ? "eager" : "lazy"}
+              decoding="async"
+              fetchPriority={priority ? "high" : "auto"}
               draggable={false}
               className="h-full w-full object-cover object-center transition-transform duration-700 ease-out will-change-transform group-hover:scale-[1.04]"
             />

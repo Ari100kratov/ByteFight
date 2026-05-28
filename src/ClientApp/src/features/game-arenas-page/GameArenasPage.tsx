@@ -49,8 +49,13 @@ export default function GameArenasPage() {
       >
         {arenas && arenas.length > 0 && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {arenas.map((arena) => (
-              <GameArenaCard key={arena.id} arena={arena} onSelect={handleArenaClick} />
+            {arenas.map((arena, index) => (
+              <GameArenaCard
+                key={arena.id}
+                arena={arena}
+                priority={index < 3}
+                onSelect={handleArenaClick}
+              />
             ))}
           </div>
         )}

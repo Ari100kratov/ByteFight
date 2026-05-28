@@ -37,7 +37,7 @@ export default function CharactersPage() {
       >
         {characters && (
           <div className="grid gap-4 md:grid-cols-4">
-            {characters.map((c) => (
+            {characters.map((c, index) => (
               <CharacterCard
                 key={c.id}
                 id={c.id}
@@ -45,6 +45,7 @@ export default function CharactersPage() {
                 className={c.className}
                 specName={c.specName}
                 portraitUrl={c.portraitUrl}
+                priority={index < 4}
               />
             ))}
           </div>
