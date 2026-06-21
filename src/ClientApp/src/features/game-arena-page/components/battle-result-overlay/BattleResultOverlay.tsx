@@ -109,7 +109,7 @@ export function BattleResultOverlay({
         <button
           type="button"
           onClick={onClose}
-          className="text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 transition-colors"
+          className="text-muted-foreground hover:text-foreground absolute top-3 right-3 z-20 transition-colors"
           aria-label="Закрыть результат боя"
         >
           <X className="h-4 w-4" />
