@@ -2,6 +2,7 @@ import { extend, useTick } from "@pixi/react"
 import { AnimatedSprite, Container, Graphics, Sprite, type Texture } from "pixi.js"
 import { useEffect, useRef, useState } from "react"
 import { useGridStore } from "../state/game/grid.state.store"
+import { useArenaPlaybackStore } from "../state/game/playback.state.store"
 import { useTexturesStore } from "../state/data/textures.data.store"
 import type { ArenaItemResponse } from "@/features/game-arena-page/hooks/useArena"
 import { useArenaItemSelectionStore } from "../state/ui/arena-item.selection.store"
@@ -101,9 +102,10 @@ function ItemInteractionHighlight({
   isSelected,
 }: ItemInteractionHighlightProps) {
   const [pulse, setPulse] = useState(0)
+  const animationSpeedScale = useArenaPlaybackStore((s) => s.animationSpeedScale)
 
   useTick((ticker) => {
-    setPulse((value) => (value + ticker.deltaMS * 0.005) % (Math.PI * 2))
+    setPulse((value) => (value + ticker.deltaMS * animationSpeedScale * 0.005) % (Math.PI * 2))
   })
 
   if (intensity <= 0.02 && !isSelected) return null
@@ -156,6 +158,7 @@ function ItemInteractionHighlight({
 
 export function ArenaItemSprite({ item }: Props) {
   const layout = useGridStore((s) => s.layout)
+  const animationSpeedScale = useArenaPlaybackStore((s) => s.animationSpeedScale)
   const selectItem = useArenaItemSelectionStore((s) => s.select)
   const clearSelection = useArenaItemSelectionStore((s) => s.clearSelection)
   const selectedPlacedItemId = useArenaItemSelectionStore((s) => s.selectedPlacedItemId)
@@ -171,11 +174,13 @@ export function ArenaItemSprite({ item }: Props) {
   const isSelected = selectedPlacedItemId === item.placedItemId
 
   useTick((ticker) => {
-    timeRef.current += ticker.deltaMS * HOVER_SPEED
+    const scaledDelta = ticker.deltaMS * animationSpeedScale
+
+    timeRef.current += scaledDelta * HOVER_SPEED
     setHoverOffset(Math.sin(timeRef.current) * HOVER_AMPLITUDE)
     setHoverIntensity((value) => {
       const target = isHovered || isSelected ? 1 : 0
-      const next = value + (target - value) * Math.min(1, ticker.deltaMS / 120)
+      const next = value + (target - value) * Math.min(1, scaledDelta / 120)
 
       return Math.abs(next - value) < 0.01 ? target : next
     })
@@ -258,10 +263,13 @@ export function ArenaItemSprite({ item }: Props) {
 
     useCharacterSelectionStore.getState().clearSelection()
     useEnemySelectionStore.getState().clearSelection()
-    selectItem(item.placedItemId, camera.worldToScreen({
-      x,
-      y: y - 24,
-    }))
+    selectItem(
+      item.placedItemId,
+      camera.worldToScreen({
+        x,
+        y: y - 24,
+      }),
+    )
   }
 
   const handlePointerOver = () => {
@@ -331,7 +339,7 @@ export function ArenaItemSprite({ item }: Props) {
         y={y}
         anchor={{ x: 0.5, y: 1 }}
         scale={scale}
-        animationSpeed={item.sprite.animationSpeed}
+        animationSpeed={item.sprite.animationSpeed * animationSpeedScale}
         autoPlay
         loop
         eventMode="static"

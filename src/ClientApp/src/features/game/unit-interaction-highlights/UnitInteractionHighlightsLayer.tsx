@@ -10,6 +10,7 @@ import { useEnemySelectionStore } from "../state/ui/enemy.selection.store"
 import { useUnitHoverStore } from "../state/ui/unit.hover.store"
 import type { UnitRuntime } from "../types/UnitRuntime"
 import { RENDER_LAYERS, snapPixel } from "../rendering/pixiQuality"
+import { useArenaPlaybackStore } from "../state/game/playback.state.store"
 
 extend({ Container, Graphics })
 
@@ -74,10 +75,11 @@ function getHighlightStyle(side: HighlightSide, isSelected: boolean) {
 
 function UnitGroundHighlight({ runtime, isSelected, side }: Omit<HighlightTarget, "unitId">) {
   const layout = useGridStore((s) => s.layout)
+  const animationSpeedScale = useArenaPlaybackStore((s) => s.animationSpeedScale)
   const [pulse, setPulse] = useState(0)
 
   useTick((ticker) => {
-    setPulse((value) => (value + ticker.deltaMS * 0.004) % (Math.PI * 2))
+    setPulse((value) => (value + ticker.deltaMS * animationSpeedScale * 0.004) % (Math.PI * 2))
   })
 
   if (!layout) return null

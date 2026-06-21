@@ -2,6 +2,7 @@ import { extend } from "@pixi/react"
 import { Text, Ticker } from "pixi.js"
 import { useEffect, useRef, useState } from "react"
 import { FloatingCombatTextKind } from "../state/ui/floating.combat.text.store"
+import { getAnimationSpeedScale } from "../state/game/playback.state.store"
 
 extend({ Text })
 
@@ -50,7 +51,7 @@ export function FloatingCombatText({ value, kind, x, y, onComplete }: Props) {
     const ticker = Ticker.shared
 
     const update = (ticker: Ticker) => {
-      elapsedRef.current += ticker.deltaMS
+      elapsedRef.current += ticker.deltaMS * getAnimationSpeedScale()
 
       const t = Math.min(1, elapsedRef.current / duration)
 

@@ -3,6 +3,7 @@ import { Container, Graphics, Text } from "pixi.js"
 import { useEffect, useRef, useState } from "react"
 import type { UnitRuntime } from "../../types/UnitRuntime"
 import type { StatSnapshot } from "../../types/common"
+import { useArenaPlaybackStore } from "../../state/game/playback.state.store"
 
 extend({ Graphics, Container, Text })
 
@@ -108,6 +109,7 @@ function getResourceBarLayout({
 }
 
 function useAnimatedResource(targetRatio: number, lagDelayMs: number) {
+  const animationSpeedScale = useArenaPlaybackStore((s) => s.animationSpeedScale)
   const previousTargetRef = useRef(targetRatio)
   const valueRatioRef = useRef(targetRatio)
   const lagRatioRef = useRef(targetRatio)
@@ -150,7 +152,7 @@ function useAnimatedResource(targetRatio: number, lagDelayMs: number) {
 
   useTick((ticker) => {
     let changed = false
-    const delta = ticker.deltaMS
+    const delta = ticker.deltaMS * animationSpeedScale
     const valueStep = Math.min(1, delta / 220)
     const lagStep = Math.min(1, delta / 480)
 
@@ -287,6 +289,7 @@ function drawResourceBar({
 
 export function UnitBars(props: ResourceLayerProps) {
   const { runtime } = props
+  const animationSpeedScale = useArenaPlaybackStore((s) => s.animationSpeedScale)
   const [pulse, setPulse] = useState(0)
   const [deathElapsedMs, setDeathElapsedMs] = useState(0)
   const layout = getResourceBarLayout(props)
@@ -300,14 +303,16 @@ export function UnitBars(props: ResourceLayerProps) {
   const mp = useAnimatedResource(mpRatio, 180)
 
   useTick((ticker) => {
-    setPulse((value) => (value + ticker.deltaMS * 0.006) % (Math.PI * 2))
+    const delta = ticker.deltaMS * animationSpeedScale
+
+    setPulse((value) => (value + delta * 0.006) % (Math.PI * 2))
 
     if (!dead) {
       setDeathElapsedMs((value) => (value === 0 ? value : 0))
       return
     }
 
-    setDeathElapsedMs((value) => Math.min(1100, value + ticker.deltaMS))
+    setDeathElapsedMs((value) => Math.min(1100, value + delta))
   })
 
   if (dead && deathElapsedMs >= 1000) return null

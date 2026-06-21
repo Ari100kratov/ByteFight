@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Info, LogOut, SwordsIcon } from "lucide-react"
+import { Info, LogOut, Minus, Plus, SwordsIcon } from "lucide-react"
 import { Game } from "@/features/game/Game"
 import { useArenaStore } from "@/features/game/state/data/arena.data.store"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -14,6 +14,12 @@ import { useCodeEditorStore } from "@/features/character-code-block/state/codeEd
 import { useResizeObserver } from "@/shared/hooks/useResizeObserver"
 import { useViewportStore } from "@/features/game/state/viewport/viewport.store"
 import { useGridStore } from "@/features/game/state/game/grid.state.store"
+import {
+  ANIMATION_SPEED_PERCENT_MAX,
+  ANIMATION_SPEED_PERCENT_MIN,
+  ANIMATION_SPEED_PERCENT_STEP,
+  useArenaPlaybackStore,
+} from "@/features/game/state/game/playback.state.store"
 import { Switch } from "@/components/ui/switch"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useArenaBattleState } from "./hooks/useArenaBattleState"
@@ -31,6 +37,8 @@ export function ArenaCard() {
 
   const setViewportSize = useViewportStore((s) => s.setSize)
   const { showGrid, setShowGrid } = useGridStore()
+  const animationSpeedPercent = useArenaPlaybackStore((s) => s.animationSpeedPercent)
+  const adjustAnimationSpeedPercent = useArenaPlaybackStore((s) => s.adjustAnimationSpeedPercent)
 
   const arenaRef = useResizeObserver((size) => {
     setViewportSize(size)
@@ -191,10 +199,49 @@ export function ArenaCard() {
           </div>
         </CardContent>
 
-        <CardFooter className="flex shrink-0 items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Switch checked={showGrid} onCheckedChange={setShowGrid} aria-label="Показать сетку" />
-            <span className="text-muted-foreground text-sm">Показать сетку</span>
+        <CardFooter className="flex shrink-0 flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-sm">Сетка</span>
+              <Switch
+                checked={showGrid}
+                onCheckedChange={setShowGrid}
+                aria-label="Показать сетку"
+              />
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted-foreground text-sm">Скорость</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-8"
+                aria-label="Уменьшить скорость анимаций"
+                disabled={animationSpeedPercent <= ANIMATION_SPEED_PERCENT_MIN}
+                onClick={() => {
+                  adjustAnimationSpeedPercent(-ANIMATION_SPEED_PERCENT_STEP)
+                }}
+              >
+                <Minus className="size-4" />
+              </Button>
+              <span className="text-muted-foreground w-12 text-center text-sm tabular-nums">
+                {animationSpeedPercent}%
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-8"
+                aria-label="Увеличить скорость анимаций"
+                disabled={animationSpeedPercent >= ANIMATION_SPEED_PERCENT_MAX}
+                onClick={() => {
+                  adjustAnimationSpeedPercent(ANIMATION_SPEED_PERCENT_STEP)
+                }}
+              >
+                <Plus className="size-4" />
+              </Button>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">

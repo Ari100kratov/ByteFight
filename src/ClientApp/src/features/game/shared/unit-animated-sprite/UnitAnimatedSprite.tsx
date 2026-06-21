@@ -5,11 +5,12 @@ import type { UnitRuntime } from "../../types/UnitRuntime"
 import type { SpriteAnimationDto } from "@/shared/types/spriteAnimation"
 import { UnitBars, UnitResourceDetails, type UnitSide } from "./UnitBars"
 import { FacingDirection } from "../../types/common"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { type UnitController } from "../../units/controller/UnitController"
 import { useUnitHoverStore } from "../../state/ui/unit.hover.store"
 import { RENDER_LAYERS, snapPixel } from "../../rendering/pixiQuality"
 import { useCameraStore } from "../../camera/camera.store"
+import { useArenaPlaybackStore } from "../../state/game/playback.state.store"
 
 extend({ AnimatedSprite, Container, Graphics })
 
@@ -96,10 +97,18 @@ export function UnitAnimatedSprite({
   onClick,
 }: Props) {
   const layout = useGridStore((s) => s.layout)
+  const animationSpeedScale = useArenaPlaybackStore((s) => s.animationSpeedScale)
   const spriteRef = useRef<AnimatedSprite | null>(null)
   const [isHovered, setIsHovered] = useState(false)
   const setHoveredUnit = useUnitHoverStore((s) => s.setHoveredUnit)
   const clearHoveredUnit = useUnitHoverStore((s) => s.clearHoveredUnit)
+
+  useEffect(() => {
+    const sprite = spriteRef.current
+    if (!sprite) return
+
+    sprite.animationSpeed = spriteAnimation.animationSpeed * animationSpeedScale
+  }, [animationSpeedScale, spriteAnimation.animationSpeed])
 
   if (!layout) return null
 
@@ -126,7 +135,8 @@ export function UnitAnimatedSprite({
 
   const healthPriority = runtime.hp.max > 0 ? runtime.hp.current / runtime.hp.max : 0
 
-  const zIndex = RENDER_LAYERS.units + spriteY + healthPriority + (isHovered ? 10 : selected ? 8 : 0)
+  const zIndex =
+    RENDER_LAYERS.units + spriteY + healthPriority + (isHovered ? 10 : selected ? 8 : 0)
 
   const handleTap = () => {
     const camera = useCameraStore.getState()

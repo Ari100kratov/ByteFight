@@ -9,7 +9,6 @@ import {
   // PieChart,
   Archive,
   Send,
-  Settings2,
   FolderGit2,
   Swords,
   // Gamepad2,
@@ -105,11 +104,6 @@ const data = {
           url: "/docs/script-api",
         },
       ],
-    },
-    {
-      title: "Настройки",
-      url: "/settings",
-      icon: Settings2,
     },
   ],
   navSecondary: [

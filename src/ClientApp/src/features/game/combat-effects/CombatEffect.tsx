@@ -1,7 +1,11 @@
 import { extend } from "@pixi/react"
 import { Container, Graphics, Ticker } from "pixi.js"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { CombatVisualEffectKind, type CombatVisualEffectKind as EffectKind } from "../state/ui/combat.effects.store"
+import {
+  CombatVisualEffectKind,
+  type CombatVisualEffectKind as EffectKind,
+} from "../state/ui/combat.effects.store"
+import { getAnimationSpeedScale } from "../state/game/playback.state.store"
 
 extend({ Container, Graphics })
 
@@ -158,14 +162,17 @@ function drawItemPickup(g: Graphics, point: CombatEffectPoint, t: number, partic
 export function CombatEffect({ kind, point, seed, onComplete }: Props) {
   const [progress, setProgress] = useState(0)
   const elapsedRef = useRef(0)
-  const particles = useMemo(() => createParticles(seed, kind === CombatVisualEffectKind.DamageImpact ? 5 : 9), [kind, seed])
+  const particles = useMemo(
+    () => createParticles(seed, kind === CombatVisualEffectKind.DamageImpact ? 5 : 9),
+    [kind, seed],
+  )
 
   useEffect(() => {
     const ticker = Ticker.shared
     const duration = EFFECT_DURATION[kind]
 
     const update = (ticker: Ticker) => {
-      elapsedRef.current += ticker.deltaMS
+      elapsedRef.current += ticker.deltaMS * getAnimationSpeedScale()
       const nextProgress = Math.min(1, elapsedRef.current / duration)
 
       setProgress(nextProgress)

@@ -3,11 +3,8 @@ import { type AnimatedSprite, Ticker } from "pixi.js"
 import { useTexturesStore } from "../../state/data/textures.data.store"
 import type { UnitRuntimeUpdater } from "../../types/UnitRuntime"
 import { type ActionType } from "@/shared/types/action"
-import {
-  getPixelArtScaleMode,
-  setTexturesScaleMode,
-  snapPixel,
-} from "../../rendering/pixiQuality"
+import { getPixelArtScaleMode, setTexturesScaleMode, snapPixel } from "../../rendering/pixiQuality"
+import { getAnimationSpeedScale } from "../../state/game/playback.state.store"
 
 const SPEED = 70
 
@@ -48,10 +45,7 @@ export class UnitSprite {
     if (this.sprite !== sprite) return
     if (version !== this.playVersion) return
 
-    setTexturesScaleMode(
-      textures,
-      getPixelArtScaleMode(animation.scale.x, animation.scale.y),
-    )
+    setTexturesScaleMode(textures, getPixelArtScaleMode(animation.scale.x, animation.scale.y))
 
     this.currentAnimation = animation.url
 
@@ -60,7 +54,7 @@ export class UnitSprite {
     sprite.onComplete = undefined
 
     sprite.textures = textures
-    sprite.animationSpeed = animation.animationSpeed
+    sprite.animationSpeed = animation.animationSpeed * getAnimationSpeedScale()
     sprite.loop = loop
 
     this.updateRuntime({ action, spriteAnimation: animation, textureHeight: textures[0]?.height })
@@ -129,7 +123,7 @@ export class UnitSprite {
 
     return new Promise((resolve) => {
       const update = (t: Ticker) => {
-        const step = SPEED * (t.deltaMS / 1000)
+        const step = SPEED * getAnimationSpeedScale() * (t.deltaMS / 1000)
         traveled += step
 
         const k = Math.min(1, traveled / dist)

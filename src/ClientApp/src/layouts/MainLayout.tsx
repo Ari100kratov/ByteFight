@@ -29,8 +29,6 @@ const routeNames: Record<string, string> = {
   recipes: "Рецепты",
   "script-api": "API",
 
-  settings: "Настройки",
-
   account: "Аккаунт",
 }
 

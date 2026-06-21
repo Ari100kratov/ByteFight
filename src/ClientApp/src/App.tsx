@@ -83,7 +83,6 @@ export default function App() {
               <Route path="script-api" element={<ScriptApiDocsPage />} />
             </Route>
 
-            <Route path="settings" element={<InProgressPage title="Настройки" />} />
             <Route path="account" element={<AccountPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
