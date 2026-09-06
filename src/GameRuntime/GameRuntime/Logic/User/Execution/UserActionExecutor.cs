@@ -1,4 +1,3 @@
-﻿using System.Collections.Immutable;
 using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.ValueObjects;
 using GameRuntime.Common;
@@ -18,14 +17,9 @@ namespace GameRuntime.Logic.User.Execution;
 /// Отвечает за проверку корректности действия, применение игровых правил
 /// и делегирование фактического перемещения или атаки игровым action-классам.
 /// </summary>
-internal sealed class UserActionExecutor
+internal sealed class UserActionExecutor(IPathFinder pathFinder)
 {
-    private readonly IPathFinder _pathFinder;
-
-    public UserActionExecutor(IPathFinder pathFinder)
-    {
-        _pathFinder = pathFinder;
-    }
+    private readonly IPathFinder _pathFinder = pathFinder;
 
     /// <summary>
     /// Выполняет пользовательское действие от имени указанного юнита
@@ -35,9 +29,9 @@ internal sealed class UserActionExecutor
     /// <param name="actor">Юнит, совершающий действие.</param>
     /// <param name="world">Текущее состояние игрового мира.</param>
     public IEnumerable<GameActionLogEntry> Execute(
-    UserAction action,
-    BaseUnit actor,
-    ArenaWorld world)
+        UserAction action,
+        BaseUnit actor,
+        ArenaWorld world)
     {
         return action switch
         {
@@ -67,7 +61,7 @@ internal sealed class UserActionExecutor
             return [world.CreateIdleLogEntry(actor, IdleReasons.TargetDead)];
         }
 
-        int distance = actor.Position.ManhattanDistance(target.Position);
+        int distance = actor.Position.HexDistance(target.Position);
 
         RuntimeAbility? attack = actor.Abilities.FindBestBasicAttack(distance);
 
@@ -76,14 +70,14 @@ internal sealed class UserActionExecutor
             return [world.CreateIdleLogEntry(actor, IdleReasons.OutOfRange)];
         }
 
-        return new UseAbilityAction(actor, target, attack).Execute(world);
+        return new UseAbilityAction(actor, attack, target.Position).Execute(world);
     }
 
     /// <summary>
     /// Выполняет перемещение к указанной позиции.
     ///
-    /// Движок строит путь до цели, а затем проходит по нему столько клеток,
-    /// сколько позволяет характеристика <c>MoveRange</c>.
+    /// Движок строит путь до цели, а затем проходит по нему столько гексов,
+    /// сколько позволяет остаток очков перемещения.
     /// Если путь отсутствует или перемещение невозможно, действие заменяется на Idle.
     /// </summary>
     private IEnumerable<GameActionLogEntry> ExecuteMoveTo(
@@ -91,36 +85,15 @@ internal sealed class UserActionExecutor
         BaseUnit actor,
         ArenaWorld world)
     {
-        List<Position>? path = _pathFinder.FindPath(
-        world,
-        actor.Position,
-        action.Target);
+        List<Position>? path = _pathFinder.FindPath(world, actor.Position, action.Target);
 
-        if (path is null || path.Count < 2)
-        {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
-        }
-
-        int moveRange = actor.Stats.GetMoveRange();
-
-        Position? target = MovementRules.SelectMoveTarget(
-            world,
-            actor,
-            path,
-            moveRange);
-
-        if (target is null)
-        {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
-        }
-
-        return new MoveAction(actor, target).Execute(world);
+        return ExecutePath(path, actor, world);
     }
 
     /// <summary>
     /// Выполняет сближение с указанной целью.
     ///
-    /// В отличие от <see cref="MoveTo" />, действие не требует попасть именно
+    /// В отличие от <see cref="ExecuteMoveTo" />, действие не требует попасть именно
     /// в клетку цели. Если цель занята или полностью окружена, исполнитель
     /// всё равно попытается выбрать полезный путь в её сторону.
     /// </summary>
@@ -141,34 +114,11 @@ internal sealed class UserActionExecutor
             actor.Position,
             target.Position);
 
-        if (path is null || path.Count < 2)
-        {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
-        }
-
-        int moveRange = actor.Stats.GetMoveRange();
-
-        Position? moveTarget = MovementRules.SelectMoveTarget(
-            world,
-            actor,
-            path,
-            moveRange);
-
-        if (moveTarget is null)
-        {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
-        }
-
-        return new MoveAction(actor, moveTarget).Execute(world);
+        return ExecutePath(path, actor, world);
     }
 
     /// <summary>
     /// Выполняет движение в сторону указанной позиции.
-    ///
-    /// В отличие от <see cref="MoveTo"/>, действие не требует
-    /// достижения конкретной клетки.
-    /// Если путь до позиции отсутствует, исполнитель всё равно
-    /// попытается приблизиться к ней максимально близко.
     /// </summary>
     private IEnumerable<GameActionLogEntry> ExecuteMoveTowardsPosition(
         MoveTowardsPosition action,
@@ -180,33 +130,15 @@ internal sealed class UserActionExecutor
             actor.Position,
             action.Target);
 
-        if (path is null || path.Count < 2)
-        {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
-        }
-
-        int moveRange = actor.Stats.GetMoveRange();
-
-        Position? moveTarget = MovementRules.SelectMoveTarget(
-            world,
-            actor,
-            path,
-            moveRange);
-
-        if (moveTarget is null)
-        {
-            return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
-        }
-
-        return new MoveAction(actor, moveTarget).Execute(world);
+        return ExecutePath(path, actor, world);
     }
 
     /// <summary>
     /// Выполняет отступление от указанной цели.
     ///
-    /// Из всех достижимых за текущий ход клеток выбирается та,
-    /// которая максимизирует расстояние до цели.
-    /// Если допустимой клетки нет, действие заменяется на Idle.
+    /// Из всех достижимых за текущий ход гексов выбирается тот,
+    /// который максимизирует расстояние до цели.
+    /// Если допустимого гекса нет, действие заменяется на Idle.
     /// </summary>
     private IEnumerable<GameActionLogEntry> ExecuteMoveAwayFrom(
         MoveAwayFrom action,
@@ -220,13 +152,13 @@ internal sealed class UserActionExecutor
             return [world.CreateIdleLogEntry(actor, IdleReasons.TargetDead)];
         }
 
-        int moveRange = actor.Stats.GetMoveRange();
-        ImmutableHashSet<Position> reachable = world.GetReachableCells(actor, actor.Position, moveRange);
+        System.Collections.Immutable.ImmutableHashSet<Position> reachable =
+            MovementRules.GetReachableCells(world, actor);
 
         Position? bestPosition = reachable
             .Where(p => p != actor.Position)
-            .OrderByDescending(p => p.ManhattanDistance(target.Position))
-            .ThenBy(p => p.ManhattanDistance(actor.Position))
+            .OrderByDescending(p => p.HexDistance(target.Position))
+            .ThenBy(p => p.HexDistance(actor.Position))
             .Cast<Position?>()
             .FirstOrDefault();
 
@@ -235,6 +167,56 @@ internal sealed class UserActionExecutor
             return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
         }
 
-        return new MoveAction(actor, bestPosition).Execute(world);
+        List<Position>? path = _pathFinder.FindPath(world, actor.Position, bestPosition);
+
+        return ExecutePath(path, actor, world);
+    }
+
+    /// <summary>
+    /// Проходит по построенному пути в пределах оставшихся очков перемещения.
+    /// </summary>
+    private IEnumerable<GameActionLogEntry> ExecutePath(
+        List<Position>? path,
+        BaseUnit actor,
+        ArenaWorld world)
+    {
+        if (path is null || path.Count < 2)
+        {
+            return [world.CreateIdleLogEntry(actor, IdleReasons.NoPath)];
+        }
+
+        List<Position> trimmed = TrimPathToBudget(world, actor, path);
+
+        if (trimmed.Count < 2)
+        {
+            return [world.CreateIdleLogEntry(actor, IdleReasons.MoveImpossible)];
+        }
+
+        return new MoveAction(actor, trimmed).Execute(world);
+    }
+
+    private static List<Position> TrimPathToBudget(
+        ArenaWorld world,
+        BaseUnit actor,
+        List<Position> path)
+    {
+        int budget = actor.BattleState.MovePointsRemaining;
+        int spent = 0;
+        int last = 0;
+
+        for (int i = 1; i < path.Count; i++)
+        {
+            int cost = MovementRules.MovementCost(world, path[i]);
+
+            if (cost == int.MaxValue || spent + cost > budget)
+            {
+                break;
+            }
+
+            spent += cost;
+            last = i;
+        }
+
+        return [.. path.Take(last + 1)];
     }
 }

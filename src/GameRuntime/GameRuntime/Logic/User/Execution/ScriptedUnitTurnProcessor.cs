@@ -1,13 +1,13 @@
 ﻿using Domain.GameRuntime.GameActionLogs.Entries;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.Units;
-using GameRuntime.Logic.Turns;
+
 using GameRuntime.Logic.User.Api;
 using GameRuntime.Logic.User.Compilation;
 
 namespace GameRuntime.Logic.User.Execution;
 
-internal sealed class ScriptedUnitTurnProcessor : IUnitTurnProcessor, IDisposable
+internal sealed class ScriptedUnitTurnProcessor : IDisposable
 {
     private readonly CompiledUserScript _script;
     private readonly IUserCodeRunner _runner;

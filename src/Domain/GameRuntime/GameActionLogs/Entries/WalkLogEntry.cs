@@ -8,7 +8,14 @@ namespace Domain.GameRuntime.GameActionLogs.Entries;
 public sealed class WalkLogEntry : GameActionLogEntry
 {
     public FacingDirection FacingDirection { get; private set; }
+
     public Position To { get; private set; }
+
+    /// <summary>
+    /// Полный путь перемещения по гексам (включая стартовую клетку).
+    /// Клиент использует его для плавной анимации.
+    /// </summary>
+    public IReadOnlyList<Position>? Path { get; private set; }
 
     private WalkLogEntry() { } // EF
 
@@ -19,7 +26,8 @@ public sealed class WalkLogEntry : GameActionLogEntry
         string? info,
         FacingDirection facingDirection,
         Position to,
-        int turnIndex)
+        int turnIndex,
+        IReadOnlyList<Position>? path = null)
         : base(
             sessionId,
             actorId,
@@ -30,5 +38,6 @@ public sealed class WalkLogEntry : GameActionLogEntry
     {
         FacingDirection = facingDirection;
         To = to;
+        Path = path;
     }
 }

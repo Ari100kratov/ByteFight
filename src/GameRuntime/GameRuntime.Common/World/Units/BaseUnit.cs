@@ -1,4 +1,5 @@
-﻿using Domain.Game.ArenaItems;
+using Domain.Game.Arenas;
+using Domain.Game.ArenaItems;
 using Domain.GameRuntime.GameActionLogs;
 using Domain.ValueObjects;
 using GameRuntime.Common.World.Abilities;
@@ -13,6 +14,7 @@ public record BaseUnit
     {
         Position = position;
         FacingDirection = facingDirection;
+        BattleState = new UnitBattleState();
     }
 
     public Position Position { get; private set; }
@@ -34,34 +36,53 @@ public record BaseUnit
     /// </summary>
     public required RuntimeAbilities Abilities { get; init; }
 
+    /// <summary>
+    /// Состояние юнита в текущем бою: очки действия, перезарядки, статусы.
+    /// </summary>
+    public UnitBattleState BattleState { get; }
+
     public required string Name { get; init; }
+
+    /// <summary>
+    /// Идентификатор команды. Основа для будущих PvP-режимов:
+    /// сейчас игрок — одна команда, враги арены — другая.
+    /// </summary>
+    public Guid TeamId { get; init; } = Guid.Empty;
 
     public virtual Guid Id { get; }
 
     public bool IsDead => Stats.IsDead();
 
-    public void Move(Position newPosition)
+    /// <summary>
+    /// Перемещает юнита в соседний гекс, обновляя направление взгляда
+    /// по направлению шага.
+    /// </summary>
+    public void MoveStep(Position step)
     {
         ThrowIfDead();
 
-        int dx = newPosition.X - Position.X;
-
-        if (dx != 0)
+        if (step != Position)
         {
-            FacingDirection newFacingDirection = dx > 0
-                ? FacingDirection.Right
-                : FacingDirection.Left;
-
-            Turn(newFacingDirection);
+            Turn(Position.CalculateFacing(step));
+            Position = step;
         }
-
-        Position = newPosition;
     }
 
+    /// <summary>
+    /// Поворачивает юнита в указанном направлении.
+    /// </summary>
     public void Turn(FacingDirection facingDirection)
     {
         ThrowIfDead();
         FacingDirection = facingDirection;
+    }
+
+    /// <summary>
+    /// Поворачивает юнита лицом к цели.
+    /// </summary>
+    public void FaceTarget(Position target)
+    {
+        Turn(Position.CalculateFacing(target));
     }
 
     public void MarkKilledBy(Guid killerId)
@@ -72,6 +93,7 @@ public record BaseUnit
         }
 
         KilledByUnitId = killerId;
+        BattleState.Statuses.Clear();
     }
 
     /// <summary>
@@ -88,6 +110,16 @@ public record BaseUnit
             _ => throw new NotImplementedException(
                 $"Item type '{item.Type}' is not supported yet.")
         };
+    }
+
+    /// <summary>
+    /// Возвращает множитель входящего урона с учётом рельефа под юнитом.
+    /// </summary>
+    public decimal GetTerrainDamageMultiplier(IReadOnlyDictionary<Position, TerrainType> terrain)
+    {
+        TerrainType cell = terrain.GetValueOrDefault(Position, TerrainType.Meadow);
+
+        return TerrainRules.IncomingDamageMultiplier(cell);
     }
 
     private void ThrowIfDead()

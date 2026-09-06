@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.GameRuntime;
+using Application.Abstractions.GameRuntime;
 using Domain.GameRuntime.GameSessions;
 using GameRuntime.Common.World;
 using GameRuntime.Hosting;
@@ -7,42 +7,28 @@ using GameRuntime.Logic.Turns;
 using GameRuntime.Logic.User.Compilation;
 using GameRuntime.Logic.User.Execution;
 using GameRuntime.Persistence;
+using GameRuntime.Realtime;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
 namespace GameRuntime.Builders;
 
-internal sealed class GameInstanceFactory
+/// <summary>
+/// Создаёт боевую сессию. Ручной режим — основной: игрок управляет
+/// персонажем сам. Скриптовый режим включается, когда передан код
+/// (функция скрыта из интерфейса, но сохранена для совместимости).
+/// </summary>
+internal sealed class GameInstanceFactory(
+    TacticalEnemyAiRunner npcRunner,
+    UserActionExecutor executor,
+    IUserCodeRunner userCodeRunner,
+    UserScriptCompiler compiler,
+    UserCodeExecutionOptions userCodeExecutionOptions,
+    BattleCommandRegistry commandRegistry,
+    IGameSessionRepository sessionRepository,
+    IGameRuntimeEventSender events,
+    ILoggerFactory loggerFactory)
 {
-    private readonly BasicEnemyAiProcessor _npcAi;
-    private readonly UserActionExecutor _executor;
-    private readonly IUserCodeRunner _userCodeRunner;
-    private readonly UserScriptCompiler _compiler;
-    private readonly UserCodeExecutionOptions _userCodeExecutionOptions;
-    private readonly IGameSessionRepository _sessionRepository;
-    private readonly IGameRuntimeEventSender _events;
-    private readonly ILoggerFactory _loggerFactory;
-
-    public GameInstanceFactory(
-        BasicEnemyAiProcessor npcAi,
-        UserActionExecutor executor,
-        IUserCodeRunner userCodeRunner,
-        UserScriptCompiler compiler,
-        UserCodeExecutionOptions userCodeExecutionOptions,
-        IGameSessionRepository sessionRepository,
-        IGameRuntimeEventSender events,
-        ILoggerFactory loggerFactory)
-    {
-        _npcAi = npcAi;
-        _executor = executor;
-        _userCodeRunner = userCodeRunner;
-        _compiler = compiler;
-        _userCodeExecutionOptions = userCodeExecutionOptions;
-        _sessionRepository = sessionRepository;
-        _events = events;
-        _loggerFactory = loggerFactory;
-    }
-
     public async Task<Result<GameInstance>> Create(
         GameInitModel initModel,
         ArenaWorld world,
@@ -50,36 +36,51 @@ internal sealed class GameInstanceFactory
         CancellationToken ct)
     {
         CompiledUserScript? compiledScript = null;
-        ScriptedUnitTurnProcessor? playerAi = null;
+        ScriptedPlayerTurnRunner? scriptedRunner = null;
 
         try
         {
-            try
+            IBattleTurnRunner playerRunner;
+            IDisposable? ownedResource;
+
+            if (string.IsNullOrWhiteSpace(initModel.Code))
             {
-                compiledScript = _compiler.Compile(initModel.Code);
+                // Ручной режим: ждём команды игрока через хаб.
+                BattleCommandQueue queue = commandRegistry.Register(world.GameSessionId);
+
+                playerRunner = new ManualPlayerTurnRunner(queue);
+                ownedResource = null;
             }
-            catch (Exception ex)
+            else
             {
-                return Result.Failure<GameInstance>(
-                    GameHostErrors.UserCodeCompilationFailed(
-                        $"Не удалось скомпилировать пользовательский код: {ex.Message}"));
+                try
+                {
+                    compiledScript = compiler.Compile(initModel.Code);
+                }
+                catch (Exception ex)
+                {
+                    return Result.Failure<GameInstance>(
+                        GameHostErrors.UserCodeCompilationFailed(
+                            $"Не удалось скомпилировать пользовательский код: {ex.Message}"));
+                }
+
+                scriptedRunner = new ScriptedPlayerTurnRunner(
+                    compiledScript,
+                    userCodeRunner,
+                    executor,
+                    userCodeExecutionOptions);
+
+                // Владение compiledScript перешло в scriptedRunner.
+                compiledScript = null;
+
+                playerRunner = scriptedRunner;
+                ownedResource = scriptedRunner;
             }
-
-            playerAi = new ScriptedUnitTurnProcessor(
-                compiledScript,
-                _userCodeRunner,
-                _executor,
-                _userCodeExecutionOptions);
-
-            // Владение compiledScript перешло в playerAi.
-            compiledScript = null;
-
-            var turnProcessor = new GameTurnProcessor(_npcAi, playerAi);
 
             IEnumerable<GameSessionParticipantInitModel> arenaEnemies = world.Enemies
                 .Select(x => new GameSessionParticipantInitModel(x.ArenaEnemyId, x.Name));
 
-            GameSession gameSession = await _sessionRepository.Create(
+            GameSession gameSession = await sessionRepository.Create(
                 world.GameSessionId,
                 initModel,
                 world.Player.Name,
@@ -89,21 +90,23 @@ internal sealed class GameInstanceFactory
             var gameInstance = new GameInstance(
                 sessionId: gameSession.Id,
                 world: world,
+                npcRunner: npcRunner,
+                playerRunner: playerRunner,
                 onCompleted: onCompleted,
-                disposableResource: playerAi,
-                sessionRepository: _sessionRepository,
-                gameTurnProcessor: turnProcessor,
-                eventSender: _events,
-                logger: _loggerFactory.CreateLogger<GameInstance>());
+                commandRegistry: commandRegistry,
+                disposableResource: ownedResource,
+                sessionRepository: sessionRepository,
+                eventSender: events,
+                logger: loggerFactory.CreateLogger<GameInstance>());
 
-            // Владение playerAi перешло в gameInstance.
-            playerAi = null;
+            // Владение scriptedRunner перешло в gameInstance.
+            scriptedRunner = null;
 
             return gameInstance;
         }
         finally
         {
-            playerAi?.Dispose();
+            scriptedRunner?.Dispose();
             compiledScript?.Dispose();
         }
     }

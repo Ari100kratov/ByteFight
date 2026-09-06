@@ -10,4 +10,13 @@ public interface IGameHost
     Result CancelGame(Guid sessionId);
 }
 
-public sealed record GameInitModel(Guid UserId, Guid ArenaId, GameModeType Mode, Guid CharacterId, string Code);
+/// <summary>
+/// Модель запуска боя. Пустой или отсутствующий код — ручное управление;
+/// код — скрытый скриптовый режим для совместимости.
+/// </summary>
+public sealed record GameInitModel(
+    Guid UserId,
+    Guid ArenaId,
+    GameModeType Mode,
+    Guid CharacterId,
+    string? Code = null);

@@ -43,8 +43,15 @@ public sealed record Position
 
     /// <summary>
     /// Манхэттенское расстояние до другой позиции.
+    /// Для игровой логики на гексах используйте <see cref="HexDistance"/>.
     /// </summary>
     public int ManhattanDistance(Position position) => Math.Abs(X - position.X) + Math.Abs(Y - position.Y);
+
+    /// <summary>
+    /// Расстояние до другой позиции в гексах
+    /// (минимальное число шагов по гексагональной сетке).
+    /// </summary>
+    public int HexDistance(Position position) => HexGeometry.Distance(this, position);
 
     /// <summary>
     /// Евклидово расстояние до другой позиции.
@@ -56,7 +63,20 @@ public sealed record Position
     /// Вычисляет направление взгляда в сторону целевой позиции.
     /// </summary>
     public FacingDirection CalculateFacing(Position targetPosition) =>
-        targetPosition.X < X ? FacingDirection.Left : FacingDirection.Right;
+        HexGeometry.GetFacing(this, targetPosition);
+
+    /// <summary>
+    /// Возвращает шесть соседних гексов (смещённая раскладка odd-q).
+    /// Гексы с отрицательными координатами пропускаются;
+    /// принадлежность арене нужно проверять отдельно.
+    /// </summary>
+    public IEnumerable<Position> GetHexNeighbors() => HexGeometry.GetNeighbors(this);
+
+    /// <summary>
+    /// Возвращает все гексы в радиусе от текущей позиции включительно.
+    /// </summary>
+    public IEnumerable<Position> GetHexesInRange(int radius) =>
+        HexGeometry.GetCellsInRange(this, radius);
 
     /// <summary>
     /// Возвращает четыре соседние клетки по ортогонали:

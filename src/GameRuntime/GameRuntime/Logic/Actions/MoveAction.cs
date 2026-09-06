@@ -1,5 +1,6 @@
-﻿using Domain.GameRuntime.GameActionLogs.Entries;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Domain.ValueObjects;
+using GameRuntime.Common;
 using GameRuntime.Common.World;
 using GameRuntime.Common.World.ArenaItems;
 using GameRuntime.Common.World.Stats;
@@ -7,23 +8,38 @@ using GameRuntime.Common.World.Units;
 
 namespace GameRuntime.Logic.Actions;
 
+/// <summary>
+/// Перемещение юнита по пути из соседних гексов в пределах
+/// оставшихся очков перемещения.
+/// </summary>
 internal sealed class MoveAction : IRuntimeAction
 {
     public BaseUnit Actor { get; }
 
-    public Position Position { get; }
+    public IReadOnlyList<Position> Path { get; }
 
-    public MoveAction(BaseUnit actor, Position position)
+    public MoveAction(BaseUnit actor, IReadOnlyList<Position> path)
     {
         Actor = actor;
-        Position = position;
+        Path = path;
     }
 
     public IEnumerable<GameActionLogEntry> Execute(ArenaWorld world)
     {
-        Actor.Move(Position);
+        if (!MovementRules.IsPathValid(world, Actor, Path, out int totalCost))
+        {
+            yield return world.CreateIdleLogEntry(Actor, IdleReasons.MoveImpossible);
+            yield break;
+        }
 
-        yield return world.CreateWalkLogEntry(Actor);
+        foreach (Position step in Path.Skip(1))
+        {
+            Actor.MoveStep(step);
+        }
+
+        Actor.BattleState.MovePointsRemaining -= totalCost;
+
+        yield return world.CreateWalkLogEntry(Actor, Path);
 
         if (Actor is not PlayerUnit)
         {

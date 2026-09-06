@@ -1,184 +1,132 @@
-import { useParams } from "react-router-dom"
-import { useDefaultLayout } from "react-resizable-panels"
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
-import CharacterCodeBlock from "../character-code-block/CharacterCodeBlock"
-import { SelectCharacterCard } from "./components/select-character-card/SelectCharacterCard"
-import { ArenaCard } from "./components/arena-card/ArenaCard"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoaderState } from "@/components/common/LoaderState"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useArena } from "./hooks/useArena"
-import { useCharacterStore } from "../game/state/data/character.data.store"
-import { useGameSession } from "./hooks/useGameSession"
-import { useArenaBreadcrumbs } from "@/shared/hooks/useArenaBreadcrumbs"
-import { Group, Panel, Separator } from "@/components/ui/resizable"
-import { CombatLogPanel } from "../game/combat-log/CombatLogPanel"
-import { useEffect, useRef } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { LoaderState } from '@/components/common/LoaderState'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/shared/lib/utils'
+
+import { useArena } from './hooks/useArena'
+import { useArenaBreadcrumbs } from '@/shared/hooks/useArenaBreadcrumbs'
+import { useCharacters } from '../characters-page/useCharacters'
+import { useStartGame } from '../game/api/useStartGame'
+import { BattleScreen } from '../battle/BattleScreen'
 
 function GameArenaPageSkeleton() {
   return (
-    <Group orientation="horizontal">
-      {/* Левая часть */}
-      <Panel id="left-panel-skeleton" defaultSize="30%">
-        <Group orientation="vertical">
-          <Panel id="character-panel-skeleton" defaultSize="40%" className="p-2">
-            <Skeleton className="h-full w-full rounded-md" />
-          </Panel>
-
-          <Separator withHandle />
-
-          <Panel id="code-panel-skeleton" defaultSize="60%" className="p-2">
-            <Skeleton className="h-full w-full rounded-md" />
-          </Panel>
-        </Group>
-      </Panel>
-
-      <Separator withHandle />
-
-      {/* Правая часть */}
-      <Panel id="right-panel-skeleton" defaultSize="70%" minSize="30%">
-        <Group orientation="horizontal">
-          <Panel id="arena-panel-skeleton" defaultSize="70%" minSize="40%" className="p-2">
-            <Skeleton className="h-full w-full rounded-md" />
-          </Panel>
-
-          <Separator withHandle />
-
-          <Panel id="combat-log-panel-skeleton" defaultSize="30%" className="p-2">
-            <Skeleton className="h-full w-full rounded-md" />
-          </Panel>
-        </Group>
-      </Panel>
-    </Group>
+    <div className="flex h-full gap-4">
+      <Skeleton className="h-full w-64 rounded-xl" />
+      <Skeleton className="h-full flex-1 rounded-xl" />
+    </div>
   )
 }
 
+/**
+ * Страница арены: выбор героя и старт ручного боя.
+ * Режим программирования скрыт: бой идёт под управлением игрока.
+ */
 export default function GameArenaPage() {
-  const { modeType, arenaId, sessionId } = useParams()
+  const { modeType, arenaId } = useParams()
 
-  // Да, это костыль — но зато рабочий.
-  // Я честно пытался нормально сбрасывать состояние при выходе из сессии,
-  // но из-за анимаций, асинхронных событий с сервера, глобальных сторов
-  // и всевозможных гонок состояний всё это превращается в ад:
-  // где-то не доинициализировалось, где-то остался старый controller,
-  // где-то не применились текстуры, где-то отвалились подписки и т.д.
-  //
-  // В какой-то момент стало понятно, что пытаться это всё аккуратно
-  // синхронизировать — это бесконечная борьба с edge-case'ами.
-  //
-  // Поэтому делаем максимально тупо, но надежно:
-  // при исчезновении sessionId просто делаем полный reload страницы.
-  // Это гарантированно очищает ВСЁ состояние (включая сторы, registry,
-  // Pixi-инстансы и прочие сайд-эффекты) и возвращает приложение
-  // в полностью консистентное состояние.
-  //
-  // Если когда-нибудь захочется "сделать правильно" — удачи тому герою :)
-  const prevSessionIdRef = useRef<string | undefined>(sessionId)
-  useEffect(() => {
-    const prevSessionId = prevSessionIdRef.current
-
-    if (prevSessionId && !sessionId) {
-      window.location.reload()
-      return
-    }
-
-    prevSessionIdRef.current = sessionId
-  }, [sessionId])
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null)
 
   const { data: arena, isLoading, error } = useArena(arenaId)
-  const character = useCharacterStore((s) => s.character)
+  const { data: characters, isLoading: charactersLoading } = useCharacters()
+
+  const startGame = useStartGame()
 
   useArenaBreadcrumbs({ modeType, arena })
-  useGameSession(sessionId)
 
-  const { defaultLayout: rootDefaultLayout, onLayoutChanged: onRootLayoutChanged } =
-    useDefaultLayout({
-      id: "game-arena-layout",
-    })
+  // Полный перезапуск при выходе из сессии: чистим сторы боя.
+  useEffect(() => {
+    return () => {
+      setSessionId(null)
+    }
+  }, [])
 
-  const { defaultLayout: leftDefaultLayout, onLayoutChanged: onLeftLayoutChanged } =
-    useDefaultLayout({
-      id: "game-arena-left-layout",
-    })
+  if (sessionId) {
+    return <BattleScreen sessionId={sessionId} />
+  }
 
-  const { defaultLayout: rightDefaultLayout, onLayoutChanged: onRightLayoutChanged } =
-    useDefaultLayout({
-      id: "game-arena-right-layout",
-    })
+  const canStart = Boolean(arena && selectedCharacterId) && !startGame.isPending
+
+  const handleStart = () => {
+    if (!arena || !selectedCharacterId || !modeType) return
+
+    startGame.mutate(
+      {
+        arenaId: arena.id,
+        mode: modeType,
+        characterId: selectedCharacterId,
+        code: null,
+      },
+      { onSuccess: setSessionId },
+    )
+  }
 
   return (
-    <div className="flex h-full w-full flex-col gap-4">
+    <div className="flex h-full min-h-0 gap-4">
       <LoaderState
         isLoading={isLoading}
         error={error}
-        skeletonClassName="w-full h-full rounded-2xl"
+        skeletonClassName="w-72 h-full"
         loadingFallback={<GameArenaPageSkeleton />}
       >
-        <Group
-          orientation="horizontal"
-          defaultLayout={rootDefaultLayout}
-          onLayoutChanged={onRootLayoutChanged}
-        >
-          {/* Левая часть */}
-          <Panel id="left-panel" defaultSize="30%">
-            <Group
-              orientation="vertical"
-              defaultLayout={leftDefaultLayout}
-              onLayoutChanged={onLeftLayoutChanged}
+        <Card className="h-full w-72 shrink-0 border-[#2c3a24] bg-[#161f12]/80">
+          <CardHeader>
+            <CardTitle className="text-[#e8d9a0]">Выбор героя</CardTitle>
+          </CardHeader>
+
+          <CardContent className="flex min-h-0 flex-col gap-3">
+            {charactersLoading && <Skeleton className="h-24 w-full" />}
+
+            <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
+              {characters?.map((character) => (
+                <button
+                  key={character.id}
+                  type="button"
+                  onClick={() => { setSelectedCharacterId(character.id); }}
+                  className={cn(
+                    'flex flex-col items-start rounded-lg border p-3 text-left transition-colors',
+                    selectedCharacterId === character.id
+                      ? 'border-[#9c7b3a] bg-[#2c3a24]'
+                      : 'border-[#3a4a30] bg-[#1a2415] hover:border-[#9c7b3a]',
+                  )}
+                >
+                  <span className="text-sm font-semibold text-[#e8d9a0]">{character.name}</span>
+                  <span className="text-xs text-[#a8a88f]">
+                    {character.className} · {character.specName}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <Button
+              className="w-full border-[#9c7b3a] bg-[#2c3a24] text-[#e8d9a0] hover:bg-[#3a4a30]"
+              variant="outline"
+              disabled={!canStart}
+              onClick={() => { handleStart() }}
             >
-              {/* Блок персонажа */}
-              <Panel id="character-panel" defaultSize="40%" className="p-2">
-                <SelectCharacterCard />
-              </Panel>
-
-              <Separator withHandle />
-
-              {/* Блок кода */}
-              <Panel id="code-panel" defaultSize="60%" className="p-2">
-                {character ? (
-                  <div className="h-full overflow-auto">
-                    <CharacterCodeBlock characterId={character.id} />
-                  </div>
-                ) : (
-                  <Card className="flex h-full w-full flex-col overflow-auto">
-                    <CardHeader>
-                      <CardTitle>Поведение</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-muted-foreground p-4 text-center">
-                        Необходимо выбрать персонажа.
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </Panel>
-            </Group>
-          </Panel>
-
-          <Separator withHandle />
-
-          {/* Правая часть */}
-          <Panel id="right-panel" defaultSize="70%" minSize="30%">
-            <Group
-              orientation="horizontal"
-              defaultLayout={rightDefaultLayout}
-              onLayoutChanged={onRightLayoutChanged}
-            >
-              {/* Арена */}
-              <Panel id="arena-panel" defaultSize="70%" minSize="40%" className="p-2">
-                <ArenaCard />
-              </Panel>
-
-              <Separator withHandle />
-
-              {/* Журнал боя */}
-              <Panel id="combat-log-panel" defaultSize="30%" className="p-2">
-                <CombatLogPanel />
-              </Panel>
-            </Group>
-          </Panel>
-        </Group>
+              {startGame.isPending ? 'Рубка начинается...' : 'В бой!'}
+            </Button>
+          </CardContent>
+        </Card>
       </LoaderState>
+
+      <Card className="min-h-0 flex-1 border-[#2c3a24] bg-[#161f12]/80">
+        <CardHeader>
+          <CardTitle className="text-[#e8d9a0]">{arena?.name ?? 'Арена'}</CardTitle>
+        </CardHeader>
+        <CardContent className="min-h-0 overflow-y-auto text-sm text-[#c9c9b0]">
+          <p>{arena?.description}</p>
+          <p className="mt-3 text-xs text-[#a8a88f]">
+            Поле {arena?.gridWidth}×{arena?.gridHeight} гексов. Управляйте героем вручную:
+            перемещение тратит очки шагов, способности — очки действия и ману.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }

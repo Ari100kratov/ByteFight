@@ -28,5 +28,15 @@ public enum GameActionLogEntryType
     /// <summary>
     /// Юнит подобрал предмет на арене.
     /// </summary>
-    ItemPickedUp = 5
+    ItemPickedUp = 5,
+
+    /// <summary>
+    /// На юнита наложен статус-эффект.
+    /// </summary>
+    StatusApplied = 6,
+
+    /// <summary>
+    /// Начало нового раунда боя.
+    /// </summary>
+    RoundStarted = 7
 }

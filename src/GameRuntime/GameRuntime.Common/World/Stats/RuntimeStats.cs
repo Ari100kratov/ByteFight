@@ -81,6 +81,57 @@ public sealed class RuntimeStats
         decimal.ToInt32(Math.Floor(Get(StatType.MoveRange)));
 
     /// <summary>
+    /// Возвращает инициативу юнита (порядок хода в раунде).
+    /// </summary>
+    public int GetInitiative() =>
+        decimal.ToInt32(Get(StatType.Initiative));
+
+    /// <summary>
+    /// Возвращает броню юнита (плоское снижение входящего урона).
+    /// </summary>
+    public decimal GetArmor() =>
+        Get(StatType.Armor);
+
+    /// <summary>
+    /// Возвращает мощь юнита (процентная прибавка к урону и лечению).
+    /// </summary>
+    public decimal GetPower() =>
+        Get(StatType.Power);
+
+    /// <summary>
+    /// Возвращает восстановление маны за ход.
+    /// </summary>
+    public decimal GetManaRegen() =>
+        Get(StatType.ManaRegen);
+
+    /// <summary>
+    /// Пытается списать ману. Возвращает false, если маны не хватает.
+    /// </summary>
+    public bool TrySpendMana(decimal cost)
+    {
+        if (Get(StatType.Mana) < cost)
+        {
+            return false;
+        }
+
+        Current[StatType.Mana] -= cost;
+        return true;
+    }
+
+    /// <summary>
+    /// Восстанавливает ману, не превышая максимум.
+    /// </summary>
+    public void RegenerateMana(decimal value)
+    {
+        if (!Current.ContainsKey(StatType.Mana))
+        {
+            return;
+        }
+
+        Current[StatType.Mana] = Math.Min(GetMax(StatType.Mana), Get(StatType.Mana) + value);
+    }
+
+    /// <summary>
     /// Проверяет, мертв ли юнит.
     /// </summary>
     public bool IsDead() =>

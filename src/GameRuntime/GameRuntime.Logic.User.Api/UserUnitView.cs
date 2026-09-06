@@ -71,14 +71,14 @@ public sealed class UserUnitView
     public int MoveRange => decimal.ToInt32(Math.Floor(Stats.Get(StatType.MoveRange) ?? 0));
 
     /// <summary>
-    /// Манхэттенское расстояние до другого юнита.
+    /// Гексагональное расстояние до другого юнита.
     /// </summary>
-    public int DistanceTo(UserUnitView other) => Position.ManhattanDistance(other.Position);
+    public int DistanceTo(UserUnitView other) => Position.HexDistance(other.Position);
 
     /// <summary>
-    /// Манхэттенское расстояние до указанной позиции.
+    /// Гексагональное расстояние до указанной позиции.
     /// </summary>
-    public int DistanceTo(Position position) => Position.ManhattanDistance(position);
+    public int DistanceTo(Position position) => Position.HexDistance(position);
 
     /// <summary>
     /// Возвращает лучшую базовую атаку, которой можно ударить указанного юнита.

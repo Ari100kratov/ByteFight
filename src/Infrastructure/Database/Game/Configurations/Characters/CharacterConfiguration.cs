@@ -23,5 +23,11 @@ internal sealed class CharacterConfiguration : IEntityTypeConfiguration<Characte
         builder.Property(c => c.UserId)
             .HasConversion(v => v.Value, v => new UserId(v))
             .IsRequired();
+
+        builder.Property(c => c.Level)
+            .HasDefaultValue(1);
+
+        builder.Property(c => c.Experience)
+            .HasDefaultValue(0);
     }
 }

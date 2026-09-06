@@ -29,6 +29,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Link } from "react-router-dom"
+import { FEATURE_FLAGS } from "@/shared/config/features"
 
 const data = {
   user: {
@@ -164,7 +165,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain
+          items={
+            FEATURE_FLAGS.codeMode
+              ? data.navMain
+              : data.navMain.filter((item) => item.url !== "/docs")
+          }
+        />
         {/* <NavProjects projects={data.projects} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>

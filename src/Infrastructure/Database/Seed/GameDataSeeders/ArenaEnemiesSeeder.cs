@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain.Game.Arenas.ArenaEnemies;
 using Domain.ValueObjects;
 
@@ -10,34 +10,35 @@ internal static class ArenaEnemiesSeeder
     {
         List<ArenaEnemy> arenaEnemies =
         [
-            ..CreateQuietClearingArenaEnemies(seed),
-            ..CreateSkeletonCryptArenaEnemies(seed),
-            ..CreateOrcRitualArenaEnemies(seed)
+            ..CreateForestEdgeEnemies(seed),
+            ..CreateGraveyardEnemies(seed),
+            ..CreateSwampEnemies(seed)
         ];
 
         dbContext.ArenaEnemies.AddRange(arenaEnemies);
     }
 
-    private static ArenaEnemy[] CreateQuietClearingArenaEnemies(SeedContext seed) =>
+    private static ArenaEnemy[] CreateForestEdgeEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.Quiet_Clearing_Arena, seed.Orc_Warrior, new Position(5, 3)),
-        CreateArenaEnemy(seed.Quiet_Clearing_Arena, seed.Orc_Warrior, new Position(6, 5))
+        CreateArenaEnemy(seed.ForestEdge_Arena, seed.Ghoul, new Position(3, 5)),
+        CreateArenaEnemy(seed.ForestEdge_Arena, seed.SkeletonWarrior, new Position(5, 4))
     ];
 
-    private static ArenaEnemy[] CreateSkeletonCryptArenaEnemies(SeedContext seed) =>
+    private static ArenaEnemy[] CreateGraveyardEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(5, 5)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(9, 4)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(1, 4)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(1, 7)),
-        CreateArenaEnemy(seed.Skeleton_Crypt_Arena, seed.Skeleton, new Position(3, 8)),
+        CreateArenaEnemy(seed.Graveyard_Arena, seed.SkeletonWarrior, new Position(2, 4)),
+        CreateArenaEnemy(seed.Graveyard_Arena, seed.SkeletonWarrior, new Position(7, 3)),
+        CreateArenaEnemy(seed.Graveyard_Arena, seed.Ghoul, new Position(4, 7)),
+        CreateArenaEnemy(seed.Graveyard_Arena, seed.Ghoul, new Position(6, 6)),
+        CreateArenaEnemy(seed.Graveyard_Arena, seed.Leshy, new Position(8, 8))
     ];
 
-    private static ArenaEnemy[] CreateOrcRitualArenaEnemies(SeedContext seed) =>
+    private static ArenaEnemy[] CreateSwampEnemies(SeedContext seed) =>
     [
-        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(2, 5)),
-        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Berserker, new Position(9, 3)),
-        CreateArenaEnemy(seed.Orc_Ritual_Arena, seed.Orc_Shaman, new Position(8, 6))
+        CreateArenaEnemy(seed.Swamp_Arena, seed.Kikimora, new Position(3, 6)),
+        CreateArenaEnemy(seed.Swamp_Arena, seed.Kikimora, new Position(8, 6)),
+        CreateArenaEnemy(seed.Swamp_Arena, seed.Volkolak, new Position(5, 8)),
+        CreateArenaEnemy(seed.Swamp_Arena, seed.Leshy, new Position(10, 8))
     ];
 
     private static ArenaEnemy CreateArenaEnemy(

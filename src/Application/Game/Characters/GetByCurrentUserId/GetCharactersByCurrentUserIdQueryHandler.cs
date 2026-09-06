@@ -24,7 +24,8 @@ public sealed class GetCharactersByCurrentUserIdQueryHandler(IGameDbContext dbCo
                 c.Name,
                 c.Spec.Class.Name,
                 c.Spec.Name,
-                new Uri(c.Spec.PortraitUrl, UriKind.Relative)))
+                new Uri(c.Spec.PortraitUrl, UriKind.Relative),
+                c.Level))
             .ToListAsync(cancellationToken);
 
         return Result.Success(characters);

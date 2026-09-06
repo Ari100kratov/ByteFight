@@ -19,7 +19,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("game_runtime")
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -28,47 +28,37 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ActorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("actor_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ActorName")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("actor_name");
+                        .HasColumnType("character varying(32)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("EntryType")
-                        .HasColumnType("integer")
-                        .HasColumnName("entry_type");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Info")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("info");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid>("SessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("session_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("TurnIndex")
-                        .HasColumnType("integer")
-                        .HasColumnName("turn_index");
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id")
-                        .HasName("pk_game_action_log_entries");
+                    b.HasKey("Id");
 
-                    b.HasIndex("SessionId")
-                        .HasDatabaseName("ix_game_action_log_entries_session_id");
+                    b.HasIndex("SessionId");
 
-                    b.ToTable("game_action_log_entries", "game_runtime");
+                    b.ToTable("GameActionLogEntries", "game_runtime");
 
                     b.HasDiscriminator<int>("EntryType");
 
@@ -79,159 +69,125 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("joined_at");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CharacterClassName")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("character_class_name");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("CharacterSpecName")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("character_spec_name");
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("SessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("session_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UnitId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unit_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("UnitName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("unit_name");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<int>("UnitType")
-                        .HasColumnType("integer")
-                        .HasColumnName("unit_type");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserFirstName")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("user_first_name");
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("UserLastName")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("user_last_name");
+                        .HasColumnType("character varying(100)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_game_session_participants");
+                    b.HasKey("Id");
 
-                    b.HasIndex("SessionId")
-                        .HasDatabaseName("ix_game_session_participants_session_id");
+                    b.HasIndex("SessionId");
 
-                    b.ToTable("game_session_participants", "game_runtime");
+                    b.ToTable("GameSessionParticipants", "game_runtime");
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameSessions.GameSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ArenaId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("arena_id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("EndedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("ended_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ErrorMessage")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("error_message");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("Mode")
-                        .HasColumnType("integer")
-                        .HasColumnName("mode");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("started_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TotalTurns")
-                        .HasColumnType("integer")
-                        .HasColumnName("total_turns");
+                        .HasColumnType("integer");
 
                     b.PrimitiveCollection<List<Guid>>("UserIds")
                         .IsRequired()
-                        .HasColumnType("uuid[]")
-                        .HasColumnName("user_ids");
+                        .HasColumnType("uuid[]");
 
-                    b.HasKey("Id")
-                        .HasName("pk_game_sessions");
+                    b.HasKey("Id");
 
-                    b.ToTable("game_sessions", "game_runtime");
+                    b.ToTable("GameSessions", "game_runtime");
                 });
 
             modelBuilder.Entity("Domain.Integration.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AggregateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("aggregate_id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at_utc");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Error")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
-                        .HasColumnName("error");
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<DateTime>("OccurredAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("occurred_at_utc");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Payload")
                         .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("payload");
+                        .HasColumnType("jsonb");
 
                     b.Property<DateTime?>("ProcessedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("processed_at_utc");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("type");
+                        .HasColumnType("character varying(256)");
 
-                    b.HasKey("Id")
-                        .HasName("pk_outbox_messages");
+                    b.HasKey("Id");
 
                     b.HasIndex("AggregateId", "Type")
-                        .IsUnique()
-                        .HasDatabaseName("ix_outbox_messages_aggregate_id_type");
+                        .IsUnique();
 
-                    b.HasIndex("Type", "CreatedAtUtc", "Id")
-                        .HasDatabaseName("ix_outbox_messages_type_created_at_utc_id");
+                    b.HasIndex("Type", "CreatedAtUtc", "Id");
 
                     b.ToTable("outbox_messages", "integration");
                 });
@@ -242,36 +198,27 @@ namespace Infrastructure.Database.GameRuntime.Migrations
 
                     b.Property<string>("AbilityName")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("ability_name");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<int>("AbilityType")
-                        .HasColumnType("integer")
-                        .HasColumnName("ability_type");
+                        .HasColumnType("integer");
 
                     b.Property<int>("EffectType")
-                        .HasColumnType("integer")
-                        .HasColumnName("effect_type");
+                        .HasColumnType("integer");
 
                     b.Property<int>("FacingDirection")
-                        .HasColumnType("integer")
-                        .HasColumnName("facing_direction");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("TargetId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("target_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("TargetName")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("target_name");
+                        .HasColumnType("character varying(32)");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("numeric")
-                        .HasColumnName("value");
-
-                    b.ToTable("game_action_log_entries", "game_runtime");
+                        .HasColumnType("numeric");
 
                     b.HasDiscriminator().HasValue(3);
                 });
@@ -280,16 +227,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                 {
                     b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
-                    b.ToTable("game_action_log_entries", "game_runtime");
-
                     b.HasDiscriminator().HasValue(4);
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.IdleLogEntry", b =>
                 {
                     b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
-
-                    b.ToTable("game_action_log_entries", "game_runtime");
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -299,34 +242,72 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("item_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ItemName")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("item_name");
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("ItemType")
-                        .HasColumnType("integer")
-                        .HasColumnName("item_type");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("PlacedItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("placed_item_id");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("numeric")
-                        .HasColumnName("value");
+                        .HasColumnType("numeric");
 
-                    b.ToTable("game_action_log_entries", "game_runtime", t =>
+                    b.ToTable("GameActionLogEntries", "game_runtime", t =>
                         {
                             t.Property("Value")
-                                .HasColumnName("item_picked_up_log_entry_value");
+                                .HasColumnName("ItemPickedUpLogEntry_Value");
                         });
 
                     b.HasDiscriminator().HasValue(5);
+                });
+
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.RoundStartedLogEntry", b =>
+                {
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
+
+                    b.Property<int>("RoundNumber")
+                        .HasColumnType("integer");
+
+                    b.HasDiscriminator().HasValue(7);
+                });
+
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.StatusAppliedLogEntry", b =>
+                {
+                    b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Magnitude")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("StatusType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TargetName")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.ToTable("GameActionLogEntries", "game_runtime", t =>
+                        {
+                            t.Property("TargetId")
+                                .HasColumnName("StatusAppliedLogEntry_TargetId");
+
+                            t.Property("TargetName")
+                                .HasColumnName("StatusAppliedLogEntry_TargetName");
+                        });
+
+                    b.HasDiscriminator().HasValue(6);
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.WalkLogEntry", b =>
@@ -334,13 +315,12 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.HasBaseType("Domain.GameRuntime.GameActionLogs.Entries.GameActionLogEntry");
 
                     b.Property<int>("FacingDirection")
-                        .HasColumnType("integer")
-                        .HasColumnName("facing_direction");
+                        .HasColumnType("integer");
 
-                    b.ToTable("game_action_log_entries", "game_runtime", t =>
+                    b.ToTable("GameActionLogEntries", "game_runtime", t =>
                         {
                             t.Property("FacingDirection")
-                                .HasColumnName("walk_log_entry_facing_direction");
+                                .HasColumnName("WalkLogEntry_FacingDirection");
                         });
 
                     b.HasDiscriminator().HasValue(2);
@@ -352,8 +332,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .WithMany("ActionLogs")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_game_action_log_entries_game_sessions_session_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.GameRuntime.GameSessionParticipants.GameSessionParticipant", b =>
@@ -362,8 +341,7 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .WithMany("Participants")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_game_session_participants_game_sessions_session_id");
+                        .IsRequired();
 
                     b.Navigation("Session");
                 });
@@ -373,24 +351,20 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.OwnsOne("Domain.GameRuntime.GameResults.GameResult", "Result", b1 =>
                         {
                             b1.Property<Guid>("GameSessionId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("Outcome")
-                                .HasColumnType("integer")
-                                .HasColumnName("result_outcome");
+                                .HasColumnType("integer");
 
                             b1.Property<Guid?>("WinnerUnitId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("result_winner_unit_id");
+                                .HasColumnType("uuid");
 
                             b1.HasKey("GameSessionId");
 
-                            b1.ToTable("game_sessions", "game_runtime");
+                            b1.ToTable("GameSessions", "game_runtime");
 
                             b1.WithOwner()
-                                .HasForeignKey("GameSessionId")
-                                .HasConstraintName("fk_game_sessions_game_sessions_id");
+                                .HasForeignKey("GameSessionId");
                         });
 
                     b.Navigation("Result");
@@ -401,24 +375,20 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.OwnsOne("Domain.ValueObjects.StatSnapshot", "TargetHp", b1 =>
                         {
                             b1.Property<Guid>("AbilityUsedLogEntryId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnType("uuid");
 
                             b1.Property<decimal>("Current")
-                                .HasColumnType("numeric")
-                                .HasColumnName("target_hp_current");
+                                .HasColumnType("numeric");
 
                             b1.Property<decimal>("Max")
-                                .HasColumnType("numeric")
-                                .HasColumnName("target_hp_max");
+                                .HasColumnType("numeric");
 
                             b1.HasKey("AbilityUsedLogEntryId");
 
-                            b1.ToTable("game_action_log_entries", "game_runtime");
+                            b1.ToTable("GameActionLogEntries", "game_runtime");
 
                             b1.WithOwner()
-                                .HasForeignKey("AbilityUsedLogEntryId")
-                                .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
+                                .HasForeignKey("AbilityUsedLogEntryId");
                         });
 
                     b.Navigation("TargetHp")
@@ -430,47 +400,39 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                     b.OwnsOne("Domain.ValueObjects.StatSnapshot", "ActorHp", b1 =>
                         {
                             b1.Property<Guid>("ItemPickedUpLogEntryId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnType("uuid");
 
                             b1.Property<decimal>("Current")
-                                .HasColumnType("numeric")
-                                .HasColumnName("actor_hp_current");
+                                .HasColumnType("numeric");
 
                             b1.Property<decimal>("Max")
-                                .HasColumnType("numeric")
-                                .HasColumnName("actor_hp_max");
+                                .HasColumnType("numeric");
 
                             b1.HasKey("ItemPickedUpLogEntryId");
 
-                            b1.ToTable("game_action_log_entries", "game_runtime");
+                            b1.ToTable("GameActionLogEntries", "game_runtime");
 
                             b1.WithOwner()
-                                .HasForeignKey("ItemPickedUpLogEntryId")
-                                .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
+                                .HasForeignKey("ItemPickedUpLogEntryId");
                         });
 
                     b.OwnsOne("Domain.ValueObjects.Position", "Position", b1 =>
                         {
                             b1.Property<Guid>("ItemPickedUpLogEntryId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("X")
-                                .HasColumnType("integer")
-                                .HasColumnName("position_x");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("Y")
-                                .HasColumnType("integer")
-                                .HasColumnName("position_y");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ItemPickedUpLogEntryId");
 
-                            b1.ToTable("game_action_log_entries", "game_runtime");
+                            b1.ToTable("GameActionLogEntries", "game_runtime");
 
                             b1.WithOwner()
-                                .HasForeignKey("ItemPickedUpLogEntryId")
-                                .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
+                                .HasForeignKey("ItemPickedUpLogEntryId");
                         });
 
                     b.Navigation("ActorHp")
@@ -480,30 +442,82 @@ namespace Infrastructure.Database.GameRuntime.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.StatusAppliedLogEntry", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.StatSnapshot", "TargetHp", b1 =>
+                        {
+                            b1.Property<Guid>("StatusAppliedLogEntryId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Current")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("Max")
+                                .HasColumnType("numeric");
+
+                            b1.HasKey("StatusAppliedLogEntryId");
+
+                            b1.ToTable("GameActionLogEntries", "game_runtime", t =>
+                                {
+                                    t.Property("Current")
+                                        .HasColumnName("StatSnapshot_TargetHp_Current");
+
+                                    t.Property("Max")
+                                        .HasColumnName("StatSnapshot_TargetHp_Max");
+                                });
+
+                            b1.WithOwner()
+                                .HasForeignKey("StatusAppliedLogEntryId");
+                        });
+
+                    b.Navigation("TargetHp");
+                });
+
             modelBuilder.Entity("Domain.GameRuntime.GameActionLogs.Entries.WalkLogEntry", b =>
                 {
+                    b.OwnsMany("Domain.ValueObjects.Position", "Path", b1 =>
+                        {
+                            b1.Property<Guid>("WalkLogEntryId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.Property<int>("X");
+
+                            b1.Property<int>("Y");
+
+                            b1.HasKey("WalkLogEntryId", "__synthesizedOrdinal");
+
+                            b1.ToTable("GameActionLogEntries", "game_runtime");
+
+                            b1
+                                .ToJson("Path")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("WalkLogEntryId");
+                        });
+
                     b.OwnsOne("Domain.ValueObjects.Position", "To", b1 =>
                         {
                             b1.Property<Guid>("WalkLogEntryId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("X")
-                                .HasColumnType("integer")
-                                .HasColumnName("to_x");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("Y")
-                                .HasColumnType("integer")
-                                .HasColumnName("to_y");
+                                .HasColumnType("integer");
 
                             b1.HasKey("WalkLogEntryId");
 
-                            b1.ToTable("game_action_log_entries", "game_runtime");
+                            b1.ToTable("GameActionLogEntries", "game_runtime");
 
                             b1.WithOwner()
-                                .HasForeignKey("WalkLogEntryId")
-                                .HasConstraintName("fk_game_action_log_entries_game_action_log_entries_id");
+                                .HasForeignKey("WalkLogEntryId");
                         });
+
+                    b.Navigation("Path");
 
                     b.Navigation("To")
                         .IsRequired();

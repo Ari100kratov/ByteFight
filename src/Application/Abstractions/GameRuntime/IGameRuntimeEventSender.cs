@@ -1,4 +1,5 @@
-﻿using Domain.GameRuntime.GameActionLogs;
+﻿using Application.Contracts.GameRuntime;
+using Domain.GameRuntime.GameActionLogs;
 using Domain.GameRuntime.GameSessions;
 
 namespace Application.Abstractions.GameRuntime;
@@ -6,12 +7,14 @@ namespace Application.Abstractions.GameRuntime;
 public interface IGameRuntimeEventSender
 {
     Task SendTick(Guid gameSessionId, TurnLog log, CancellationToken ct);
+    Task SendState(Guid gameSessionId, BattleStateDto state, CancellationToken ct);
     Task SendFinished(GameSession session, CancellationToken ct);
 }
 
 public static class GameRuntimeEvents
 {
     public const string Tick = "Tick";
+    public const string State = "State";
     public const string Finished = "Finished";
 }
 

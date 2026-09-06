@@ -123,6 +123,30 @@ public sealed class GameSessionCompletedIntegrationEventFactory(IDateTimeProvide
                 new PositionSnapshot(item.Position.X, item.Position.Y),
                 item.Value,
                 new StatSnapshotContract(item.ActorHp.Current, item.ActorHp.Max)),
+            StatusAppliedLogEntry status => new StatusAppliedLogEntrySnapshot(
+                status.Id,
+                status.SessionId,
+                status.ActorId.Value,
+                status.ActorName,
+                status.EntryType.ToString(),
+                status.Info,
+                status.TurnIndex,
+                status.CreatedAt,
+                status.TargetId.Value,
+                status.TargetName,
+                status.StatusType.ToString(),
+                status.Duration,
+                status.Magnitude),
+            RoundStartedLogEntry round => new RoundStartedLogEntrySnapshot(
+                round.Id,
+                round.SessionId,
+                round.ActorId.Value,
+                round.ActorName,
+                round.EntryType.ToString(),
+                round.Info,
+                round.TurnIndex,
+                round.CreatedAt,
+                round.RoundNumber),
             _ => throw new ArgumentOutOfRangeException(nameof(logEntry), logEntry.GetType().Name, null)
         };
 }

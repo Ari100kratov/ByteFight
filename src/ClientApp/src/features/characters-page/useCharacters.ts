@@ -8,6 +8,7 @@ export interface CharacterResponse {
   className: string
   specName: string
   portraitUrl: string
+  level: number
 }
 
 export function useCharacters() {

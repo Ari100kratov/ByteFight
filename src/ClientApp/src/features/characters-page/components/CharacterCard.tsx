@@ -10,6 +10,7 @@ interface CharacterCardProps {
   className: string
   specName: string
   portraitUrl?: string | null
+  level?: number
   priority?: boolean
 }
 
@@ -19,6 +20,7 @@ export function CharacterCard({
   className,
   specName,
   portraitUrl,
+  level,
   priority = false,
 }: CharacterCardProps) {
   const navigate = useNavigate()
@@ -62,6 +64,9 @@ export function CharacterCard({
           variant="badge"
           size="lg"
         />
+        {level !== undefined && (
+          <span className="text-muted-foreground mt-2 block text-xs">Уровень {level}</span>
+        )}
       </CardContent>
     </Card>
   )

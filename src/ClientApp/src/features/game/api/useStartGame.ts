@@ -5,7 +5,8 @@ export interface StartGameRequest {
   arenaId: string
   mode: string
   characterId: string
-  code?: string
+  /** Код опционален: без кода бой идёт в ручном режиме. */
+  code?: string | null
 }
 
 export interface StartGameResponse {
@@ -18,11 +19,15 @@ export function useStartGame() {
       if (!data.arenaId) throw new Error("Не указан ArenaId")
       if (!data.characterId) throw new Error("Не выбран персонаж")
       if (!data.mode) throw new Error("Не указан режим игры")
-      if (!data.code?.trim()) throw new Error("Пользовательский код не задан")
 
       const response = await apiFetch<StartGameResponse>("/game/start", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          arenaId: data.arenaId,
+          mode: data.mode,
+          characterId: data.characterId,
+          code: data.code?.trim() ? data.code : null,
+        }),
       })
 
       return response.id

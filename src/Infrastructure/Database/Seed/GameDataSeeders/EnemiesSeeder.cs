@@ -1,174 +1,138 @@
 using Application.Abstractions.Data;
 using Domain.Game.Abilities;
-using Domain.Game.Actions;
 using Domain.Game.Enemies;
 using Domain.Game.Stats;
-using Domain.ValueObjects;
 
 namespace Infrastructure.Database.Seed.GameDataSeeders;
 
+/// <summary>
+/// Древнеславянская нечисть и зверьё. Игровые значения способностей —
+/// из <see cref="AbilityCatalog"/>, здесь задаётся состав и здоровье.
+/// </summary>
 internal static class EnemiesSeeder
 {
-    private const string AssetRoot = "enemies";
-
     public static void Seed(SeedContext seed, IGameDbContext dbContext)
     {
-        Enemy orcWarrior = CreateOrcWarrior();
-        Enemy orcBerserker = CreateOrcBerserker();
-        Enemy orcShaman = CreateOrcShaman();
-        Enemy skeleton = CreateSkeleton();
+        Enemy ghoul = CreateGhoul();
+        Enemy leshy = CreateLeshy();
+        Enemy kikimora = CreateKikimora();
+        Enemy skeleton = CreateSkeletonWarrior();
+        Enemy volkolak = CreateVolkolak();
 
-        dbContext.Enemies.AddRange(orcWarrior, orcBerserker, orcShaman, skeleton);
+        dbContext.Enemies.AddRange(ghoul, leshy, kikimora, skeleton, volkolak);
 
-        seed.Orc_Warrior = orcWarrior.Id;
-        seed.Orc_Berserker = orcBerserker.Id;
-        seed.Orc_Shaman = orcShaman.Id;
-        seed.Skeleton = skeleton.Id;
+        seed.Ghoul = ghoul.Id;
+        seed.Leshy = leshy.Id;
+        seed.Kikimora = kikimora.Id;
+        seed.SkeletonWarrior = skeleton.Id;
+        seed.Volkolak = volkolak.Id;
     }
 
-    private static Enemy CreateOrcWarrior()
+    private static Enemy CreateGhoul()
     {
-        const string folder = $"{AssetRoot}/orc-warrior";
-
         return new Enemy
         {
             Id = Guid.CreateVersion7(),
-            Name = "Орк-воин",
-            Description = "Орк-воин решает большинство проблем топором.\r\n" +
-                "Если проблема не решилась — значит, топором махнули недостаточно сильно.\r\n" +
-                "Простой, упрямый и опасный, особенно когда понял, в какую сторону бежать.",
+            Name = "Упырь",
+            Description = "Погостный упырь: голоден, цепок и обидчив.\r\n" +
+                "Когти рвут, дыхание воняет, а терпение кончилось ещё при жизни.",
             Stats =
             [
-                CreateStat(StatType.Health, 105),
-                CreateStat(StatType.MoveRange, 1),
+                CreateStat(StatType.Health, 110),
+                CreateStat(StatType.MoveRange, 3),
+                CreateStat(StatType.Initiative, 6),
+                CreateStat(StatType.Armor, 2)
             ],
-            ActionAssets = CreateOrcWarriorActionAssets(folder),
-            Abilities =
-            [
-                CreateBasicMeleeAttack(
-                    name: string.Empty,
-                    description: string.Empty,
-                    damage: 16,
-                    folder: folder,
-                    frameCountByAsset:
-                    [
-                        ("Attack_1.png", 4, 0),
-                        ("Attack_2.png", 4, 1),
-                        ("Attack_3.png", 3, 2),
-                    ])
-            ]
+            ActionAssets = [],
+            Abilities = [CreateAbility(AbilityType.GhoulClawStrike)]
         };
     }
 
-    private static Enemy CreateOrcBerserker()
+    private static Enemy CreateLeshy()
     {
-        const string folder = $"{AssetRoot}/orc-berserk";
-
         return new Enemy
         {
             Id = Guid.CreateVersion7(),
-            Name = "Орк-берсерк",
-            Description =
-                "Орк-берсерк считает тактику формой трусости.\r\n" +
-                "Если враг ещё стоит — значит, удар был недостаточно сильным.\r\n" +
-                "После его рывка поле боя обычно становится тише, а союзники начинают делать вид, что не знакомы с ним.",
+            Name = "Леший",
+            Description = "Хозяин чащи: мох вместо бороды, корни вместо ног.\r\n" +
+                "Скрутит тропу, запутает след и уйдёт в папоротник, посмеиваясь.",
             Stats =
             [
-                CreateStat(StatType.Health, 80),
+                CreateStat(StatType.Health, 160),
                 CreateStat(StatType.MoveRange, 2),
+                CreateStat(StatType.Initiative, 5),
+                CreateStat(StatType.Armor, 4)
             ],
-            ActionAssets = CreateOrcBerserkerActionAssets(folder),
+            ActionAssets = [],
             Abilities =
             [
-                CreateBasicMeleeAttack(
-                    name: string.Empty,
-                    description: string.Empty,
-                    damage: 22,
-                    folder: folder,
-                    frameCountByAsset:
-                    [
-                        ("Attack_1.png", 4, 0),
-                        ("Attack_2.png", 5, 1),
-                    ])
+                CreateAbility(AbilityType.LeshyRootVines),
+                CreateAbility(AbilityType.LeshyRegeneration),
+                CreateAbility(AbilityType.BasicMeleeAttack)
             ]
         };
     }
 
-    private static Enemy CreateOrcShaman()
+    private static Enemy CreateKikimora()
     {
-        const string folder = $"{AssetRoot}/orc-shaman";
-
         return new Enemy
         {
             Id = Guid.CreateVersion7(),
-            Name = "Орк-шаман",
-            Description = "Орк-шаман держится позади, потому что мудрость предков подсказала ему:\r\n" +
-                "в первых рядах слишком часто заканчиваются родственники.\r\n" +
-                "Он лечит союзников, ворчит на духов и делает вид, что всё идёт по ритуальному плану.",
+                       Name = "Кикимора",
+            Description = "Болотная кикимора: шипит, плюётся и обожает чужое горе.\r\n" +
+                "Держится на кочку подальше, но яд у неё — знатный.",
             Stats =
             [
-                CreateStat(StatType.Health, 65),
-                CreateStat(StatType.MoveRange, 2),
+                CreateStat(StatType.Health, 85),
+                CreateStat(StatType.MoveRange, 3),
+                CreateStat(StatType.Initiative, 8),
+                CreateStat(StatType.Armor, 1)
             ],
-            ActionAssets = CreateOrcShamanActionAssets(folder),
-            Abilities =
-            [
-                CreateBasicMeleeAttack(
-                    name: string.Empty,
-                    description: string.Empty,
-                    damage: 10,
-                    folder: folder,
-                    frameCountByAsset:
-                    [
-                        ("Attack_1.png", 4, 0),
-                        ("Attack_2.png", 2, 1),
-                    ]),
-
-                CreateHealAbility(
-                    name: "Зов предков",
-                    description: "Шаман взывает к духам предков, направляя их силу в союзника.\r\n" +
-                        "Духовная энергия мгновенно затягивает его раны.",
-                    heal: 22,
-                    range: 4,
-                    folder: folder,
-                    frameCountByAsset:
-                    [
-                        ("Magic_2.png", 6, 0),
-                    ])
-            ]
+            ActionAssets = [],
+            Abilities = [CreateAbility(AbilityType.KikimoraPoisonSpit)]
         };
     }
 
-    private static Enemy CreateSkeleton()
+    private static Enemy CreateSkeletonWarrior()
     {
-        const string folder = $"{AssetRoot}/skeleton";
-
         return new Enemy
         {
             Id = Guid.CreateVersion7(),
-            Name = "Скелет",
+            Name = "Скелет-ратник",
             Description = "Когда-то он был обычным стражником. Теперь у него нет ни страха, ни усталости,\r\n" +
-                "ни уважительной причины оставаться лежать в могиле.\r\n" +
-                "Двигается медленно, гремит костями громко, а бьёт неожиданно уверенно.",
+                "ни уважительной причины оставаться лежать в могиле.",
             Stats =
             [
-                CreateStat(StatType.Health, 55),
+                CreateStat(StatType.Health, 60),
                 CreateStat(StatType.MoveRange, 2),
+                CreateStat(StatType.Initiative, 5),
+                CreateStat(StatType.Armor, 3)
             ],
-            ActionAssets = CreateSkeletonActionAssets(folder),
+            ActionAssets = [],
+            Abilities = [CreateAbility(AbilityType.SkeletonBoneSlash)]
+        };
+    }
+
+    private static Enemy CreateVolkolak()
+    {
+        return new Enemy
+        {
+            Id = Guid.CreateVersion7(),
+            Name = "Волколак",
+            Description = "Человек, которого лес переломил в волка.\r\n" +
+                "Прыжок — и вот он уже у горла, а не за три гекса.",
+            Stats =
+            [
+                CreateStat(StatType.Health, 95),
+                CreateStat(StatType.MoveRange, 4),
+                CreateStat(StatType.Initiative, 11),
+                CreateStat(StatType.Armor, 1)
+            ],
+            ActionAssets = [],
             Abilities =
             [
-                CreateBasicMeleeAttack(
-                    name: string.Empty,
-                    description: string.Empty,
-                    damage: 16,
-                    folder: folder,
-                    frameCountByAsset:
-                    [
-                        ("Attack_1.png", 5, 0),
-                        ("Attack_2.png", 6, 1),
-                        ("Attack_3.png", 4, 2),
-                    ])
+                CreateAbility(AbilityType.WolfDashBite),
+                CreateAbility(AbilityType.BasicMeleeAttack)
             ]
         };
     }
@@ -180,162 +144,21 @@ internal static class EnemiesSeeder
             Value = value
         };
 
-    private static EnemyAbility CreateBasicMeleeAttack(
-        string name,
-        string description,
-        int damage,
-        string folder,
-        (string FileName, int FrameCount, int Variant)[] frameCountByAsset,
-        float scaleX = 1f,
-        float scaleY = 1f) =>
-        new()
+    private static EnemyAbility CreateAbility(AbilityType type, int priority = 0)
+    {
+        AbilityDefinition definition = AbilityCatalog.Get(type);
+
+        return new EnemyAbility
         {
             Id = Guid.CreateVersion7(),
-            Type = AbilityType.BasicMeleeAttack,
-            EffectType = AbilityEffectType.Damage,
-            TargetType = AbilityTargetType.Enemy,
-            Name = name,
-            Description = description,
-            Priority = 100,
-            Stats =
-            [
-                CreateAbilityStat(AbilityStatType.Damage, damage),
-                CreateAbilityStat(AbilityStatType.Range, 1),
-            ],
-            ActionAssets =
-            [
-                .. frameCountByAsset.Select(x =>
-                    CreateAbilityActionAsset(
-                        ActionType.Attack,
-                        $"{folder}/{x.FileName}",
-                        x.FrameCount,
-                        animationSpeed: 0.1f,
-                        variant: x.Variant,
-                        scaleX,
-                        scaleY))
-            ]
+            Type = definition.Type,
+            EffectType = definition.EffectType,
+            TargetType = definition.TargetType,
+            Name = definition.Name,
+            Description = definition.Description,
+            Priority = priority,
+            Stats = [],
+            ActionAssets = []
         };
-
-    private static EnemyAbility CreateHealAbility(
-        string name,
-        string description,
-        int heal,
-        int range,
-        string folder,
-        (string FileName, int FrameCount, int Variant)[] frameCountByAsset,
-        float scaleX = 1f,
-        float scaleY = 1f) =>
-        new()
-        {
-            Id = Guid.CreateVersion7(),
-            Type = AbilityType.Healing,
-            EffectType = AbilityEffectType.Healing,
-            TargetType = AbilityTargetType.Ally,
-            Name = name,
-            Description = description,
-            Priority = 80,
-            Stats =
-            [
-                CreateAbilityStat(AbilityStatType.Healing, heal),
-                CreateAbilityStat(AbilityStatType.Range, range),
-            ],
-            ActionAssets =
-            [
-                .. frameCountByAsset.Select(x =>
-                    CreateAbilityActionAsset(
-                        ActionType.Cast,
-                        $"{folder}/{x.FileName}",
-                        x.FrameCount,
-                        animationSpeed: 0.1f,
-                        variant: x.Variant,
-                        scaleX,
-                        scaleY))
-            ]
-        };
-
-    private static EnemyAbilityStat CreateAbilityStat(AbilityStatType type, int value) =>
-        new()
-        {
-            StatType = type,
-            Value = value
-        };
-
-    private static EnemyActionAsset[] CreateOrcWarriorActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
-    ];
-
-    private static EnemyActionAsset[] CreateOrcBerserkerActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
-    ];
-
-    private static EnemyActionAsset[] CreateOrcShamanActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 5, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", frameCount: 6, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 5, animationSpeed: 0.1f)
-    ];
-
-    private static EnemyActionAsset[] CreateSkeletonActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", frameCount: 7, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", frameCount: 8, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", frameCount: 2, animationSpeed: 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", frameCount: 4, animationSpeed: 0.1f)
-    ];
-
-    private static EnemyActionAsset CreateActionAsset(
-        ActionType actionType,
-        string path,
-        int frameCount,
-        float animationSpeed,
-        int? variant = null,
-        float scaleX = 1f,
-        float scaleY = 1f) =>
-        new()
-        {
-            ActionType = actionType,
-            Variant = variant ?? 0,
-            Animation = new SpriteAnimation(
-                new Uri(path, UriKind.Relative),
-                frameCount,
-                animationSpeed,
-                scaleX,
-                scaleY)
-        };
-
-    private static EnemyAbilityActionAsset CreateAbilityActionAsset(
-        ActionType actionType,
-        string path,
-        int frameCount,
-        float animationSpeed,
-        int variant,
-        float scaleX = 1f,
-        float scaleY = 1f) =>
-        new()
-        {
-            ActionType = actionType,
-            Variant = variant,
-            Animation = new SpriteAnimation(
-                new Uri(path, UriKind.Relative),
-                frameCount,
-                animationSpeed,
-                scaleX,
-                scaleY)
-        };
+    }
 }

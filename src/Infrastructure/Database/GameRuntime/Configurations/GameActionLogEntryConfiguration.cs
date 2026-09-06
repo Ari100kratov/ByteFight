@@ -33,7 +33,9 @@ internal sealed class GameActionLogEntryConfiguration
             .HasValue<WalkLogEntry>(GameActionLogEntryType.Walk)
             .HasValue<AbilityUsedLogEntry>(GameActionLogEntryType.AbilityUsed)
             .HasValue<DeathLogEntry>(GameActionLogEntryType.Death)
-            .HasValue<ItemPickedUpLogEntry>(GameActionLogEntryType.ItemPickedUp);
+            .HasValue<ItemPickedUpLogEntry>(GameActionLogEntryType.ItemPickedUp)
+            .HasValue<StatusAppliedLogEntry>(GameActionLogEntryType.StatusApplied)
+            .HasValue<RoundStartedLogEntry>(GameActionLogEntryType.RoundStarted);
 
         builder.HasOne<GameSession>()
             .WithMany(s => s.ActionLogs)

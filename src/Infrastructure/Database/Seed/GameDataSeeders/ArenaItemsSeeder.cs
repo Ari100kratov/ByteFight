@@ -31,14 +31,14 @@ internal static class ArenaItemsSeeder
 
         dbContext.ArenaPlacedItems.AddRange(
             CreatePlacedItem(
-                seed.Skeleton_Crypt_Arena,
+                seed.Graveyard_Arena,
                 healingPotion.Id,
-                new Position(8, 6)),
+                new Position(8, 5)),
 
             CreatePlacedItem(
-                seed.Orc_Ritual_Arena,
+                seed.Swamp_Arena,
                 healingPotion.Id,
-                new Position(8, 7))
+                new Position(5, 5))
         );
     }
 

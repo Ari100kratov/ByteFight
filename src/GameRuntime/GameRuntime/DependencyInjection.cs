@@ -26,7 +26,8 @@ public static class DependencyInjection
 
         services.AddSingleton<ArenaWorldBuilder>();
         services.AddSingleton<GameInstanceFactory>();
-        services.AddSingleton<BasicEnemyAiProcessor>();
+        services.AddSingleton<TacticalEnemyAiRunner>();
+        services.AddSingleton<BattleCommandRegistry>();
 
         services.AddSingleton<UserActionExecutor>();
         services.AddSingleton<UserScriptCompiler>();

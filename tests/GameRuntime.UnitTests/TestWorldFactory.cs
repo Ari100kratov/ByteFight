@@ -18,7 +18,8 @@ internal static class TestWorldFactory
         int gridWidth = 5,
         int gridHeight = 5,
         IReadOnlyList<Position>? blockedPositions = null,
-        IReadOnlyList<ArenaItemDefinition>? items = null) =>
+        IReadOnlyList<ArenaItemDefinition>? items = null,
+        IReadOnlyDictionary<Position, Domain.Game.Arenas.TerrainType>? terrain = null) =>
         new()
         {
             Arena = new ArenaDefinition
@@ -28,6 +29,7 @@ internal static class TestWorldFactory
                 GridHeight = gridHeight,
                 StartPosition = new Position(0, 0),
                 BlockedPositions = blockedPositions?.ToArray() ?? [],
+                Terrain = terrain ?? new Dictionary<Position, Domain.Game.Arenas.TerrainType>(),
                 Items = items ?? []
             },
             Player = player,
@@ -38,13 +40,14 @@ internal static class TestWorldFactory
         Position position,
         decimal health = 20,
         decimal moveRange = 2,
+        decimal initiative = 5,
         RuntimeAbilities? abilities = null) =>
         new(position, FacingDirection.Right)
         {
             CharacterId = Guid.CreateVersion7(),
-            Name = "Player",
+            Name = "Игрок",
             Spec = CharacterSpecType.Berserker,
-            Stats = CreateStats(health, moveRange),
+            Stats = CreateStats(health, moveRange, initiative),
             Abilities = abilities ?? new RuntimeAbilities([])
         };
 
@@ -52,19 +55,21 @@ internal static class TestWorldFactory
         Position position,
         decimal health = 20,
         decimal moveRange = 2,
+        decimal initiative = 3,
         RuntimeAbilities? abilities = null) =>
         new(position, FacingDirection.Left)
         {
             ArenaEnemyId = Guid.CreateVersion7(),
             EnemyId = Guid.CreateVersion7(),
-            Name = "Enemy",
-            Stats = CreateStats(health, moveRange),
+            Name = "Враг",
+            Stats = CreateStats(health, moveRange, initiative),
             Abilities = abilities ?? new RuntimeAbilities([])
         };
 
-    private static RuntimeStats CreateStats(decimal health, decimal moveRange) =>
+    private static RuntimeStats CreateStats(decimal health, decimal moveRange, decimal initiative) =>
         new([
             (StatType.Health, health),
-            (StatType.MoveRange, moveRange)
+            (StatType.MoveRange, moveRange),
+            (StatType.Initiative, initiative)
         ]);
 }

@@ -31,5 +31,15 @@ public enum AbilityStatType
     /// <summary>
     /// Радиус области действия.
     /// </summary>
-    AreaRadius = 5
+    AreaRadius = 5,
+
+    /// <summary>
+    /// Перезарядка способности в ходах (0 — без перезарядки).
+    /// </summary>
+    Cooldown = 6,
+
+    /// <summary>
+    /// Стоимость в очках действия (по умолчанию 1).
+    /// </summary>
+    ActionCost = 7
 }

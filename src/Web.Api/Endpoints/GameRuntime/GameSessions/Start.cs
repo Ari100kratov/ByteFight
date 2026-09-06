@@ -9,7 +9,11 @@ namespace Web.Api.Endpoints.GameRuntime.GameSessions;
 
 internal sealed class Start : IEndpoint
 {
-    public sealed record Request(Guid ArenaId, string Mode, Guid CharacterId, string Code);
+    /// <summary>
+    /// Запуск боя. Код опционален: без кода бой идёт в ручном режиме
+    /// (игрок управляет персонажем сам), с кодом — в скрытом скриптовом.
+    /// </summary>
+    public sealed record Request(Guid ArenaId, string Mode, Guid CharacterId, string? Code = null);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -26,19 +30,12 @@ internal sealed class Start : IEndpoint
                     Result.Failure(StartErrors.InvalidMode(request.Mode)));
             }
 
-            if (string.IsNullOrWhiteSpace(request.Code))
-            {
-                return CustomResults.Problem(
-                    Result.Failure(StartErrors.CodeIsRequired()));
-            }
-
-
             var init = new GameInitModel(
                 userContext.UserId,
                 request.ArenaId,
                 parsedMode,
                 request.CharacterId,
-                request.Code ?? string.Empty
+                string.IsNullOrWhiteSpace(request.Code) ? null : request.Code
             );
 
             Result<Guid> result = await gameHost.StartGame(init, ct);
@@ -55,9 +52,4 @@ internal static class StartErrors
         Error.Validation(
             "GameSession.InvalidMode",
             $"Неизвестный режим игры: {mode}");
-
-    public static Error CodeIsRequired() =>
-        Error.Validation(
-            "GameSession.CodeIsRequired",
-            "Пользовательский код обязателен для запуска боя.");
 }

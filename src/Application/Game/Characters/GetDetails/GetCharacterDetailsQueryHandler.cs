@@ -44,6 +44,7 @@ internal sealed class GetCharacterDetailsQueryHandler(
         var response = new CharacterResponse(
             character.Id,
             character.Name,
+            character.Level,
             new SpecResponse(
                 character.Spec.Id,
                 character.Spec.Name,

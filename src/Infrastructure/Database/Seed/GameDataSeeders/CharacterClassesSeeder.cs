@@ -1,206 +1,340 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain.Game.Abilities;
-using Domain.Game.Actions;
 using Domain.Game.CharacterClasses;
 using Domain.Game.CharacterSpecAbilities;
 using Domain.Game.CharacterSpecs;
 using Domain.Game.Stats;
-using Domain.ValueObjects;
 
 namespace Infrastructure.Database.Seed.GameDataSeeders;
 
+/// <summary>
+/// Древнеславянские классы и их стези. Игровые значения способностей
+/// берутся из <see cref="AbilityCatalog"/>; здесь фиксируется состав
+/// способностей стези и базовые характеристики.
+/// </summary>
 internal static class CharacterClassesSeeder
 {
-    private const string AssetRoot = "classes";
-
     public static void Seed(SeedContext seed, IGameDbContext dbContext)
     {
-        CharacterClass warrior = CreateWarrior(seed);
-        CharacterClass mage = CreateMage(seed);
+        CharacterClass vityaz = CreateVityaz(seed);
+        CharacterClass volkhv = CreateVolkhv(seed);
+        CharacterClass okhotnik = CreateOkhotnik(seed);
+        CharacterClass vedunya = CreateVedunya(seed);
 
-        dbContext.CharacterClasses.AddRange(warrior, mage);
-
-        seed.Class_Warrior = warrior.Id;
-        seed.Class_Mage = mage.Id;
+        dbContext.CharacterClasses.AddRange(vityaz, volkhv, okhotnik, vedunya);
     }
 
-    private static CharacterClass CreateWarrior(SeedContext seed)
+    // ===== Витязь =====
+
+    private static CharacterClass CreateVityaz(SeedContext seed)
     {
-        CharacterClass warrior = new()
+        CharacterClass vityaz = new()
         {
             Id = Guid.CreateVersion7(),
-            Type = CharacterClassType.Warrior,
-            Name = "Воин",
-            Description = "Сильный боец ближнего боя, полагающийся на выносливость, оружие и позицию."
+            Type = CharacterClassType.Vityaz,
+            Name = "Витязь",
+            Description = "Ратник дальней дороги: меч, щит и богатырская стойкость. " +
+                "Держит строй, ломает строй чужой."
         };
 
-        CharacterSpec berserker = CreateWarriorSpec(
-            warrior,
-            CharacterSpecType.Berserker,
-            "Берсерк",
-            "Агрессивный воин, жертвующий защитой ради высокой силы удара.",
-            folder: "berserker",
-            health: 170,
-            meleeDamage: 40,
-            moveRange: 2,
-            specIdSetter: id => seed.Spec_Warrior_Berserker = id);
-
-        CharacterSpec guardian = CreateWarriorSpec(
-            warrior,
-            CharacterSpecType.Guardian,
-            "Страж",
-            "Выносливый защитник, способный долго держать линию фронта.",
-            folder: "guardian",
-            health: 260,
-            meleeDamage: 30,
-            moveRange: 2,
-            specIdSetter: id => seed.Spec_Warrior_Guardian = id);
-
-        CharacterSpec duelist = CreateWarriorSpec(
-            warrior,
-            CharacterSpecType.Duelist,
-            "Дуэлянт",
-            "Подвижный мастер ближнего боя, побеждающий за счёт темпа и точности.",
-            folder: "duelist",
-            health: 185,
-            meleeDamage: 36,
-            moveRange: 3,
-            specIdSetter: id => seed.Spec_Warrior_Duelist = id);
-
-        warrior.Specs = [berserker, guardian, duelist];
-
-        return warrior;
-    }
-
-    private static CharacterClass CreateMage(SeedContext seed)
-    {
-        CharacterClass mage = new()
-        {
-            Id = Guid.CreateVersion7(),
-            Type = CharacterClassType.Mage,
-            Name = "Маг",
-            Description = "Заклинатель дальнего боя, управляющий магической энергией и наносящий урон с расстояния."
-        };
-
-        CharacterSpec pyromancer = CreateMageSpec(
-            mage,
-            CharacterSpecType.Pyromancer,
-            "Пиромант",
-            "Боевой маг огня, наносящий высокий урон разрушительными заклинаниями.",
-            folder: "pyromancer",
-            health: 120,
-            meleeDamage: 20,
-            rangedDamage: 40,
-            rangedRange: 4,
-            moveRange: 2,
-            mana: 100,
-            specIdSetter: id => seed.Spec_Mage_Pyromancer = id);
-
-        CharacterSpec luminary = CreateMageSpec(
-            mage,
-            CharacterSpecType.Luminary,
-            "Люминар",
-            "Маг света, использующий концентрированную энергию для точечных атак на расстоянии.",
-            folder: "luminary",
-            health: 135,
-            meleeDamage: 18,
-            rangedDamage: 36,
-            rangedRange: 3,
-            moveRange: 2,
-            mana: 115,
-            specIdSetter: id => seed.Spec_Mage_Luminary = id);
-
-        CharacterSpec arcanist = CreateMageSpec(
-            mage,
-            CharacterSpecType.Arcanist,
-            "Арканист",
-            "Универсальный маг тайной школы, способный атаковать одной базовой магической атакой даже вблизи.",
-            folder: "arcanist",
-            health: 150,
-            meleeDamage: null,
-            rangedDamage: 32,
-            rangedRange: 2,
-            moveRange: 2,
-            mana: 130,
-            specIdSetter: id => seed.Spec_Mage_Arcanist = id);
-
-        mage.Specs = [pyromancer, luminary, arcanist];
-
-        return mage;
-    }
-
-    private static CharacterSpec CreateWarriorSpec(
-        CharacterClass characterClass,
-        CharacterSpecType type,
-        string name,
-        string description,
-        string folder,
-        int health,
-        int meleeDamage,
-        int moveRange,
-        Action<Guid> specIdSetter)
-    {
-        string specFolder = GetSpecFolder(CharacterClassType.Warrior, folder);
-
-        CharacterSpec spec = new()
-        {
-            Id = Guid.CreateVersion7(),
-            ClassId = characterClass.Id,
-            Type = type,
-            Name = name,
-            PortraitUrl = $"{specFolder}/Portrait.png",
-            Description = description,
-            Stats =
+        CharacterSpec swordBearer = CreateSpec(
+            vityaz,
+            CharacterSpecType.SwordBearer,
+            "Мечник",
+            "Витязь, сделавший ставку на атаку: бьёт часто и больно.",
+            health: 190, mana: 40, manaRegen: 6, moveRange: 3, initiative: 8, armor: 4, power: 10,
+            abilities:
             [
-                CreateStat(StatType.Health, health),
-                CreateStat(StatType.MoveRange, moveRange)
+                AbilityType.BasicMeleeAttack,
+                AbilityType.VityazSwordStrike,
+                AbilityType.VityazCharge,
+                AbilityType.VityazBulwark
             ],
-            ActionAssets = CreateWarriorActionAssets(type, specFolder),
-            Abilities = CreateWarriorAbilities(type, specFolder, meleeDamage)
-        };
+            id => seed.Spec_Vityaz_SwordBearer = id);
 
-        specIdSetter(spec.Id);
+        CharacterSpec shieldBearer = CreateSpec(
+            vityaz,
+            CharacterSpecType.ShieldBearer,
+            "Щитоносец",
+            "Защитник рода: терпелив, бронирован и очень убедителен щитом.",
+            health: 240, mana: 40, manaRegen: 6, moveRange: 2, initiative: 6, armor: 8, power: 5,
+            abilities:
+            [
+                AbilityType.BasicMeleeAttack,
+                AbilityType.VityazSwordStrike,
+                AbilityType.VityazShieldBash,
+                AbilityType.VityazBulwark
+            ],
+            id => seed.Spec_Vityaz_ShieldBearer = id);
 
-        return spec;
+        CharacterSpec druzhinnik = CreateSpec(
+            vityaz,
+            CharacterSpecType.Druzhinnik,
+            "Дружинник",
+            "Ровный боец: и ударит, и прикроет, и не потеряет головы.",
+            health: 210, mana: 45, manaRegen: 7, moveRange: 3, initiative: 7, armor: 6, power: 8,
+            abilities:
+            [
+                AbilityType.BasicMeleeAttack,
+                AbilityType.VityazSwordStrike,
+                AbilityType.VityazShieldBash,
+                AbilityType.VityazCharge
+            ],
+            id => seed.Spec_Vityaz_Druzhinnik = id);
+
+        vityaz.Specs = [swordBearer, shieldBearer, druzhinnik];
+        seed.Class_Vityaz = vityaz.Id;
+
+        return vityaz;
     }
 
-    private static CharacterSpec CreateMageSpec(
+    // ===== Волхв =====
+
+    private static CharacterClass CreateVolkhv(SeedContext seed)
+    {
+        CharacterClass volkhv = new()
+        {
+            Id = Guid.CreateVersion7(),
+            Type = CharacterClassType.Volkhv,
+            Name = "Волхв",
+            Description = "Хранитель вед: повелевает грозой Перуна, хладом и оберегами света."
+        };
+
+        CharacterSpec stormCaller = CreateSpec(
+            volkhv,
+            CharacterSpecType.StormCaller,
+            "Громовник",
+            "Волхв грозы: молнии прошивают строй врагов насквозь.",
+            health: 130, mana: 110, manaRegen: 12, moveRange: 3, initiative: 10, armor: 1, power: 14,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.VolkhvPerunBolt,
+                AbilityType.VolkhvFrostGrip,
+                AbilityType.VolkhvAshCloud
+            ],
+            id => seed.Spec_Volkhv_StormCaller = id);
+
+        CharacterSpec wardKeeper = CreateSpec(
+            volkhv,
+            CharacterSpecType.WardKeeper,
+            "Обережник",
+            "Волхв-хранитель: щиты, хлад и свет на страже союзников.",
+            health: 150, mana: 120, manaRegen: 13, moveRange: 3, initiative: 8, armor: 2, power: 10,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.VolkhvPerunBolt,
+                AbilityType.VolkhvFrostGrip,
+                AbilityType.VolkhvWard
+            ],
+            id => seed.Spec_Volkhv_WardKeeper = id);
+
+        CharacterSpec veden = CreateSpec(
+            volkhv,
+            CharacterSpecType.Veden,
+            "Ведун",
+            "Уравновешен в стихиях: и гром, и щит, и хлад — по надобности.",
+            health: 140, mana: 115, manaRegen: 12, moveRange: 3, initiative: 9, armor: 1, power: 12,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.VolkhvPerunBolt,
+                AbilityType.VolkhvAshCloud,
+                AbilityType.VolkhvWard
+            ],
+            id => seed.Spec_Volkhv_Veden = id);
+
+        volkhv.Specs = [stormCaller, wardKeeper, veden];
+        seed.Class_Volkhv = volkhv.Id;
+
+        return volkhv;
+    }
+
+    // ===== Охотник =====
+
+    private static CharacterClass CreateOkhotnik(SeedContext seed)
+    {
+        CharacterClass okhotnik = new()
+        {
+            Id = Guid.CreateVersion7(),
+            Type = CharacterClassType.Okhotnik,
+            Name = "Охотник",
+            Description = "Ловчий чащоб: дальний лук, силки и стрелы с гнилым наконечником."
+        };
+
+        CharacterSpec archer = CreateSpec(
+            okhotnik,
+            CharacterSpecType.Archer,
+            "Лучник",
+            "Мастер дальнего боя: меткий выстрел решает спор до его начала.",
+            health: 140, mana: 70, manaRegen: 9, moveRange: 3, initiative: 11, armor: 1, power: 12,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.HunterPreciseShot,
+                AbilityType.HunterPoisonArrow,
+                AbilityType.HunterCamouflage
+            ],
+            id => seed.Spec_Okhotnik_Archer = id);
+
+        CharacterSpec trapper = CreateSpec(
+            okhotnik,
+            CharacterSpecType.Trapper,
+            "Ловчий",
+            "Мастер силков: держит врага на месте, пока стрелы работают.",
+            health: 150, mana: 75, manaRegen: 9, moveRange: 4, initiative: 10, armor: 2, power: 10,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.HunterPreciseShot,
+                AbilityType.HunterNetTrap,
+                AbilityType.HunterCamouflage
+            ],
+            id => seed.Spec_Okhotnik_Trappers = id);
+
+        CharacterSpec beastStalker = CreateSpec(
+            okhotnik,
+            CharacterSpecType.BeastStalker,
+            "Зверолов",
+            "Чтит дух зверя: подвижен, вынослив и точен.",
+            health: 160, mana: 70, manaRegen: 9, moveRange: 4, initiative: 10, armor: 2, power: 11,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.HunterPreciseShot,
+                AbilityType.HunterNetTrap,
+                AbilityType.HunterPoisonArrow
+            ],
+            id => seed.Spec_Okhotnik_BeastStalker = id);
+
+        okhotnik.Specs = [archer, trapper, beastStalker];
+        seed.Class_Okhotnik = okhotnik.Id;
+
+        return okhotnik;
+    }
+
+    // ===== Ведунья =====
+
+    private static CharacterClass CreateVedunya(SeedContext seed)
+    {
+        CharacterClass vedunya = new()
+        {
+            Id = Guid.CreateVersion7(),
+            Type = CharacterClassType.Vedunya,
+            Name = "Ведунья",
+            Description = "Травница-шептунья: отвары лечат, порча калечит, духи берегут."
+        };
+
+        CharacterSpec herbalist = CreateSpec(
+            vedunya,
+            CharacterSpecType.Herbalist,
+            "Травница",
+            "Целительница: отвар возвращает союзников в строй.",
+            health: 135, mana: 115, manaRegen: 13, moveRange: 3, initiative: 9, armor: 1, power: 12,
+            abilities:
+            [
+                AbilityType.Healing,
+                AbilityType.VedunyaHerbalBrew,
+                AbilityType.VedunyaSpiritWard,
+                AbilityType.VedunyaThorns
+            ],
+            id => seed.Spec_Vedunya_Herbalist = id);
+
+        CharacterSpec whisperer = CreateSpec(
+            vedunya,
+            CharacterSpecType.Whisperer,
+            "Шептунья",
+            "Мастер порчи: враг чахнет, союзники крепнут.",
+            health: 130, mana: 110, manaRegen: 12, moveRange: 3, initiative: 10, armor: 1, power: 13,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.VedunyaHex,
+                AbilityType.VedunyaThorns,
+                AbilityType.VedunyaHerbalBrew
+            ],
+            id => seed.Spec_Vedunya_Whisperer = id);
+
+        CharacterSpec sorceress = CreateSpec(
+            vedunya,
+            CharacterSpecType.Sorceress,
+            "Ворожея",
+            "Равновесие вед: и лечит, и портит, и читает следы.",
+            health: 140, mana: 112, manaRegen: 12, moveRange: 3, initiative: 9, armor: 1, power: 12,
+            abilities:
+            [
+                AbilityType.BasicRangedAttack,
+                AbilityType.VedunyaHerbalBrew,
+                AbilityType.VedunyaHex,
+                AbilityType.VedunyaSpiritWard
+            ],
+            id => seed.Spec_Vedunya_Sorceress = id);
+
+        vedunya.Specs = [herbalist, whisperer, sorceress];
+        seed.Class_Vedunya = vedunya.Id;
+
+        return vedunya;
+    }
+
+    private static CharacterSpec CreateSpec(
         CharacterClass characterClass,
         CharacterSpecType type,
         string name,
         string description,
-        string folder,
         int health,
-        int? meleeDamage,
-        int rangedDamage,
-        int rangedRange,
-        int moveRange,
         int mana,
+        int manaRegen,
+        int moveRange,
+        int initiative,
+        int armor,
+        int power,
+        AbilityType[] abilities,
         Action<Guid> specIdSetter)
     {
-        string specFolder = GetSpecFolder(CharacterClassType.Mage, folder);
-
         CharacterSpec spec = new()
         {
             Id = Guid.CreateVersion7(),
             ClassId = characterClass.Id,
             Type = type,
             Name = name,
-            PortraitUrl = $"{specFolder}/Portrait.png",
+            PortraitUrl = $"classes/{characterClass.Type}/{type}/portrait.png",
             Description = description,
             Stats =
             [
                 CreateStat(StatType.Health, health),
+                CreateStat(StatType.Mana, mana),
+                CreateStat(StatType.ManaRegen, manaRegen),
                 CreateStat(StatType.MoveRange, moveRange),
-                CreateStat(StatType.Mana, mana)
+                CreateStat(StatType.Initiative, initiative),
+                CreateStat(StatType.Armor, armor),
+                CreateStat(StatType.Power, power)
             ],
-            ActionAssets = CreateMageActionAssets(type, specFolder),
-            Abilities = CreateMageAbilities(type, specFolder, meleeDamage, rangedDamage, rangedRange)
+            ActionAssets = [],
+            Abilities = [.. abilities.Select((ability, index) => CreateAbility(ability, index))]
         };
 
         specIdSetter(spec.Id);
 
         return spec;
+    }
+
+    private static CharacterSpecAbility CreateAbility(AbilityType type, int index)
+    {
+        AbilityDefinition definition = AbilityCatalog.Get(type);
+
+        return new CharacterSpecAbility
+        {
+            Id = Guid.CreateVersion7(),
+            Type = definition.Type,
+            EffectType = definition.EffectType,
+            TargetType = definition.TargetType,
+            Name = definition.Name,
+            Description = definition.Description,
+            Priority = index,
+            Stats = [],
+            ActionAssets = []
+        };
     }
 
     private static CharacterSpecStat CreateStat(StatType type, int value) =>
@@ -208,297 +342,5 @@ internal static class CharacterClassesSeeder
         {
             StatType = type,
             Value = value
-        };
-
-    private static CharacterSpecAbility CreateBasicAttackAbility(
-        AbilityType type,
-        string name,
-        string description,
-        int damage,
-        int range,
-        int priority,
-        CharacterSpecAbilityActionAsset[] actionAssets) =>
-        new()
-        {
-            Id = Guid.CreateVersion7(),
-            Type = type,
-            EffectType = AbilityEffectType.Damage,
-            TargetType = AbilityTargetType.Enemy,
-            Name = name,
-            Description = description,
-            Priority = priority,
-            Stats =
-            [
-                CreateAbilityStat(AbilityStatType.Damage, damage),
-                CreateAbilityStat(AbilityStatType.Range, range)
-            ],
-            ActionAssets = actionAssets
-        };
-
-    private static CharacterSpecAbilityStat CreateAbilityStat(AbilityStatType type, int value) =>
-        new()
-        {
-            StatType = type,
-            Value = value
-        };
-
-    private static string GetSpecFolder(CharacterClassType classType, string specFolder) =>
-        classType switch
-        {
-            CharacterClassType.Warrior => $"{AssetRoot}/warrior/{specFolder}",
-            CharacterClassType.Mage => $"{AssetRoot}/mage/{specFolder}",
-            _ => throw new ArgumentOutOfRangeException(nameof(classType), classType, null)
-        };
-
-    private static CharacterSpecActionAsset[] CreateWarriorActionAssets(
-        CharacterSpecType type,
-        string folder) =>
-        type switch
-        {
-            CharacterSpecType.Berserker => CreateBerserkerActionAssets(folder),
-            CharacterSpecType.Guardian => CreateGuardianActionAssets(folder),
-            CharacterSpecType.Duelist => CreateDuelistActionAssets(folder),
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-
-    private static CharacterSpecActionAsset[] CreateMageActionAssets(
-        CharacterSpecType type,
-        string folder) =>
-        type switch
-        {
-            CharacterSpecType.Pyromancer => CreatePyromancerActionAssets(folder),
-            CharacterSpecType.Luminary => CreateLuminaryActionAssets(folder),
-            CharacterSpecType.Arcanist => CreateArcanistActionAssets(folder),
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-
-    private static CharacterSpecAbility[] CreateWarriorAbilities(
-        CharacterSpecType type,
-        string folder,
-        int meleeDamage) =>
-        type switch
-        {
-            CharacterSpecType.Berserker =>
-            [
-                CreateBasicAttackAbility(
-                    AbilityType.BasicMeleeAttack,
-                    string.Empty,
-                    string.Empty,
-                    meleeDamage,
-                    range: 1,
-                    priority: 100,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_3.png", 4, 0.1f, variant: 2),
-                        CreateAbilityActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", 4, 0.1f)
-                    ])
-            ],
-
-            CharacterSpecType.Guardian =>
-            [
-                CreateBasicAttackAbility(
-                    AbilityType.BasicMeleeAttack,
-                    string.Empty,
-                    string.Empty,
-                    meleeDamage,
-                    range: 1,
-                    priority: 100,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1),
-                        CreateAbilityActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", 4, 0.1f)
-                    ])
-            ],
-
-            CharacterSpecType.Duelist =>
-            [
-                CreateBasicAttackAbility(
-                    AbilityType.BasicMeleeAttack,
-                    string.Empty,
-                    string.Empty,
-                    meleeDamage,
-                    range: 1,
-                    priority: 100,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 3, 0.1f, variant: 1),
-                        CreateAbilityActionAsset(ActionType.Run_Attack, $"{folder}/Run_Attack.png", 4, 0.1f)
-                    ])
-            ],
-
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-
-    private static CharacterSpecAbility[] CreateMageAbilities(
-        CharacterSpecType type,
-        string folder,
-        int? meleeDamage,
-        int rangedDamage,
-        int rangedRange) =>
-        type switch
-        {
-            CharacterSpecType.Pyromancer =>
-            [
-                CreateBasicAttackAbility(
-                    AbilityType.BasicMeleeAttack,
-                    string.Empty,
-                    string.Empty,
-                    meleeDamage ?? throw new ArgumentNullException(nameof(meleeDamage)),
-                    range: 1,
-                    priority: 200,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 4, 0.1f),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1)
-                    ]),
-
-                CreateBasicAttackAbility(
-                    AbilityType.BasicRangedAttack,
-                    "Поток пламени",
-                    "Нельзя применить, если цель стоит на соседней клетке.",
-                    rangedDamage,
-                    range: rangedRange,
-                    priority: 100,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Flame_jet.png", 14, 0.2f)
-                    ])
-            ],
-
-            CharacterSpecType.Luminary =>
-            [
-                CreateBasicAttackAbility(
-                    AbilityType.BasicMeleeAttack,
-                    string.Empty,
-                    string.Empty,
-                    meleeDamage ?? throw new ArgumentNullException(nameof(meleeDamage)),
-                    range: 1,
-                    priority: 200,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 10, 0.15f),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 4, 0.1f, variant: 1)
-                    ]),
-
-                CreateBasicAttackAbility(
-                    AbilityType.BasicRangedAttack,
-                    "Световой заряд",
-                    "Нельзя применить, если цель стоит на соседней клетке.",
-                    rangedDamage,
-                    range: rangedRange,
-                    priority: 100,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Light_charge.png", 13, 0.2f)
-                    ])
-            ],
-
-            CharacterSpecType.Arcanist =>
-            [
-                CreateBasicAttackAbility(
-                    AbilityType.BasicRangedAttack,
-                    "Арканный импульс",
-                    "Можно применять как на расстоянии, так и вблизи.",
-                    rangedDamage,
-                    range: rangedRange,
-                    priority: 100,
-                    [
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_1.png", 7, 0.1f),
-                        CreateAbilityActionAsset(ActionType.Attack, $"{folder}/Attack_2.png", 9, 0.1f, variant: 1)
-                    ])
-            ],
-
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-
-    private static CharacterSpecActionAsset[] CreateBerserkerActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 8, 0.1f),
-        // CreateActionAsset(ActionType.Walk, $"{folder}/Run.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 5, 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 2, 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
-    ];
-
-    private static CharacterSpecActionAsset[] CreateGuardianActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 5, 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 7, 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 3, 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
-    ];
-
-    private static CharacterSpecActionAsset[] CreateDuelistActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 5, 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 8, 0.1f),
-        // CreateActionAsset(ActionType.Walk, $"{folder}/Run.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 2, 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
-    ];
-
-    private static CharacterSpecActionAsset[] CreatePyromancerActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 7, 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 6, 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 9, 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 3, 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 6, 0.1f)
-    ];
-
-    private static CharacterSpecActionAsset[] CreateLuminaryActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 7, 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 7, 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 3, 0.1f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 5, 0.1f)
-    ];
-
-    private static CharacterSpecActionAsset[] CreateArcanistActionAssets(string folder) =>
-    [
-        CreateActionAsset(ActionType.Idle, $"{folder}/Idle.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Walk, $"{folder}/Walk.png", 7, 0.1f),
-        CreateActionAsset(ActionType.Run, $"{folder}/Run.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Jump, $"{folder}/Jump.png", 8, 0.1f),
-        CreateActionAsset(ActionType.Hurt, $"{folder}/Hurt.png", 4, 0.15f),
-        CreateActionAsset(ActionType.Dead, $"{folder}/Dead.png", 4, 0.1f)
-    ];
-
-    private static CharacterSpecActionAsset CreateActionAsset(
-        ActionType actionType,
-        string path,
-        int frameCount,
-        float animationSpeed,
-        int? variant = null) =>
-        new()
-        {
-            ActionType = actionType,
-            Variant = variant ?? 0,
-            Animation = new SpriteAnimation(
-                new Uri(path, UriKind.Relative),
-                frameCount,
-                animationSpeed)
-        };
-
-    private static CharacterSpecAbilityActionAsset CreateAbilityActionAsset(
-        ActionType actionType,
-        string path,
-        int frameCount,
-        float animationSpeed,
-        int? variant = null) =>
-        new()
-        {
-            ActionType = actionType,
-            Variant = variant ?? 0,
-            Animation = new SpriteAnimation(
-                new Uri(path, UriKind.Relative),
-                frameCount,
-                animationSpeed)
         };
 }

@@ -60,6 +60,16 @@ public sealed record UserArenaDefinition
         => BlockedPositions.Contains(position);
 
     /// <summary>
+    /// Возвращает шесть соседних гексов, находящихся внутри границ арены.
+    ///
+    /// Метод не исключает заблокированные клетки и не учитывает занятость юнитами.
+    /// Для этого нужно дополнительно использовать проверки мира.
+    /// </summary>
+    /// <param name="position">Позиция, для которой нужно получить соседей.</param>
+    public IEnumerable<Position> GetNeighbors(Position position)
+        => position.GetHexNeighbors().Where(IsWithin);
+
+    /// <summary>
     /// Возвращает соседние клетки по ортогонали, которые находятся
     /// внутри границ арены.
     ///

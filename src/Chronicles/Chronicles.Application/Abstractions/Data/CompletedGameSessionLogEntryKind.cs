@@ -28,5 +28,15 @@ public enum CompletedGameSessionLogEntryKind
     /// <summary>
     /// Подбор предмета.
     /// </summary>
-    ItemPickedUp = 5
+    ItemPickedUp = 5,
+
+    /// <summary>
+    /// Наложение статус-эффекта.
+    /// </summary>
+    StatusApplied = 6,
+
+    /// <summary>
+    /// Начало раунда.
+    /// </summary>
+    RoundStarted = 7
 }

@@ -1,4 +1,5 @@
-﻿using Domain.ValueObjects;
+﻿using Domain.Game.Arenas;
+using Domain.ValueObjects;
 using GameRuntime.Common.World.ArenaItems;
 using SharedKernel;
 
@@ -19,11 +20,44 @@ public sealed record ArenaDefinition
 
     public required Position[] BlockedPositions { get; init; }
 
+    /// <summary>
+    /// Рельеф арены: гекс → тип рельефа.
+    /// Гексы без записи считаются луговиной.
+    /// </summary>
+    public IReadOnlyDictionary<Position, TerrainType> Terrain { get; init; } =
+        new Dictionary<Position, TerrainType>();
+
     private readonly List<ArenaItemDefinition> items = [];
     public required IReadOnlyList<ArenaItemDefinition> Items
     {
         get => items;
-        init => items = [.. value];
+        init => items.AddRange(value);
+    }
+
+    /// <summary>
+    /// Возвращает тип рельефа гекса.
+    /// </summary>
+    public TerrainType TerrainAt(Position position) =>
+        Terrain.GetValueOrDefault(position, TerrainType.Meadow);
+
+    /// <summary>
+    /// Проверяет, находится ли позиция в границах арены.
+    /// </summary>
+    public bool IsWithin(Position position) =>
+        position.IsWithinGrid(GridWidth, GridHeight);
+
+    /// <summary>
+    /// Возвращает все гексы арены.
+    /// </summary>
+    public IEnumerable<Position> AllCells()
+    {
+        for (int x = 0; x < GridWidth; x++)
+        {
+            for (int y = 0; y < GridHeight; y++)
+            {
+                yield return new Position(x, y);
+            }
+        }
     }
 
     public ArenaItemDefinition? GetItemAt(Position position)

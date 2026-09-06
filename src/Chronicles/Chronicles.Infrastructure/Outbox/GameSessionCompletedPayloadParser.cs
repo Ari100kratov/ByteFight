@@ -101,6 +101,24 @@ internal sealed class GameSessionCompletedPayloadParser : ICompletedGameSessionP
                 item.Value,
                 null,
                 item.ItemType),
+            StatusAppliedLogEntrySnapshot status => new CompletedGameSessionLogEntryData(
+                status.ActorId,
+                CompletedGameSessionLogEntryKind.StatusApplied,
+                status.EntryType,
+                status.TurnIndex,
+                status.TargetId,
+                status.Magnitude,
+                null,
+                null),
+            RoundStartedLogEntrySnapshot round => new CompletedGameSessionLogEntryData(
+                round.ActorId,
+                CompletedGameSessionLogEntryKind.RoundStarted,
+                round.EntryType,
+                round.TurnIndex,
+                null,
+                0,
+                null,
+                null),
             _ => throw new InvalidOperationException($"Unsupported integration log entry '{logEntry.GetType().Name}'.")
         };
 }

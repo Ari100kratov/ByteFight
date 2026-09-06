@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Domain.Game.Abilities;
 using Domain.Game.ArenaItems;
+using Domain.Game.Statuses;
 using Domain.GameRuntime.GameActionLogs;
 
 namespace Application.Contracts.GameRuntime;
@@ -11,6 +12,8 @@ namespace Application.Contracts.GameRuntime;
 [JsonDerivedType(typeof(AbilityUsedLogEntryDto), (int)GameActionLogEntryType.AbilityUsed)]
 [JsonDerivedType(typeof(DeathLogEntryDto), (int)GameActionLogEntryType.Death)]
 [JsonDerivedType(typeof(ItemPickedUpLogEntryDto), (int)GameActionLogEntryType.ItemPickedUp)]
+[JsonDerivedType(typeof(StatusAppliedLogEntryDto), (int)GameActionLogEntryType.StatusApplied)]
+[JsonDerivedType(typeof(RoundStartedLogEntryDto), (int)GameActionLogEntryType.RoundStarted)]
 public abstract record GameActionLogEntryDto
 {
     public required Guid Id { get; init; }
@@ -27,6 +30,7 @@ public sealed record WalkLogEntryDto : GameActionLogEntryDto
 {
     public required FacingDirection FacingDirection { get; init; }
     public required PositionDto To { get; init; }
+    public PositionDto[]? Path { get; init; }
 }
 
 public sealed record AbilityUsedLogEntryDto : GameActionLogEntryDto
@@ -55,6 +59,21 @@ public sealed record ItemPickedUpLogEntryDto : GameActionLogEntryDto
     public required PositionDto Position { get; init; }
     public required decimal Value { get; init; }
     public required StatSnapshotDto ActorHp { get; init; }
+}
+
+public sealed record StatusAppliedLogEntryDto : GameActionLogEntryDto
+{
+    public required Guid TargetId { get; init; }
+    public required string TargetName { get; init; }
+    public required StatusEffectType StatusType { get; init; }
+    public required int Duration { get; init; }
+    public required decimal Magnitude { get; init; }
+    public StatSnapshotDto? TargetHp { get; init; }
+}
+
+public sealed record RoundStartedLogEntryDto : GameActionLogEntryDto
+{
+    public required int RoundNumber { get; init; }
 }
 
 public sealed record StatSnapshotDto(decimal Current, decimal Max);

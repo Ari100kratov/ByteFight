@@ -1,5 +1,6 @@
 ﻿using Domain.Game.Arenas.ArenaEnemies;
 using Domain.Game.Arenas.ArenaPlacedItems;
+using Domain.Game.Arenas.ArenaTerrainCells;
 using Domain.Game.GameModes;
 using Domain.ValueObjects;
 using SharedKernel;
@@ -39,6 +40,27 @@ public sealed class Arena : Entity
     public ICollection<ArenaEnemy> Enemies { get; set; }
 
     public ICollection<ArenaPlacedItem> Items { get; set; } = [];
+
+    /// <summary>
+    /// Гексы с особым рельефом. Отсутствие записи означает луговину.
+    /// </summary>
+    public ICollection<ArenaTerrainCell> TerrainCells { get; set; } = [];
+
+    /// <summary>
+    /// Возвращает тип рельефа гекса. Гексы без записи — луговина.
+    /// </summary>
+    public TerrainType TerrainAt(Position position)
+    {
+        foreach (ArenaTerrainCell cell in TerrainCells)
+        {
+            if (cell.Position == position)
+            {
+                return cell.Terrain;
+            }
+        }
+
+        return TerrainType.Meadow;
+    }
 
     public void SetSize(int width, int height)
     {

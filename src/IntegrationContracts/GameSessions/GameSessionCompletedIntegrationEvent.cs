@@ -111,6 +111,8 @@ public enum IntegrationGameOutcome
 [JsonDerivedType(typeof(DeathLogEntrySnapshot), "death")]
 [JsonDerivedType(typeof(AbilityUsedLogEntrySnapshot), "ability_used")]
 [JsonDerivedType(typeof(ItemPickedUpLogEntrySnapshot), "item_picked_up")]
+[JsonDerivedType(typeof(StatusAppliedLogEntrySnapshot), "status_applied")]
+[JsonDerivedType(typeof(RoundStartedLogEntrySnapshot), "round_started")]
 public abstract record GameActionLogEntrySnapshot(
     Guid Id,
     Guid SessionId,
@@ -206,6 +208,40 @@ public sealed record ItemPickedUpLogEntrySnapshot(
     PositionSnapshot Position,
     decimal Value,
     StatSnapshotContract ActorHp)
+    : GameActionLogEntrySnapshot(Id, SessionId, ActorId, ActorName, EntryType, Info, TurnIndex, CreatedAtUtc);
+
+/// <summary>
+/// Snapshot наложения статус-эффекта.
+/// </summary>
+public sealed record StatusAppliedLogEntrySnapshot(
+    Guid Id,
+    Guid SessionId,
+    Guid ActorId,
+    string ActorName,
+    string EntryType,
+    string? Info,
+    int TurnIndex,
+    DateTime CreatedAtUtc,
+    Guid TargetId,
+    string TargetName,
+    string StatusType,
+    int Duration,
+    decimal Magnitude)
+    : GameActionLogEntrySnapshot(Id, SessionId, ActorId, ActorName, EntryType, Info, TurnIndex, CreatedAtUtc);
+
+/// <summary>
+/// Snapshot начала раунда.
+/// </summary>
+public sealed record RoundStartedLogEntrySnapshot(
+    Guid Id,
+    Guid SessionId,
+    Guid ActorId,
+    string ActorName,
+    string EntryType,
+    string? Info,
+    int TurnIndex,
+    DateTime CreatedAtUtc,
+    int RoundNumber)
     : GameActionLogEntrySnapshot(Id, SessionId, ActorId, ActorName, EntryType, Info, TurnIndex, CreatedAtUtc);
 
 /// <summary>

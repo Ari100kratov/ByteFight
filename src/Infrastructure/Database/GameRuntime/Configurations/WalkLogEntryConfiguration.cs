@@ -1,4 +1,4 @@
-﻿using Domain.GameRuntime.GameActionLogs.Entries;
+using Domain.GameRuntime.GameActionLogs.Entries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,5 +10,11 @@ internal sealed class WalkLogEntryConfiguration
     public void Configure(EntityTypeBuilder<WalkLogEntry> builder)
     {
         builder.OwnsOne(x => x.To);
+
+        // Путь перемещения хранится JSON-массивом координат.
+        builder.OwnsMany(x => x.Path, owned =>
+        {
+            owned.ToJson();
+        });
     }
 }

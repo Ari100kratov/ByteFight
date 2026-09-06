@@ -71,18 +71,18 @@ public sealed class UserWorldView
            && !IsOccupied(position);
 
     /// <summary>
-    /// Возвращает соседние по ортогонали клетки, в которые можно перемещаться.
+    /// Возвращает соседние гексы, в которые можно перемещаться.
     /// </summary>
     /// <param name="position">Центральная позиция.</param>
-    public IEnumerable<Position> GetWalkableNeighbors4(Position position)
-        => Arena.GetNeighbors4(position).Where(IsWalkable);
+    public IEnumerable<Position> GetWalkableNeighbors(Position position)
+        => Arena.GetNeighbors(position).Where(IsWalkable);
 
     /// <summary>
     /// Возвращает соседние по ортогонали клетки для позиции текущего игрока,
     /// в которые можно перемещаться.
     /// </summary>
-    public IEnumerable<Position> GetWalkableNeighbors4()
-        => GetWalkableNeighbors4(Self.Position);
+    public IEnumerable<Position> GetWalkableNeighbors()
+        => GetWalkableNeighbors(Self.Position);
 }
 
 public static partial class Mapper

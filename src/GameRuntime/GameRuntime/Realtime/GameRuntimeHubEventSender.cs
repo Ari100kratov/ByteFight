@@ -34,6 +34,13 @@ internal sealed class GameRuntimeHubEventSender(
             .SendAsync(GameRuntimeEvents.Tick, log.ToDto(), ct);
     }
 
+    public async Task SendState(Guid gameSessionId, BattleStateDto state, CancellationToken ct)
+    {
+        await hub.Clients
+            .Group(gameSessionId.ToString())
+            .SendAsync(GameRuntimeEvents.State, state, ct);
+    }
+
     public async Task SendFinished(GameSession session, CancellationToken ct)
     {
         registry.Remove(session.Id);

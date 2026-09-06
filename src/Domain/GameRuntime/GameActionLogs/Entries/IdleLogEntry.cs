@@ -49,4 +49,19 @@ public static class IdleReasons
 
     public const string OutOfRange =
         "Не дотягивается. Ни оружием, ни надеждами.";
+
+    public const string NoActionPoints =
+        "Очки действия исчерпаны. Ход прожит зря.";
+
+    public const string OnCooldown =
+        "Способность ещё отдыхает после прошлого подвига.";
+
+    public const string NotEnoughMana =
+        "Сил не хватило. Мана на нуле.";
+
+    public const string InvalidTarget =
+        "Цель выбрана странно. Так нельзя.";
+
+    public const string NoTargetsHit =
+        "Промах по пустоте. Красиво, но бесполезно.";
 }

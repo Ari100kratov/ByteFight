@@ -14,7 +14,7 @@ public sealed class RuntimeAbilities
     ];
 
     private readonly Dictionary<AbilityType, RuntimeAbility> byType;
-    private readonly RuntimeAbility[] orderedByPriority;
+    private readonly List<RuntimeAbility> orderedByPriority;
 
     /// <summary>
     /// Создает коллекцию runtime-способностей.
@@ -23,6 +23,21 @@ public sealed class RuntimeAbilities
     {
         orderedByPriority = [.. abilities.OrderByDescending(x => x.Priority)];
         byType = orderedByPriority.ToDictionary(x => x.Type);
+    }
+
+    /// <summary>
+    /// Добавляет способность (например, открытую талантом).
+    /// </summary>
+    public void Add(RuntimeAbility ability)
+    {
+        if (byType.ContainsKey(ability.Type))
+        {
+            return;
+        }
+
+        byType[ability.Type] = ability;
+        orderedByPriority.Add(ability);
+        orderedByPriority.Sort((a, b) => b.Priority.CompareTo(a.Priority));
     }
 
     /// <summary>
